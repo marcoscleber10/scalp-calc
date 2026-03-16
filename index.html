@@ -3,176 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ScalpCalc Pro Max</title>
+    <title>ScalpCalc Pro + Gráfico RSI</title>
     <style>
-        :root { --bg: #0a0e14; --card: #151a21; --green: #00ff88; --red: #ff3e3e; --text: #848e9c; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0a0e14; color: white; display: flex; justify-content: center; padding: 10px; margin: 0; min-height: 100vh; align-items: flex-start; }
         
-        /* Container Full Width */
-        .app-container { width: 100%; max-width: 600px; background: var(--card); min-height: 100vh; display: flex; flex-direction: column; }
+        /* Layout centralizado e proporcional */
+        .card { background: #151a21; padding: 15px; border-radius: 16px; width: 100%; max-width: 440px; border: 1px solid #2b3139; box-shadow: 0 8px 32px rgba(0,0,0,0.5); display: flex; flex-direction: column; }
         
-        /* Header e Preço */
-        header { padding: 15px; text-align: center; border-bottom: 1px solid #2b3139; }
-        .price-box { font-size: 36px; font-weight: bold; color: var(--green); margin: 5px 0; }
+        .price-box { font-size: 32px; font-weight: bold; color: #00ff88; text-align: center; margin: 8px 0; letter-spacing: 1px; }
         
-        /* Medidor de Sinal Estilizado */
-        .signal-bar { padding: 10px 20px; background: #1c2128; border-bottom: 2px solid #2b3139; }
-        #entrySignal { font-size: 14px; font-weight: bold; text-align: center; text-transform: uppercase; margin-bottom: 8px; }
-        .progress-bg { background: #2b3139; height: 6px; border-radius: 3px; overflow: hidden; }
-        .progress-fill { height: 100%; width: 50%; transition: 0.5s; background: var(--text); }
-
-        /* Gráfico Expandido */
-        .chart-frame { flex-grow: 1; min-height: 400px; width: 100%; border-bottom: 1px solid #2b3139; }
-
-        /* Painel de Controle */
-        .controls { padding: 20px; background: var(--card); }
-        .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
-        label { font-size: 11px; color: var(--text); text-transform: uppercase; font-weight: bold; }
-        input, select { width: 100%; padding: 12px; background: #2b3139; border: 1px solid #474d57; color: white; border-radius: 8px; box-sizing: border-box; font-size: 15px; margin-top: 4px; }
+        /* Painel de Sinal Inteligente */
+        .signal-meter { background: #1c2128; padding: 10px; border-radius: 10px; text-align: center; margin-bottom: 12px; border: 1px solid #2b3139; }
+        .signal-text { font-size: 14px; font-weight: bold; text-transform: uppercase; margin-bottom: 4px; }
+        .progress-bar { background: #2b3139; height: 6px; border-radius: 3px; overflow: hidden; margin-top: 6px; }
+        .progress-fill { height: 100%; width: 0%; transition: 0.5s; background: #848e9c; }
         
-        button { width: 100%; padding: 18px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; background: var(--green); color: black; font-size: 16px; transition: 0.2s; box-shadow: 0 4px 15px rgba(0, 255, 136, 0.2); }
-        button:active { transform: scale(0.96); }
-
-        /* Resultados */
-        .res-box { margin-top: 20px; padding: 15px; border-radius: 12px; background: #1c2128; display: none; border: 1px solid #2b3139; }
-        .res-line { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 15px; }
+        /* Área do Gráfico Embutido - Altura proporcional */
+        .chart-container { width: 100%; height: 350px; margin-bottom: 12px; border-radius: 10px; overflow: hidden; border: 1px solid #2b3139; }
+        
+        .flex { display: flex; gap: 8px; margin-bottom: 8px; }
+        .flex div { flex: 1; }
+        label { font-size: 10px; color: #848e9c; text-transform: uppercase; font-weight: bold; display: block; margin-bottom: 2px;}
+        input, select { width: 100%; padding: 10px; background: #2b3139; border: 1px solid #474d57; color: white; border-radius: 8px; box-sizing: border-box; font-size: 14px; outline: none;}
+        
+        button { width: 100%; padding: 14px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; background: #00ff88; color: black; font-size: 15px; margin-top: 8px; transition: 0.2s; box-shadow: 0 4px 10px rgba(0, 255, 136, 0.1); }
+        button:active { transform: scale(0.98); background: #00cc6e; }
+        
+        .res { margin-top: 15px; padding: 12px; border-radius: 10px; background: #1c2128; border-left: 4px solid #00ff88; display: none; font-size: 14px; border: 1px solid #2b3139; }
     </style>
 </head>
 <body>
-
-<div class="app-container">
-    <header>
+    <div class="card">
+        <h3 style="text-align:center; margin-top:0; color:#848e9c; font-size: 16px; margin-bottom:10px;">ScalpCalc Inteligente</h3>
+        
         <select id="exchangeSelect" onchange="changeExchange()">
             <option value="binance">Binance (BTC/USDT)</option>
             <option value="hyperliquid">Hyperliquid (BTC/USDC)</option>
         </select>
-        <div class="price-box" id="priceDisplay">...</div>
-    </header>
 
-    <div class="signal-bar">
-        <div id="entrySignal">Iniciando Análise...</div>
-        <div class="progress-bg">
-            <div id="meterFill" class="progress-fill"></div>
-        </div>
-    </div>
+        <div class="price-box" id="priceDisplay">Carregando...</div>
 
-    <div class="chart-frame">
-        <div id="tv_chart_container" style="height: 100%; width: 100%;"></div>
-    </div>
-
-    <div class="controls">
-        <div class="input-grid">
-            <div><label>Capital ($)</label><input type="number" id="capital" value="300"></div>
-            <div><label>Alavancagem</label><input type="number" id="lev" value="10"></div>
-            <div><label>Alvo %</label><input type="number" id="tpPerc" value="1.0" step="0.1"></div>
-            <div><label>Stop %</label><input type="number" id="slPerc" value="1.0" step="0.1"></div>
-        </div>
-
-        <button onclick="calculate()">CALCULAR ESTRATÉGIA</button>
-
-        <div id="results" class="res-box">
-            <div class="res-line"><span>🎯 Take Profit:</span> <b id="tp" style="color:var(--green)"></b></div>
-            <div class="res-line"><span>🛑 Stop Loss:</span> <b id="sl" style="color:var(--red)"></b></div>
-            <div class="res-line" style="border-top:1px solid #2b3139; padding-top:8px; margin-top:5px; font-size:12px;">
-                <span>Total Operado:</span> <span id="posSize"></span>
+        <div class="signal-meter">
+            <div id="entrySignal" class="signal-text" style="color:#848e9c">Analisando Mercado...</div>
+            <div class="progress-bar">
+                <div id="meterFill" class="progress-fill"></div>
             </div>
         </div>
-    </div>
-</div>
 
-<script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-<script>
-    let currentPrice = 0, prices = [], socket;
-
-    // Inicializa o Gráfico com RSI e Stoch RSI
-    function loadChart(symbol) {
-        new TradingView.widget({
-            "autosize": true,
-            "symbol": symbol,
-            "interval": "1",
-            "timezone": "Etc/UTC",
-            "theme": "dark",
-            "style": "1",
-            "locale": "br",
-            "enable_publishing": false,
-            "hide_top_toolbar": false,
-            "hide_legend": true,
-            "container_id": "tv_chart_container",
-            "studies": [
-                "RSI@tv-basicstudies",
-                "StochasticRSI@tv-basicstudies",
-                "MASimple@tv-basicstudies"
-            ]
-        });
-    }
-
-    function connectBinance() {
-        if(socket) socket.close();
-        loadChart("BINANCE:BTCUSDT");
-        socket = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@ticker');
-        socket.onmessage = (e) => { updateUI(parseFloat(JSON.parse(e.data).c)); };
-    }
-
-    function connectHyperliquid() {
-        if(socket) socket.close();
-        loadChart("BITGET:BTCUSDT"); // Usando Bitget como proxy visual estável para o gráfico
-        socket = new WebSocket('wss://api.hyperliquid.xyz/ws');
-        socket.onopen = () => { socket.send(JSON.stringify({"method": "subscribe", "subscription": {"type": "l2Book", "coin": "BTC"}})); };
-        socket.onmessage = (e) => {
-            const data = JSON.parse(e.data);
-            if (data.data && data.data.levels) {
-                const midPrice = (parseFloat(data.data.levels[0][0].px) + parseFloat(data.data.levels[1][0].px)) / 2;
-                updateUI(midPrice);
+        <div class="chart-container">
+            <div class="tradingview-widget-container" style="height:100%;width:100%">
+              <div id="tradingview_chart" style="height:100%;width:100%"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+              <script type="text/javascript">
+              new TradingView.widget(
+              {
+              "autosize": true,
+              "symbol": "BINANCE:BTCUSDT",
+              "interval": "1",
+              "timezone": "Etc/UTC",
+              "theme": "dark",
+              "style": "1",
+              "locale": "br",
+              "toolbar_bg": "#f1f3f6",
+              "enable_publishing": false,
+              "hide_legend": true,
+              "save_image": false,
+              "container_id": "tradingview_chart",
+              "studies": [
+                "RSI@tv-basicstudies"
+              ]
             }
-        };
-    }
+              );
+              </script>
+            </div>
+            </div>
 
-    function updateUI(price) {
-        currentPrice = price;
-        document.getElementById('priceDisplay').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-        updateSignal(price);
-    }
+        <div class="flex">
+            <div><label>Capital ($)</label><input type="number" id="capital" value="300"></div>
+            <div><label>Alavancagem</label><input type="number" id="lev" value="10"></div>
+        </div>
 
-    function updateSignal(price) {
-        prices.push(price);
-        if(prices.length > 14) prices.shift();
-        if(prices.length === 14) {
-            let gains = 0, losses = 0;
-            for(let i=1; i<14; i++) {
-                let d = prices[i] - prices[i-1];
-                d > 0 ? gains += d : losses -= d;
-            }
-            let rsi = 100 - (100 / (1 + (gains / (losses || 0.001))));
-            const signal = document.getElementById('entrySignal');
-            const fill = document.getElementById('meterFill');
-            fill.style.width = rsi + '%';
-
-            if(rsi <= 35) { signal.innerText = "🔥 Oportunidade: Compra (RSI Baixo)"; signal.style.color = "#00ff88"; fill.style.background = "#00ff88"; }
-            else if(rsi >= 65) { signal.innerText = "⚠️ Atenção: Venda (RSI Alto)"; signal.style.color = "#ff3e3e"; fill.style.background = "#ff3e3e"; }
-            else { signal.innerText = "⚖️ Mercado Neutro"; signal.style.color = "#848e9c"; fill.style.background = "#848e9c"; }
-        }
-    }
-
-    function calculate() {
-        if(currentPrice === 0) return;
-        const cap = parseFloat(document.getElementById('capital').value);
-        const l = parseFloat(document.getElementById('lev').value);
-        const tpP = parseFloat(document.getElementById('tpPerc').value) / 100;
-        const slP = parseFloat(document.getElementById('slPerc').value) / 100;
-
-        document.getElementById('tp').innerText = `$ ${(currentPrice * (1 + tpP)).toFixed(2)}`;
-        document.getElementById('sl').innerText = `$ ${(currentPrice * (1 - slP)).toFixed(2)}`;
-        document.getElementById('posSize').innerText = `$ ${(cap * l).toFixed(2)}`;
-        document.getElementById('results').style.display = 'block';
-    }
-
-    function changeExchange() {
-        prices = [];
-        const ex = document.getElementById('exchangeSelect').value;
-        ex === 'binance' ? connectBinance() : connectHyperliquid();
-    }
-
-    connectBinance();
-</script>
-</body>
-</html>
+        <div class="flex">
