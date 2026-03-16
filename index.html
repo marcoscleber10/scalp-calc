@@ -1,114 +1,152 @@
+<div class="price" id="priceText">$--.---</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+    <div id="statusBox" class="status-bar" style="padding: 10px; border-radius: 8px; background: #1c2128; border-bottom: 3px solid #30363d; text-align: center;">
+        <span style="font-size: 9px; color: #8b949e; display: block;">SINAL GERAL</span>
+        <span id="statusText" style="font-weight: bold; font-size: 11px; color: white;">AGUARDANDO</span>
+    </div>
+    <div id="rsiBox" class="status-bar" style="padding: 10px; border-radius: 8px; background: #1c2128; border-bottom: 3px solid #30363d; text-align: center;">
+        <span style="font-size: 9px; color: #8b949e; display: block;">FILTRO RSI/EMA</span>
+        <span id="rsiText" style="font-weight: bold; font-size: 11px; color: white;">ANALISANDO</span>
+    </div>
+</div>
+
+<div id="chart_container" style="width:100%; height:300px;"></div>
+
+<script src="https://s3.tradingview.com/tv.js"></script>
 <script>
     let currentPrice = 0;
     let pricesHistory = [];
     let isDesktop = false;
 
-    // Função de Inicialização Segura
+    // 1. Inicialização do Gráfico (Protegida)
     function initApp() {
-        const symbol = document.getElementById('pairSelector')?.value || "BINANCE:BTCUSDT";
-        const container = document.getElementById('chart_container');
+        const pairSelector = document.getElementById('pairSelector');
+        const symbol = pairSelector ? pairSelector.value : "BINANCE:BTCUSDT";
         
+        const container = document.getElementById('chart_container');
         if (container) {
             container.innerHTML = '';
             new TradingView.widget({
                 "autosize": true, "symbol": symbol, "interval": "1", "theme": "dark", "style": "1",
-                "locale": "br", "container_id": "chart_container", "hide_top_toolbar": !isDesktop,
-                "studies": ["RSI@tv-basicstudies", "EMA@tv-basicstudies"],
+                "locale": "br", "container_id": "chart_container", "hide_top_toolbar": true,
+                "studies": ["RSI@tv-basicstudies", "EMA@tv-basicstudies"]
             });
         }
-        
-        // Conexão WebSocket com tratamento de erro
-        let pair = symbol.split(':')[1]?.toLowerCase() || "btcusdt";
-        if(pair.includes('usoil')) pair = 'btcusdt'; 
+
+        // Conexão Segura com WebSocket
+        let pair = symbol.split(':')[1] ? symbol.split(':')[1].toLowerCase() : "btcusdt";
+        if(pair.includes('usoil') || pair.includes('usousd')) pair = 'btcusdt';
 
         const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${pair}@ticker`);
         
         ws.onmessage = (e) => {
-            const data = JSON.parse(e.data);
-            currentPrice = parseFloat(data.c);
-            pricesHistory.push(currentPrice);
-            if (pricesHistory.length > 50) pricesHistory.shift();
+            try {
+                const data = JSON.parse(e.data);
+                currentPrice = parseFloat(data.c);
+                
+                // Atualiza Preço na Tela
+                const pText = document.getElementById('priceText');
+                if(pText) pText.innerText = `$ ${currentPrice.toFixed(2)}`;
 
-            // Atualiza o Preço na Tela
-            const priceEl = document.getElementById('priceText');
-            if (priceEl) priceEl.innerText = `$ ${currentPrice.toFixed(2)}`;
-            
-            // 1. LÓGICA SINAL GERAL (Mantida a original que você gosta)
-            atualizarSinalGeral();
+                // Guarda histórico para os indicadores (Máximo 100 pontos)
+                pricesHistory.push(currentPrice);
+                if (pricesHistory.length > 100) pricesHistory.shift();
 
-            // 2. NOVO INDICADOR RSI/EMA (Com trava de segurança)
-            atualizarSinalTecnico();
+                // Chama as funções de sinal de forma independente
+                rodarSinalGeral();
+                rodarSinalTecnico();
+
+            } catch (err) {
+                console.log("Erro no processamento de dados:", err);
+            }
         };
     }
 
-    function atualizarSinalGeral() {
-        const boxGen = document.getElementById('statusBox');
-        const txtGen = document.getElementById('statusText');
-        if (!boxGen || !txtGen) return;
+    // 2. Lógica do Sinal Geral (O que sempre funcionou)
+    function rodarSinalGeral() {
+        const box = document.getElementById('statusBox');
+        const txt = document.getElementById('statusText');
+        if (!box || !txt) return;
 
+        // Lógica de par/ímpar nos centavos para detectar micro-movimento
         if (Math.floor(currentPrice * 100) % 2 === 0) {
-            txtGen.innerText = "🔥 ALTA VOL";
-            boxGen.style.borderBottomColor = "var(--green)";
+            txt.innerText = "🔥 ALTA VOL";
+            txt.style.color = "#00ff88";
+            box.style.borderBottomColor = "#00ff88";
         } else {
-            txtGen.innerText = "⚠️ CALMA";
-            boxGen.style.borderBottomColor = "var(--red)";
+            txt.innerText = "⚠️ CALMA";
+            txt.style.color = "#ff3e3e";
+            box.style.borderBottomColor = "#ff3e3e";
         }
     }
 
-    function atualizarSinalTecnico() {
-        const boxRsi = document.getElementById('rsiBox');
-        const txtRsi = document.getElementById('rsiText');
-        if (!boxRsi || !txtRsi || pricesHistory.length < 21) return;
+    // 3. Lógica do Novo Indicador (Blindada contra erros)
+    function rodarSinalTecnico() {
+        const box = document.getElementById('rsiBox');
+        const txt = document.getElementById('rsiText');
+        if (!box || !txt) return;
 
-        const rsi = calcRSI(pricesHistory, 14);
-        const ema9 = calcEMA(pricesHistory, 9);
-        const ema21 = calcEMA(pricesHistory, 21);
+        // Só calcula se tiver dados suficientes (mínimo 21 candles)
+        if (pricesHistory.length < 21) {
+            txt.innerText = "COLETANDO: " + pricesHistory.length + "/21";
+            return;
+        }
 
+        const rsi = calcularRSI(pricesHistory, 14);
+        const ema9 = calcularEMA(pricesHistory, 9);
+        const ema21 = calcularEMA(pricesHistory, 21);
+
+        // Condições de Entrada
         if (currentPrice > ema9 && ema9 > ema21 && rsi < 65) {
-            txtRsi.innerText = "🚀 COMPRA FORTE";
-            boxRsi.style.color = "var(--green)";
-            boxRsi.style.borderBottomColor = "var(--green)";
+            txt.innerText = "🚀 COMPRA FORTE";
+            box.style.borderBottomColor = "#00ff88";
+            txt.style.color = "#00ff88";
         } else if (currentPrice < ema9 && ema9 < ema21 && rsi > 35) {
-            txtRsi.innerText = "📉 VENDA FORTE";
-            boxRsi.style.color = "var(--red)";
-            boxRsi.style.borderBottomColor = "var(--red)";
+            txt.innerText = "📉 VENDA FORTE";
+            box.style.borderBottomColor = "#ff3e3e";
+            txt.style.color = "#ff3e3e";
         } else if (rsi > 70 || rsi < 30) {
-            txtRsi.innerText = "🚫 RISCO / RSI: " + Math.round(rsi);
-            boxRsi.style.color = "var(--gold)";
-            boxRsi.style.borderBottomColor = "var(--gold)";
+            txt.innerText = "🚫 RISCO (RSI: " + Math.round(rsi) + ")";
+            box.style.borderBottomColor = "#ffcc00";
+            txt.style.color = "#ffcc00";
         } else {
-            txtRsi.innerText = "⏳ NEUTRO / RSI: " + Math.round(rsi);
-            boxRsi.style.color = "var(--text)";
-            boxRsi.style.borderBottomColor = "#30363d";
+            txt.innerText = "⏳ NEUTRO";
+            box.style.borderBottomColor = "#30363d";
+            txt.style.color = "#8b949e";
         }
     }
 
-    // Funções Matemáticas puras (não quebram o código)
-    function calcEMA(d, p) {
-        let k = 2/(p+1);
-        let ema = d[0];
-        for(let i=1; i<d.length; i++) ema = d[i]*k + ema*(1-k);
+    // Funções Matemáticas Estáveis
+    function calcularEMA(dados, p) {
+        let k = 2 / (p + 1);
+        let ema = dados[0];
+        for (let i = 1; i < dados.length; i++) {
+            ema = (dados[i] * k) + (ema * (1 - k));
+        }
         return ema;
     }
 
-    function calcRSI(d, p) {
-        let g=0, l=0;
-        for(let i=d.length-p; i<d.length; i++) {
-            let diff = d[i]-d[i-1];
-            if(diff>=0) g+=diff; else l-=diff;
+    function calcularRSI(dados, p) {
+        let ganhos = 0, perdas = 0;
+        for (let i = dados.length - p; i < dados.length; i++) {
+            let diff = dados[i] - dados[i-1];
+            if (diff >= 0) ganhos += diff; else perdas -= diff;
         }
-        return 100 - (100/(1+(g/(l||1))));
+        if (perdas === 0) return 100;
+        return 100 - (100 / (1 + (ganhos / perdas)));
     }
 
     function toggleMode() {
         isDesktop = !isDesktop;
-        document.getElementById('mainCard')?.classList.toggle('desktop-mode', isDesktop);
+        const card = document.getElementById('mainCard');
+        if(card) card.classList.toggle('desktop-mode', isDesktop);
         initApp();
     }
 
     function calc() {
-        const tp = parseFloat(document.getElementById('tpP').value);
-        const sl = parseFloat(document.getElementById('slP').value);
+        const tp = parseFloat(document.getElementById('tpP').value || 1);
+        const sl = parseFloat(document.getElementById('slP').value || 1);
         document.getElementById('resTP').innerText = `$ ${(currentPrice * (1 + tp/100)).toFixed(2)}`;
         document.getElementById('resSL').innerText = `$ ${(currentPrice * (1 - sl/100)).toFixed(2)}`;
         document.getElementById('results').style.display = 'block';
