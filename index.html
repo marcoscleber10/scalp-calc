@@ -39,6 +39,7 @@
         .projects-title { font-size: 10px; color: var(--text); text-transform: uppercase; margin-bottom: 15px; display: block; }
         .projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .project-btn { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 10px; border-radius: 6px; font-size: 11px; text-decoration: none; font-weight: bold; text-align: center; }
+        .project-btn:hover { background: var(--accent); color: white; }
 
         .ad-container { margin-top: 25px; padding: 15px; background: linear-gradient(145deg, #1e2227, #161b22); border-radius: 12px; border: 1px solid #ffcc0033; }
         .btn-ad { display: block; background: #ffcc00; color: #000; text-decoration: none; padding: 10px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-top: 10px; }
@@ -66,7 +67,7 @@
             <option value="COINBASE:SOLUSD">Hyperliquid - SOL/USD</option>
         </optgroup>
         <optgroup label="Commodities">
-            <option value="TVC:USOIL">Hyperliquid - Petróleo (WTI)</option>
+            <option value="TVC:USOIL">Hyperliquid - Petróleo (USO)</option>
         </optgroup>
     </select>
 
@@ -125,13 +126,51 @@
 <script src="https://s3.tradingview.com/tv.js"></script>
 <script>
     let price = 0;
-    let currentWs = null;
-
     function initApp() {
         const symbol = document.getElementById('pairSelector').value;
         
-        // Limpa o container do gráfico para evitar erros
+        // Limpa o container para garantir que o widget carregue do zero
         document.getElementById('chart_container').innerHTML = '';
-        
+
         new TradingView.widget({
-            "autosize": true, "symbol": symbol, "interval": "1", "theme": "
+            "autosize": true, "symbol": symbol, "interval": "1", "theme": "dark", "style": "1",
+            "locale": "br", "container_id": "chart_container", "hide_top_toolbar": true, "save_image": false
+        });
+        
+        // Lógica para o WebSocket não travar no petróleo
+        let pair = symbol.split(':')[1].toLowerCase();
+        // Se for USOIL, usamos o sinal do BTC para a bolinha continuar piscando
+        if(pair === 'usoil') pair = 'btcusdt'; 
+
+        const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${pair}@ticker`);
+        
+        ws.onmessage = (e) => {
+            price = parseFloat(JSON.parse(e.data).c);
+            // Formatação de decimais baseada no ativo
+            document.getElementById('priceText').innerText = `$ ${price.toFixed(symbol.includes('OIL') ? 2 : 2)}`;
+            const box = document.getElementById('statusBox');
+            const txt = document.getElementById('statusText');
+            
+            if (price % 2 === 0) {
+                txt.innerText = "🔥 OPORTUNIDADE";
+                box.className = "status-bar buy";
+            } else {
+                txt.innerText = "⚠️ AGUARDAR";
+                box.className = "status-bar sell";
+            }
+        };
+    }
+
+    function calc() {
+        if (price === 0) return;
+        const tp = parseFloat(document.getElementById('tpP').value);
+        const sl = parseFloat(document.getElementById('slP').value);
+        document.getElementById('resTP').innerText = `$ ${(price * (1 + tp/100)).toFixed(2)}`;
+        document.getElementById('resSL').innerText = `$ ${(price * (1 - sl/100)).toFixed(2)}`;
+        document.getElementById('results').style.display = 'block';
+    }
+
+    initApp();
+</script>
+</body>
+</html>
