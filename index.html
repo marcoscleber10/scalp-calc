@@ -5,67 +5,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mestre do Scalping Pro</title>
     <style>
-        :root { --bg: #0d1117; --card: #161b22; --green: #00ff88; --red: #ff3e3e; --text: #8b949e; }
-        body { background-color: var(--bg); color: white; font-family: sans-serif; display: flex; justify-content: center; padding: 10px; margin: 0; }
-        .card { background: var(--card); padding: 20px; border-radius: 16px; width: 100%; max-width: 380px; text-align: center; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .price { font-size: 32px; font-weight: 800; color: var(--green); margin-bottom: 10px; font-family: monospace; }
-        .status-bar { background: #0d1117; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 12px; font-weight: bold; border-bottom: 4px solid #30363d; }
+        :root { --bg: #0d1117; --card: #161b22; --green: #00ff88; --red: #ff3e3e; --text: #8b949e; --accent: #f39c12; }
+        body { background-color: var(--bg); color: white; font-family: sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
+        .card { background: var(--card); padding: 24px; border-radius: 16px; width: 100%; max-width: 380px; text-align: center; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h4 { color: var(--text); font-size: 11px; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 1px; }
+        select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 12px; border-radius: 8px; margin-bottom: 20px; outline: none; }
+        .price { font-size: 36px; font-weight: 800; color: var(--green); margin-bottom: 15px; font-family: monospace; }
+        .status-bar { background: #0d1117; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 12px; font-weight: bold; border-bottom: 4px solid #30363d; }
         .buy { border-bottom-color: var(--green); color: var(--green); }
         .sell { border-bottom-color: var(--red); color: var(--red); }
-        #chart_container { width: 100%; height: 200px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #30363d; overflow: hidden; }
-        .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: left; margin-bottom: 15px; }
-        label { font-size: 9px; color: var(--text); text-transform: uppercase; display: block; margin-bottom: 4px; }
-        input { width: 100%; background: #21262d; border: 1px solid #30363d; color: white; padding: 10px; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
-        .btn-calc { width: 100%; padding: 16px; background: var(--green); color: #0d1117; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-bottom: 20px; }
-        .res { margin-bottom: 20px; padding: 15px; background: #0d1117; border-radius: 10px; text-align: left; display: none; }
-        .res-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; }
+        #chart_container { width: 100%; height: 200px; border-radius: 8px; margin-bottom: 20px; overflow: hidden; border: 1px solid #30363d; background: #000; }
+        .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; text-align: left; }
+        label { font-size: 9px; color: var(--text); text-transform: uppercase; margin-bottom: 4px; display: block; }
+        input { width: 100%; background: #21262d; border: 1px solid #30363d; color: white; padding: 10px; border-radius: 6px; box-sizing: border-box; margin-bottom: 12px; font-size: 14px; }
+        .btn-calc { width: 100%; padding: 16px; background: var(--green); color: #0d1117; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-bottom: 10px; }
         
-        /* PUBLICIDADE ATMOS - IMAGEM EMBUTIDA NO CSS */
-        .ad-section { margin-top: 10px; border-top: 1px solid #30363d; padding-top: 15px; }
-        .ad-banner { 
-            width: 100%; 
-            height: 250px; 
-            background-size: contain; 
-            background-repeat: no-repeat; 
-            background-position: center;
-            border-radius: 12px;
-            /* A imagem da Atmos agora é este código abaixo */
-            background-image: url('https://i.postimg.cc/85MhVst4/atmos-banner.jpg'); 
-        }
+        /* Estilo da Publicidade */
+        .ad-container { margin-top: 25px; padding: 15px; background: linear-gradient(145deg, #1e2227, #161b22); border-radius: 12px; border: 1px solid #ffcc0033; position: relative; overflow: hidden; }
+        .ad-title { color: #ffcc00; font-size: 14px; font-weight: bold; margin-bottom: 8px; display: block; }
+        .ad-text { font-size: 11px; color: #ced4da; margin-bottom: 12px; line-height: 1.4; }
+        .btn-ad { display: block; background: #ffcc00; color: #000; text-decoration: none; padding: 10px; border-radius: 6px; font-size: 12px; font-weight: bold; transition: 0.3s; }
+        .btn-ad:hover { background: #e6b800; transform: scale(1.02); }
+
+        .res { margin-top: 20px; padding-top: 20px; border-top: 1px solid #30363d; text-align: left; display: none; }
+        .res-item { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; font-size: 13px; }
+        .val-group { text-align: right; }
+        .cash-val { font-size: 11px; color: var(--text); display: block; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <select id="exchange" onchange="initApp()" style="width: 100%; background: #21262d; color: white; padding: 10px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #30363d;">
-        <option value="BINANCE:BTCUSDT">Binance</option>
-        <option value="OKX:BTCUSDT">OKX</option>
-        <option value="BYBIT:BTCUSDT">Hyperliquid</option>
+    <h4>Mestre do Scalping</h4>
+    
+    <select id="exchange" onchange="initApp()">
+        <option value="BINANCE:BTCUSDT">Binance (Quantfury)</option>
+        <option value="OKX:BTCUSDT">OKX (Real-time)</option>
+        <option value="COINBASE:BTCUSD">Hyperliquid (Alternativo)</option>
     </select>
 
     <div class="price" id="priceText">$--.---</div>
-    <div id="statusBox" class="status-bar">CONECTANDO...</div>
+    <div id="statusBox" class="status-bar">ANALISANDO...</div>
     <div id="chart_container"></div>
 
     <div class="inputs-grid">
         <div><label>Capital ($)</label><input type="number" id="capital" value="300"></div>
         <div><label>Alavancagem</label><input type="number" id="lev" value="10"></div>
-        <div><label>Ganho %</label><input type="number" id="tpP" value="1.0" step="0.1"></div>
-        <div><label>Perda %</label><input type="number" id="slP" value="1.0" step="0.1"></div>
+        <div><label>Ganho Alvo %</label><input type="number" id="tpP" value="1.0" step="0.1"></div>
+        <div><label>Stop Loss %</label><input type="number" id="slP" value="1.0" step="0.1"></div>
     </div>
 
     <button class="btn-calc" onclick="calc()">Ver Meus Alvos Agora</button>
 
     <div id="results" class="res">
-        <div class="res-item"><span>🟢 Lucro Alvo:</span> <span id="resTP" style="color:var(--green)"></span></div>
-        <div class="res-item"><span>💵 Valor Lucro:</span> <span id="valTP" style="color:var(--green)"></span></div>
-        <div class="res-item"><span>🛑 Stop Loss:</span> <span id="resSL" style="color:var(--red)"></span></div>
-        <div class="res-item"><span>💸 Valor Perda:</span> <span id="valSL" style="color:var(--red)"></span></div>
+        <div class="res-item">
+            <span>🟢 Saída Lucro (TP):</span>
+            <div class="val-group">
+                <span id="resTP" style="color:var(--green)"></span>
+                <span class="cash-val" id="profitCash"></span>
+            </div>
+        </div>
+        <div class="res-item">
+            <span>🛑 Saída Perda (SL):</span>
+            <div class="val-group">
+                <span id="resSL" style="color:var(--red)"></span>
+                <span class="cash-val" id="lossCash"></span>
+            </div>
+        </div>
     </div>
 
-    <div class="ad-section">
-        <a href="https://wa.me/5597991916621?text=Quero+testar+a+Atmos" target="_blank" style="text-decoration:none;">
-            <div class="ad-banner"></div>
+    <div class="ad-container">
+        <span class="ad-title">📺 DIA DO CONSUMIDOR ATMOS</span>
+        <p class="ad-text">Todos os canais liberados, milhares de filmes e séries por apenas <b>R$ 30,00/mês</b>. Teste grátis agora!</p>
+        <a href="https://wa.me/5597991916621?text=Olá!+Vi+a+promoção+Atmos+no+Mestre+do+Scalping+e+quero+meu+teste+grátis" target="_blank" class="btn-ad">
+            QUERO TESTAR GRÁTIS
         </a>
     </div>
 </div>
@@ -73,33 +86,53 @@
 <script src="https://s3.tradingview.com/tv.js"></script>
 <script>
     let ws, price = 0;
+
     function initApp() {
         if (ws) ws.close();
+        const symbol = document.getElementById('exchange').value;
+        
         new TradingView.widget({
-            "autosize": true, "symbol": document.getElementById('exchange').value,
-            "interval": "1", "theme": "dark", "style": "1", "locale": "br", "container_id": "chart_container",
-            "hide_top_toolbar": true, "hide_legend": true
+            "autosize": true, "symbol": symbol, "interval": "1", "theme": "dark",
+            "style": "1", "locale": "br", "container_id": "chart_container",
+            "hide_top_toolbar": true, "hide_legend": true, "save_image": false
         });
+
         ws = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@ticker');
         ws.onmessage = (e) => {
-            price = parseFloat(JSON.parse(e.data).c);
+            const data = JSON.parse(e.data);
+            price = parseFloat(data.c);
             document.getElementById('priceText').innerText = `$ ${price.toFixed(2)}`;
-            document.getElementById('statusBox').innerText = price % 2 === 0 ? "🔥 COMPRA" : "⚠️ AGUARDAR";
-            document.getElementById('statusBox').className = price % 2 === 0 ? "status-bar buy" : "status-bar sell";
+            const box = document.getElementById('statusBox');
+            if (price % 2 === 0) {
+                box.innerText = "🔥 OPORTUNIDADE DE COMPRA";
+                box.className = "status-bar buy";
+            } else {
+                box.innerText = "⚠️ HORA DE VENDER / AGUARDAR";
+                box.className = "status-bar sell";
+            }
         };
     }
+
     function calc() {
+        if (price === 0) return;
         const cap = parseFloat(document.getElementById('capital').value);
         const lev = parseFloat(document.getElementById('lev').value);
-        const tp = parseFloat(document.getElementById('tpP').value);
-        const sl = parseFloat(document.getElementById('slP').value);
-        const size = cap * lev;
-        document.getElementById('resTP').innerText = `$ ${(price * (1 + tp/100)).toFixed(2)}`;
-        document.getElementById('valTP').innerText = `+ $ ${(size * tp/100).toFixed(2)}`;
-        document.getElementById('resSL').innerText = `$ ${(price * (1 - sl/100)).toFixed(2)}`;
-        document.getElementById('valSL').innerText = `- $ ${(size * sl/100).toFixed(2)}`;
+        const tpPct = parseFloat(document.getElementById('tpP').value);
+        const slPct = parseFloat(document.getElementById('slP').value);
+
+        const totalSize = cap * lev;
+        const profit = totalSize * (tpPct / 100);
+        const loss = totalSize * (slPct / 100);
+
+        document.getElementById('resTP').innerText = `$ ${(price * (1 + (tpPct / 100))).toFixed(2)}`;
+        document.getElementById('profitCash').innerText = `+ $ ${profit.toFixed(2)} (+${tpPct}%)`;
+        
+        document.getElementById('resSL').innerText = `$ ${(price * (1 - (slPct / 100))).toFixed(2)}`;
+        document.getElementById('lossCash').innerText = `- $ ${loss.toFixed(2)} (-${slPct}%)`;
+        
         document.getElementById('results').style.display = 'block';
     }
+
     initApp();
 </script>
 </body>
