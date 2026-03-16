@@ -1,67 +1,68 @@
 <script src="https://s3.tradingview.com/tv.js"></script>
 <script>
-    let price = 0;
+    let currentPrice = 0;
 
-    function initApp() {
-        const symbol = document.getElementById('pairSelector').value;
+    // 1. Inicialização do Gráfico com Indicadores Profissionais
+    function initChart() {
+        const selectedSymbol = document.getElementById('pairSelector').value;
         
         new TradingView.widget({
             "autosize": true,
-            "symbol": symbol,
+            "symbol": selectedSymbol,
             "interval": "1", 
             "theme": "dark",
             "style": "1",
             "locale": "br",
             "container_id": "chart_container",
-            "hide_top_toolbar": false, 
-            "save_image": false,
+            "hide_top_toolbar": false,
             "studies": [
-                {
-                    "id": "MASimple@tv-basicstudies",
-                    "inputs": { "length": 9 },
-                    "title": "EMA 9",
-                    "style": { "line.color": "#00ff88" } 
-                },
-                {
-                    "id": "MASimple@tv-basicstudies",
-                    "inputs": { "length": 21 },
-                    "title": "EMA 21",
-                    "style": { "line.color": "#ff3e3e" } 
-                },
-                {
-                    "id": "RSI@tv-basicstudies",
-                    "inputs": { "length": 14 },
-                    "title": "RSI",
-                    "style": { "line.color": "#2f81f7" }
-                }
+                { "id": "MASimple@tv-basicstudies", "inputs": { "length": 9 }, "title": "EMA 9" },
+                { "id": "MASimple@tv-basicstudies", "inputs": { "length": 21 }, "title": "EMA 21" },
+                { "id": "RSI@tv-basicstudies", "inputs": { "length": 14 }, "title": "RSI" }
             ]
         });
         
-        const pair = symbol.split(':')[1].toLowerCase();
-        const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${pair === 'usoousd' ? 'btcusdt' : pair}@ticker`);
-        ws.onmessage = (e) => {
-            price = parseFloat(JSON.parse(e.data).c);
-            document.getElementById('priceText').innerText = `$ ${price.toFixed(symbol.includes('USO') ? 4 : 2)}`;
-            const box = document.getElementById('statusBox');
-            
-            box.innerText = price % 2 === 0 ? "🔥 OPORTUNIDADE DE COMPRA" : "⚠️ HORA DE VENDER / AGUARDAR";
-            box.className = price % 2 === 0 ? "status-bar buy" : "status-bar sell";
-        };
+        setupPriceStream(selectedSymbol);
     }
 
-    function calc() {
-        if (price === 0) return;
-        const tp = parseFloat(document.getElementById('tpP').value); 
-        const sl = parseFloat(document.getElementById('slP').value); 
+    // 2. Conexão com Preço em Tempo Real (WebSocket)
+    function setupPriceStream(symbol) {
+        const cleanPair = symbol.split(':')[1].toLowerCase();
+        // Fallback para petróleo caso o par não seja cripto pura
+        const streamPair = cleanPair.includes("uso") ? "btcusdt" : cleanPair;
         
-        const resTP = price * (1 + tp/100);
-        const resSL = price * (1 - sl/100);
+        const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`);
         
-        document.getElementById('resTP').innerText = `$ ${resTP.toFixed(4)}`;
-        document.getElementById('resSL').innerText = `$ ${resSL.toFixed(4)}`;
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            currentPrice = parseFloat(data.c);
+            document.getElementById('priceText').innerText = `$ ${currentPrice.toFixed(2)}`;
+        };
+        
+        ws.onerror = () => console.log("Erro na conexão de preço.");
+    }
+
+    // 3. Calculadora de Alvos Corrigida
+    function calcularAlvos() {
+        if (currentPrice === 0) {
+            alert("Aguardando carregamento do preço...");
+            return;
+        }
+
+        const gainPct = parseFloat(document.getElementById('tpP').value) || 0.5;
+        const lossPct = parseFloat(document.getElementById('slP').value) || 0.7;
+        
+        const tpValue = currentPrice * (1 + (gainPct / 100));
+        const slValue = currentPrice * (1 - (lossPct / 100));
+        
+        document.getElementById('resTP').innerText = `$ ${tpValue.toFixed(2)}`;
+        document.getElementById('resSL').innerText = `$ ${slValue.toFixed(2)}`;
         document.getElementById('results').style.display = 'block';
     }
 
-    setInterval(updateTradingClock, 1000);
-    initApp();
+    // Inicializar ao carregar a página
+    window.onload = () => {
+        initChart();
+        setInterval(updateTradingClock, 1000);
+    };
 </script>
