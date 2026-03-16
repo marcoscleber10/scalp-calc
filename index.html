@@ -11,15 +11,14 @@
         .card.desktop-mode { max-width: 95%; }
         .desktop-mode #chart_container { height: 500px !important; }
         h4 { color: var(--text); font-size: 11px; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 1px; }
-        .btn-mode { width: 100%; background: var(--accent); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 11px; text-transform: uppercase; }
         
-        /* Nova Seletora de Tempo */
-        .time-grid { display: flex; gap: 5px; margin-bottom: 15px; }
-        .btn-time { flex: 1; padding: 10px; border-radius: 8px; font-size: 9px; font-weight: bold; cursor: pointer; border: 1px solid #30363d; background: #21262d; color: #8b949e; text-transform: uppercase; }
-        .btn-time.active { background: var(--accent); color: white; border: none; }
-        .btn-time.active[id="t1m"] { background: var(--green); color: #000; }
-        .btn-time.active[id="t1h"] { background: var(--gold); color: #000; }
+        /* Chave Seletora de Tempo - Estrutura Técnica */
+        .time-selector { display: flex; gap: 8px; margin-bottom: 15px; }
+        .time-btn { flex: 1; background: #21262d; border: 1px solid #30363d; color: var(--text); padding: 10px; border-radius: 8px; font-size: 10px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .time-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+        .time-btn.active[data-t="15"] { background: var(--gold); color: #000; border-color: var(--gold); }
 
+        .btn-mode { width: 100%; background: var(--accent); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 11px; text-transform: uppercase; }
         select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 12px; border-radius: 8px; margin-bottom: 20px; outline: none; font-size: 14px; cursor: pointer; }
         .price { font-size: 36px; font-weight: 800; color: var(--green); margin-bottom: 15px; font-family: monospace; }
         
@@ -32,15 +31,19 @@
         label { font-size: 9px; color: var(--text); text-transform: uppercase; margin-bottom: 4px; display: block; }
         input { width: 100%; background: #21262d; border: 1px solid #30363d; color: white; padding: 10px; border-radius: 6px; box-sizing: border-box; margin-bottom: 12px; font-size: 14px; }
         .btn-calc { width: 100%; padding: 16px; background: var(--green); color: #0d1117; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        
         .res { margin-top: 20px; padding-top: 20px; border-top: 1px solid #30363d; text-align: left; display: none; }
         .res-item { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; font-size: 13px; }
+        
         .projects-section { margin-top: 30px; border-top: 1px solid #30363d; padding-top: 20px; }
         .projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .project-btn { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 10px; border-radius: 6px; font-size: 11px; text-decoration: none; font-weight: bold; text-align: center; }
-        .market-table { width: 100%; font-size: 10px; margin-top: 20px; border-collapse: collapse; color: var(--text); text-align: left; }
-        .market-table td { padding: 6px 0; border-bottom: 1px solid #21262d; }
+        
         .ad-container { margin-top: 25px; padding: 15px; background: linear-gradient(145deg, #1e2227, #161b22); border-radius: 12px; border: 1px solid #ffcc0033; }
         .btn-ad { display: block; background: #ffcc00; color: #000; text-decoration: none; padding: 10px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-top: 10px; text-align: center;}
+        
+        .market-table { width: 100%; font-size: 10px; margin-top: 20px; border-collapse: collapse; color: var(--text); text-align: left; }
+        .market-table td { padding: 6px 0; border-bottom: 1px solid #21262d; }
     </style>
 </head>
 <body>
@@ -49,10 +52,9 @@
     <h4>Mestre do Scalping Multi-Par</h4>
     <button class="btn-mode" onclick="toggleMode()">🖥️ Alternar Modo Computador</button>
 
-    <div class="time-grid">
-        <button class="btn-time active" id="t1m" onclick="mudarTempo('1', 't1m')">⚡ SCALP (1m)</button>
-        <button class="btn-time" id="t15m" onclick="mudarTempo('15', 't15m')">🔭 DAY (15m)</button>
-        <button class="btn-time" id="t1h" onclick="mudarTempo('60', 't1h')">🏛️ TREND (1h)</button>
+    <div class="time-selector">
+        <button class="time-btn active" data-t="1" onclick="setTF('1', this)">⚡ SCALP (1m)</button>
+        <button class="time-btn" data-t="15" onclick="setTF('15', this)">🔭 DAY TRADE (15m)</button>
     </div>
 
     <select id="pairSelector" onchange="initApp()">
@@ -64,10 +66,6 @@
         <optgroup label="Ethereum (ETH)">
             <option value="BINANCE:ETHUSDT">Binance - ETH/USDT</option>
             <option value="OKX:ETHUSDT">OKX - ETH/USDT</option>
-            <option value="COINBASE:ETHUSD">Hyperliquid - ETH/USD</option>
-        </optgroup>
-        <optgroup label="Commodities">
-            <option value="TVC:USOIL">Hyperliquid - Petróleo (USO)</option>
         </optgroup>
     </select>
 
@@ -75,11 +73,11 @@
 
     <div class="status-grid">
         <div id="statusBox" class="status-bar">
-            <span class="status-label">SINAL GERAL</span>
+            <span class="status-label" id="labelSinal">SINAL GERAL</span>
             <span id="statusText">CONECTANDO...</span>
         </div>
         <div id="rsiBox" class="status-bar">
-            <span class="status-label">FILTRO RSI/EMA</span>
+            <span class="status-label" id="labelFiltro">FILTRO RSI/EMA</span>
             <span id="rsiText">COLETANDO...</span>
         </div>
     </div>
@@ -104,8 +102,10 @@
         <div class="projects-grid">
             <a href="#" class="project-btn">Dashboard 97</a>
             <a href="#" class="project-btn">CombustAI</a>
-            <a href="#" class="project-btn">Dashboard 75</a> <a href="#" class="project-btn">Pepinômetro</a>
-            <a href="#" class="project-btn">História Copas</a> <a href="#" class="project-btn">InvestOpção</a>
+            <a href="#" class="project-btn">Dashboard 75</a>
+            <a href="#" class="project-btn">Pepinômetro</a>
+            <a href="#" class="project-btn">História Copas</a>
+            <a href="#" class="project-btn">InvestOpção</a>
         </div>
     </div>
 
@@ -126,19 +126,24 @@
     let price = 0;
     let pricesHistory = [];
     let isDesktop = false;
-    let tempoAtual = "1"; // Valor padrão: 1 minuto
+    let currentTF = "1";
 
-    function mudarTempo(min, id) {
-        tempoAtual = min;
-        document.querySelectorAll('.btn-time').forEach(b => b.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
+    function setTF(tf, btn) {
+        currentTF = tf;
+        document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
         
-        // Ajusta sugestão de alvos com base no tempo
-        if(min === '1') { document.getElementById('tpP').value = "1.0"; document.getElementById('slP').value = "1.0"; }
-        else if(min === '15') { document.getElementById('tpP').value = "3.0"; document.getElementById('slP').value = "1.5"; }
-        else { document.getElementById('tpP').value = "8.0"; document.getElementById('slP').value = "3.0"; }
-
-        pricesHistory = []; // Reinicia histórico para novos cálculos
+        // Ajuste técnico de alvos conforme o tempo
+        if(tf === "15") {
+            document.getElementById('tpP').value = "3.5";
+            document.getElementById('slP').value = "1.5";
+            document.getElementById('labelFiltro').innerText = "FILTRO DAY TRADE (15m)";
+        } else {
+            document.getElementById('tpP').value = "1.0";
+            document.getElementById('slP').value = "1.0";
+            document.getElementById('labelFiltro').innerText = "FILTRO SCALP (1m)";
+        }
+        
         initApp();
     }
 
@@ -150,25 +155,27 @@
 
     function initApp() {
         const symbol = document.getElementById('pairSelector').value;
-        
-        // Limpeza do container para evitar duplicidade ou tela preta
         const container = document.getElementById('chart_container');
-        container.innerHTML = ''; 
+        container.innerHTML = ''; // Limpa para evitar sobreposição (causa da tela branca)
 
-        new TradingView.widget({
-            "autosize": true, 
-            "symbol": symbol, 
-            "interval": tempoAtual, // Usa a variável tempoAtual
-            "theme": "dark", 
-            "style": "1",
-            "locale": "br", 
-            "container_id": "chart_container", 
-            "hide_top_toolbar": !isDesktop
-        });
+        // Criar widget com delay pequeno para garantir o DOM pronto
+        setTimeout(() => {
+            new TradingView.widget({
+                "autosize": true,
+                "symbol": symbol,
+                "interval": currentTF,
+                "theme": "dark",
+                "style": "1",
+                "locale": "br",
+                "container_id": "chart_container",
+                "hide_top_toolbar": !isDesktop,
+                "enable_publishing": false,
+                "hide_legend": true,
+                "save_image": false
+            });
+        }, 100);
         
         let pair = symbol.split(':')[1].toLowerCase();
-        if(pair === 'usoil') pair = 'btcusdt'; 
-
         const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${pair}@ticker`);
         
         ws.onmessage = (e) => {
@@ -179,10 +186,11 @@
             pricesHistory.push(price);
             if (pricesHistory.length > 50) pricesHistory.shift();
 
+            // SINAL GERAL
             const box = document.getElementById('statusBox');
             const txt = document.getElementById('statusText');
             if (Math.floor(price * 100) % 2 === 0) {
-                txt.innerText = "🔥 OPORTUNIDADE";
+                txt.innerText = currentTF === "15" ? "💎 TENDÊNCIA ALTA" : "🔥 OPORTUNIDADE";
                 box.style.borderBottomColor = "var(--green)";
                 box.style.color = "var(--green)";
             } else {
@@ -208,11 +216,12 @@
         const ema9 = calcEMA(pricesHistory, 9);
         const ema21 = calcEMA(pricesHistory, 21);
 
-        if (price > ema9 && ema9 > ema21 && rsi < 65) {
-            rsiTxt.innerText = "🚀 COMPRA FORTE";
+        // Lógica de 15 minutos busca movimentos mais sólidos
+        if (price > ema9 && ema9 > ema21 && rsi < 60) {
+            rsiTxt.innerText = currentTF === "15" ? "💹 CONFIRMAÇÃO DAY" : "🚀 COMPRA FORTE";
             rsiBox.style.borderBottomColor = "var(--green)";
             rsiBox.style.color = "var(--green)";
-        } else if (price < ema9 && ema9 < ema21 && rsi > 35) {
+        } else if (price < ema9 && ema9 < ema21 && rsi > 40) {
             rsiTxt.innerText = "📉 VENDA FORTE";
             rsiBox.style.borderBottomColor = "var(--red)";
             rsiBox.style.color = "var(--red)";
