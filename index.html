@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mestre do Scalping Pro</title>
     <style>
-        :root { --bg: #0d1117; --card: #161b22; --green: #00ff88; --red: #ff3e3e; --text: #8b949e; }
+        :root { --bg: #0d1117; --card: #161b22; --green: #00ff88; --red: #ff3e3e; --text: #8b949e; --accent: #f39c12; }
         body { background-color: var(--bg); color: white; font-family: sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
         .card { background: var(--card); padding: 24px; border-radius: 16px; width: 100%; max-width: 380px; text-align: center; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         h4 { color: var(--text); font-size: 11px; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 1px; }
@@ -18,7 +18,15 @@
         .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; text-align: left; }
         label { font-size: 9px; color: var(--text); text-transform: uppercase; margin-bottom: 4px; display: block; }
         input { width: 100%; background: #21262d; border: 1px solid #30363d; color: white; padding: 10px; border-radius: 6px; box-sizing: border-box; margin-bottom: 12px; font-size: 14px; }
-        button { width: 100%; padding: 16px; background: var(--green); color: #0d1117; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        .btn-calc { width: 100%; padding: 16px; background: var(--green); color: #0d1117; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-bottom: 10px; }
+        
+        /* Estilo da Publicidade */
+        .ad-container { margin-top: 25px; padding: 15px; background: linear-gradient(145deg, #1e2227, #161b22); border-radius: 12px; border: 1px solid #ffcc0033; position: relative; overflow: hidden; }
+        .ad-title { color: #ffcc00; font-size: 14px; font-weight: bold; margin-bottom: 8px; display: block; }
+        .ad-text { font-size: 11px; color: #ced4da; margin-bottom: 12px; line-height: 1.4; }
+        .btn-ad { display: block; background: #ffcc00; color: #000; text-decoration: none; padding: 10px; border-radius: 6px; font-size: 12px; font-weight: bold; transition: 0.3s; }
+        .btn-ad:hover { background: #e6b800; transform: scale(1.02); }
+
         .res { margin-top: 20px; padding-top: 20px; border-top: 1px solid #30363d; text-align: left; display: none; }
         .res-item { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; font-size: 13px; }
         .val-group { text-align: right; }
@@ -33,7 +41,7 @@
     <select id="exchange" onchange="initApp()">
         <option value="BINANCE:BTCUSDT">Binance (Quantfury)</option>
         <option value="OKX:BTCUSDT">OKX (Real-time)</option>
-        <option value="COINBASE:BTCUSD">Hyperliquid (BTC/USDC)</option>
+        <option value="COINBASE:BTCUSD">Hyperliquid (Alternativo)</option>
     </select>
 
     <div class="price" id="priceText">$--.---</div>
@@ -47,7 +55,7 @@
         <div><label>Stop Loss %</label><input type="number" id="slP" value="1.0" step="0.1"></div>
     </div>
 
-    <button onclick="calc()">Ver Meus Alvos Agora</button>
+    <button class="btn-calc" onclick="calc()">Ver Meus Alvos Agora</button>
 
     <div id="results" class="res">
         <div class="res-item">
@@ -64,10 +72,14 @@
                 <span class="cash-val" id="lossCash"></span>
             </div>
         </div>
-        <div class="res-item">
-            <span>📊 Tamanho da Posição:</span>
-            <span id="resSize" style="font-weight:bold"></span>
-        </div>
+    </div>
+
+    <div class="ad-container">
+        <span class="ad-title">📺 DIA DO CONSUMIDOR ATMOS</span>
+        <p class="ad-text">Todos os canais liberados, milhares de filmes e séries por apenas <b>R$ 30,00/mês</b>. Teste grátis agora!</p>
+        <a href="https://wa.me/5597991916621?text=Olá!+Vi+a+promoção+Atmos+no+Mestre+do+Scalping+e+quero+meu+teste+grátis" target="_blank" class="btn-ad">
+            QUERO TESTAR GRÁTIS
+        </a>
     </div>
 </div>
 
@@ -118,7 +130,6 @@
         document.getElementById('resSL').innerText = `$ ${(price * (1 - (slPct / 100))).toFixed(2)}`;
         document.getElementById('lossCash').innerText = `- $ ${loss.toFixed(2)} (-${slPct}%)`;
         
-        document.getElementById('resSize').innerText = `$ ${totalSize.toFixed(2)}`;
         document.getElementById('results').style.display = 'block';
     }
 
