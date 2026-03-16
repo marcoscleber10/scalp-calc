@@ -3,79 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ScalpCalc Multi-Exchange</title>
+    <title>ScalpCalc Inteligente</title>
     <style>
-        body { font-family: sans-serif; background: #0a0e14; color: white; display: flex; justify-content: center; padding: 10px; margin: 0; }
-        .card { background: #151a21; padding: 20px; border-radius: 12px; width: 100%; max-width: 400px; border: 1px solid #2b3139; }
-        .price-box { font-size: 28px; font-weight: bold; color: #00ff88; margin: 10px 0; text-align: center; min-height: 40px; }
-        select, input { width: 100%; padding: 12px; margin: 8px 0; background: #2b3139; border: 1px solid #474d57; color: white; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
-        .indicator { display: flex; justify-content: space-between; margin: 15px 0; padding: 10px; background: #1c2128; border-radius: 8px; font-size: 14px; }
-        .status { font-weight: bold; padding: 2px 6px; border-radius: 4px; }
-        .buy { background: #00ff8822; color: #00ff88; }
-        .sell { background: #ff3e3e22; color: #ff3e3e; }
-        button { width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; background: #00ff88; color: black; margin-top: 10px; font-size: 16px; }
-        .res { margin-top: 20px; padding: 15px; border-top: 1px solid #2b3139; line-height: 1.8; background: #1c2128; border-radius: 8px; }
-        .flex { display: flex; gap: 10px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0a0e14; color: white; display: flex; justify-content: center; padding: 10px; margin: 0; }
+        .card { background: #151a21; padding: 20px; border-radius: 16px; width: 100%; max-width: 420px; border: 1px solid #2b3139; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+        .price-box { font-size: 32px; font-weight: bold; color: #00ff88; text-align: center; margin: 15px 0; letter-spacing: 1px; }
+        
+        /* Estilo do Medidor de Entrada */
+        .signal-meter { background: #1c2128; padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 20px; border: 1px solid #2b3139; }
+        .signal-text { font-size: 18px; font-weight: bold; margin-bottom: 5px; }
+        .progress-bar { background: #2b3139; height: 10px; border-radius: 5px; overflow: hidden; margin-top: 10px; }
+        .progress-fill { height: 100%; width: 0%; transition: 0.5s; background: #848e9c; }
+        
+        .flex { display: flex; gap: 10px; margin-bottom: 10px; }
         .flex div { flex: 1; }
-        label { font-size: 12px; color: #848e9c; }
+        label { font-size: 11px; color: #848e9c; text-transform: uppercase; font-weight: bold; }
+        input, select { width: 100%; padding: 12px; margin-top: 5px; background: #2b3139; border: 1px solid #474d57; color: white; border-radius: 8px; box-sizing: border-box; }
+        
+        button { width: 100%; padding: 16px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; background: #00ff88; color: black; font-size: 16px; margin-top: 10px; }
+        .res { margin-top: 20px; padding: 15px; border-radius: 12px; background: #1c2128; border-left: 4px solid #00ff88; display: none; }
     </style>
 </head>
 <body>
     <div class="card">
-        <h3 style="text-align:center">ScalpCalc Multi-Exchange</h3>
+        <h3 style="text-align:center; margin-top:0; color:#848e9c">Mestre do Scalping</h3>
         
-        <label>Fonte de Dados:</label>
         <select id="exchangeSelect" onchange="changeExchange()">
-            <option value="binance">Binance (BTC/USDT)</option>
-            <option value="hyperliquid">Hyperliquid (BTC/USDC)</option>
+            <option value="binance">Binance (Mercado Global)</option>
+            <option value="hyperliquid">Hyperliquid (DEX)</option>
         </select>
 
-        <div class="price-box" id="priceDisplay">Conectando...</div>
-        
-        <div class="indicator">
-            <span>RSI (14): <strong id="rsiVal">--</strong></span>
-            <span id="rsiStatus" class="status">Aguardando...</span>
+        <div class="price-box" id="priceDisplay">Carregando...</div>
+
+        <div class="signal-meter">
+            <div id="entrySignal" class="signal-text" style="color:#848e9c">Analisando Mercado...</div>
+            <div id="entryAdvice" style="font-size:12px; color:#848e9c">Aguarde 14 atualizações para sinalizar</div>
+            <div class="progress-bar">
+                <div id="meterFill" class="progress-fill"></div>
+            </div>
         </div>
 
         <div class="flex">
-            <div><label>Capital ($):</label><input type="number" id="capital" value="300"></div>
-            <div><label>Alavancagem:</label><input type="number" id="lev" value="10"></div>
+            <div><label>Seu Capital ($)</label><input type="number" id="capital" value="300"></div>
+            <div><label>Alavancagem</label><input type="number" id="lev" value="10"></div>
         </div>
 
         <div class="flex">
-            <div><label>Lucro Alvo %:</label><input type="number" id="tpPerc" value="1.0" step="0.1"></div>
-            <div><label>Stop Loss %:</label><input type="number" id="slPerc" value="0.5" step="0.1"></div>
+            <div><label>Ganho Desejado %</label><input type="number" id="tpPerc" value="1.0" step="0.1"></div>
+            <div><label>Perda Máxima %</label><input type="number" id="slPerc" value="1.0" step="0.1"></div>
         </div>
 
-        <button onclick="calculate()">CALCULAR POSIÇÃO</button>
+        <button onclick="calculate()">VER MEUS ALVOS AGORA</button>
 
-        <div id="results" class="res" style="display:none">
-            <div>🎯 <strong>Saída (TP):</strong> <span id="tp" style="color:#00ff88"></span></div>
-            <div>🛑 <strong>Stop (SL):</strong> <span id="sl" style="color:#ff3e3e"></span></div>
-            <div>📊 <strong>Total Operado:</strong> <span id="posSize"></span></div>
+        <div id="results" class="res">
+            <div style="margin-bottom:8px">🟢 <b>Venda em (Lucro):</b> <span id="tp" style="color:#00ff88; float:right"></span></div>
+            <div style="margin-bottom:8px">🔴 <b>Venda em (Stop):</b> <span id="sl" style="color:#ff3e3e; float:right"></span></div>
+            <div style="border-top:1px solid #2b3139; padding-top:8px; font-size:13px">
+                💰 <b>Valor Total da Operação:</b> <span id="posSize" style="float:right"></span>
+            </div>
         </div>
     </div>
 
     <script>
-        let currentPrice = 0;
-        let prices = [];
-        let socket;
+        let currentPrice = 0, prices = [], socket;
 
         function connectBinance() {
             if(socket) socket.close();
             socket = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@ticker');
-            socket.onmessage = (e) => {
-                const data = JSON.parse(e.data);
-                updateUI(parseFloat(data.c));
-            };
+            socket.onmessage = (e) => { updateUI(parseFloat(JSON.parse(e.data).c)); };
         }
 
         function connectHyperliquid() {
             if(socket) socket.close();
             socket = new WebSocket('wss://api.hyperliquid.xyz/ws');
-            socket.onopen = () => {
-                socket.send(JSON.stringify({"method": "subscribe", "subscription": {"type": "l2Book", "coin": "BTC"}}));
-            };
+            socket.onopen = () => { socket.send(JSON.stringify({"method": "subscribe", "subscription": {"type": "l2Book", "coin": "BTC"}})); };
             socket.onmessage = (e) => {
                 const data = JSON.parse(e.data);
                 if (data.data && data.data.levels) {
@@ -87,33 +88,48 @@
 
         function updateUI(price) {
             currentPrice = price;
-            document.getElementById('priceDisplay').innerText = `$ ${currentPrice.toFixed(2)}`;
-            calculateRSI(price);
+            document.getElementById('priceDisplay').innerText = `$ ${price.toFixed(2)}`;
+            updateSignal(price);
         }
 
-        function calculateRSI(price) {
+        function updateSignal(price) {
             prices.push(price);
             if(prices.length > 14) prices.shift();
             if(prices.length === 14) {
                 let gains = 0, losses = 0;
                 for(let i=1; i<14; i++) {
-                    let diff = prices[i] - prices[i-1];
-                    diff > 0 ? gains += diff : losses -= diff;
+                    let d = prices[i] - prices[i-1];
+                    d > 0 ? gains += d : losses -= d;
                 }
                 let rsi = 100 - (100 / (1 + (gains / (losses || 0.001))));
-                document.getElementById('rsiVal').innerText = rsi.toFixed(2);
-                const status = document.getElementById('rsiStatus');
-                if(rsi < 35) { status.innerText = "COMPRA"; status.className = "status buy"; }
-                else if(rsi > 65) { status.innerText = "VENDA"; status.className = "status sell"; }
-                else { status.innerText = "NEUTRO"; status.className = "status"; }
+                
+                const signal = document.getElementById('entrySignal');
+                const advice = document.getElementById('entryAdvice');
+                const fill = document.getElementById('meterFill');
+                
+                fill.style.width = rsi + '%';
+
+                if(rsi <= 35) {
+                    signal.innerText = "🔥 OPORTUNIDADE DE COMPRA";
+                    signal.style.color = "#00ff88";
+                    advice.innerText = "O preço caiu muito e pode subir em breve!";
+                    fill.style.background = "#00ff88";
+                } else if(rsi >= 65) {
+                    signal.innerText = "⚠️ HORA DE VENDER / AGUARDAR";
+                    signal.style.color = "#ff3e3e";
+                    advice.innerText = "O preço subiu demais, risco de queda alto.";
+                    fill.style.background = "#ff3e3e";
+                } else {
+                    signal.innerText = "⚖️ MERCADO NEUTRO";
+                    signal.style.color = "#848e9c";
+                    advice.innerText = "Sem sinal claro. Aguarde um movimento maior.";
+                    fill.style.background = "#848e9c";
+                }
             }
         }
 
         function calculate() {
-            if(currentPrice === 0) {
-                alert("Aguarde o preço carregar!");
-                return;
-            }
+            if(currentPrice === 0) return;
             const cap = parseFloat(document.getElementById('capital').value);
             const l = parseFloat(document.getElementById('lev').value);
             const tpP = parseFloat(document.getElementById('tpPerc').value) / 100;
