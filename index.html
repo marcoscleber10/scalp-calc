@@ -8,16 +8,19 @@
         :root { --bg: #0d1117; --card: #161b22; --green: #00ff88; --red: #ff3e3e; --text: #8b949e; --accent: #2f81f7; }
         body { background-color: var(--bg); color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
         
-        /* Layout do Card Principal */
+        /* Ajuste dinâmico do card */
         .card { background: var(--card); padding: 24px; border-radius: 16px; width: 100%; max-width: 400px; text-align: center; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: max-width 0.3s ease; }
         
-        /* MODO COMPUTADOR: Quando esta classe for ativada, o card expande */
+        /* Classe para o Modo Computador */
         .card.desktop-mode { max-width: 95%; }
         .desktop-mode #chart_container { height: 500px !important; }
 
         h4 { color: var(--text); font-size: 11px; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 1px; }
         
-        select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 12px; border-radius: 8px; margin-bottom: 20px; outline: none; font-size: 14px; }
+        /* Estilo do Botão Alternar */
+        .btn-mode { width: 100%; background: var(--accent); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 11px; text-transform: uppercase; }
+
+        select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 12px; border-radius: 8px; margin-bottom: 20px; outline: none; font-size: 14px; cursor: pointer; }
         .price { font-size: 36px; font-weight: 800; color: var(--green); margin-bottom: 15px; font-family: monospace; }
         
         .status-bar { background: #0d1117; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 12px; font-weight: bold; border-bottom: 4px solid #30363d; display: flex; align-items: center; justify-content: center; gap: 8px; }
@@ -27,22 +30,26 @@
         .sell { border-bottom-color: var(--red); color: var(--red); }
         .sell .dot { background: var(--red); box-shadow: 0 0 8px var(--red); }
         
-        /* Container do Gráfico */
-        #chart_container { width: 100%; height: 250px; border-radius: 8px; margin-bottom: 20px; overflow: hidden; border: 1px solid #30363d; background: #000; }
+        #chart_container { width: 100%; height: 200px; border-radius: 8px; margin-bottom: 20px; overflow: hidden; border: 1px solid #30363d; background: #000; }
         
-        /* Botão Alternar Modo */
-        .btn-mode { background: #2f81f7; color: white; border: none; padding: 8px 15px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; margin-bottom: 15px; text-transform: uppercase; }
-
         .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; text-align: left; }
         label { font-size: 9px; color: var(--text); text-transform: uppercase; margin-bottom: 4px; display: block; }
         input { width: 100%; background: #21262d; border: 1px solid #30363d; color: white; padding: 10px; border-radius: 6px; box-sizing: border-box; margin-bottom: 12px; font-size: 14px; }
         
         .btn-calc { width: 100%; padding: 16px; background: var(--green); color: #0d1117; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
         
-        /* Seção de Projetos */
+        .res { margin-top: 20px; padding-top: 20px; border-top: 1px solid #30363d; text-align: left; display: none; }
+        .res-item { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; font-size: 13px; }
+
+        .market-table { width: 100%; font-size: 10px; margin-top: 20px; border-collapse: collapse; color: var(--text); text-align: left; }
+        .market-table td { padding: 6px 0; border-bottom: 1px solid #21262d; }
+        .note { margin-top: 15px; padding: 10px; background: rgba(255, 62, 62, 0.1); border: 1px solid var(--red); border-radius: 6px; font-size: 10px; color: #ff8e8e; text-align: left; }
+
         .projects-section { margin-top: 30px; border-top: 1px solid #30363d; padding-top: 20px; }
+        .projects-title { font-size: 10px; color: var(--text); text-transform: uppercase; margin-bottom: 15px; display: block; }
         .projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .project-btn { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 10px; border-radius: 6px; font-size: 11px; text-decoration: none; font-weight: bold; text-align: center; }
+        .project-btn:hover { background: var(--accent); color: white; }
 
         .ad-container { margin-top: 25px; padding: 15px; background: linear-gradient(145deg, #1e2227, #161b22); border-radius: 12px; border: 1px solid #ffcc0033; }
         .btn-ad { display: block; background: #ffcc00; color: #000; text-decoration: none; padding: 10px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-top: 10px; text-align: center;}
@@ -56,9 +63,24 @@
     <button class="btn-mode" onclick="toggleMode()">🖥️ Alternar Modo Computador</button>
 
     <select id="pairSelector" onchange="initApp()">
-        <option value="BINANCE:BTCUSDT">Binance - BTC/USDT</option>
-        <option value="OKX:BTCUSDT">OKX - BTC/USDT</option>
-        <option value="TVC:USOIL">Petróleo (WTI)</option>
+        <optgroup label="Bitcoin (BTC)">
+            <option value="BINANCE:BTCUSDT">Binance - BTC/USDT</option>
+            <option value="OKX:BTCUSDT">OKX - BTC/USDT</option>
+            <option value="COINBASE:BTCUSD">Hyperliquid - BTC/USD</option>
+        </optgroup>
+        <optgroup label="Ethereum (ETH)">
+            <option value="BINANCE:ETHUSDT">Binance - ETH/USDT</option>
+            <option value="OKX:ETHUSDT">OKX - ETH/USDT</option>
+            <option value="COINBASE:ETHUSD">Hyperliquid - ETH/USD</option>
+        </optgroup>
+        <optgroup label="Solana (SOL)">
+            <option value="BINANCE:SOLUSDT">Binance - SOL/USDT</option>
+            <option value="OKX:SOLUSDT">OKX - SOL/USDT</option>
+            <option value="COINBASE:SOLUSD">Hyperliquid - SOL/USD</option>
+        </optgroup>
+        <optgroup label="Commodities">
+            <option value="TVC:USOIL">Hyperliquid - Petróleo (USO)</option>
+        </optgroup>
     </select>
 
     <div class="price" id="priceText">$--.---</div>
@@ -73,81 +95,10 @@
     <div class="inputs-grid">
         <div><label>Capital ($)</label><input type="number" id="capital" value="300"></div>
         <div><label>Alavancagem</label><input type="number" id="lev" value="10"></div>
+        <div><label>Ganho Alvo %</label><input type="number" id="tpP" value="1.0" step="0.1"></div>
+        <div><label>Stop Loss %</label><input type="number" id="slP" value="1.0" step="0.1"></div>
     </div>
 
     <button class="btn-calc" onclick="calc()">Calcular Alvos</button>
 
-    <div class="projects-section">
-        <div class="projects-grid">
-            <a href="https://site-559791916621-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">Dashboard 97</a>
-            <a href="https://pepinometro-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">Pepinômetro</a>
-        </div>
-    </div>
-
-    <div class="ad-container">
-        <span style="color:#ffcc00; font-size: 12px; font-weight: bold;">📺 ATMOS IPTV</span>
-        <a href="https://wa.me/5597991916621" target="_blank" class="btn-ad">TESTE GRÁTIS</a>
-    </div>
-</div>
-
-<script src="https://s3.tradingview.com/tv.js"></script>
-<script>
-    let price = 0;
-    let isDesktop = false;
-
-    function toggleMode() {
-        isDesktop = !isDesktop;
-        const card = document.getElementById('mainCard');
-        if (isDesktop) {
-            card.classList.add('desktop-mode');
-        } else {
-            card.classList.remove('desktop-mode');
-        }
-        initApp(); // Reinicia o gráfico para ajustar ao novo tamanho
-    }
-
-    function initApp() {
-        const symbol = document.getElementById('pairSelector').value;
-        document.getElementById('chart_container').innerHTML = '';
-
-        new TradingView.widget({
-            "autosize": true,
-            "symbol": symbol,
-            "interval": "1",
-            "theme": "dark",
-            "style": "1",
-            "locale": "br",
-            "container_id": "chart_container",
-            "hide_side_toolbar": isDesktop ? false : true, // MOSTRA BARRA NO MODO DESKTOP
-            "withdateranges": isDesktop, 
-            "allow_symbol_change": true,
-            "details": isDesktop,
-            "hotlist": isDesktop,
-            "calendar": isDesktop,
-            "show_popup_button": true,
-            "popup_width": "1000",
-            "popup_height": "650"
-        });
-        
-        let pair = symbol.split(':')[1].toLowerCase();
-        if(pair === 'usoil') pair = 'btcusdt'; 
-
-        const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${pair}@ticker`);
-        ws.onmessage = (e) => {
-            price = parseFloat(JSON.parse(e.data).c);
-            document.getElementById('priceText').innerText = `$ ${price.toFixed(2)}`;
-            const box = document.getElementById('statusBox');
-            if (price % 2 === 0) {
-                box.className = "status-bar buy";
-                document.getElementById('statusText').innerText = "🔥 OPORTUNIDADE";
-            } else {
-                box.className = "status-bar sell";
-                document.getElementById('statusText').innerText = "⚠️ AGUARDAR";
-            }
-        };
-    }
-
-    initApp();
-</script>
-</body>
-</html>
+    <div id="results" class="res">
