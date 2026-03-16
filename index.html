@@ -1,2 +1,94 @@
-document.getElementById('tp').innerText = `$ ${(currentPrice * 1.02).toFixed(2)}`; // Lucro de 2%
-document.getElementById('sl').innerText = `$ ${(currentPrice * 0.99).toFixed(2)}`;  // Stop de 1%
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScalpCalc Pro: Binance & Hyperliquid</title>
+    <style>
+        body { font-family: sans-serif; background: #0a0e14; color: white; display: flex; justify-content: center; padding: 10px; margin: 0; }
+        .card { background: #151a21; padding: 20px; border-radius: 12px; width: 100%; max-width: 400px; border: 1px solid #2b3139; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .price-box { font-size: 28px; font-weight: bold; color: #00ff88; margin: 10px 0; text-align: center; border: 1px solid #2b3139; padding: 10px; border-radius: 8px; background: #0a0e14; }
+        select, input { width: 100%; padding: 12px; margin: 8px 0; background: #2b3139; border: 1px solid #474d57; color: white; border-radius: 8px; box-sizing: border-box; font-size: 16px; outline: none; }
+        .indicator { display: flex; justify-content: space-between; margin: 15px 0; padding: 10px; background: #1c2128; border-radius: 8px; font-size: 14px; border: 1px solid #2b3139; }
+        .status { font-weight: bold; padding: 2px 6px; border-radius: 4px; }
+        .buy { background: #00ff8822; color: #00ff88; }
+        .sell { background: #ff3e3e22; color: #ff3e3e; }
+        button { width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; background: #00ff88; color: black; margin-top: 10px; font-size: 16px; transition: 0.2s; }
+        button:active { transform: scale(0.98); background: #00cc6e; }
+        .res { margin-top: 20px; padding: 15px; border-top: 1px solid #2b3139; line-height: 1.8; background: #1c2128; border-radius: 8px; }
+        .flex { display: flex; gap: 10px; }
+        .flex div { flex: 1; }
+        label { font-size: 12px; color: #848e9c; margin-left: 5px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h3 style="text-align:center; margin-top:0;">ScalpCalc Multi-Exchange</h3>
+        
+        <label>Fonte de Dados:</label>
+        <select id="exchangeSelect" onchange="changeExchange()">
+            <option value="binance">Binance (BTC/USDT)</option>
+            <option value="hyperliquid">Hyperliquid (BTC/USDC)</option>
+        </select>
+
+        <div class="price-box" id="priceDisplay">Conectando...</div>
+        
+        <div class="indicator">
+            <span>RSI (14): <strong id="rsiVal">--</strong></span>
+            <span id="rsiStatus" class="status">Aguardando...</span>
+        </div>
+
+        <div class="flex">
+            <div>
+                <label>Capital ($):</label>
+                <input type="number" id="capital" value="300">
+            </div>
+            <div>
+                <label>Alavancagem:</label>
+                <input type="number" id="lev" value="10">
+            </div>
+        </div>
+
+        <div class="flex">
+            <div>
+                <label>Lucro Alvo %:</label>
+                <input type="number" id="tpPerc" value="1.0" step="0.1">
+            </div>
+            <div>
+                <label>Stop Loss %:</label>
+                <input type="number" id="slPerc" value="0.5" step="0.1">
+            </div>
+        </div>
+
+        <button onclick="calculate()">CALCULAR POSIÇÃO</button>
+
+        <div id="results" class="res" style="display:none">
+            <div>🎯 <strong>Saída (TP):</strong> <span id="tp" style="color:#00ff88"></span></div>
+            <div>🛑 <strong>Stop (SL):</strong> <span id="sl" style="color:#ff3e3e"></span></div>
+            <div>📊 <strong>Total Operado:</strong> <span id="posSize" style="color:#e9e9e9"></span></div>
+        </div>
+    </div>
+
+    <script>
+        let currentPrice = 0;
+        let prices = [];
+        let socket;
+
+        function connectBinance() {
+            if(socket) socket.close();
+            socket = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@ticker');
+            socket.onmessage = (e) => {
+                const data = JSON.parse(e.data);
+                updateUI(parseFloat(data.c));
+            };
+        }
+
+        function connectHyperliquid() {
+            if(socket) socket.close();
+            socket = new WebSocket('wss://api.hyperliquid.xyz/ws');
+            socket.onopen = () => {
+                socket.send(JSON.stringify({"method": "subscribe", "subscription": {"type": "l2Book", "coin": "BTC"}}));
+            };
+            socket.onmessage = (e) => {
+                const data = JSON.parse(e.data);
+                if (data.data && data.data.levels)
