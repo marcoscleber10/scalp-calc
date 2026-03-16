@@ -11,176 +11,23 @@
         .card.desktop-mode { max-width: 95%; }
         .desktop-mode #chart_container { height: 500px !important; }
         h4 { color: var(--text); font-size: 11px; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 1px; }
+        
         .btn-mode { width: 100%; background: var(--accent); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 11px; text-transform: uppercase; }
         
-        /* NOVO: Estilo dos botões de Tempo */
+        /* Estilo das Abas de Tempo */
         .time-grid { display: flex; gap: 5px; margin-bottom: 15px; }
-        .btn-time { flex: 1; padding: 10px; border-radius: 8px; font-size: 9px; font-weight: bold; cursor: pointer; border: 1px solid #30363d; background: #21262d; color: #8b949e; text-transform: uppercase; transition: 0.3s; }
-        .btn-time.active { background: var(--accent); color: white; border: none; }
+        .btn-time { flex: 1; padding: 10px; border-radius: 8px; font-size: 9px; font-weight: bold; cursor: pointer; border: 1px solid #30363d; background: #21262d; color: #8b949e; text-transform: uppercase; }
+        .btn-time.active[id="t1m"] { background: var(--green); color: #0d1117; border: none; }
+        .btn-time.active[id="t15m"] { background: var(--accent); color: white; border: none; }
+        .btn-time.active[id="t1h"] { background: var(--gold); color: #0d1117; border: none; }
 
         select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 12px; border-radius: 8px; margin-bottom: 20px; outline: none; font-size: 14px; cursor: pointer; }
         .price { font-size: 36px; font-weight: 800; color: var(--green); margin-bottom: 15px; font-family: monospace; }
         .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
         .status-bar { background: #0d1117; padding: 10px; border-radius: 8px; font-size: 10px; font-weight: bold; border-bottom: 3px solid #30363d; text-align: center; }
         .status-label { font-size: 8px; color: var(--text); display: block; margin-bottom: 4px; text-transform: uppercase; }
+        
         #chart_container { width: 100%; height: 200px; border-radius: 8px; margin-bottom: 20px; overflow: hidden; border: 1px solid #30363d; background: #000; }
         .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; text-align: left; }
         label { font-size: 9px; color: var(--text); text-transform: uppercase; margin-bottom: 4px; display: block; }
-        input { width: 100%; background: #21262d; border: 1px solid #30363d; color: white; padding: 10px; border-radius: 6px; box-sizing: border-box; margin-bottom: 12px; font-size: 14px; }
-        .btn-calc { width: 100%; padding: 16px; background: var(--green); color: #0d1117; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
-        .res { margin-top: 20px; padding-top: 20px; border-top: 1px solid #30363d; text-align: left; display: none; }
-        .res-item { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; font-size: 13px; }
-    </style>
-</head>
-<body>
-
-<div class="card" id="mainCard">
-    <h4>Mestre do Scalping Multi-Par</h4>
-    <button class="btn-mode" onclick="toggleMode()">🖥️ Alternar Modo Computador</button>
-
-    <div class="time-grid">
-        <button class="btn-time active" id="t1m" onclick="mudarTempo('1', 't1m')">⚡ SCALP (1m)</button>
-        <button class="btn-time" id="t15m" onclick="mudarTempo('15', 't15m')">🔭 DAY (15m)</button>
-        <button class="btn-time" id="t1h" onclick="mudarTempo('60', 't1h')">🏛️ TREND (1h)</button>
-    </div>
-
-    <select id="pairSelector" onchange="initApp()">
-        <optgroup label="Bitcoin (BTC)">
-            <option value="BINANCE:BTCUSDT">Binance - BTC/USDT</option>
-            <option value="OKX:BTCUSDT">OKX - BTC/USDT</option>
-            <option value="COINBASE:BTCUSD">Hyperliquid - BTC/USD</option>
-        </optgroup>
-        <optgroup label="Ethereum (ETH)">
-            <option value="BINANCE:ETHUSDT">Binance - ETH/USDT</option>
-            <option value="OKX:ETHUSDT">OKX - ETH/USDT</option>
-        </optgroup>
-    </select>
-
-    <div class="price" id="priceText">$--.---</div>
-
-    <div class="status-grid">
-        <div id="statusBox" class="status-bar">
-            <span class="status-label">SINAL GERAL</span>
-            <span id="statusText">CONECTANDO...</span>
-        </div>
-        <div id="rsiBox" class="status-bar">
-            <span class="status-label" id="lblTecnico">FILTRO RSI/EMA (1m)</span>
-            <span id="rsiText">COLETANDO...</span>
-        </div>
-    </div>
-
-    <div id="chart_container"></div>
-
-    <div class="inputs-grid">
-        <div><label>Capital ($)</label><input type="number" id="capital" value="300"></div>
-        <div><label>Alavancagem</label><input type="number" id="lev" value="10"></div>
-        <div><label>Ganho Alvo %</label><input type="number" id="tpP" value="1.0" step="0.1"></div>
-        <div><label>Stop Loss %</label><input type="number" id="slP" value="1.0" step="0.1"></div>
-    </div>
-
-    <button class="btn-calc" onclick="calc()">Calcular Alvos</button>
-
-    <div id="results" class="res">
-        <div class="res-item"><span>🟢 Saída Lucro (TP):</span><span id="resTP" style="color:var(--green); font-weight: bold;"></span></div>
-        <div class="res-item"><span>🛑 Saída Perda (SL):</span><span id="resSL" style="color:var(--red); font-weight: bold;"></span></div>
-    </div>
-
-    </div>
-
-<script src="https://s3.tradingview.com/tv.js"></script>
-<script>
-    let price = 0;
-    let pricesHistory = [];
-    let isDesktop = false;
-    let tempoAtual = "1"; // Padrão 1 minuto
-
-    function mudarTempo(minutos, idBotao) {
-        tempoAtual = minutos;
-        
-        // Atualiza visual dos botões
-        document.querySelectorAll('.btn-time').forEach(b => b.classList.remove('active'));
-        document.getElementById(idBotao).classList.add('active');
-
-        // Ajusta rótulo e alvos sugeridos
-        const lbl = document.getElementById('lblTecnico');
-        if(minutos === "1") {
-            lbl.innerText = "FILTRO SCALP (1m)";
-            document.getElementById('tpP').value = "1.0";
-            document.getElementById('slP').value = "1.0";
-        } else if(minutos === "15") {
-            lbl.innerText = "FILTRO DAY (15m)";
-            document.getElementById('tpP').value = "3.0";
-            document.getElementById('slP').value = "1.5";
-        } else {
-            lbl.innerText = "FILTRO TREND (1h)";
-            document.getElementById('tpP').value = "8.0";
-            document.getElementById('slP').value = "3.0";
-        }
-
-        pricesHistory = []; // Reseta para novos cálculos
-        initApp();
-    }
-
-    function toggleMode() {
-        isDesktop = !isDesktop;
-        document.getElementById('mainCard').classList.toggle('desktop-mode', isDesktop);
-        initApp();
-    }
-
-    function initApp() {
-        const symbol = document.getElementById('pairSelector').value;
-        document.getElementById('chart_container').innerHTML = '';
-
-        new TradingView.widget({
-            "autosize": true, "symbol": symbol, "interval": tempoAtual, "theme": "dark", "style": "1",
-            "locale": "br", "container_id": "chart_container", "hide_top_toolbar": !isDesktop
-        });
-        
-        let pair = symbol.split(':')[1].toLowerCase();
-        const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${pair}@ticker`);
-        
-        ws.onmessage = (e) => {
-            const data = JSON.parse(e.data);
-            price = parseFloat(data.c);
-            document.getElementById('priceText').innerText = `$ ${price.toFixed(2)}`;
-            pricesHistory.push(price);
-            if (pricesHistory.length > 50) pricesHistory.shift();
-
-            // Sinal Geral Par/Ímpar (Sua lógica que funciona)
-            const box = document.getElementById('statusBox');
-            const txt = document.getElementById('statusText');
-            if (Math.floor(price * 100) % 2 === 0) {
-                txt.innerText = "🔥 OPORTUNIDADE";
-                box.style.borderBottomColor = "var(--green)";
-                box.style.color = "var(--green)";
-            } else {
-                txt.innerText = "⚠️ AGUARDAR";
-                box.style.borderBottomColor = "var(--red)";
-                box.style.color = "var(--red)";
-            }
-            atualizarFiltroTecnico();
-        };
-    }
-
-    function atualizarFiltroTecnico() {
-        const rsiBox = document.getElementById('rsiBox');
-        const rsiTxt = document.getElementById('rsiText');
-        
-        // Prazos das EMAs se ajustam ao tempo selecionado
-        const pCurta = tempoAtual === "1" ? 9 : 20;
-        const pLonga = tempoAtual === "1" ? 21 : 50;
-
-        if (pricesHistory.length < pLonga) {
-            rsiTxt.innerText = "COLETANDO: " + pricesHistory.length + "/" + pLonga;
-            return;
-        }
-
-        const rsi = calcRSI(pricesHistory, 14);
-        const emaC = calcEMA(pricesHistory, pCurta);
-        const emaL = calcEMA(pricesHistory, pLonga);
-
-        if (price > emaC && emaC > emaL && rsi < 65) {
-            rsiTxt.innerText = tempoAtual === "1" ? "🚀 COMPRA FORTE" : "📈 TENDÊNCIA ALTA";
-            rsiBox.style.borderBottomColor = "var(--green)";
-            rsiBox.style.color = "var(--green)";
-        } else
+        input { width: 100%; background: #21262d;
