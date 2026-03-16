@@ -13,14 +13,13 @@
         select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 12px; border-radius: 8px; margin-bottom: 20px; outline: none; font-size: 14px; cursor: pointer; }
         .price { font-size: 36px; font-weight: 800; color: var(--green); margin-bottom: 15px; font-family: monospace; }
         
-        /* STATUS COM BOLINHA PULSANTE */
-        .status-bar { background: #0d1117; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 12px; font-weight: bold; border: 1px solid #30363d; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        /* BARRA DE STATUS COM BOLINHA */
+        .status-bar { background: #0d1117; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 12px; font-weight: bold; border-bottom: 4px solid #30363d; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
-        .buy { color: var(--green); border-bottom: 4px solid var(--green); }
-        .buy .dot { background: var(--green); box-shadow: 0 0 10px var(--green); animation: pulse 1.5s infinite; }
-        .sell { color: var(--red); border-bottom: 4px solid var(--red); }
-        .sell .dot { background: var(--red); box-shadow: 0 0 10px var(--red); animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+        .buy { border-bottom-color: var(--green); color: var(--green); }
+        .buy .dot { background: var(--green); box-shadow: 0 0 10px var(--green); }
+        .sell { border-bottom-color: var(--red); color: var(--red); }
+        .sell .dot { background: var(--red); box-shadow: 0 0 10px var(--red); }
         
         #chart_container { width: 100%; height: 200px; border-radius: 8px; margin-bottom: 20px; overflow: hidden; border: 1px solid #30363d; background: #000; }
         
@@ -45,4 +44,68 @@
         .projects-section { margin-top: 30px; border-top: 1px solid #30363d; padding-top: 20px; }
         .projects-title { font-size: 10px; color: var(--text); text-transform: uppercase; margin-bottom: 15px; display: block; }
         .projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .project-btn { background: #21262d;
+        .project-btn { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 10px; border-radius: 6px; font-size: 11px; text-decoration: none; font-weight: bold; text-align: center; }
+
+        .ad-container { margin-top: 25px; padding: 15px; background: linear-gradient(145deg, #1e2227, #161b22); border-radius: 12px; border: 1px solid #ffcc0033; }
+        .btn-ad { display: block; background: #ffcc00; color: #000; text-decoration: none; padding: 10px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-top: 10px; }
+        
+        #clock { margin-top: 15px; font-size: 12px; color: var(--text); font-family: monospace; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h4>Mestre do Scalping Multi-Par</h4>
+    
+    <select id="pairSelector" onchange="initApp()">
+        <optgroup label="Bitcoin (BTC)">
+            <option value="BINANCE:BTCUSDT">Binance - BTC/USDT</option>
+            <option value="OKX:BTCUSDT">OKX - BTC/USDT</option>
+            <option value="COINBASE:BTCUSD">Hyperliquid - BTC/USD</option>
+        </optgroup>
+        <optgroup label="Ethereum (ETH)">
+            <option value="BINANCE:ETHUSDT">Binance - ETH/USDT</option>
+            <option value="OKX:ETHUSDT">OKX - ETH/USDT</option>
+            <option value="COINBASE:ETHUSD">Hyperliquid - ETH/USD</option>
+        </optgroup>
+        <optgroup label="Solana (SOL)">
+            <option value="BINANCE:SOLUSDT">Binance - SOL/USDT</option>
+            <option value="OKX:SOLUSDT">OKX - SOL/USDT</option>
+            <option value="COINBASE:SOLUSD">Hyperliquid - SOL/USD</option>
+        </optgroup>
+        <optgroup label="Commodities">
+            <option value="COINBASE:USOUSD">Hyperliquid - Petróleo (USO)</option>
+        </optgroup>
+    </select>
+
+    <div class="price" id="priceText">$--.---</div>
+    
+    <div id="statusBox" class="status-bar">
+        <span class="dot"></span>
+        <span id="statusLabel">CONECTANDO...</span>
+    </div>
+
+    <div id="chart_container"></div>
+
+    <div class="inputs-grid">
+        <div><label>Capital ($)</label><input type="number" id="capital" value="300"></div>
+        <div><label>Alavancagem</label><input type="number" id="lev" value="10"></div>
+        <div><label>Ganho Alvo %</label><input type="number" id="tpP" value="1.0" step="0.1"></div>
+        <div><label>Stop Loss %</label><input type="number" id="slP" value="1.0" step="0.1"></div>
+    </div>
+
+    <button class="btn-calc" onclick="calc()">Calcular Alvos</button>
+
+    <div id="results" class="res">
+        <div class="res-item"><span>🟢 Saída Lucro (TP):</span><span id="resTP" style="color:var(--green); font-weight: bold;"></span></div>
+        <div class="res-item"><span>🛑 Saída Perda (SL):</span><span id="resSL" style="color:var(--red); font-weight: bold;"></span></div>
+    </div>
+
+    <div class="projects-section">
+        <span class="projects-title">Meus Projetos</span>
+        <div class="projects-grid">
+            <a href="https://site-559791916621-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">Dashboard 97</a>
+            <a href="https://site-combustai-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">CombustAI</a>
+            <a href="https://site-557591544835-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">Dashboard 75</a>
+            <a href="https://pepinometro-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">Pepinômetro</a>
+            <a href="https://historia-copas-620634
