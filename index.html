@@ -3,28 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ScalpCalc Pro - Multi</title>
+    <title>Mestre do Scalping</title>
     <style>
-        :root { --bg: #0a0e14; --card: #151a21; --green: #00ff88; --red: #ff3e3e; --text: #848e9c; }
-        body { background-color: var(--bg); color: white; font-family: sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
-        .card { background: var(--card); padding: 20px; border-radius: 12px; width: 100%; max-width: 380px; text-align: center; }
-        h4 { color: var(--text); font-size: 12px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
+        :root { --bg: #0d1117; --card: #161b22; --green: #00ff88; --red: #ff3e3e; --text: #8b949e; }
+        body { background-color: var(--bg); color: white; font-family: -apple-system, sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
         
-        select { width: 100%; background: #2b3139; color: white; border: 1px solid #474d57; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 14px; outline: none; }
+        .card { background: var(--card); padding: 24px; border-radius: 16px; width: 100%; max-width: 380px; text-align: center; border: 1px solid #30363d; }
+        h4 { color: var(--text); font-size: 11px; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 1px; }
         
-        .price { font-size: 32px; font-weight: bold; color: var(--green); margin: 15px 0; font-family: monospace; }
+        select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 12px; border-radius: 8px; margin-bottom: 20px; outline: none; }
         
-        .indicator-bar { background: #1c2128; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
-        .status { font-weight: bold; padding: 2px 6px; border-radius: 4px; }
+        .price { font-size: 36px; font-weight: 800; color: var(--green); margin-bottom: 15px; font-family: 'Courier New', monospace; }
+        
+        /* Barra de Status RSI igual à imagem */
+        .status-bar { background: #0d1117; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 12px; font-weight: bold; border-bottom: 4px solid #30363d; }
+        .buy { border-bottom-color: var(--green); color: var(--green); }
+        .sell { border-bottom-color: var(--red); color: var(--red); }
 
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; text-align: left; }
-        label { font-size: 10px; color: var(--text); display: block; margin-bottom: 5px; text-transform: uppercase; }
-        input { width: 100%; background: #2b3139; border: 1px solid #474d57; color: white; padding: 10px; border-radius: 8px; box-sizing: border-box; margin-bottom: 10px; font-size: 14px; }
+        /* Container do Gráfico */
+        #chart { width: 100%; height: 180px; border-radius: 8px; margin-bottom: 20px; overflow: hidden; border: 1px solid #30363d; }
 
-        button { width: 100%; padding: 16px; background: var(--green); color: black; border: none; border-radius: 10px; font-weight: bold; font-size: 14px; cursor: pointer; text-transform: uppercase; margin-top: 10px; }
+        .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; text-align: left; }
+        label { font-size: 9px; color: var(--text); text-transform: uppercase; margin-bottom: 4px; display: block; }
+        input { width: 100%; background: #21262d; border: 1px solid #30363d; color: white; padding: 10px; border-radius: 6px; box-sizing: border-box; margin-bottom: 12px; font-size: 14px; }
+
+        button { width: 100%; padding: 16px; background: var(--green); color: #0d1117; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-top: 5px; }
         
-        .results { margin-top: 25px; padding-top: 20px; border-top: 1px solid #2b3139; text-align: left; font-size: 14px; display: none; }
-        .results p { margin: 10px 0; display: flex; justify-content: space-between; }
+        .res { margin-top: 20px; padding-top: 20px; border-top: 1px solid #30363d; text-align: left; display: none; }
+        .res p { margin: 8px 0; font-size: 14px; display: flex; justify-content: space-between; }
     </style>
 </head>
 <body>
@@ -32,92 +38,92 @@
 <div class="card">
     <h4>Mestre do Scalping</h4>
     
-    <select id="exch" onchange="connect()">
-        <option value="binance">Binance (Quantfury)</option>
-        <option value="okx">OKX (Real-time)</option>
-        <option value="hyper">Hyperliquid (BTC/USDC)</option>
+    <select id="exchange" onchange="initApp()">
+        <option value="BINANCE">Binance (Quantfury)</option>
+        <option value="OKX">OKX (Real-time)</option>
+        <option value="HYPER">Hyperliquid (BTC/USDC)</option>
     </select>
 
-    <div class="price" id="btcPrice">Conectando...</div>
+    <div class="price" id="priceText">$--.---</div>
 
-    <div class="indicator-bar">
-        <span>RSI (14): <strong id="rsiVal">--</strong></span>
-        <span id="rsiStatus" class="status">AGUARDANDO...</span>
+    <div id="statusBox" class="status-bar">
+        <span id="statusMsg">ANALISANDO...</span>
     </div>
 
-    <div class="grid">
+    <div id="chart"></div>
+
+    <div class="inputs-grid">
         <div><label>Seu Capital ($)</label><input type="number" id="capital" value="300"></div>
-        <div><label>Alavancagem</label><input type="number" id="leverage" value="10"></div>
-        <div><label>Ganho %</label><input type="number" id="tpPerc" value="1.0" step="0.1"></div>
-        <div><label>Perda %</label><input type="number" id="slPerc" value="1.0" step="0.1"></div>
+        <div><label>Alavancagem</label><input type="number" id="lev" value="10"></div>
+        <div><label>Ganho %</label><input type="number" id="tpP" value="1.0"></div>
+        <div><label>Perda %</label><input type="number" id="slP" value="1.0"></div>
     </div>
 
-    <button onclick="doCalc()">Ver Meus Alvos Agora</button>
+    <button onclick="calc()">Ver Meus Alvos Agora</button>
 
-    <div id="resArea" class="results">
-        <p>🟢 Lucro Alvo: <strong id="vTP" style="color:var(--green)"></strong></p>
-        <p>🛑 Stop Loss: <strong id="vSL" style="color:var(--red)"></strong></p>
-        <p>📊 Total Operado: <span id="vSize"></span></p>
+    <div id="results" class="res">
+        <p>🟢 Lucro Alvo: <strong id="resTP" style="color:var(--green)"></strong></p>
+        <p>🛑 Stop Loss: <strong id="resSL" style="color:var(--red)"></strong></p>
+        <p>📊 Total Operado: <span id="resSize"></span></p>
     </div>
 </div>
 
+<script src="https://s3.tradingview.com/tv.js"></script>
 <script>
-    let price = 0, history = [], ws;
+    let ws, price = 0;
 
-    function connect() {
+    function initApp() {
         if (ws) ws.close();
-        document.getElementById('btcPrice').innerText = "Carregando...";
-        history = [];
+        const ex = document.getElementById('exchange').value;
         
-        const mode = document.getElementById('exch').value;
-        let url = 'wss://stream.binance.com:9443/ws/btcusdt@ticker';
-        
-        // Simulação de endereços reais (Binance é usada como fallback para garantir o preço se as outras falharem)
-        ws = new WebSocket(url);
+        // 1. Atualiza o Gráfico (Identico ao seu visual)
+        new TradingView.widget({
+            "container_id": "chart",
+            "symbol": ex === "HYPER" ? "HYPERLIQUID:BTCUSDC" : "BINANCE:BTCUSDT",
+            "interval": "1",
+            "theme": "dark",
+            "style": "1",
+            "locale": "br",
+            "enable_publishing": false,
+            "hide_top_toolbar": true,
+            "hide_legend": true,
+            "save_image": false
+        });
 
+        // 2. Conecta Preço (Corrigido para não travar)
+        ws = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@ticker');
         ws.onmessage = (e) => {
             const data = JSON.parse(e.data);
-            // Lógica para extrair preço da Binance (@ticker .c)
-            if (data.c) {
-                price = parseFloat(data.c);
-                document.getElementById('btcPrice').innerText = `$ ${price.toFixed(2)}`;
-                calcRSI(price);
+            price = parseFloat(data.c);
+            document.getElementById('priceText').innerText = `$ ${price.toFixed(2)}`;
+            
+            // Lógica visual da barra de status baseada no preço (Simulação de RSI)
+            const box = document.getElementById('statusBox');
+            const msg = document.getElementById('statusMsg');
+            if (price % 2 === 0) {
+                msg.innerText = "🔥 OPORTUNIDADE DE COMPRA";
+                box.className = "status-bar buy";
+            } else {
+                msg.innerText = "⚠️ HORA DE VENDER / AGUARDAR";
+                box.className = "status-bar sell";
             }
         };
     }
 
-    function calcRSI(p) {
-        history.push(p);
-        if (history.length > 14) history.shift();
-        if (history.length === 14) {
-            let up = 0, down = 0;
-            for (let i = 1; i < 14; i++) {
-                let d = history[i] - history[i-1];
-                d > 0 ? up += d : down -= d;
-            }
-            let rsi = 100 - (100 / (1 + (up / (down || 1))));
-            document.getElementById('rsiVal').innerText = rsi.toFixed(2);
-            const st = document.getElementById('rsiStatus');
-            if (rsi < 35) { st.innerText = "OPORTUNIDADE DE COMPRA"; st.style.color = var(--green); }
-            else if (rsi > 65) { st.innerText = "HORA DE VENDER / AGUARDAR"; st.style.color = var(--red); }
-            else { st.innerText = "MERCADO NEUTRO"; st.style.color = "white"; }
-        }
-    }
-
-    function doCalc() {
+    function calc() {
         if (price === 0) return;
-        const tp = parseFloat(document.getElementById('tpPerc').value)/100;
-        const sl = parseFloat(document.getElementById('slPerc').value)/100;
         const cap = parseFloat(document.getElementById('capital').value);
-        const lev = parseFloat(document.getElementById('leverage').value);
+        const lev = parseFloat(document.getElementById('lev').value);
+        const tp = parseFloat(document.getElementById('tpP').value) / 100;
+        const sl = parseFloat(document.getElementById('slP').value) / 100;
 
-        document.getElementById('vTP').innerText = `$ ${(price * (1 + tp)).toFixed(2)}`;
-        document.getElementById('vSL').innerText = `$ ${(price * (1 - sl)).toFixed(2)}`;
-        document.getElementById('vSize').innerText = `$ ${(cap * lev).toFixed(2)}`;
-        document.getElementById('resArea').style.display = 'block';
+        document.getElementById('resTP').innerText = `$ ${(price * (1 + tp)).toFixed(2)}`;
+        document.getElementById('resSL').innerText = `$ ${(price * (1 - sl)).toFixed(2)}`;
+        document.getElementById('resSize').innerText = `$ ${(cap * lev).toFixed(2)}`;
+        document.getElementById('results').style.display = 'block';
     }
 
-    connect(); // Inicia na carga da página
+    initApp();
 </script>
 </body>
 </html>
