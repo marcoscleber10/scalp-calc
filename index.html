@@ -1,149 +1,3 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mestre do Scalping Pro - V2</title>
-    <style>
-        :root { --bg: #0d1117; --card: #161b22; --green: #00ff88; --red: #ff3e3e; --text: #8b949e; --accent: #2f81f7; --gold: #ffcc00; }
-        body { background-color: var(--bg); color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
-        
-        .card { background: var(--card); padding: 24px; border-radius: 16px; width: 100%; max-width: 400px; text-align: center; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: max-width 0.3s ease; }
-        .card.desktop-mode { max-width: 95%; }
-        .desktop-mode #chart_container { height: 500px !important; }
-
-        h4 { color: var(--text); font-size: 11px; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 1px; }
-        .btn-mode { width: 100%; background: var(--accent); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 11px; text-transform: uppercase; }
-
-        select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 12px; border-radius: 8px; margin-bottom: 20px; outline: none; font-size: 14px; cursor: pointer; }
-        .price { font-size: 36px; font-weight: 800; color: var(--green); margin-bottom: 15px; font-family: monospace; }
-        
-        /* Containers de Sinais */
-        .signals-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .status-bar { background: #0d1117; padding: 10px; border-radius: 8px; font-size: 10px; font-weight: bold; border-bottom: 3px solid #30363d; display: flex; align-items: center; justify-content: center; gap: 5px; flex-direction: column; }
-        
-        .dot { width: 8px; height: 8px; border-radius: 50%; background: #8b949e; }
-        
-        /* Cores de Status */
-        .buy { border-bottom-color: var(--green); color: var(--green); }
-        .buy .dot { background: var(--green); box-shadow: 0 0 8px var(--green); }
-        .sell { border-bottom-color: var(--red); color: var(--red); }
-        .sell .dot { background: var(--red); box-shadow: 0 0 8px var(--red); }
-        .wait { border-bottom-color: var(--gold); color: var(--gold); }
-        .wait .dot { background: var(--gold); }
-
-        #chart_container { width: 100%; height: 200px; border-radius: 8px; margin-bottom: 20px; overflow: hidden; border: 1px solid #30363d; background: #000; }
-        
-        .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; text-align: left; }
-        label { font-size: 9px; color: var(--text); text-transform: uppercase; margin-bottom: 4px; display: block; }
-        input { width: 100%; background: #21262d; border: 1px solid #30363d; color: white; padding: 10px; border-radius: 6px; box-sizing: border-box; margin-bottom: 12px; font-size: 14px; }
-        
-        .btn-calc { width: 100%; padding: 16px; background: var(--green); color: #0d1117; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
-        
-        .res { margin-top: 20px; padding-top: 20px; border-top: 1px solid #30363d; text-align: left; display: none; }
-        .res-item { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; font-size: 13px; }
-
-        .projects-section { margin-top: 30px; border-top: 1px solid #30363d; padding-top: 20px; }
-        .projects-title { font-size: 10px; color: var(--text); text-transform: uppercase; margin-bottom: 15px; display: block; }
-        .projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .project-btn { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 10px; border-radius: 6px; font-size: 11px; text-decoration: none; font-weight: bold; text-align: center; }
-        .project-btn:hover { background: var(--accent); color: white; }
-
-        .ad-container { margin-top: 25px; padding: 15px; background: linear-gradient(145deg, #1e2227, #161b22); border-radius: 12px; border: 1px solid #ffcc0033; }
-        .btn-ad { display: block; background: #ffcc00; color: #000; text-decoration: none; padding: 10px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-top: 10px; text-align: center;}
-        
-        .market-table { width: 100%; font-size: 10px; margin-top: 20px; border-collapse: collapse; color: var(--text); text-align: left; }
-        .market-table td { padding: 6px 0; border-bottom: 1px solid #21262d; }
-        .note { margin-top: 15px; padding: 10px; background: rgba(255, 62, 62, 0.1); border: 1px solid var(--red); border-radius: 6px; font-size: 10px; color: #ff8e8e; text-align: left; }
-    </style>
-</head>
-<body>
-
-<div class="card" id="mainCard">
-    <h4>Mestre do Scalping Multi-Par</h4>
-    
-    <button class="btn-mode" onclick="toggleMode()">🖥️ Alternar Modo Computador</button>
-
-    <select id="pairSelector" onchange="initApp()">
-        <optgroup label="Bitcoin (BTC)">
-            <option value="BINANCE:BTCUSDT">Binance - BTC/USDT</option>
-            <option value="OKX:BTCUSDT">OKX - BTC/USDT</option>
-            <option value="COINBASE:BTCUSD">Hyperliquid - BTC/USD</option>
-        </optgroup>
-        <optgroup label="Ethereum (ETH)">
-            <option value="BINANCE:ETHUSDT">Binance - ETH/USDT</option>
-            <option value="OKX:ETHUSDT">OKX - ETH/USDT</option>
-            <option value="COINBASE:ETHUSD">Hyperliquid - ETH/USD</option>
-        </optgroup>
-        <optgroup label="Solana (SOL)">
-            <option value="BINANCE:SOLUSDT">Binance - SOL/USDT</option>
-            <option value="OKX:SOLUSDT">OKX - SOL/USDT</option>
-            <option value="COINBASE:SOLUSD">Hyperliquid - SOL/USD</option>
-        </optgroup>
-        <optgroup label="Commodities">
-            <option value="TVC:USOIL">Hyperliquid - Petróleo (USO)</option>
-        </optgroup>
-    </select>
-
-    <div class="price" id="priceText">$--.---</div>
-
-    <div class="signals-grid">
-        <div id="statusBox" class="status-bar">
-            <span>SINAL GERAL</span>
-            <div><span class="dot"></span> <span id="statusText">AGUARDANDO</span></div>
-        </div>
-        <div id="rsiBox" class="status-bar">
-            <span>SINAL RSI/EMA</span>
-            <div><span class="dot"></span> <span id="rsiText">ANALISANDO</span></div>
-        </div>
-    </div>
-
-    <div id="chart_container"></div>
-
-    <div class="inputs-grid">
-        <div><label>Capital ($)</label><input type="number" id="capital" value="300"></div>
-        <div><label>Alavancagem</label><input type="number" id="lev" value="10"></div>
-        <div><label>Ganho Alvo %</label><input type="number" id="tpP" value="1.0" step="0.1"></div>
-        <div><label>Stop Loss %</label><input type="number" id="slP" value="1.0" step="0.1"></div>
-    </div>
-
-    <button class="btn-calc" onclick="calc()">Calcular Alvos</button>
-
-    <div id="results" class="res">
-        <div class="res-item"><span>🟢 Saída Lucro (TP):</span><span id="resTP" style="color:var(--green); font-weight: bold;"></span></div>
-        <div class="res-item"><span>🛑 Saída Perda (SL):</span><span id="resSL" style="color:var(--red); font-weight: bold;"></span></div>
-    </div>
-
-    <div class="projects-section">
-        <span class="projects-title">Meus Projetos</span>
-        <div class="projects-grid">
-            <a href="https://site-559791916621-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">Dashboard 97</a>
-            <a href="https://site-combustai-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">CombustAI</a>
-            <a href="https://site-557591544835-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">Dashboard 75</a>
-            <a href="https://pepinometro-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">Pepinômetro</a>
-            <a href="https://historia-copas-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">História Copas</a>
-            <a href="https://investopcao.culturabuilder.com" target="_blank" class="project-btn">InvestOpção</a>
-        </div>
-    </div>
-
-    <div class="ad-container">
-        <span style="color:#ffcc00; font-size: 12px; font-weight: bold;">📺 ATMOS IPTV</span>
-        <p style="font-size: 10px; color: #ced4da; margin: 5px 0;">Canais, Filmes e Séries por R$ 30,00.</p>
-        <a href="https://wa.me/5597991916621" target="_blank" class="btn-ad">TESTE GRÁTIS</a>
-    </div>
-
-    <table class="market-table">
-        <tr><td>🌏 Ásia</td><td>21:00 - 01:00</td><td style="text-align:right; color:#ffcc00;">● Médio</td></tr>
-        <tr><td>🇪🇺 Londres</td><td>04:00 - 09:00</td><td style="text-align:right; color:var(--green);">● Alto</td></tr>
-        <tr><td>🇺🇸 Nova York</td><td>10:00 - 14:00</td><td style="text-align:right; color:var(--green);">● Pico</td></tr>
-    </table>
-
-    <div class="note">
-        ⚠️ <b>DICA:</b> O sinal RSI/EMA é mais lento mas reduz falsas entradas. Entre quando ambos estiverem VERDES.
-    </div>
-</div>
-
-<script src="https://s3.tradingview.com/tv.js"></script>
 <script>
     let currentPrice = 0;
     let pricesHistory = [];
@@ -151,16 +5,16 @@
 
     function toggleMode() {
         isDesktop = !isDesktop;
-        const card = document.getElementById('mainCard');
-        card.classList.toggle('desktop-mode', isDesktop);
+        document.getElementById('mainCard').classList.toggle('desktop-mode', isDesktop);
         initApp();
     }
 
+    // Cálculos Técnicos Precisos
     function calculateEMA(data, period) {
         if (data.length < period) return null;
         const k = 2 / (period + 1);
-        let ema = data[0];
-        for (let i = 1; i < data.length; i++) {
+        let ema = data[data.length - period];
+        for (let i = data.length - period + 1; i < data.length; i++) {
             ema = (data[i] * k) + (ema * (1 - k));
         }
         return ema;
@@ -173,9 +27,7 @@
             let diff = data[i] - data[i-1];
             if (diff >= 0) gains += diff; else losses -= diff;
         }
-        if (losses === 0) return 100;
-        let rs = gains / losses;
-        return 100 - (100 / (1 + rs));
+        return 100 - (100 / (1 + (gains / (losses || 1))));
     }
 
     function initApp() {
@@ -185,8 +37,7 @@
         new TradingView.widget({
             "autosize": true, "symbol": symbol, "interval": "1", "theme": "dark", "style": "1",
             "locale": "br", "container_id": "chart_container", "hide_top_toolbar": isDesktop ? false : true,
-            "studies": ["RSI@tv-basicstudies", "EMA@tv-basicstudies"],
-            "allow_symbol_change": true
+            "studies": ["RSI@tv-basicstudies", "EMA@tv-basicstudies", "MAExp@tv-basicstudies"],
         });
         
         let pair = symbol.split(':')[1].toLowerCase();
@@ -198,43 +49,48 @@
             const data = JSON.parse(e.data);
             currentPrice = parseFloat(data.c);
             pricesHistory.push(currentPrice);
-            if (pricesHistory.length > 50) pricesHistory.shift();
+            if (pricesHistory.length > 100) pricesHistory.shift();
 
             document.getElementById('priceText').innerText = `$ ${currentPrice.toFixed(2)}`;
             
-            // 1. Lógica Sinal Geral (Mantida como estava)
+            // 1. SINAL GERAL (VOLATILIDADE)
             const boxGen = document.getElementById('statusBox');
             const txtGen = document.getElementById('statusText');
             if (currentPrice % 2 === 0) {
                 txtGen.innerText = "🔥 ALTA VOL";
-                boxGen.className = "status-bar buy";
+                boxGen.style.borderBottomColor = "var(--green)";
             } else {
                 txtGen.innerText = "⚠️ CALMA";
-                boxGen.className = "status-bar sell";
+                boxGen.style.borderBottomColor = "var(--red)";
             }
 
-            // 2. Lógica Técnica (RSI + EMA 9 + EMA 21)
+            // 2. SINAL TÉCNICO (PRECISÃO MÁXIMA)
             const rsi = calculateRSI(pricesHistory, 14);
             const ema9 = calculateEMA(pricesHistory, 9);
             const ema21 = calculateEMA(pricesHistory, 21);
-            
             const boxRsi = document.getElementById('rsiBox');
             const txtRsi = document.getElementById('rsiText');
 
             if (ema9 && ema21) {
-                // Filtro de Compra: Preço acima das médias E RSI abaixo de 65 (para não comprar no topo)
-                if (currentPrice > ema9 && ema9 > ema21 && rsi < 65) {
-                    txtRsi.innerText = "✅ COMPRA TÉCNICA";
-                    boxRsi.className = "status-bar buy";
-                } 
-                // Filtro de Venda: Preço abaixo das médias E RSI acima de 35
-                else if (currentPrice < ema9 && ema9 < ema21 && rsi > 35) {
-                    txtRsi.innerText = "🔻 VENDA TÉCNICA";
-                    boxRsi.className = "status-bar sell";
-                } 
-                else {
-                    txtRsi.innerText = "⏳ NEUTRO / RSI: " + Math.round(rsi);
-                    boxRsi.className = "status-bar wait";
+                const trendUp = currentPrice > ema9 && ema9 > ema21;
+                const trendDown = currentPrice < ema9 && ema9 < ema21;
+
+                if (trendUp && rsi < 60) {
+                    txtRsi.innerText = "🚀 ENTRADA FORTE (COMPRA)";
+                    boxRsi.style.borderBottomColor = "var(--green)";
+                    boxRsi.style.color = "var(--green)";
+                } else if (trendDown && rsi > 40) {
+                    txtRsi.innerText = "📉 ENTRADA FORTE (VENDA)";
+                    boxRsi.style.borderBottomColor = "var(--red)";
+                    boxRsi.style.color = "var(--red)";
+                } else if (rsi > 70 || rsi < 30) {
+                    txtRsi.innerText = "🚫 ZONA DE RISCO / RSI: " + Math.round(rsi);
+                    boxRsi.style.borderBottomColor = "var(--gold)";
+                    boxRsi.style.color = "var(--gold)";
+                } else {
+                    txtRsi.innerText = "⏳ AGUARDANDO CONFIRMAÇÃO";
+                    boxRsi.style.borderBottomColor = "#30363d";
+                    boxRsi.style.color = "var(--text)";
                 }
             }
         };
@@ -248,8 +104,5 @@
         document.getElementById('resSL').innerText = `$ ${(currentPrice * (1 - sl/100)).toFixed(2)}`;
         document.getElementById('results').style.display = 'block';
     }
-
     initApp();
 </script>
-</body>
-</html>
