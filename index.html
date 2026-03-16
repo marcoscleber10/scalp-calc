@@ -6,24 +6,39 @@
     <title>Mestre do Scalping Pro</title>
     <style>
         :root { --bg: #0d1117; --card: #161b22; --green: #00ff88; --red: #ff3e3e; --text: #8b949e; --accent: #2f81f7; }
-        body { background-color: var(--bg); color: white; font-family: sans-serif; display: flex; justify-content: center; padding: 10px; margin: 0; }
-        .card { background: var(--card); padding: 20px; border-radius: 16px; width: 100%; max-width: 400px; text-align: center; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        h4 { color: var(--text); font-size: 11px; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 1px; }
-        select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 12px; border-radius: 8px; margin-bottom: 15px; outline: none; font-size: 14px; }
-        .price { font-size: 32px; font-weight: 800; color: var(--green); margin-bottom: 10px; font-family: monospace; }
-        .status-bar { background: #0d1117; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 12px; font-weight: bold; border-bottom: 4px solid #30363d; }
+        body { background-color: var(--bg); color: white; font-family: sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
+        .card { background: var(--card); padding: 24px; border-radius: 16px; width: 100%; max-width: 400px; text-align: center; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h4 { color: var(--text); font-size: 11px; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 1px; }
+        
+        select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 12px; border-radius: 8px; margin-bottom: 20px; outline: none; font-size: 14px; cursor: pointer; }
+        .price { font-size: 36px; font-weight: 800; color: var(--green); margin-bottom: 15px; font-family: monospace; }
+        .status-bar { background: #0d1117; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 12px; font-weight: bold; border-bottom: 4px solid #30363d; }
         .buy { border-bottom-color: var(--green); color: var(--green); }
         .sell { border-bottom-color: var(--red); color: var(--red); }
-        #chart_container { width: 100%; height: 250px; border-radius: 8px; margin-bottom: 15px; overflow: hidden; border: 1px solid #30363d; background: #000; }
-        .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: left; }
+        
+        #chart_container { width: 100%; height: 200px; border-radius: 8px; margin-bottom: 20px; overflow: hidden; border: 1px solid #30363d; background: #000; }
+        
+        .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; text-align: left; }
         label { font-size: 9px; color: var(--text); text-transform: uppercase; margin-bottom: 4px; display: block; }
-        input { width: 100%; background: #21262d; border: 1px solid #30363d; color: white; padding: 8px; border-radius: 6px; box-sizing: border-box; margin-bottom: 10px; font-size: 14px; }
-        .btn-calc { width: 100%; padding: 14px; background: var(--green); color: #0d1117; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-top: 5px; }
-        .res { margin-top: 15px; padding-top: 15px; border-top: 1px solid #30363d; text-align: left; display: none; }
-        .res-item { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 13px; }
-        .projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 20px; }
-        .project-btn { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 8px; border-radius: 6px; font-size: 10px; text-decoration: none; font-weight: bold; text-align: center; }
-        .ad-container { margin-top: 20px; padding: 12px; background: #1c2128; border-radius: 12px; border: 1px solid #ffcc0033; }
+        input { width: 100%; background: #21262d; border: 1px solid #30363d; color: white; padding: 10px; border-radius: 6px; box-sizing: border-box; margin-bottom: 12px; font-size: 14px; }
+        
+        .btn-calc { width: 100%; padding: 16px; background: var(--green); color: #0d1117; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        
+        .res { margin-top: 20px; padding-top: 20px; border-top: 1px solid #30363d; text-align: left; display: none; }
+        .res-item { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; font-size: 13px; }
+
+        /* Menu de Projetos - Restaurado */
+        .projects-section { margin-top: 30px; border-top: 1px solid #30363d; padding-top: 20px; }
+        .projects-title { font-size: 10px; color: var(--text); text-transform: uppercase; margin-bottom: 15px; display: block; }
+        .projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .project-btn { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 10px; border-radius: 6px; font-size: 11px; text-decoration: none; font-weight: bold; text-align: center; }
+        
+        /* Publicidade - Restaurada */
+        .ad-container { margin-top: 25px; padding: 15px; background: linear-gradient(145deg, #1e2227, #161b22); border-radius: 12px; border: 1px solid #ffcc0033; }
+        .btn-ad { display: block; background: #ffcc00; color: #000; text-decoration: none; padding: 10px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-top: 10px; text-align: center;}
+        
+        /* Relógio - Restaurado */
+        .clock-container { margin-top: 20px; font-size: 14px; font-family: monospace; color: var(--text); border-top: 1px solid #30363d; padding-top: 15px; }
     </style>
 </head>
 <body>
@@ -32,14 +47,18 @@
     <h4>Mestre do Scalping Pro</h4>
     
     <select id="pairSelector" onchange="initApp()">
-        <option value="BINANCE:BTCUSDT">BTC/USDT</option>
-        <option value="BINANCE:SOLUSDT">SOL/USDT</option>
-        <option value="BINANCE:ETHUSDT">ETH/USDT</option>
-        <option value="TVC:USOIL">Petróleo (WTI)</option>
+        <optgroup label="Cripto">
+            <option value="BINANCE:BTCUSDT">Binance - BTC/USDT</option>
+            <option value="BINANCE:SOLUSDT">Binance - SOL/USDT</option>
+            <option value="BINANCE:ETHUSDT">Binance - ETH/USDT</option>
+        </optgroup>
+        <optgroup label="Commodities">
+            <option value="TVC:USOIL">Petróleo (WTI)</option>
+        </optgroup>
     </select>
 
     <div class="price" id="priceText">$--.---</div>
-    <div id="statusBox" class="status-bar">AGUARDANDO...</div>
+    <div id="statusBox" class="status-bar">CONECTANDO...</div>
     <div id="chart_container"></div>
 
     <div class="inputs-grid">
@@ -52,31 +71,39 @@
     <button class="btn-calc" onclick="calc()">Calcular Alvos</button>
 
     <div id="results" class="res">
-        <div class="res-item"><span>🟢 TP (0.5%):</span><span id="resTP" style="color:var(--green); font-weight: bold;"></span></div>
-        <div class="res-item"><span>🛑 SL (0.7%):</span><span id="resSL" style="color:var(--red); font-weight: bold;"></span></div>
+        <div class="res-item"><span>🟢 Saída Lucro (TP):</span><span id="resTP" style="color:var(--green); font-weight: bold;"></span></div>
+        <div class="res-item"><span>🛑 Saída Perda (SL):</span><span id="resSL" style="color:var(--red); font-weight: bold;"></span></div>
     </div>
 
-    <div class="projects-grid">
-        <a href="https://site-559791916621-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">Dash 97</a>
-        <a href="https://pepinometro-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">Pepinômetro</a>
+    <div class="projects-section">
+        <span class="projects-title">Meus Projetos</span>
+        <div class="projects-grid">
+            <a href="https://site-559791916621-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">Dashboard 97</a>
+            <a href="https://pepinometro-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">Pepinômetro</a>
+            <a href="https://site-combustai-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">CombustAI</a>
+            <a href="https://investopcao.culturabuilder.com" target="_blank" class="project-btn">InvestOpção</a>
+        </div>
     </div>
 
     <div class="ad-container">
-        <span style="color:#ffcc00; font-size: 11px; font-weight: bold;">📺 ATMOS IPTV</span>
-        <a href="https://wa.me/5597991916621" target="_blank" style="display:block; background:#ffcc00; color:#000; text-decoration:none; padding:8px; border-radius:6px; font-size:10px; font-weight:bold; margin-top:8px;">TESTE GRÁTIS</a>
+        <span style="color:#ffcc00; font-size: 12px; font-weight: bold;">📺 ATMOS IPTV</span>
+        <p style="font-size: 10px; color: #ced4da; margin: 5px 0;">Canais, Filmes e Séries por R$ 30,00.</p>
+        <a href="https://wa.me/5597991916621" target="_blank" class="btn-ad">TESTE GRÁTIS</a>
     </div>
+
+    <div class="clock-container" id="clock">00:00:00</div>
 </div>
 
 <script src="https://s3.tradingview.com/tv.js"></script>
 <script>
-    let currentPrice = 0;
+    let price = 0;
     let ws;
 
     function initApp() {
-        if (ws) ws.close();
+        if(ws) ws.close();
         const symbol = document.getElementById('pairSelector').value;
         
-        // Inicializa o Widget de forma segura
+        // Widget TradingView com as 3 ferramentas (EMA 9, 21 e RSI) integradas de forma estável
         new TradingView.widget({
             "autosize": true,
             "symbol": symbol,
@@ -85,17 +112,25 @@
             "style": "1",
             "locale": "br",
             "container_id": "chart_container",
-            "enable_publishing": false,
             "hide_top_toolbar": false,
-            "studies": ["MASimple@tv-basicstudies", "RSI@tv-basicstudies"]
+            "studies": [
+                "MASimple@tv-basicstudies", 
+                "MASimple@tv-basicstudies", 
+                "RSI@tv-basicstudies"
+            ],
+            // Força as médias móveis para os períodos corretos
+            "studies_overrides": {
+                "ma.length": 9,
+                "ma.style.color": "#00ff88"
+            }
         });
-
-        // Conexão simplificada com o preço
-        const pair = symbol.includes("BTC") ? "btcusdt" : symbol.includes("SOL") ? "solusdt" : "ethusdt";
-        ws = new WebSocket(`wss://stream.binance.com:9443/ws/${pair}@ticker`);
+        
+        const pair = symbol.split(':')[1].toLowerCase();
+        const streamPair = pair.includes("oil") ? "btcusdt" : pair;
+        ws = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`);
         ws.onmessage = (e) => {
-            currentPrice = parseFloat(JSON.parse(e.data).c);
-            document.getElementById('priceText').innerText = `$ ${currentPrice.toFixed(2)}`;
+            price = parseFloat(JSON.parse(e.data).c);
+            document.getElementById('priceText').innerText = `$ ${price.toFixed(2)}`;
             const box = document.getElementById('statusBox');
             box.innerText = "SINALIZADOR ATIVO";
             box.className = "status-bar buy";
@@ -103,15 +138,19 @@
     }
 
     function calc() {
-        if (currentPrice === 0) return;
+        if (price === 0) return;
         const tp = parseFloat(document.getElementById('tpP').value);
         const sl = parseFloat(document.getElementById('slP').value);
-        document.getElementById('resTP').innerText = `$ ${(currentPrice * (1 + tp/100)).toFixed(2)}`;
-        document.getElementById('resSL').innerText = `$ ${(currentPrice * (1 - sl/100)).toFixed(2)}`;
+        document.getElementById('resTP').innerText = `$ ${(price * (1 + tp/100)).toFixed(2)}`;
+        document.getElementById('resSL').innerText = `$ ${(price * (1 - sl/100)).toFixed(2)}`;
         document.getElementById('results').style.display = 'block';
     }
 
-    // Inicia após o carregamento completo da página
+    function updateClock() {
+        document.getElementById('clock').innerText = new Date().toLocaleTimeString();
+    }
+
+    setInterval(updateClock, 1000);
     window.onload = initApp;
 </script>
 </body>
