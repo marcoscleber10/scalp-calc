@@ -3,131 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ScalpCalc Pro</title>
+    <title>Mestre do Scalping</title>
     <style>
         :root { --bg: #0a0e14; --card: #151a21; --green: #00ff88; --red: #ff3e3e; --text: #848e9c; }
-        body { background-color: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; padding-top: 20px; margin: 0; }
-        
-        .card { background: var(--card); padding: 25px; border-radius: 15px; width: 90%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; }
-        h3 { color: var(--text); font-size: 14px; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
-
-        select { width: 100%; background: #2b3139; color: white; border: 1px solid #474d57; padding: 10px; border-radius: 8px; margin-bottom: 15px; }
-
-        .price-box { font-size: 32px; font-weight: bold; color: var(--green); margin: 20px 0; font-family: monospace; }
-        
-        .indicator { background: #1c2128; padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 14px; }
-        .status { font-weight: bold; padding: 2px 8px; border-radius: 4px; font-size: 12px; }
-
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: left; }
-        label { font-size: 11px; color: var(--text); display: block; margin-bottom: 5px; text-transform: uppercase; }
-        input { width: 100%; background: #2b3139; border: 1px solid #474d57; color: white; padding: 10px; border-radius: 8px; box-sizing: border-box; margin-bottom: 15px; }
-
-        button { width: 100%; padding: 15px; background: var(--green); color: black; border: none; border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; transition: 0.2s; }
-        button:active { transform: scale(0.98); }
-
-        .res { margin-top: 25px; padding-top: 20px; border-top: 1px solid #2b3139; text-align: left; font-size: 14px; }
-        .res p { margin: 10px 0; display: flex; justify-content: space-between; }
+        body { background-color: var(--bg); color: white; font-family: sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
+        .card { background: var(--card); padding: 20px; border-radius: 12px; width: 100%; max-width: 380px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        h4 { color: var(--text); font-size: 12px; margin-bottom: 15px; text-transform: uppercase; }
+        select { width: 100%; background: #2b3139; color: white; border: 1px solid #474d57; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 14px; }
+        .price { font-size: 32px; font-weight: bold; color: var(--green); margin: 15px 0; font-family: monospace; }
+        .status-bar { background: #1c2128; padding: 10px; border-radius: 6px; margin-bottom: 20px; font-size: 13px; display: flex; justify-content: space-around; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: left; }
+        label { font-size: 10px; color: var(--text); display: block; margin-bottom: 4px; text-transform: uppercase; }
+        input { width: 100%; background: #2b3139; border: 1px solid #474d57; color: white; padding: 8px; border-radius: 6px; box-sizing: border-box; margin-bottom: 10px; }
+        button { width: 100%; padding: 14px; background: var(--green); color: black; border: none; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; text-transform: uppercase; margin-top: 5px; }
+        .res { margin-top: 20px; padding-top: 15px; border-top: 1px solid #2b3139; text-align: left; font-size: 13px; display: none; }
+        .res p { margin: 8px 0; display: flex; justify-content: space-between; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h3>Mestre do Scalping</h3>
+    <h4>Mestre do Scalping</h4>
     
-    <select id="source" onchange="changeExchange()">
+    <select id="ex" onchange="initWS()">
         <option value="BINANCE">Binance (Quantfury)</option>
         <option value="OKX">OKX (Real-time)</option>
+        <option value="HYPER">Hyperliquid (BTC/USDC)</option>
     </select>
 
-    <div class="price-box" id="btcPrice">Carregando...</div>
+    <div class="price" id="p">Conectando...</div>
 
-    <div class="indicator">
-        <span>RSI (14): <strong id="rsiVal">--</strong></span>
-        <span id="rsiStatus" class="status">AGUARDANDO...</span>
+    <div class="status-bar">
+        <span>RSI (14): <strong id="rv">--</strong></span>
+        <span id="rs" style="font-weight:bold">AGUARDANDO...</span>
     </div>
 
     <div class="grid">
-        <div>
-            <label>Seu Capital ($)</label>
-            <input type="number" id="c" value="300">
-        </div>
-        <div>
-            <label>Alavancagem</label>
-            <input type="number" id="l" value="10">
-        </div>
-        <div>
-            <label>Ganho %</label>
-            <input type="number" id="tpP" value="1.0" step="0.1">
-        </div>
-        <div>
-            <label>Perda %</label>
-            <input type="number" id="slP" value="1.0" step="0.1">
-        </div>
+        <div><label>Seu Capital ($)</label><input type="number" id="c" value="300"></div>
+        <div><label>Alavancagem</label><input type="number" id="l" value="10"></div>
+        <div><label>Ganho %</label><input type="number" id="tpP" value="1.0" step="0.1"></div>
+        <div><label>Perda %</label><input type="number" id="slP" value="1.0" step="0.1"></div>
     </div>
 
-    <button onclick="calculatePositions()">VER MEUS ALVOS AGORA</button>
+    <button onclick="calc()">Ver Meus Alvos Agora</button>
 
-    <div id="r" class="res" style="display:none">
-        <p>💰 Lucro Alvo: <strong id="tp" style="color:var(--green)"></strong></p>
-        <p>🛑 Stop Loss: <strong id="sl" style="color:var(--red)"></strong></p>
-        <p>📊 Tamanho da Posição: <span id="posSize"></span></p>
+    <div id="r" class="res">
+        <p>🟢 Lucro Alvo: <strong id="rtp" style="color:var(--green)"></strong></p>
+        <p>🛑 Stop Loss: <strong id="rsl" style="color:var(--red)"></strong></p>
+        <p>📊 Total Operado: <span id="rvv"></span></p>
     </div>
 </div>
 
 <script>
-    let currentPrice = 0;
-    let prices = [];
-    let ws;
+    let curP = 0, prices = [], ws;
 
-    function connectWS(exchange) {
+    function initWS() {
         if (ws) ws.close();
+        document.getElementById('p').innerText = "Conectando...";
+        prices = []; // Limpa histórico para novo RSI
         
-        // Define o endpoint baseado na exchange (Usando Binance como base de dados estável para cálculo de RSI)
-        const endpoint = 'wss://stream.binance.com:9443/ws/btcusdt@ticker';
+        const mode = document.getElementById('ex').value;
+        let url = 'wss://stream.binance.com:9443/ws/btcusdt@ticker'; // Padrão Binance
         
-        ws = new WebSocket(endpoint);
-        ws.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            currentPrice = parseFloat(data.c);
-            document.getElementById('btcPrice').innerText = `$ ${currentPrice.toFixed(2)}`;
-            updateRSI(currentPrice);
+        if (mode === 'OKX') url = 'wss://wspap.okx.com:443/ws/v5/public'; // Exemplo OKX
+        if (mode === 'HYPER') url = 'wss://api.hyperliquid.xyz/ws';
+
+        ws = new WebSocket(url);
+
+        // Lógica simplificada para Binance/Quantfury (mais estável para web)
+        ws.onmessage = (e) => {
+            const data = JSON.parse(e.data);
+            if (data.c) { // Formato Binance
+                curP = parseFloat(data.c);
+                document.getElementById('p').innerText = `$ ${curP.toFixed(2)}`;
+                updateRSI(curP);
+            }
         };
     }
 
-    function updateRSI(price) {
-        prices.push(price);
+    function updateRSI(p) {
+        prices.push(p);
         if (prices.length > 14) prices.shift();
-
         if (prices.length === 14) {
-            let gains = 0, losses = 0;
+            let g = 0, l = 0;
             for (let i = 1; i < 14; i++) {
-                let diff = prices[i] - prices[i - 1];
-                diff > 0 ? gains += diff : losses -= diff;
+                let d = prices[i] - prices[i-1];
+                d > 0 ? g += d : l -= d;
             }
-            let rs = gains / (losses || 1);
-            let rsi = 100 - (100 / (1 + rs));
-
-            document.getElementById('rsiVal').innerText = rsi.toFixed(2);
-            const status = document.getElementById('rsiStatus');
-            
-            if (rsi < 35) {
-                status.innerText = "OPORTUNIDADE DE COMPRA";
-                status.style.color = "var(--green)";
-            } else if (rsi > 65) {
-                status.innerText = "HORA DE VENDER / AGUARDAR";
-                status.style.color = "var(--red)";
-            } else {
-                status.innerText = "MERCADO NEUTRO";
-                status.style.color = "var(--text)";
-            }
+            let rsi = 100 - (100 / (1 + (g / (l || 1))));
+            document.getElementById('rv').innerText = rsi.toFixed(2);
+            const s = document.getElementById('rs');
+            if (rsi < 35) { s.innerText = "COMPRA (SOBREVENDIDO)"; s.style.color = "var(--green)"; }
+            else if (rsi > 65) { s.innerText = "VENDA (SOBRECOMPRADO)"; s.style.color = "var(--red)"; }
+            else { s.innerText = "NEUTRO"; s.style.color = "var(--text)"; }
         }
     }
 
-    function calculatePositions() {
-        if (currentPrice === 0) return;
+    function calc() {
+        if (curP === 0) return;
+        const tp = parseFloat(document.getElementById('tpP').value)/100;
+        const sl = parseFloat(document.getElementById('slP').value)/100;
         const cap = parseFloat(document.getElementById('c').value);
         const lev = parseFloat(document.getElementById('l').value);
-        const tpPerc = parseFloat(document.getElementById('tpP').value) / 100;
-        const slPerc = parseFloat(document.getElementById('slP').value) / 100;
 
-        document.getElementById('tp
+        document.getElementById('rtp').innerText = `$ ${(curP * (1 + tp)).toFixed(2)}`;
+        document.getElementById('rsl').innerText = `$ ${(curP * (1 - sl)).toFixed(2)}`;
+        document.getElementById('rvv').innerText = `$ ${(cap * lev).toFixed(2)}`;
+        document.getElementById('r').style.display = 'block';
+    }
+
+    initWS();
+</script>
+</body>
+</html>
