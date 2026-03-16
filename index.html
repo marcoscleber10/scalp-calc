@@ -13,9 +13,9 @@
         select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 12px; border-radius: 8px; margin-bottom: 20px; outline: none; font-size: 14px; cursor: pointer; }
         .price { font-size: 36px; font-weight: 800; color: var(--green); margin-bottom: 15px; font-family: monospace; }
         
-        /* BARRA DE STATUS RESTAURADA */
+        /* STATUS BAR COM BOLINHA (PRINCIPAL) */
         .status-bar { background: #0d1117; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 11px; font-weight: bold; border: 1px solid #30363d; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
         .status-buy { color: var(--green); }
         .status-buy .dot { background: var(--green); box-shadow: 0 0 10px var(--green); }
         .status-sell { color: var(--red); }
@@ -29,20 +29,25 @@
         label { font-size: 9px; color: var(--text); text-transform: uppercase; margin-bottom: 4px; display: block; }
         input { width: 100%; background: #21262d; border: 1px solid #30363d; color: white; padding: 10px; border-radius: 6px; box-sizing: border-box; margin-bottom: 12px; font-size: 14px; }
         
-        .btn-calc { width: 100%; padding: 16px; background: var(--green); color: #0d1117; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-bottom: 20px; }
+        .btn-calc { width: 100%; padding: 16px; background: var(--green); color: #0d1117; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
         
-        .res { padding: 15px; background: #0d1117; border-radius: 8px; text-align: left; display: none; margin-bottom: 20px; border: 1px solid #30363d; }
+        .res { margin-top: 20px; padding: 15px; background: #0d1117; border-radius: 8px; text-align: left; display: none; border: 1px solid #30363d; }
         .res-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; }
 
-        .projects-section { margin-top: 10px; border-top: 1px solid #30363d; padding-top: 20px; }
-        .projects-title { font-size: 10px; color: var(--text); text-transform: uppercase; margin-bottom: 15px; display: block; }
-        .projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .project-btn { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 10px; border-radius: 6px; font-size: 11px; text-decoration: none; font-weight: bold; text-align: center; }
+        /* SESSÕES E TABELA */
+        .market-table { width: 100%; font-size: 10px; margin-top: 20px; border-collapse: collapse; color: var(--text); }
+        .market-table tr { border-bottom: 1px solid #21262d; }
+        .market-table td { padding: 8px 0; text-align: left; }
+        .status-label { font-size: 9px; font-weight: bold; float: right; }
 
-        .ad-container { margin-top: 25px; padding: 15px; background: linear-gradient(145deg, #1e2227, #161b22); border-radius: 12px; border: 1px solid #ffcc0033; }
+        .projects-section { margin-top: 20px; border-top: 1px solid #30363d; padding-top: 20px; }
+        .projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+        .project-btn { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 10px; border-radius: 6px; font-size: 11px; text-decoration: none; font-weight: bold; }
+
+        .ad-container { margin-top: 20px; padding: 15px; background: #1c1c1c; border: 1px solid #ffcc0066; border-radius: 8px; }
         .btn-ad { display: block; background: #ffcc00; color: #000; text-decoration: none; padding: 10px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-top: 10px; }
         
-        .clock-container { margin-top: 20px; font-size: 13px; font-family: monospace; color: var(--text); border-top: 1px solid #30363d; padding-top: 15px; }
+        #clock { margin-top: 15px; font-size: 12px; font-family: monospace; color: var(--text); border-top: 1px solid #30363d; padding-top: 10px; }
     </style>
 </head>
 <body>
@@ -51,18 +56,16 @@
     <h4>Mestre do Scalping Multi-Par</h4>
     
     <select id="pairSelector" onchange="initApp()">
-        <optgroup label="Cripto">
-            <option value="BINANCE:BTCUSDT">Binance - BTC/USDT</option>
-            <option value="OKX:SOLUSDT">OKX - SOL/USDT</option>
-            <option value="COINBASE:ETHUSD">Hyperliquid - ETH/USD</option>
-        </optgroup>
+        <option value="BINANCE:BTCUSDT">Binance - BTC/USDT</option>
+        <option value="OKX:SOLUSDT">OKX - SOL/USDT</option>
+        <option value="COINBASE:ETHUSD">Hyperliquid - ETH/USD</option>
     </select>
 
     <div class="price" id="priceText">$--.---</div>
 
     <div id="statusBox" class="status-bar status-wait">
         <span class="dot"></span>
-        <span id="statusText">AGUARDANDO CONEXÃO...</span>
+        <span id="statusText">ANALISANDO MERCADO...</span>
     </div>
 
     <div id="chart_container"></div>
@@ -82,7 +85,7 @@
     </div>
 
     <div class="projects-section">
-        <span class="projects-title">Meus Projetos</span>
+        <span style="font-size: 9px; color: var(--text);">MEUS PROJETOS</span>
         <div class="projects-grid">
             <a href="#" class="project-btn">Dashboard 97</a>
             <a href="#" class="project-btn">CombustAI</a>
@@ -94,12 +97,18 @@
     </div>
 
     <div class="ad-container">
-        <span style="color:#ffcc00; font-size: 12px; font-weight: bold;">📺 ATMOS IPTV</span>
-        <p style="font-size: 10px; color: #ced4da; margin: 5px 0;">Canais, Filmes e Séries por R$ 30,00.</p>
-        <a href="https://wa.me/5597991916621" target="_blank" class="btn-ad">QUERO TESTAR GRÁTIS</a>
+        <span style="color:#ffcc00; font-size: 11px; font-weight: bold;">📺 ATMOS IPTV</span>
+        <p style="font-size: 9px; margin: 5px 0;">Canais e Filmes por R$ 30,00.</p>
+        <a href="https://wa.me/5597991916621" class="btn-ad">TESTAR GRÁTIS</a>
     </div>
-    
-    <div class="clock-container" id="clock">17:31:06</div>
+
+    <table class="market-table">
+        <tr><td>🌏 Ásia (Tóquio)</td><td>21:00 - 01:00</td><td><span class="status-label" style="color:#ffcc00;">● Médio</span></td></tr>
+        <tr><td>🇪🇺 Londres</td><td>04:00 - 09:00</td><td><span class="status-label" style="color:var(--green);">● Alto</span></td></tr>
+        <tr><td>🇺🇸 Nova York</td><td>10:00 - 14:00</td><td><span class="status-label" style="color:var(--green);">● Pico</span></td></tr>
+    </table>
+
+    <div id="clock">00:00:00</div>
 </div>
 
 <script src="https://s3.tradingview.com/tv.js"></script>
@@ -108,9 +117,7 @@
     function initApp() {
         const symbol = document.getElementById('pairSelector').value;
         new TradingView.widget({
-            "autosize": true, "symbol": symbol, "interval": "1", "theme": "dark", "style": "1",
-            "locale": "br", "container_id": "chart_container", "hide_top_toolbar": false,
-            "studies": ["EMA@tv-basicstudies", "EMA@tv-basicstudies", "RSI@tv-basicstudies"]
+            "autosize": true, "symbol": symbol, "interval": "1", "theme": "dark", "container_id": "chart_container", "hide_top_toolbar": true
         });
         
         const pair = symbol.split(':')[1].toLowerCase();
@@ -119,7 +126,7 @@
             price = parseFloat(JSON.parse(e.data).c);
             document.getElementById('priceText').innerText = `$ ${price.toFixed(2)}`;
             
-            // Lógica do Sinalizador com Bolinha
+            // Lógica do Sinal (Exemplo: baseado em preço par/ímpar para demonstração)
             const box = document.getElementById('statusBox');
             const txt = document.getElementById('statusText');
             if(price % 2 === 0) {
