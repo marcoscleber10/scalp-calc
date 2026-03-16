@@ -13,15 +13,14 @@
         select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 12px; border-radius: 8px; margin-bottom: 20px; outline: none; font-size: 14px; cursor: pointer; }
         .price { font-size: 36px; font-weight: 800; color: var(--green); margin-bottom: 15px; font-family: monospace; }
         
-        /* NOVO FORMATO DE STATUS COM BOLINHA */
-        .status-bar { background: #0d1117; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 11px; font-weight: bold; border: 1px solid #30363d; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        /* STATUS COM BOLINHA PULSANTE */
+        .status-bar { background: #0d1117; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 12px; font-weight: bold; border: 1px solid #30363d; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
-        .buy { color: var(--green); }
-        .buy .dot { background: var(--green); box-shadow: 0 0 10px var(--green); }
-        .sell { color: var(--red); }
-        .sell .dot { background: var(--red); box-shadow: 0 0 10px var(--red); }
-        .wait { color: #ffcc00; }
-        .wait .dot { background: #ffcc00; box-shadow: 0 0 10px #ffcc00; }
+        .buy { color: var(--green); border-bottom: 4px solid var(--green); }
+        .buy .dot { background: var(--green); box-shadow: 0 0 10px var(--green); animation: pulse 1.5s infinite; }
+        .sell { color: var(--red); border-bottom: 4px solid var(--red); }
+        .sell .dot { background: var(--red); box-shadow: 0 0 10px var(--red); animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
         
         #chart_container { width: 100%; height: 200px; border-radius: 8px; margin-bottom: 20px; overflow: hidden; border: 1px solid #30363d; background: #000; }
         
@@ -31,14 +30,14 @@
         
         .btn-calc { width: 100%; padding: 16px; background: var(--green); color: #0d1117; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
         
-        .res { margin-top: 20px; padding: 15px; background: #0d1117; border-radius: 8px; text-align: left; display: none; border: 1px solid #30363d; }
-        .res-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; }
+        .res { margin-top: 20px; padding-top: 20px; border-top: 1px solid #30363d; text-align: left; display: none; }
+        .res-item { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; font-size: 13px; }
 
-        /* TABELA DE SESSÕES */
-        .market-table { width: 100%; font-size: 10px; margin-top: 20px; border-collapse: collapse; color: var(--text); }
+        /* TABELA DE HORÁRIOS */
+        .market-table { width: 100%; font-size: 10px; margin-top: 20px; border-collapse: collapse; color: var(--text); text-align: left; }
         .market-table tr { border-bottom: 1px solid #21262d; }
-        .market-table td { padding: 8px 0; text-align: left; }
-        .vol-label { font-size: 9px; font-weight: bold; float: right; }
+        .market-table td { padding: 8px 0; }
+        .vol-label { font-weight: bold; float: right; }
 
         /* NOTA ESTRATÉGICA */
         .note { margin-top: 15px; padding: 10px; background: rgba(255, 62, 62, 0.1); border: 1px solid var(--red); border-radius: 6px; font-size: 10px; color: #ff8e8e; text-align: left; line-height: 1.4; }
@@ -46,17 +45,4 @@
         .projects-section { margin-top: 30px; border-top: 1px solid #30363d; padding-top: 20px; }
         .projects-title { font-size: 10px; color: var(--text); text-transform: uppercase; margin-bottom: 15px; display: block; }
         .projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .project-btn { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 10px; border-radius: 6px; font-size: 11px; text-decoration: none; font-weight: bold; text-align: center; }
-
-        .ad-container { margin-top: 25px; padding: 15px; background: linear-gradient(145deg, #1e2227, #161b22); border-radius: 12px; border: 1px solid #ffcc0033; }
-        .btn-ad { display: block; background: #ffcc00; color: #000; text-decoration: none; padding: 10px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-top: 10px; }
-        
-        #clock { margin-top: 20px; font-size: 13px; font-family: monospace; color: var(--text); border-top: 1px solid #30363d; padding-top: 15px; }
-    </style>
-</head>
-<body>
-
-<div class="card">
-    <h4>Mestre do Scalping Multi-Par</h4>
-    
-    <select id="pairSelector" onchange="
+        .project-btn { background: #21262d;
