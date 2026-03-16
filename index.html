@@ -5,34 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mestre do Scalping Pro</title>
     <style>
-        :root { --bg: #0d1117; --card: #161b22; --green: #00ff88; --red: #ff3e3e; --text: #8b949e; --gold: #ffcc00; }
-        body { background-color: var(--bg); color: white; font-family: sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
-        .card { background: var(--card); padding: 24px; border-radius: 16px; width: 100%; max-width: 380px; text-align: center; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        h4 { color: var(--text); font-size: 11px; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 1px; }
-        select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 12px; border-radius: 8px; margin-bottom: 20px; outline: none; }
-        .price { font-size: 36px; font-weight: 800; color: var(--green); margin-bottom: 15px; font-family: monospace; }
-        .status-bar { background: #0d1117; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 12px; font-weight: bold; border-bottom: 4px solid #30363d; }
+        /* Estilos Globais e do Dashboard de Trade */
+        :root { --bg: #0d1117; --card: #161b22; --green: #00ff88; --red: #ff3e3e; --text: #8b949e; }
+        body { background-color: var(--bg); color: white; font-family: -apple-system, sans-serif; display: flex; justify-content: center; padding: 10px; margin: 0; }
+        
+        .card { background: var(--card); padding: 20px; border-radius: 16px; width: 100%; max-width: 380px; text-align: center; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; flex-direction: column; gap: 10px; }
+        h4 { color: var(--text); font-size: 11px; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
+        
+        select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 10px; border-radius: 8px; font-size: 14px; outline: none; }
+        
+        .price { font-size: 32px; font-weight: 800; color: var(--green); font-family: 'Courier New', monospace; }
+        
+        .status-bar { background: #0d1117; padding: 10px; border-radius: 8px; font-size: 12px; font-weight: bold; border-bottom: 4px solid #30363d; }
         .buy { border-bottom-color: var(--green); color: var(--green); }
         .sell { border-bottom-color: var(--red); color: var(--red); }
-        #chart_container { width: 100%; height: 200px; border-radius: 8px; margin-bottom: 20px; overflow: hidden; border: 1px solid #30363d; background: #000; }
-        .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; text-align: left; }
-        label { font-size: 9px; color: var(--text); text-transform: uppercase; margin-bottom: 4px; display: block; }
-        input { width: 100%; background: #21262d; border: 1px solid #30363d; color: white; padding: 10px; border-radius: 6px; box-sizing: border-box; margin-bottom: 12px; font-size: 14px; }
-        .btn-calc { width: 100%; padding: 16px; background: var(--green); color: #0d1117; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-bottom: 5px; }
-        
-        .res { margin-top: 20px; padding-bottom: 20px; text-align: left; display: none; }
-        .res-item { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; font-size: 13px; }
-        .val-group { text-align: right; }
-        .cash-val { font-size: 11px; color: var(--text); display: block; }
 
-        /* Estilo da Publicidade Atmos no Rodapé */
-        .ad-footer { margin-top: 20px; padding-top: 20px; border-top: 1px solid #30363d; }
-        .ad-banner { background: linear-gradient(145deg, #1e2227, #161b22); padding: 15px; border-radius: 12px; border: 1px solid #ffcc0033; }
-        .ad-title { color: var(--gold); font-size: 14px; font-weight: bold; margin-bottom: 5px; display: block; }
-        .ad-price { color: #fff; font-size: 18px; font-weight: 800; margin-bottom: 10px; display: block; }
-        .ad-desc { font-size: 10px; color: #8b949e; margin-bottom: 15px; line-height: 1.4; }
-        .btn-wa { display: block; background: var(--gold); color: #000; text-decoration: none; padding: 12px; border-radius: 8px; font-size: 12px; font-weight: bold; transition: 0.3s; text-transform: uppercase; }
-        .btn-wa:hover { background: #e6b800; transform: translateY(-2px); }
+        #chart_container { width: 100%; height: 180px; border-radius: 8px; overflow: hidden; border: 1px solid #30363d; background: #000; }
+
+        .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: left; }
+        .input-group label { font-size: 9px; color: var(--text); text-transform: uppercase; display: block; margin-bottom: 4px; }
+        input { width: 100%; background: #21262d; border: 1px solid #30363d; color: white; padding: 10px; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
+
+        .btn-calc { width: 100%; padding: 16px; background: var(--green); color: #0d1117; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 14px; }
+        
+        .res { margin-top: 10px; padding-top: 10px; border-top: 1px solid #30363d; text-align: left; display: none; }
+        .res-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 13px; }
+
+        /* --- ESTILOS DO BANNER PUBLICITÁRIO INTEGRADO --- */
+        .ad-integrated-container { margin-top: 15px; padding-top: 15px; border-top: 1px solid #30363d; }
+        
+        /* O segredo: A imagem embutida vira o fundo desse container */
+        .ad-integrated-banner { width: 100%; height: 0; padding-bottom: 125%; /* Mantém a proporção da imagem original */ background-image: url('[COLE_AQUI_O_CODIGO_BASE64_DA_IMAGEM]'); background-size: cover; background-position: center; border-radius: 12px; border: 1px solid #30363d; position: relative; overflow: hidden; }
+
+        /* Link invisível que cobre toda a área da imagem para o WhatsApp */
+        .ad-whatsapp-link { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; z-index: 10; cursor: pointer; text-decoration: none; }
+        
+        /* Opcional: Efeito de hover suave */
+        .ad-integrated-banner:hover { box-shadow: 0 0 15px rgba(255, 204, 0, 0.3); transform: translateY(-2px); transition: 0.3s; }
     </style>
 </head>
 <body>
@@ -41,49 +50,48 @@
     <h4>Mestre do Scalping</h4>
     
     <select id="exchange" onchange="initApp()">
-        <option value="BINANCE:BTCUSDT">Binance (Quantfury)</option>
-        <option value="OKX:BTCUSDT">OKX (Real-time)</option>
-        <option value="COINBASE:BTCUSD">Hyperliquid (Alternativo)</option>
+        <option value="BINANCE">Binance (Quantfury)</option>
+        <option value="OKX">OKX (Real-time)</option>
+        <option value="HYPER">Hyperliquid (Alternativo)</option>
     </select>
 
     <div class="price" id="priceText">$--.---</div>
-    <div id="statusBox" class="status-bar">ANALISANDO MERCADO...</div>
+
+    <div id="statusBox" class="status-bar">CONECTANDO...</div>
+
     <div id="chart_container"></div>
 
     <div class="inputs-grid">
-        <div><label>Capital ($)</label><input type="number" id="capital" value="300"></div>
-        <div><label>Alavancagem</label><input type="number" id="lev" value="10"></div>
-        <div><label>Ganho Alvo %</label><input type="number" id="tpP" value="1.0" step="0.1"></div>
-        <div><label>Stop Loss %</label><input type="number" id="slP" value="1.0" step="0.1"></div>
+        <div class="input-group">
+            <label>Capital ($)</label>
+            <input type="number" id="capital" value="300">
+        </div>
+        <div class="input-group">
+            <label>Alavancagem</label>
+            <input type="number" id="lev" value="10">
+        </div>
+        <div class="input-group">
+            <label>Ganho Alvo %</label>
+            <input type="number" id="tpP" value="1.0" step="0.1">
+        </div>
+        <div class="input-group">
+            <label>Stop Loss %</label>
+            <input type="number" id="slP" value="0.5" step="0.1">
+        </div>
     </div>
 
     <button class="btn-calc" onclick="calc()">Ver Meus Alvos Agora</button>
 
     <div id="results" class="res">
-        <div class="res-item">
-            <span>🟢 Saída Lucro (TP):</span>
-            <div class="val-group">
-                <span id="resTP" style="color:var(--green)"></span>
-                <span class="cash-val" id="profitCash"></span>
-            </div>
-        </div>
-        <div class="res-item">
-            <span>🛑 Saída Perda (SL):</span>
-            <div class="val-group">
-                <span id="resSL" style="color:var(--red)"></span>
-                <span class="cash-val" id="lossCash"></span>
-            </div>
-        </div>
+        <div class="res-item"><span>🟢 Lucro Alvo (TP):</span> <strong id="resTP" style="color:var(--green)"></strong></div>
+        <div class="res-item"><span>🛑 Stop Loss (SL):</span> <strong id="resSL" style="color:var(--red)"></strong></div>
+        <div class="res-item"><span>📊 Tamanho Posição:</span> <span id="resSize"></span></div>
     </div>
 
-    <div class="ad-footer">
-        <div class="ad-banner">
-            <span class="ad-title">DIA DO CONSUMIDOR ATMOS</span>
-            <span class="ad-price">R$ 30,00/mês</span>
-            <p class="ad-desc">Canais liberados + Filmes e Séries. O melhor IPTV do mercado com suporte 24h.</p>
-            <a href="https://wa.me/5597991916621?text=Olá!+Vi+a+promoção+Atmos+no+Mestre+do+Scalping+e+quero+um+teste+grátis" target="_blank" class="btn-wa">
-                Quero Testar Grátis
-            </a>
+    <div class="ad-integrated-container">
+        <div class="ad-integrated-banner">
+            <a href="https://wa.me/5597991916621?text=Olá!+Vi+a+promoção+Atmos+no+Mestre+do+Scalping+e+quero+um+teste+grátis" target="_blank" class="ad-whatsapp-link" title="Clique para testar grátis no WhatsApp">
+                </a>
         </div>
     </div>
 </div>
@@ -94,7 +102,8 @@
 
     function initApp() {
         if (ws) ws.close();
-        const symbol = document.getElementById('exchange').value;
+        const ex = document.getElementById('exchange').value;
+        const symbol = ex === "HYPER" ? "COINBASE:BTCUSD" : "BINANCE:BTCUSDT";
         
         new TradingView.widget({
             "autosize": true, "symbol": symbol, "interval": "1", "theme": "dark",
@@ -124,17 +133,10 @@
         const lev = parseFloat(document.getElementById('lev').value);
         const tpPct = parseFloat(document.getElementById('tpP').value);
         const slPct = parseFloat(document.getElementById('slP').value);
-
         const totalSize = cap * lev;
-        const profit = totalSize * (tpPct / 100);
-        const loss = totalSize * (slPct / 100);
-
         document.getElementById('resTP').innerText = `$ ${(price * (1 + (tpPct / 100))).toFixed(2)}`;
-        document.getElementById('profitCash').innerText = `+ $ ${profit.toFixed(2)} (+${tpPct}%)`;
-        
         document.getElementById('resSL').innerText = `$ ${(price * (1 - (slPct / 100))).toFixed(2)}`;
-        document.getElementById('lossCash').innerText = `- $ ${loss.toFixed(2)} (-${slPct}%)`;
-        
+        document.getElementById('resSize').innerText = `$ ${totalSize.toFixed(2)}`;
         document.getElementById('results').style.display = 'block';
     }
 
