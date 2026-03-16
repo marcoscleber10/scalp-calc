@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mestre do Scalping Pro</title>
     <style>
-        :root { --bg: #0d1117; --card: #161b22; --green: #00ff88; --red: #ff3e3e; --text: #8b949e; --accent: #2f81f7; }
+        :root { --bg: #0d1117; --card: #161b22; --green: #00ff88; --red: #ff3e3e; --text: #8b949e; --accent: #2f81f7; --yellow: #ffcc00; }
         body { background-color: var(--bg); color: white; font-family: sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
         .card { background: var(--card); padding: 24px; border-radius: 16px; width: 100%; max-width: 400px; text-align: center; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         h4 { color: var(--text); font-size: 11px; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 1px; }
@@ -27,16 +27,24 @@
         .res { margin-top: 20px; padding-top: 20px; border-top: 1px solid #30363d; text-align: left; display: none; }
         .res-item { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; font-size: 13px; }
 
-        /* Menu de Projetos */
         .projects-section { margin-top: 30px; border-top: 1px solid #30363d; padding-top: 20px; }
         .projects-title { font-size: 10px; color: var(--text); text-transform: uppercase; margin-bottom: 15px; display: block; }
         .projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .project-btn { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 10px; border-radius: 6px; font-size: 11px; text-decoration: none; font-weight: bold; text-align: center; }
         .project-btn:hover { background: var(--accent); color: white; }
 
-        /* Publicidade */
         .ad-container { margin-top: 25px; padding: 15px; background: linear-gradient(145deg, #1e2227, #161b22); border-radius: 12px; border: 1px solid #ffcc0033; }
         .btn-ad { display: block; background: #ffcc00; color: #000; text-decoration: none; padding: 10px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-top: 10px; }
+
+        /* NOVO: Estilos do Relógio e Tabela de Horários */
+        .trading-clock-section { margin-top: 30px; border-top: 1px solid #30363d; padding-top: 20px; text-align: left; }
+        .clock-display { display: flex; align-items: center; justify-content: center; background: #0d1117; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #30363d; }
+        .status-dot { width: 12px; height: 12px; border-radius: 50%; margin-right: 10px; box-shadow: 0 0 10px currentColor; }
+        #clockText { font-family: monospace; font-size: 18px; font-weight: bold; }
+        
+        .time-table { width: 100%; border-collapse: collapse; font-size: 11px; color: #ced4da; margin-top: 10px; }
+        .time-table td { padding: 8px 0; border-bottom: 1px solid #30363d; }
+        .note-box { background: rgba(255, 62, 62, 0.1); border: 1px solid var(--red); padding: 10px; border-radius: 8px; font-size: 11px; margin-top: 15px; color: #ffbaba; line-height: 1.4; }
     </style>
 </head>
 <body>
@@ -98,13 +106,50 @@
     <div class="ad-container">
         <span style="color:#ffcc00; font-size: 12px; font-weight: bold;">📺 ATMOS IPTV</span>
         <p style="font-size: 10px; color: #ced4da; margin: 5px 0;">Canais, Filmes e Séries por R$ 30,00.</p>
-        <a href="https://wa.me/5597991916621" target="_blank" class="btn-ad">TESTE GRÁTIS</a>
+        <a href="https://wa.me/5597991916621" target="_blank" class="btn-ad">QUERO TESTAR GRÁTIS</a>
+    </div>
+
+    <div class="trading-clock-section">
+        <span class="projects-title">Horário de Trade</span>
+        <div class="clock-display">
+            <div id="statusDot" class="status-dot"></div>
+            <div id="clockText">00:00:00</div>
+        </div>
+        
+        <table class="time-table">
+            <tr><td>🌏 Ásia (Tóquio)</td><td>21:00 - 01:00</td><td style="color:var(--yellow)">Médio</td></tr>
+            <tr><td>🇪🇺 Londres</td><td>04:00 - 09:00</td><td style="color:var(--green)">Alto</td></tr>
+            <tr><td>🇺🇸 Nova York (Pico)</td><td>10:00 - 14:00</td><td style="color:var(--green)">Pico</td></tr>
+            <tr><td>🛢️ Petróleo (Pit NY)</td><td>10:00 - 12:30</td><td style="color:var(--green)">Máximo</td></tr>
+        </tbody>
+        </table>
+
+        <div class="note-box">
+            <strong>⚠️ NOTA ESTRATÉGICA:</strong> Finais de semana o Petróleo fecha. Em conflitos no Oriente Médio, monitore o Bitcoin no domingo; o petróleo tende a abrir com GAP às 20h.
+        </div>
     </div>
 </div>
 
 <script src="https://s3.tradingview.com/tv.js"></script>
 <script>
     let price = 0;
+
+    function updateTradingClock() {
+        const now = new Date();
+        const hrs = now.getHours();
+        document.getElementById('clockText').innerText = now.toLocaleTimeString();
+        const dot = document.getElementById('statusDot');
+
+        // Lógica de cores baseada no volume
+        if (hrs >= 10 && hrs <= 14) { 
+            dot.style.color = "var(--green)"; dot.style.backgroundColor = "var(--green)";
+        } else if ((hrs >= 21) || (hrs <= 1) || (hrs >= 4 && hrs <= 9)) {
+            dot.style.color = "var(--yellow)"; dot.style.backgroundColor = "var(--yellow)";
+        } else {
+            dot.style.color = "var(--red)"; dot.style.backgroundColor = "var(--red)";
+        }
+    }
+
     function initApp() {
         const symbol = document.getElementById('pairSelector').value;
         new TradingView.widget({
@@ -112,7 +157,6 @@
             "locale": "br", "container_id": "chart_container", "hide_top_toolbar": true, "save_image": false
         });
         
-        // Simulação de preço via WebSocket (Binance como referência)
         const pair = symbol.split(':')[1].toLowerCase();
         const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${pair === 'usoousd' ? 'btcusdt' : pair}@ticker`);
         ws.onmessage = (e) => {
@@ -132,6 +176,9 @@
         document.getElementById('resSL').innerText = `$ ${(price * (1 - sl/100)).toFixed(4)}`;
         document.getElementById('results').style.display = 'block';
     }
+
+    setInterval(updateTradingClock, 1000);
+    updateTradingClock();
     initApp();
 </script>
 </body>
