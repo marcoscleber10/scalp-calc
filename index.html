@@ -27,33 +27,40 @@
         .res { margin-top: 20px; padding-top: 20px; border-top: 1px solid #30363d; text-align: left; display: none; }
         .res-item { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; font-size: 13px; }
 
-        /* Menu de Projetos - Restaurado */
         .projects-section { margin-top: 30px; border-top: 1px solid #30363d; padding-top: 20px; }
         .projects-title { font-size: 10px; color: var(--text); text-transform: uppercase; margin-bottom: 15px; display: block; }
         .projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .project-btn { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 10px; border-radius: 6px; font-size: 11px; text-decoration: none; font-weight: bold; text-align: center; }
-        
-        /* Publicidade - Restaurada */
+
         .ad-container { margin-top: 25px; padding: 15px; background: linear-gradient(145deg, #1e2227, #161b22); border-radius: 12px; border: 1px solid #ffcc0033; }
-        .btn-ad { display: block; background: #ffcc00; color: #000; text-decoration: none; padding: 10px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-top: 10px; text-align: center;}
+        .btn-ad { display: block; background: #ffcc00; color: #000; text-decoration: none; padding: 10px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-top: 10px; }
         
-        /* Relógio - Restaurado */
-        .clock-container { margin-top: 20px; font-size: 14px; font-family: monospace; color: var(--text); border-top: 1px solid #30363d; padding-top: 15px; }
+        .clock-container { margin-top: 20px; font-size: 14px; font-family: monospace; color: var(--text); padding-top: 10px; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h4>Mestre do Scalping Pro</h4>
+    <h4>Mestre do Scalping Multi-Par</h4>
     
     <select id="pairSelector" onchange="initApp()">
-        <optgroup label="Cripto">
+        <optgroup label="Bitcoin (BTC)">
             <option value="BINANCE:BTCUSDT">Binance - BTC/USDT</option>
-            <option value="BINANCE:SOLUSDT">Binance - SOL/USDT</option>
+            <option value="OKX:BTCUSDT">OKX - BTC/USDT</option>
+            <option value="COINBASE:BTCUSD">Hyperliquid - BTC/USD</option>
+        </optgroup>
+        <optgroup label="Ethereum (ETH)">
             <option value="BINANCE:ETHUSDT">Binance - ETH/USDT</option>
+            <option value="OKX:ETHUSDT">OKX - ETH/USDT</option>
+            <option value="COINBASE:ETHUSD">Hyperliquid - ETH/USD</option>
+        </optgroup>
+        <optgroup label="Solana (SOL)">
+            <option value="BINANCE:SOLUSDT">Binance - SOL/USDT</option>
+            <option value="OKX:SOLUSDT">OKX - SOL/USDT</option>
+            <option value="COINBASE:SOLUSD">Hyperliquid - SOL/USD</option>
         </optgroup>
         <optgroup label="Commodities">
-            <option value="TVC:USOIL">Petróleo (WTI)</option>
+            <option value="COINBASE:USOUSD">Hyperliquid - Petróleo (USO)</option>
         </optgroup>
     </select>
 
@@ -64,11 +71,11 @@
     <div class="inputs-grid">
         <div><label>Capital ($)</label><input type="number" id="capital" value="300"></div>
         <div><label>Alavancagem</label><input type="number" id="lev" value="10"></div>
-        <div><label>Ganho Alvo %</label><input type="number" id="tpP" value="0.5" step="0.1"></div>
-        <div><label>Stop Loss %</label><input type="number" id="slP" value="0.7" step="0.1"></div>
+        <div><label>Ganho Alvo %</label><input type="number" id="tpP" value="1.0" step="0.1"></div>
+        <div><label>Stop Loss %</label><input type="number" id="slP" value="1.0" step="0.1"></div>
     </div>
 
-    <button class="btn-calc" onclick="calc()">Calcular Alvos</button>
+    <button class="btn-calc" onclick="calc()">Calcular Alvos Agora</button>
 
     <div id="results" class="res">
         <div class="res-item"><span>🟢 Saída Lucro (TP):</span><span id="resTP" style="color:var(--green); font-weight: bold;"></span></div>
@@ -79,8 +86,10 @@
         <span class="projects-title">Meus Projetos</span>
         <div class="projects-grid">
             <a href="https://site-559791916621-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">Dashboard 97</a>
-            <a href="https://pepinometro-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">Pepinômetro</a>
             <a href="https://site-combustai-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">CombustAI</a>
+            <a href="https://site-557591544835-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">Dashboard 75</a>
+            <a href="https://pepinometro-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">Pepinômetro</a>
+            <a href="https://historia-copas-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">História Copas</a>
             <a href="https://investopcao.culturabuilder.com" target="_blank" class="project-btn">InvestOpção</a>
         </div>
     </div>
@@ -90,47 +99,30 @@
         <p style="font-size: 10px; color: #ced4da; margin: 5px 0;">Canais, Filmes e Séries por R$ 30,00.</p>
         <a href="https://wa.me/5597991916621" target="_blank" class="btn-ad">TESTE GRÁTIS</a>
     </div>
-
+    
     <div class="clock-container" id="clock">00:00:00</div>
 </div>
 
 <script src="https://s3.tradingview.com/tv.js"></script>
 <script>
     let price = 0;
-    let ws;
-
     function initApp() {
-        if(ws) ws.close();
         const symbol = document.getElementById('pairSelector').value;
-        
-        // Widget TradingView com as 3 ferramentas (EMA 9, 21 e RSI) integradas de forma estável
         new TradingView.widget({
-            "autosize": true,
-            "symbol": symbol,
-            "interval": "1",
-            "theme": "dark",
-            "style": "1",
-            "locale": "br",
-            "container_id": "chart_container",
-            "hide_top_toolbar": false,
-            "studies": [
-                "MASimple@tv-basicstudies", 
-                "MASimple@tv-basicstudies", 
-                "RSI@tv-basicstudies"
-            ],
-            // Força as médias móveis para os períodos corretos
+            "autosize": true, "symbol": symbol, "interval": "1", "theme": "dark", "style": "1",
+            "locale": "br", "container_id": "chart_container", "hide_top_toolbar": false, "save_image": false,
+            "studies": ["EMA@tv-basicstudies", "EMA@tv-basicstudies", "RSI@tv-basicstudies"],
             "studies_overrides": {
-                "ma.length": 9,
-                "ma.style.color": "#00ff88"
+                "ema.length": 9,
+                "ema.length": 21
             }
         });
         
         const pair = symbol.split(':')[1].toLowerCase();
-        const streamPair = pair.includes("oil") ? "btcusdt" : pair;
-        ws = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`);
+        const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${pair === 'usoousd' ? 'btcusdt' : pair}@ticker`);
         ws.onmessage = (e) => {
             price = parseFloat(JSON.parse(e.data).c);
-            document.getElementById('priceText').innerText = `$ ${price.toFixed(2)}`;
+            document.getElementById('priceText').innerText = `$ ${price.toFixed(symbol.includes('USO') ? 4 : 2)}`;
             const box = document.getElementById('statusBox');
             box.innerText = "SINALIZADOR ATIVO";
             box.className = "status-bar buy";
@@ -141,17 +133,16 @@
         if (price === 0) return;
         const tp = parseFloat(document.getElementById('tpP').value);
         const sl = parseFloat(document.getElementById('slP').value);
-        document.getElementById('resTP').innerText = `$ ${(price * (1 + tp/100)).toFixed(2)}`;
-        document.getElementById('resSL').innerText = `$ ${(price * (1 - sl/100)).toFixed(2)}`;
+        document.getElementById('resTP').innerText = `$ ${(price * (1 + tp/100)).toFixed(4)}`;
+        document.getElementById('resSL').innerText = `$ ${(price * (1 - sl/100)).toFixed(4)}`;
         document.getElementById('results').style.display = 'block';
     }
 
-    function updateClock() {
+    setInterval(() => {
         document.getElementById('clock').innerText = new Date().toLocaleTimeString();
-    }
+    }, 1000);
 
-    setInterval(updateClock, 1000);
-    window.onload = initApp;
+    initApp();
 </script>
 </body>
 </html>
