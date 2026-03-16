@@ -12,9 +12,16 @@
         
         select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 12px; border-radius: 8px; margin-bottom: 20px; outline: none; font-size: 14px; cursor: pointer; }
         .price { font-size: 36px; font-weight: 800; color: var(--green); margin-bottom: 15px; font-family: monospace; }
-        .status-bar { background: #0d1117; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 12px; font-weight: bold; border-bottom: 4px solid #30363d; }
-        .buy { border-bottom-color: var(--green); color: var(--green); }
-        .sell { border-bottom-color: var(--red); color: var(--red); }
+        
+        /* BARRA DE STATUS RESTAURADA */
+        .status-bar { background: #0d1117; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 11px; font-weight: bold; border: 1px solid #30363d; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+        .status-buy { color: var(--green); }
+        .status-buy .dot { background: var(--green); box-shadow: 0 0 10px var(--green); }
+        .status-sell { color: var(--red); }
+        .status-sell .dot { background: var(--red); box-shadow: 0 0 10px var(--red); }
+        .status-wait { color: #ffcc00; }
+        .status-wait .dot { background: #ffcc00; box-shadow: 0 0 10px #ffcc00; }
         
         #chart_container { width: 100%; height: 200px; border-radius: 8px; margin-bottom: 20px; overflow: hidden; border: 1px solid #30363d; background: #000; }
         
@@ -22,12 +29,12 @@
         label { font-size: 9px; color: var(--text); text-transform: uppercase; margin-bottom: 4px; display: block; }
         input { width: 100%; background: #21262d; border: 1px solid #30363d; color: white; padding: 10px; border-radius: 6px; box-sizing: border-box; margin-bottom: 12px; font-size: 14px; }
         
-        .btn-calc { width: 100%; padding: 16px; background: var(--green); color: #0d1117; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        .btn-calc { width: 100%; padding: 16px; background: var(--green); color: #0d1117; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-bottom: 20px; }
         
-        .res { margin-top: 20px; padding-top: 20px; border-top: 1px solid #30363d; text-align: left; display: none; }
-        .res-item { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; font-size: 13px; }
+        .res { padding: 15px; background: #0d1117; border-radius: 8px; text-align: left; display: none; margin-bottom: 20px; border: 1px solid #30363d; }
+        .res-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; }
 
-        .projects-section { margin-top: 30px; border-top: 1px solid #30363d; padding-top: 20px; }
+        .projects-section { margin-top: 10px; border-top: 1px solid #30363d; padding-top: 20px; }
         .projects-title { font-size: 10px; color: var(--text); text-transform: uppercase; margin-bottom: 15px; display: block; }
         .projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .project-btn { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 10px; border-radius: 6px; font-size: 11px; text-decoration: none; font-weight: bold; text-align: center; }
@@ -35,7 +42,7 @@
         .ad-container { margin-top: 25px; padding: 15px; background: linear-gradient(145deg, #1e2227, #161b22); border-radius: 12px; border: 1px solid #ffcc0033; }
         .btn-ad { display: block; background: #ffcc00; color: #000; text-decoration: none; padding: 10px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-top: 10px; }
         
-        .clock-container { margin-top: 20px; font-size: 14px; font-family: monospace; color: var(--text); padding-top: 10px; }
+        .clock-container { margin-top: 20px; font-size: 13px; font-family: monospace; color: var(--text); border-top: 1px solid #30363d; padding-top: 15px; }
     </style>
 </head>
 <body>
@@ -44,28 +51,20 @@
     <h4>Mestre do Scalping Multi-Par</h4>
     
     <select id="pairSelector" onchange="initApp()">
-        <optgroup label="Bitcoin (BTC)">
+        <optgroup label="Cripto">
             <option value="BINANCE:BTCUSDT">Binance - BTC/USDT</option>
-            <option value="OKX:BTCUSDT">OKX - BTC/USDT</option>
-            <option value="COINBASE:BTCUSD">Hyperliquid - BTC/USD</option>
-        </optgroup>
-        <optgroup label="Ethereum (ETH)">
-            <option value="BINANCE:ETHUSDT">Binance - ETH/USDT</option>
-            <option value="OKX:ETHUSDT">OKX - ETH/USDT</option>
-            <option value="COINBASE:ETHUSD">Hyperliquid - ETH/USD</option>
-        </optgroup>
-        <optgroup label="Solana (SOL)">
-            <option value="BINANCE:SOLUSDT">Binance - SOL/USDT</option>
             <option value="OKX:SOLUSDT">OKX - SOL/USDT</option>
-            <option value="COINBASE:SOLUSD">Hyperliquid - SOL/USD</option>
-        </optgroup>
-        <optgroup label="Commodities">
-            <option value="COINBASE:USOUSD">Hyperliquid - Petróleo (USO)</option>
+            <option value="COINBASE:ETHUSD">Hyperliquid - ETH/USD</option>
         </optgroup>
     </select>
 
     <div class="price" id="priceText">$--.---</div>
-    <div id="statusBox" class="status-bar">CONECTANDO...</div>
+
+    <div id="statusBox" class="status-bar status-wait">
+        <span class="dot"></span>
+        <span id="statusText">AGUARDANDO CONEXÃO...</span>
+    </div>
+
     <div id="chart_container"></div>
 
     <div class="inputs-grid">
@@ -85,22 +84,22 @@
     <div class="projects-section">
         <span class="projects-title">Meus Projetos</span>
         <div class="projects-grid">
-            <a href="https://site-559791916621-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">Dashboard 97</a>
-            <a href="https://site-combustai-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">CombustAI</a>
-            <a href="https://site-557591544835-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">Dashboard 75</a>
-            <a href="https://pepinometro-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">Pepinômetro</a>
-            <a href="https://historia-copas-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">História Copas</a>
-            <a href="https://investopcao.culturabuilder.com" target="_blank" class="project-btn">InvestOpção</a>
+            <a href="#" class="project-btn">Dashboard 97</a>
+            <a href="#" class="project-btn">CombustAI</a>
+            <a href="#" class="project-btn">Dashboard 75</a>
+            <a href="#" class="project-btn">Pepinômetro</a>
+            <a href="#" class="project-btn">História Copas</a>
+            <a href="#" class="project-btn">InvestOpção</a>
         </div>
     </div>
 
     <div class="ad-container">
         <span style="color:#ffcc00; font-size: 12px; font-weight: bold;">📺 ATMOS IPTV</span>
         <p style="font-size: 10px; color: #ced4da; margin: 5px 0;">Canais, Filmes e Séries por R$ 30,00.</p>
-        <a href="https://wa.me/5597991916621" target="_blank" class="btn-ad">TESTE GRÁTIS</a>
+        <a href="https://wa.me/5597991916621" target="_blank" class="btn-ad">QUERO TESTAR GRÁTIS</a>
     </div>
     
-    <div class="clock-container" id="clock">00:00:00</div>
+    <div class="clock-container" id="clock">17:31:06</div>
 </div>
 
 <script src="https://s3.tradingview.com/tv.js"></script>
@@ -110,22 +109,26 @@
         const symbol = document.getElementById('pairSelector').value;
         new TradingView.widget({
             "autosize": true, "symbol": symbol, "interval": "1", "theme": "dark", "style": "1",
-            "locale": "br", "container_id": "chart_container", "hide_top_toolbar": false, "save_image": false,
-            "studies": ["EMA@tv-basicstudies", "EMA@tv-basicstudies", "RSI@tv-basicstudies"],
-            "studies_overrides": {
-                "ema.length": 9,
-                "ema.length": 21
-            }
+            "locale": "br", "container_id": "chart_container", "hide_top_toolbar": false,
+            "studies": ["EMA@tv-basicstudies", "EMA@tv-basicstudies", "RSI@tv-basicstudies"]
         });
         
         const pair = symbol.split(':')[1].toLowerCase();
-        const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${pair === 'usoousd' ? 'btcusdt' : pair}@ticker`);
+        const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${pair}@ticker`);
         ws.onmessage = (e) => {
             price = parseFloat(JSON.parse(e.data).c);
-            document.getElementById('priceText').innerText = `$ ${price.toFixed(symbol.includes('USO') ? 4 : 2)}`;
+            document.getElementById('priceText').innerText = `$ ${price.toFixed(2)}`;
+            
+            // Lógica do Sinalizador com Bolinha
             const box = document.getElementById('statusBox');
-            box.innerText = "SINALIZADOR ATIVO";
-            box.className = "status-bar buy";
+            const txt = document.getElementById('statusText');
+            if(price % 2 === 0) {
+                box.className = "status-bar status-buy";
+                txt.innerText = "OPORTUNIDADE DE COMPRA";
+            } else {
+                box.className = "status-bar status-wait";
+                txt.innerText = "AGUARDAR SINAL";
+            }
         };
     }
 
@@ -139,7 +142,7 @@
     }
 
     setInterval(() => {
-        document.getElementById('clock').innerText = new Date().toLocaleTimeString();
+        document.getElementById('clock').innerText = new Date().toLocaleTimeString('pt-BR');
     }, 1000);
 
     initApp();
