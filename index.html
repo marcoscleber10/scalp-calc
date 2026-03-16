@@ -13,7 +13,6 @@
         select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 12px; border-radius: 8px; margin-bottom: 20px; outline: none; font-size: 14px; cursor: pointer; }
         .price { font-size: 36px; font-weight: 800; color: var(--green); margin-bottom: 15px; font-family: monospace; }
         
-        /* 1. ESTILO DA BOLINHA (AJUSTE MÍNIMO) */
         .status-bar { background: #0d1117; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 12px; font-weight: bold; border-bottom: 4px solid #30363d; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; background: #8b949e; }
         .buy { border-bottom-color: var(--green); color: var(--green); }
@@ -32,7 +31,6 @@
         .res { margin-top: 20px; padding-top: 20px; border-top: 1px solid #30363d; text-align: left; display: none; }
         .res-item { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; font-size: 13px; }
 
-        /* 2. ESTILO DA TABELA E NOTA */
         .market-table { width: 100%; font-size: 10px; margin-top: 20px; border-collapse: collapse; color: var(--text); text-align: left; }
         .market-table td { padding: 6px 0; border-bottom: 1px solid #21262d; }
         .note { margin-top: 15px; padding: 10px; background: rgba(255, 62, 62, 0.1); border: 1px solid var(--red); border-radius: 6px; font-size: 10px; color: #ff8e8e; text-align: left; }
@@ -41,7 +39,6 @@
         .projects-title { font-size: 10px; color: var(--text); text-transform: uppercase; margin-bottom: 15px; display: block; }
         .projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .project-btn { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 10px; border-radius: 6px; font-size: 11px; text-decoration: none; font-weight: bold; text-align: center; }
-        .project-btn:hover { background: var(--accent); color: white; }
 
         .ad-container { margin-top: 25px; padding: 15px; background: linear-gradient(145deg, #1e2227, #161b22); border-radius: 12px; border: 1px solid #ffcc0033; }
         .btn-ad { display: block; background: #ffcc00; color: #000; text-decoration: none; padding: 10px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-top: 10px; }
@@ -69,7 +66,7 @@
             <option value="COINBASE:SOLUSD">Hyperliquid - SOL/USD</option>
         </optgroup>
         <optgroup label="Commodities">
-            <option value="COINBASE:USOUSD">Hyperliquid - Petróleo (USO)</option>
+            <option value="TVC:USOIL">Hyperliquid - Petróleo (WTI)</option>
         </optgroup>
     </select>
 
@@ -128,46 +125,13 @@
 <script src="https://s3.tradingview.com/tv.js"></script>
 <script>
     let price = 0;
+    let currentWs = null;
+
     function initApp() {
         const symbol = document.getElementById('pairSelector').value;
         
-        // Mantive a lógica do seu código padrão para o gráfico
+        // Limpa o container do gráfico para evitar erros
+        document.getElementById('chart_container').innerHTML = '';
+        
         new TradingView.widget({
-            "autosize": true, "symbol": symbol, "interval": "1", "theme": "dark", "style": "1",
-            "locale": "br", "container_id": "chart_container", "hide_top_toolbar": true, "save_image": false
-        });
-        
-        const pair = symbol.split(':')[1].toLowerCase();
-        const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${pair === 'usoousd' ? 'btcusdt' : pair}@ticker`);
-        
-        ws.onmessage = (e) => {
-            price = parseFloat(JSON.parse(e.data).c);
-            document.getElementById('priceText').innerText = `$ ${price.toFixed(symbol.includes('USO') ? 4 : 2)}`;
-            const box = document.getElementById('statusBox');
-            const txt = document.getElementById('statusText');
-            
-            // Atualiza o texto e a cor da barra/bolinha
-            if (price % 2 === 0) {
-                txt.innerText = "🔥 OPORTUNIDADE";
-                box.className = "status-bar buy";
-            } else {
-                txt.innerText = "⚠️ AGUARDAR";
-                box.className = "status-bar sell";
-            }
-        };
-    }
-
-    function calc() {
-        if (price === 0) return;
-        const tp = parseFloat(document.getElementById('tpP').value);
-        const sl = parseFloat(document.getElementById('slP').value);
-        document.getElementById('resTP').innerText = `$ ${(price * (1 + tp/100)).toFixed(4)}`;
-        document.getElementById('resSL').innerText = `$ ${(price * (1 - sl/100)).toFixed(4)}`;
-        document.getElementById('results').style.display = 'block';
-    }
-
-    // Inicialização garantida
-    initApp();
-</script>
-</body>
-</html>
+            "autosize": true, "symbol": symbol, "interval": "1", "theme": "
