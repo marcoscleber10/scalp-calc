@@ -1,100 +1,23 @@
-<div style="display: flex; gap: 8px; margin-bottom: 15px;">
-    <button onclick="mudarSetup('scalp')" id="btnScalp" style="flex:1; padding:12px; border-radius:8px; background:var(--accent); color:white; border:none; font-size:10px; font-weight:bold; cursor:pointer; transition: 0.3s;">⚡ SCALPING (1m)</button>
-    <button onclick="mudarSetup('trend')" id="btnTrend" style="flex:1; padding:12px; border-radius:8px; background:#21262d; color:#8b949e; border:1px solid #30363d; font-size:10px; font-weight:bold; cursor:pointer; transition: 0.3s;">🔭 TENDÊNCIA (15m)</button>
-</div>
+function mudarSetup(tipo) {
+    setupAtual = tipo;
+    
+    // Reset visual dos botões
+    [btnScalp, btnDay, btnTrend].forEach(b => {
+        b.style.background = "#21262d"; 
+        b.style.color = "#8b949e";
+    });
 
-<div class="price" id="priceText">$--.---</div>
-
-<div class="status-grid">
-    <div id="statusBox" class="status-bar">
-        <span class="status-label">SINAL GERAL</span>
-        <span id="statusText">CONECTANDO...</span>
-    </div>
-    <div id="rsiBox" class="status-bar">
-        <span class="status-label" id="labelTecnico">FILTRO RSI/EMA (1m)</span>
-        <span id="rsiText">COLETANDO...</span>
-    </div>
-</div>
-
-<div id="chart_container"></div>
-
-<script>
-    let setupAtual = 'scalp'; // Estado inicial
-    let price = 0;
-    let pricesHistory = [];
-
-    function mudarSetup(tipo) {
-        setupAtual = tipo;
-        const btnS = document.getElementById('btnScalp');
-        const btnT = document.getElementById('btnTrend');
-        const label = document.getElementById('labelTecnico');
-        
-        if(tipo === 'trend') {
-            btnT.style.background = 'var(--accent)'; btnT.style.color = 'white';
-            btnS.style.background = '#21262d'; btnS.style.color = '#8b949e';
-            label.innerText = "FILTRO TENDÊNCIA (15m)";
-            document.getElementById('tpP').value = "3.0"; 
-            document.getElementById('slP').value = "1.5";
-        } else {
-            btnS.style.background = 'var(--accent)'; btnS.style.color = 'white';
-            btnT.style.background = '#21262d'; btnT.style.color = '#8b949e';
-            label.innerText = "FILTRO RSI/EMA (1m)";
-            document.getElementById('tpP').value = "1.0";
-            document.getElementById('slP').value = "1.0";
-        }
-        pricesHistory = []; // Reseta o histórico para recalcular no novo tempo
-        initApp(); 
+    if(tipo === 'scalp') {
+        btnScalp.style.background = "var(--green)"; btnScalp.style.color = "#0d1117";
+        configurarParametros(1, "1.0", "1.0", "FILTRO SCALP (1m)");
+    } else if(tipo === 'day') {
+        btnDay.style.background = "var(--accent)"; btnDay.style.color = "white";
+        configurarParametros(15, "3.0", "1.5", "FILTRO DAY TRADE (15m)");
+    } else {
+        btnTrend.style.background = "var(--gold)"; btnTrend.style.color = "#0d1117";
+        configurarParametros(60, "8.0", "3.0", "TENDÊNCIA MESTRE (1h)");
     }
-
-    function initApp() {
-        const symbol = document.getElementById('pairSelector').value;
-        const container = document.getElementById('chart_container');
-        if (!container) return;
-        
-        container.innerHTML = '';
-        new TradingView.widget({
-            "autosize": true, 
-            "symbol": symbol, 
-            "interval": setupAtual === 'scalp' ? "1" : "15", // ALTERNA O TEMPO AQUI
-            "theme": "dark", 
-            "style": "1",
-            "locale": "br", 
-            "container_id": "chart_container",
-            "hide_top_toolbar": false
-        });
-
-        // Lógica do WebSocket permanece a mesma para o preço em tempo real
-        conectarWS(symbol);
-    }
-
-    function atualizarFiltroTecnico() {
-        const rsiBox = document.getElementById('rsiBox');
-        const rsiTxt = document.getElementById('rsiText');
-        
-        // Ajusta períodos baseado no setup
-        const pRSI = 14;
-        const pCurta = setupAtual === 'scalp' ? 9 : 20;
-        const pLonga = setupAtual === 'scalp' ? 21 : 50;
-
-        if (pricesHistory.length < pLonga) {
-            rsiTxt.innerText = `COLETANDO: ${pricesHistory.length}/${pLonga}`;
-            return;
-        }
-
-        const rsi = calcRSI(pricesHistory, pRSI);
-        const emaCurta = calcEMA(pricesHistory, pCurta);
-        const emaLonga = calcEMA(pricesHistory, pLonga);
-
-        if (price > emaCurta && emaCurta > emaLonga && rsi < (setupAtual === 'scalp' ? 65 : 75)) {
-            rsiTxt.innerText = setupAtual === 'scalp' ? "🚀 COMPRA FORTE" : "📈 TENDÊNCIA ALTA";
-            rsiBox.style.borderBottomColor = "var(--green)";
-        } else if (price < emaCurta && emaCurta < emaLonga && rsi > (setupAtual === 'scalp' ? 35 : 25)) {
-            rsiTxt.innerText = setupAtual === 'scalp' ? "📉 VENDA FORTE" : "📉 TENDÊNCIA BAIXA";
-            rsiBox.style.borderBottomColor = "var(--red)";
-        } else {
-            rsiTxt.innerText = "⏳ NEUTRO";
-            rsiBox.style.borderBottomColor = "#30363d";
-        }
-    }
-    // ... manter as outras funções matemáticas (calcEMA, calcRSI, etc)
-</script>
+    
+    pricesHistory = []; // Limpa para não misturar médias de tempos diferentes
+    initApp();
+}
