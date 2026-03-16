@@ -1,223 +1,100 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mestre do Scalping Pro</title>
-    <style>
-        :root { --bg: #0d1117; --card: #161b22; --green: #00ff88; --red: #ff3e3e; --text: #8b949e; --accent: #2f81f7; --gold: #ffcc00; }
-        body { background-color: var(--bg); color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
-        .card { background: var(--card); padding: 24px; border-radius: 16px; width: 100%; max-width: 400px; text-align: center; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: max-width 0.3s ease; }
-        .card.desktop-mode { max-width: 95%; }
-        .desktop-mode #chart_container { height: 500px !important; }
-        h4 { color: var(--text); font-size: 11px; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 1px; }
-        .btn-mode { width: 100%; background: var(--accent); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 11px; text-transform: uppercase; }
-        select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 12px; border-radius: 8px; margin-bottom: 20px; outline: none; font-size: 14px; cursor: pointer; }
-        .price { font-size: 36px; font-weight: 800; color: var(--green); margin-bottom: 15px; font-family: monospace; }
-        
-        /* Ajuste do Painel Duplo */
-        .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .status-bar { background: #0d1117; padding: 10px; border-radius: 8px; font-size: 10px; font-weight: bold; border-bottom: 3px solid #30363d; text-align: center; }
-        .status-label { font-size: 8px; color: var(--text); display: block; margin-bottom: 4px; text-transform: uppercase; }
-        
-        #chart_container { width: 100%; height: 200px; border-radius: 8px; margin-bottom: 20px; overflow: hidden; border: 1px solid #30363d; background: #000; }
-        .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; text-align: left; }
-        label { font-size: 9px; color: var(--text); text-transform: uppercase; margin-bottom: 4px; display: block; }
-        input { width: 100%; background: #21262d; border: 1px solid #30363d; color: white; padding: 10px; border-radius: 6px; box-sizing: border-box; margin-bottom: 12px; font-size: 14px; }
-        .btn-calc { width: 100%; padding: 16px; background: var(--green); color: #0d1117; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
-        .res { margin-top: 20px; padding-top: 20px; border-top: 1px solid #30363d; text-align: left; display: none; }
-        .res-item { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; font-size: 13px; }
-        .projects-section { margin-top: 30px; border-top: 1px solid #30363d; padding-top: 20px; }
-        .projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .project-btn { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 10px; border-radius: 6px; font-size: 11px; text-decoration: none; font-weight: bold; text-align: center; }
-        .market-table { width: 100%; font-size: 10px; margin-top: 20px; border-collapse: collapse; color: var(--text); text-align: left; }
-        .market-table td { padding: 6px 0; border-bottom: 1px solid #21262d; }
-        .ad-container { margin-top: 25px; padding: 15px; background: linear-gradient(145deg, #1e2227, #161b22); border-radius: 12px; border: 1px solid #ffcc0033; }
-        .btn-ad { display: block; background: #ffcc00; color: #000; text-decoration: none; padding: 10px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-top: 10px; text-align: center;}
-    </style>
-</head>
-<body>
-
-<div class="card" id="mainCard">
-    <h4>Mestre do Scalping Multi-Par</h4>
-    <button class="btn-mode" onclick="toggleMode()">🖥️ Alternar Modo Computador</button>
-
-    <select id="pairSelector" onchange="initApp()">
-        <optgroup label="Bitcoin (BTC)">
-            <option value="BINANCE:BTCUSDT">Binance - BTC/USDT</option>
-            <option value="OKX:BTCUSDT">OKX - BTC/USDT</option>
-            <option value="COINBASE:BTCUSD">Hyperliquid - BTC/USD</option>
-        </optgroup>
-        <optgroup label="Ethereum (ETH)">
-            <option value="BINANCE:ETHUSDT">Binance - ETH/USDT</option>
-            <option value="OKX:ETHUSDT">OKX - ETH/USDT</option>
-            <option value="COINBASE:ETHUSD">Hyperliquid - ETH/USD</option>
-        </optgroup>
-        <optgroup label="Commodities">
-            <option value="TVC:USOIL">Hyperliquid - Petróleo (USO)</option>
-        </optgroup>
-    </select>
-
-    <div class="price" id="priceText">$--.---</div>
-
-    <div class="status-grid">
-        <div id="statusBox" class="status-bar">
-            <span class="status-label">SINAL GERAL</span>
-            <span id="statusText">CONECTANDO...</span>
-        </div>
-        <div id="rsiBox" class="status-bar">
-            <span class="status-label">FILTRO RSI/EMA</span>
-            <span id="rsiText">COLETANDO...</span>
-        </div>
-    </div>
-
-    <div id="chart_container"></div>
-
-    <div class="inputs-grid">
-        <div><label>Capital ($)</label><input type="number" id="capital" value="300"></div>
-        <div><label>Alavancagem</label><input type="number" id="lev" value="10"></div>
-        <div><label>Ganho Alvo %</label><input type="number" id="tpP" value="1.0" step="0.1"></div>
-        <div><label>Stop Loss %</label><input type="number" id="slP" value="1.0" step="0.1"></div>
-    </div>
-
-    <button class="btn-calc" onclick="calc()">Calcular Alvos</button>
-
-    <div id="results" class="res">
-        <div class="res-item"><span>🟢 Saída Lucro (TP):</span><span id="resTP" style="color:var(--green); font-weight: bold;"></span></div>
-        <div class="res-item"><span>🛑 Saída Perda (SL):</span><span id="resSL" style="color:var(--red); font-weight: bold;"></span></div>
-    </div>
-
-    <div class="projects-section">
-        <div class="projects-grid">
-            <a href="#" class="project-btn">Dashboard 97</a>
-            <a href="#" class="project-btn">CombustAI</a>
-            <a href="#" class="project-btn">Pepinômetro</a>
-            <a href="#" class="project-btn">InvestOpção</a>
-        </div>
-    </div>
-
-    <div class="ad-container">
-        <span style="color:#ffcc00; font-size: 12px; font-weight: bold;">📺 ATMOS IPTV</span>
-        <a href="https://wa.me/5597991916621" target="_blank" class="btn-ad">TESTE GRÁTIS</a>
-    </div>
-
-    <table class="market-table">
-        <tr><td>🌏 Ásia</td><td>21:00 - 01:00</td><td style="text-align:right; color:#ffcc00;">● Médio</td></tr>
-        <tr><td>🇪🇺 Londres</td><td>04:00 - 09:00</td><td style="text-align:right; color:var(--green);">● Alto</td></tr>
-        <tr><td>🇺🇸 Nova York</td><td>10:00 - 14:00</td><td style="text-align:right; color:var(--green);">● Pico</td></tr>
-    </table>
+<div style="display: flex; gap: 8px; margin-bottom: 15px;">
+    <button onclick="mudarSetup('scalp')" id="btnScalp" style="flex:1; padding:12px; border-radius:8px; background:var(--accent); color:white; border:none; font-size:10px; font-weight:bold; cursor:pointer; transition: 0.3s;">⚡ SCALPING (1m)</button>
+    <button onclick="mudarSetup('trend')" id="btnTrend" style="flex:1; padding:12px; border-radius:8px; background:#21262d; color:#8b949e; border:1px solid #30363d; font-size:10px; font-weight:bold; cursor:pointer; transition: 0.3s;">🔭 TENDÊNCIA (15m)</button>
 </div>
 
-<script src="https://s3.tradingview.com/tv.js"></script>
+<div class="price" id="priceText">$--.---</div>
+
+<div class="status-grid">
+    <div id="statusBox" class="status-bar">
+        <span class="status-label">SINAL GERAL</span>
+        <span id="statusText">CONECTANDO...</span>
+    </div>
+    <div id="rsiBox" class="status-bar">
+        <span class="status-label" id="labelTecnico">FILTRO RSI/EMA (1m)</span>
+        <span id="rsiText">COLETANDO...</span>
+    </div>
+</div>
+
+<div id="chart_container"></div>
+
 <script>
+    let setupAtual = 'scalp'; // Estado inicial
     let price = 0;
     let pricesHistory = [];
-    let isDesktop = false;
 
-    function toggleMode() {
-        isDesktop = !isDesktop;
-        document.getElementById('mainCard').classList.toggle('desktop-mode', isDesktop);
-        initApp();
+    function mudarSetup(tipo) {
+        setupAtual = tipo;
+        const btnS = document.getElementById('btnScalp');
+        const btnT = document.getElementById('btnTrend');
+        const label = document.getElementById('labelTecnico');
+        
+        if(tipo === 'trend') {
+            btnT.style.background = 'var(--accent)'; btnT.style.color = 'white';
+            btnS.style.background = '#21262d'; btnS.style.color = '#8b949e';
+            label.innerText = "FILTRO TENDÊNCIA (15m)";
+            document.getElementById('tpP').value = "3.0"; 
+            document.getElementById('slP').value = "1.5";
+        } else {
+            btnS.style.background = 'var(--accent)'; btnS.style.color = 'white';
+            btnT.style.background = '#21262d'; btnT.style.color = '#8b949e';
+            label.innerText = "FILTRO RSI/EMA (1m)";
+            document.getElementById('tpP').value = "1.0";
+            document.getElementById('slP').value = "1.0";
+        }
+        pricesHistory = []; // Reseta o histórico para recalcular no novo tempo
+        initApp(); 
     }
 
     function initApp() {
         const symbol = document.getElementById('pairSelector').value;
-        document.getElementById('chart_container').innerHTML = '';
-
+        const container = document.getElementById('chart_container');
+        if (!container) return;
+        
+        container.innerHTML = '';
         new TradingView.widget({
-            "autosize": true, "symbol": symbol, "interval": "1", "theme": "dark", "style": "1",
-            "locale": "br", "container_id": "chart_container", "hide_top_toolbar": !isDesktop
+            "autosize": true, 
+            "symbol": symbol, 
+            "interval": setupAtual === 'scalp' ? "1" : "15", // ALTERNA O TEMPO AQUI
+            "theme": "dark", 
+            "style": "1",
+            "locale": "br", 
+            "container_id": "chart_container",
+            "hide_top_toolbar": false
         });
-        
-        let pair = symbol.split(':')[1].toLowerCase();
-        if(pair === 'usoil') pair = 'btcusdt'; 
 
-        const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${pair}@ticker`);
-        
-        ws.onmessage = (e) => {
-            const data = JSON.parse(e.data);
-            price = parseFloat(data.c);
-            document.getElementById('priceText').innerText = `$ ${price.toFixed(2)}`;
-            
-            // Histórico para indicadores
-            pricesHistory.push(price);
-            if (pricesHistory.length > 50) pricesHistory.shift();
-
-            // 1. SINAL GERAL (Lógica Original)
-            const box = document.getElementById('statusBox');
-            const txt = document.getElementById('statusText');
-            if (Math.floor(price * 100) % 2 === 0) {
-                txt.innerText = "🔥 OPORTUNIDADE";
-                box.style.borderBottomColor = "var(--green)";
-                box.style.color = "var(--green)";
-            } else {
-                txt.innerText = "⚠️ AGUARDAR";
-                box.style.borderBottomColor = "var(--red)";
-                box.style.color = "var(--red)";
-            }
-
-            // 2. FILTRO TÉCNICO (Novo Indicador)
-            atualizarFiltroTecnico();
-        };
+        // Lógica do WebSocket permanece a mesma para o preço em tempo real
+        conectarWS(symbol);
     }
 
     function atualizarFiltroTecnico() {
         const rsiBox = document.getElementById('rsiBox');
         const rsiTxt = document.getElementById('rsiText');
         
-        if (pricesHistory.length < 21) {
-            rsiTxt.innerText = "COLETANDO: " + pricesHistory.length + "/21";
+        // Ajusta períodos baseado no setup
+        const pRSI = 14;
+        const pCurta = setupAtual === 'scalp' ? 9 : 20;
+        const pLonga = setupAtual === 'scalp' ? 21 : 50;
+
+        if (pricesHistory.length < pLonga) {
+            rsiTxt.innerText = `COLETANDO: ${pricesHistory.length}/${pLonga}`;
             return;
         }
 
-        const rsi = calcRSI(pricesHistory, 14);
-        const ema9 = calcEMA(pricesHistory, 9);
-        const ema21 = calcEMA(pricesHistory, 21);
+        const rsi = calcRSI(pricesHistory, pRSI);
+        const emaCurta = calcEMA(pricesHistory, pCurta);
+        const emaLonga = calcEMA(pricesHistory, pLonga);
 
-        if (price > ema9 && ema9 > ema21 && rsi < 65) {
-            rsiTxt.innerText = "🚀 COMPRA FORTE";
+        if (price > emaCurta && emaCurta > emaLonga && rsi < (setupAtual === 'scalp' ? 65 : 75)) {
+            rsiTxt.innerText = setupAtual === 'scalp' ? "🚀 COMPRA FORTE" : "📈 TENDÊNCIA ALTA";
             rsiBox.style.borderBottomColor = "var(--green)";
-            rsiBox.style.color = "var(--green)";
-        } else if (price < ema9 && ema9 < ema21 && rsi > 35) {
-            rsiTxt.innerText = "📉 VENDA FORTE";
+        } else if (price < emaCurta && emaCurta < emaLonga && rsi > (setupAtual === 'scalp' ? 35 : 25)) {
+            rsiTxt.innerText = setupAtual === 'scalp' ? "📉 VENDA FORTE" : "📉 TENDÊNCIA BAIXA";
             rsiBox.style.borderBottomColor = "var(--red)";
-            rsiBox.style.color = "var(--red)";
-        } else if (rsi > 70 || rsi < 30) {
-            rsiTxt.innerText = "🚫 RISCO (RSI: " + Math.round(rsi) + ")";
-            rsiBox.style.borderBottomColor = "var(--gold)";
-            rsiBox.style.color = "var(--gold)";
         } else {
             rsiTxt.innerText = "⏳ NEUTRO";
             rsiBox.style.borderBottomColor = "#30363d";
-            rsiBox.style.color = "white";
         }
     }
-
-    function calcEMA(d, p) {
-        let k = 2/(p+1);
-        let ema = d[0];
-        for(let i=1; i<d.length; i++) ema = d[i]*k + ema*(1-k);
-        return ema;
-    }
-
-    function calcRSI(d, p) {
-        let g=0, l=0;
-        for(let i=d.length-p; i<d.length; i++) {
-            let diff = d[i]-d[i-1];
-            if(diff>=0) g+=diff; else l-=diff;
-        }
-        return 100 - (100/(1+(g/(l||1))));
-    }
-
-    function calc() {
-        const tp = parseFloat(document.getElementById('tpP').value);
-        const sl = parseFloat(document.getElementById('slP').value);
-        document.getElementById('resTP').innerText = `$ ${(price * (1 + tp/100)).toFixed(2)}`;
-        document.getElementById('resSL').innerText = `$ ${(price * (1 - sl/100)).toFixed(2)}`;
-        document.getElementById('results').style.display = 'block';
-    }
-
-    initApp();
+    // ... manter as outras funções matemáticas (calcEMA, calcRSI, etc)
 </script>
-</body>
-</html>
