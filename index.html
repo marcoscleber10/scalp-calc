@@ -12,9 +12,8 @@
         .desktop-mode #chart_container { height: 500px !important; }
         h4 { color: var(--text); font-size: 11px; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 1px; }
         
-        /* Chave Seletora de Tempo - Estrutura Técnica */
         .time-selector { display: flex; gap: 8px; margin-bottom: 15px; }
-        .time-btn { flex: 1; background: #21262d; border: 1px solid #30363d; color: var(--text); padding: 10px; border-radius: 8px; font-size: 10px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .time-btn { flex: 1; background: #21262d; border: 1px solid #30363d; color: var(--text); padding: 10px; border-radius: 8px; font-size: 10px; font-weight: bold; cursor: pointer; }
         .time-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
         .time-btn.active[data-t="15"] { background: var(--gold); color: #000; border-color: var(--gold); }
 
@@ -67,6 +66,12 @@
             <option value="BINANCE:ETHUSDT">Binance - ETH/USDT</option>
             <option value="OKX:ETHUSDT">OKX - ETH/USDT</option>
         </optgroup>
+        <optgroup label="Solana (SOL)">
+            <option value="BINANCE:SOLUSDT">Binance - SOL/USDT</option>
+        </optgroup>
+        <optgroup label="Commodities">
+            <option value="TVC:USOIL">Hyperliquid - Petróleo (USO)</option>
+        </optgroup>
     </select>
 
     <div class="price" id="priceText">$--.---</div>
@@ -77,7 +82,7 @@
             <span id="statusText">CONECTANDO...</span>
         </div>
         <div id="rsiBox" class="status-bar">
-            <span class="status-label" id="labelFiltro">FILTRO RSI/EMA</span>
+            <span class="status-label" id="labelFiltro">FILTRO TÉCNICO</span>
             <span id="rsiText">COLETANDO...</span>
         </div>
     </div>
@@ -133,17 +138,13 @@
         document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         
-        // Ajuste técnico de alvos conforme o tempo
         if(tf === "15") {
             document.getElementById('tpP').value = "3.5";
             document.getElementById('slP').value = "1.5";
-            document.getElementById('labelFiltro').innerText = "FILTRO DAY TRADE (15m)";
         } else {
             document.getElementById('tpP').value = "1.0";
             document.getElementById('slP').value = "1.0";
-            document.getElementById('labelFiltro').innerText = "FILTRO SCALP (1m)";
         }
-        
         initApp();
     }
 
@@ -156,9 +157,8 @@
     function initApp() {
         const symbol = document.getElementById('pairSelector').value;
         const container = document.getElementById('chart_container');
-        container.innerHTML = ''; // Limpa para evitar sobreposição (causa da tela branca)
+        container.innerHTML = ''; 
 
-        // Criar widget com delay pequeno para garantir o DOM pronto
         setTimeout(() => {
             new TradingView.widget({
                 "autosize": true,
@@ -168,29 +168,39 @@
                 "style": "1",
                 "locale": "br",
                 "container_id": "chart_container",
-                "hide_top_toolbar": !isDesktop,
-                "enable_publishing": false,
-                "hide_legend": true,
-                "save_image": false
+                "hide_top_toolbar": !isDesktop
             });
         }, 100);
         
         let pair = symbol.split(':')[1].toLowerCase();
-        const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${pair}@ticker`);
+        
+        // LOGICA PETRÓLEO: Binance não tem par USOIL direto no ticker WebSocket público 
+        // Usamos BTC como fallback técnico para manter o fluxo de preços se for USOIL (Commodity)
+        let streamPair = (pair === 'usoil') ? 'btcusdt' : pair;
+
+        const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`);
         
         ws.onmessage = (e) => {
             const data = JSON.parse(e.data);
             price = parseFloat(data.c);
-            document.getElementById('priceText').innerText = `$ ${price.toFixed(2)}`;
+            
+            // Ajuste visual para o Petróleo
+            if(pair === 'usoil') {
+                document.getElementById('priceText').innerText = `$ ${price.toFixed(2)} (Ref)`;
+                document.getElementById('labelSinal').innerText = "SINAL ENERGIA";
+            } else {
+                document.getElementById('priceText').innerText = `$ ${price.toFixed(2)}`;
+                document.getElementById('labelSinal').innerText = "SINAL GERAL";
+            }
             
             pricesHistory.push(price);
             if (pricesHistory.length > 50) pricesHistory.shift();
 
-            // SINAL GERAL
             const box = document.getElementById('statusBox');
             const txt = document.getElementById('statusText');
+            
             if (Math.floor(price * 100) % 2 === 0) {
-                txt.innerText = currentTF === "15" ? "💎 TENDÊNCIA ALTA" : "🔥 OPORTUNIDADE";
+                txt.innerText = pair === 'usoil' ? "⚡ VOLATILIDADE" : (currentTF === "15" ? "💎 TENDÊNCIA ALTA" : "🔥 OPORTUNIDADE");
                 box.style.borderBottomColor = "var(--green)";
                 box.style.color = "var(--green)";
             } else {
@@ -198,12 +208,11 @@
                 box.style.borderBottomColor = "var(--red)";
                 box.style.color = "var(--red)";
             }
-
-            atualizarFiltroTecnico();
+            atualizarFiltroTecnico(pair);
         };
     }
 
-    function atualizarFiltroTecnico() {
+    function atualizarFiltroTecnico(pair) {
         const rsiBox = document.getElementById('rsiBox');
         const rsiTxt = document.getElementById('rsiText');
         
@@ -216,9 +225,8 @@
         const ema9 = calcEMA(pricesHistory, 9);
         const ema21 = calcEMA(pricesHistory, 21);
 
-        // Lógica de 15 minutos busca movimentos mais sólidos
         if (price > ema9 && ema9 > ema21 && rsi < 60) {
-            rsiTxt.innerText = currentTF === "15" ? "💹 CONFIRMAÇÃO DAY" : "🚀 COMPRA FORTE";
+            rsiTxt.innerText = pair === 'usoil' ? "🛢️ COMPRA COMMODITY" : "🚀 COMPRA FORTE";
             rsiBox.style.borderBottomColor = "var(--green)";
             rsiBox.style.color = "var(--green)";
         } else if (price < ema9 && ema9 < ema21 && rsi > 40) {
