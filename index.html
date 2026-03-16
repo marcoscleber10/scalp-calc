@@ -3,136 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mestre do Scalping Pro</title>
+    <title>Mestre do Scalping Pro + Market Intelligence</title>
     <style>
-        :root { --bg: #0d1117; --card: #161b22; --green: #00ff88; --red: #ff3e3e; --text: #8b949e; --accent: #2f81f7; }
-        body { background-color: var(--bg); color: white; font-family: sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
-        .card { background: var(--card); padding: 24px; border-radius: 16px; width: 100%; max-width: 400px; text-align: center; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        h4 { color: var(--text); font-size: 11px; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 1px; }
+        :root { --bg: #0d1117; --card: #161b22; --green: #00ff88; --red: #ff3e3e; --yellow: #ffcc00; --text: #8b949e; --accent: #2f81f7; }
+        body { background-color: var(--bg); color: white; font-family: sans-serif; display: flex; justify-content: center; padding: 10px; margin: 0; }
+        .card { background: var(--card); padding: 20px; border-radius: 16px; width: 100%; max-width: 420px; text-align: center; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h4 { color: var(--text); font-size: 11px; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- NOVO: RELÓGIO E STATUS DE VOLUME --- */
+        .market-status-box { background: #0d1117; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #30363d; }
+        .clock-indicator { width: 14px; height: 14px; border-radius: 50%; display: inline-block; margin-right: 8px; box-shadow: 0 0 10px currentColor; }
+        .status-text { font-size: 13px; font-weight: bold; text-transform: uppercase; vertical-align: middle; }
+        #currentTime { font-size: 16px; font-weight: bold; color: white; margin-top: 5px; font-family: monospace; }
+
+        /* Dashboard Scalping */
+        select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 12px; border-radius: 8px; margin-bottom: 15px; outline: none; font-size: 14px; }
+        .price { font-size: 34px; font-weight: 800; color: var(--green); margin-bottom: 10px; font-family: monospace; }
+        #chart_container { width: 100%; height: 200px; border-radius: 8px; margin-bottom: 15px; overflow: hidden; border: 1px solid #30363d; }
         
-        select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 12px; border-radius: 8px; margin-bottom: 20px; outline: none; font-size: 14px; cursor: pointer; }
-        .price { font-size: 36px; font-weight: 800; color: var(--green); margin-bottom: 15px; font-family: monospace; }
-        .status-bar { background: #0d1117; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 12px; font-weight: bold; border-bottom: 4px solid #30363d; }
-        .buy { border-bottom-color: var(--green); color: var(--green); }
-        .sell { border-bottom-color: var(--red); color: var(--red); }
-        
-        #chart_container { width: 100%; height: 200px; border-radius: 8px; margin-bottom: 20px; overflow: hidden; border: 1px solid #30363d; background: #000; }
-        
-        .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; text-align: left; }
-        label { font-size: 9px; color: var(--text); text-transform: uppercase; margin-bottom: 4px; display: block; }
-        input { width: 100%; background: #21262d; border: 1px solid #30363d; color: white; padding: 10px; border-radius: 6px; box-sizing: border-box; margin-bottom: 12px; font-size: 14px; }
+        .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: left; margin-bottom: 15px; }
+        label { font-size: 9px; color: var(--text); text-transform: uppercase; display: block; margin-bottom: 4px; }
+        input { width: 100%; background: #21262d; border: 1px solid #30363d; color: white; padding: 10px; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
         
         .btn-calc { width: 100%; padding: 16px; background: var(--green); color: #0d1117; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
         
-        .res { margin-top: 20px; padding-top: 20px; border-top: 1px solid #30363d; text-align: left; display: none; }
-        .res-item { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; font-size: 13px; }
+        .res { margin-top: 15px; padding: 15px; background: #0d1117; border-radius: 10px; text-align: left; display: none; border-left: 4px solid var(--green); }
+        .res-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; }
 
-        /* Menu de Projetos */
-        .projects-section { margin-top: 30px; border-top: 1px solid #30363d; padding-top: 20px; }
-        .projects-title { font-size: 10px; color: var(--text); text-transform: uppercase; margin-bottom: 15px; display: block; }
-        .projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .project-btn { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 10px; border-radius: 6px; font-size: 11px; text-decoration: none; font-weight: bold; text-align: center; }
+        /* --- TABELA DE HORÁRIOS --- */
+        .time-table { width: 100%; border-collapse: collapse; font-size: 10px; margin-top: 20px; text-align: left; color: #ced4da; }
+        .time-table th { color: var(--text); padding-bottom: 8px; }
+        .time-table td { padding: 6px 0; border-bottom: 1px solid #30363d; }
+        .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+
+        /* Alerta Guerra/FDS */
+        .war-alert { background: rgba(255, 62, 62, 0.1); border: 1px solid var(--red); padding: 10px; border-radius: 8px; font-size: 10px; margin-top: 15px; color: #ffbaba; line-height: 1.4; text-align: left; }
+
+        /* Projetos */
+        .projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 20px; }
+        .project-btn { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 10px; border-radius: 6px; font-size: 10px; text-decoration: none; font-weight: bold; text-align: center; }
         .project-btn:hover { background: var(--accent); color: white; }
 
         /* Publicidade */
-        .ad-container { margin-top: 25px; padding: 15px; background: linear-gradient(145deg, #1e2227, #161b22); border-radius: 12px; border: 1px solid #ffcc0033; }
+        .ad-container { margin-top: 20px; padding: 15px; background: linear-gradient(145deg, #1e2227, #161b22); border-radius: 12px; border: 1px solid #ffcc0033; }
         .btn-ad { display: block; background: #ffcc00; color: #000; text-decoration: none; padding: 10px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h4>Mestre do Scalping Multi-Par</h4>
+    <h4>Mestre do Scalping</h4>
     
+    <div class="market-status-box">
+        <div id="statusDot" class="clock-indicator"></div>
+        <span id="statusText" class="status-text">Carregando...</span>
+        <div id="currentTime">00:00:00</div>
+    </div>
+
     <select id="pairSelector" onchange="initApp()">
-        <optgroup label="Bitcoin (BTC)">
-            <option value="BINANCE:BTCUSDT">Binance - BTC/USDT</option>
-            <option value="OKX:BTCUSDT">OKX - BTC/USDT</option>
-            <option value="COINBASE:BTCUSD">Hyperliquid - BTC/USD</option>
+        <optgroup label="Cripto (Binance)">
+            <option value="BINANCE:BTCUSDT">BTC/USDT</option>
+            <option value="BINANCE:ETHUSDT">ETH/USDT</option>
+            <option value="BINANCE:SOLUSDT">SOL/USDT</option>
         </optgroup>
-        <optgroup label="Ethereum (ETH)">
-            <option value="BINANCE:ETHUSDT">Binance - ETH/USDT</option>
-            <option value="OKX:ETHUSDT">OKX - ETH/USDT</option>
-            <option value="COINBASE:ETHUSD">Hyperliquid - ETH/USD</option>
-        </optgroup>
-        <optgroup label="Solana (SOL)">
-            <option value="BINANCE:SOLUSDT">Binance - SOL/USDT</option>
-            <option value="OKX:SOLUSDT">OKX - SOL/USDT</option>
-            <option value="COINBASE:SOLUSD">Hyperliquid - SOL/USD</option>
-        </optgroup>
-        <optgroup label="Commodities">
-            <option value="COINBASE:USOUSD">Hyperliquid - Petróleo (USO)</option>
+        <optgroup label="Commodities (Hyperliquid)">
+            <option value="COINBASE:USOUSD">Petróleo (USO/WTI)</option>
         </optgroup>
     </select>
 
     <div class="price" id="priceText">$--.---</div>
-    <div id="statusBox" class="status-bar">CONECTANDO...</div>
     <div id="chart_container"></div>
 
     <div class="inputs-grid">
         <div><label>Capital ($)</label><input type="number" id="capital" value="300"></div>
         <div><label>Alavancagem</label><input type="number" id="lev" value="10"></div>
-        <div><label>Ganho Alvo %</label><input type="number" id="tpP" value="1.0" step="0.1"></div>
-        <div><label>Stop Loss %</label><input type="number" id="slP" value="1.0" step="0.1"></div>
     </div>
 
-    <button class="btn-calc" onclick="calc()">Calcular Alvos</button>
+    <button class="btn-calc" onclick="calc()">Calcular Alvos Agora</button>
 
     <div id="results" class="res">
-        <div class="res-item"><span>🟢 Saída Lucro (TP):</span><span id="resTP" style="color:var(--green); font-weight: bold;"></span></div>
-        <div class="res-item"><span>🛑 Saída Perda (SL):</span><span id="resSL" style="color:var(--red); font-weight: bold;"></span></div>
+        <div class="res-item"><span>🟢 Saída Lucro (TP):</span> <strong id="resTP" style="color:var(--green)"></strong></div>
+        <div class="res-item"><span>🛑 Saída Perda (SL):</span> <strong id="resSL" style="color:var(--red)"></strong></div>
     </div>
 
-    <div class="projects-section">
-        <span class="projects-title">Meus Projetos</span>
-        <div class="projects-grid">
-            <a href="https://site-559791916621-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">Dashboard 97</a>
-            <a href="https://site-combustai-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">CombustAI</a>
-            <a href="https://site-557591544835-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">Dashboard 75</a>
-            <a href="https://pepinometro-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">Pepinômetro</a>
-            <a href="https://historia-copas-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">História Copas</a>
-            <a href="https://investopcao.culturabuilder.com" target="_blank" class="project-btn">InvestOpção</a>
-        </div>
+    <table class="time-table">
+        <thead>
+            <tr><th>Sessão</th><th>Horário (BR)</th><th>Volume</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>Ásia (Tóquio)</td><td>21:00 - 01:00</td><td><span class="dot" style="background:var(--yellow)"></span>Médio</td></tr>
+            <tr><td>Londres</td><td>04:00 - 09:00</td><td><span class="dot" style="background:var(--green)"></span>Alto</td></tr>
+            <tr><td>Nova York</td><td>10:00 - 14:00</td><td><span class="dot" style="background:var(--green)"></span>Pico</td></tr>
+            <tr><td>Petróleo (Pit NY)</td><td>10:00 - 12:30</td><td><span class="dot" style="background:var(--green)"></span>Máximo</td></tr>
+        </tbody>
+    </table>
+
+    <div class="war-alert">
+        <strong>⚠️ NOTA ESTRATÉGICA:</strong> Finais de semana o Petróleo fecha. Em caso de <b>tensões no Oriente Médio</b>, use o Bitcoin como termômetro no domingo; o petróleo tende a abrir com GAP de preço às 20h.
     </div>
 
-    <div class="ad-container">
-        <span style="color:#ffcc00; font-size: 12px; font-weight: bold;">📺 ATMOS IPTV</span>
-        <p style="font-size: 10px; color: #ced4da; margin: 5px 0;">Canais, Filmes e Séries por R$ 30,00.</p>
-        <a href="https://wa.me/5597991916621" target="_blank" class="btn-ad">TESTE GRÁTIS</a>
-    </div>
-</div>
-
-<script src="https://s3.tradingview.com/tv.js"></script>
-<script>
-    let price = 0;
-    function initApp() {
-        const symbol = document.getElementById('pairSelector').value;
-        new TradingView.widget({
-            "autosize": true, "symbol": symbol, "interval": "1", "theme": "dark", "style": "1",
-            "locale": "br", "container_id": "chart_container", "hide_top_toolbar": true, "save_image": false
-        });
+    <div class="projects-grid">
+        <a href="https://site-559791916621-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">Dash 97</a>
+        <a href="https://pepinometro-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">Pepinômetro</a>
+        <a href="https://site-combustai-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">CombustAI</a>
         
-        // Simulação de preço via WebSocket (Binance como referência)
-        const pair = symbol.split(':')[1].toLowerCase();
-        const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${pair === 'usoousd' ? 'btcusdt' : pair}@ticker`);
-        ws.onmessage = (e) => {
-            price = parseFloat(JSON.parse(e.data).c);
-            document.getElementById('priceText').innerText = `$ ${price.toFixed(symbol.includes('USO') ? 4 : 2)}`;
-            const box = document.getElementById('statusBox');
-            box.innerText = price % 2 === 0 ? "🔥 OPORTUNIDADE" : "⚠️ AGUARDAR";
-            box.className = price % 2 === 0 ? "status-bar buy" : "status-bar sell";
-        };
-    }
-
-    function calc() {
-        if (price === 0) return;
-        const tp = parseFloat(document.getElementById('tpP').value);
-        const sl = parseFloat(document.getElementById('slP').value);
-        document.getElementById('resTP').innerText = `$ ${(price * (1 + tp/100)).toFixed(4)}`;
-        document.getElementById('resSL').innerText = `$ ${(price * (1 - sl/100)).toFixed(4)}`;
-        document.getElementById('results').style.display = 'block';
-    }
-    initApp();
-</script>
-</body>
-</html>
