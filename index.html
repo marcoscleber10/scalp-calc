@@ -3,33 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mestre do Scalping Pro</title>
+    <title>Mestre do Scalping Pro - V2</title>
     <style>
-        :root { --bg: #0d1117; --card: #161b22; --green: #00ff88; --red: #ff3e3e; --text: #8b949e; --accent: #2f81f7; }
+        :root { --bg: #0d1117; --card: #161b22; --green: #00ff88; --red: #ff3e3e; --text: #8b949e; --accent: #2f81f7; --gold: #ffcc00; }
         body { background-color: var(--bg); color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
         
-        /* Adicionado para permitir que o card cresça */
         .card { background: var(--card); padding: 24px; border-radius: 16px; width: 100%; max-width: 400px; text-align: center; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: max-width 0.3s ease; }
-        
-        /* Classe para o Modo Computador */
         .card.desktop-mode { max-width: 95%; }
         .desktop-mode #chart_container { height: 500px !important; }
 
         h4 { color: var(--text); font-size: 11px; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 1px; }
-        
-        /* Estilo do botão de modo */
         .btn-mode { width: 100%; background: var(--accent); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 11px; text-transform: uppercase; }
 
         select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 12px; border-radius: 8px; margin-bottom: 20px; outline: none; font-size: 14px; cursor: pointer; }
         .price { font-size: 36px; font-weight: 800; color: var(--green); margin-bottom: 15px; font-family: monospace; }
         
-        .status-bar { background: #0d1117; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 12px; font-weight: bold; border-bottom: 4px solid #30363d; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; background: #8b949e; }
+        /* Containers de Sinais */
+        .signals-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .status-bar { background: #0d1117; padding: 10px; border-radius: 8px; font-size: 10px; font-weight: bold; border-bottom: 3px solid #30363d; display: flex; align-items: center; justify-content: center; gap: 5px; flex-direction: column; }
+        
+        .dot { width: 8px; height: 8px; border-radius: 50%; background: #8b949e; }
+        
+        /* Cores de Status */
         .buy { border-bottom-color: var(--green); color: var(--green); }
         .buy .dot { background: var(--green); box-shadow: 0 0 8px var(--green); }
         .sell { border-bottom-color: var(--red); color: var(--red); }
         .sell .dot { background: var(--red); box-shadow: 0 0 8px var(--red); }
-        
+        .wait { border-bottom-color: var(--gold); color: var(--gold); }
+        .wait .dot { background: var(--gold); }
+
         #chart_container { width: 100%; height: 200px; border-radius: 8px; margin-bottom: 20px; overflow: hidden; border: 1px solid #30363d; background: #000; }
         
         .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; text-align: left; }
@@ -41,10 +43,6 @@
         .res { margin-top: 20px; padding-top: 20px; border-top: 1px solid #30363d; text-align: left; display: none; }
         .res-item { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; font-size: 13px; }
 
-        .market-table { width: 100%; font-size: 10px; margin-top: 20px; border-collapse: collapse; color: var(--text); text-align: left; }
-        .market-table td { padding: 6px 0; border-bottom: 1px solid #21262d; }
-        .note { margin-top: 15px; padding: 10px; background: rgba(255, 62, 62, 0.1); border: 1px solid var(--red); border-radius: 6px; font-size: 10px; color: #ff8e8e; text-align: left; }
-
         .projects-section { margin-top: 30px; border-top: 1px solid #30363d; padding-top: 20px; }
         .projects-title { font-size: 10px; color: var(--text); text-transform: uppercase; margin-bottom: 15px; display: block; }
         .projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -53,6 +51,10 @@
 
         .ad-container { margin-top: 25px; padding: 15px; background: linear-gradient(145deg, #1e2227, #161b22); border-radius: 12px; border: 1px solid #ffcc0033; }
         .btn-ad { display: block; background: #ffcc00; color: #000; text-decoration: none; padding: 10px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-top: 10px; text-align: center;}
+        
+        .market-table { width: 100%; font-size: 10px; margin-top: 20px; border-collapse: collapse; color: var(--text); text-align: left; }
+        .market-table td { padding: 6px 0; border-bottom: 1px solid #21262d; }
+        .note { margin-top: 15px; padding: 10px; background: rgba(255, 62, 62, 0.1); border: 1px solid var(--red); border-radius: 6px; font-size: 10px; color: #ff8e8e; text-align: left; }
     </style>
 </head>
 <body>
@@ -85,9 +87,15 @@
 
     <div class="price" id="priceText">$--.---</div>
 
-    <div id="statusBox" class="status-bar">
-        <span class="dot"></span>
-        <span id="statusText">CONECTANDO...</span>
+    <div class="signals-grid">
+        <div id="statusBox" class="status-bar">
+            <span>SINAL GERAL</span>
+            <div><span class="dot"></span> <span id="statusText">AGUARDANDO</span></div>
+        </div>
+        <div id="rsiBox" class="status-bar">
+            <span>SINAL RSI/EMA</span>
+            <div><span class="dot"></span> <span id="rsiText">ANALISANDO</span></div>
+        </div>
     </div>
 
     <div id="chart_container"></div>
@@ -131,25 +139,43 @@
     </table>
 
     <div class="note">
-        ⚠️ <b>DICA:</b> Petróleo fecha fds. Se houver tensão no Oriente Médio, acompanhe o BTC no domingo; o petróleo costuma abrir com GAP às 20h.
+        ⚠️ <b>DICA:</b> O sinal RSI/EMA é mais lento mas reduz falsas entradas. Entre quando ambos estiverem VERDES.
     </div>
 </div>
 
 <script src="https://s3.tradingview.com/tv.js"></script>
 <script>
-    let price = 0;
+    let currentPrice = 0;
+    let pricesHistory = [];
     let isDesktop = false;
 
-    // Função para alternar entre os modos
     function toggleMode() {
         isDesktop = !isDesktop;
         const card = document.getElementById('mainCard');
-        if (isDesktop) {
-            card.classList.add('desktop-mode');
-        } else {
-            card.classList.remove('desktop-mode');
+        card.classList.toggle('desktop-mode', isDesktop);
+        initApp();
+    }
+
+    function calculateEMA(data, period) {
+        if (data.length < period) return null;
+        const k = 2 / (period + 1);
+        let ema = data[0];
+        for (let i = 1; i < data.length; i++) {
+            ema = (data[i] * k) + (ema * (1 - k));
         }
-        initApp(); // Reinicia o gráfico no novo tamanho
+        return ema;
+    }
+
+    function calculateRSI(data, period = 14) {
+        if (data.length <= period) return 50;
+        let gains = 0, losses = 0;
+        for (let i = data.length - period; i < data.length; i++) {
+            let diff = data[i] - data[i-1];
+            if (diff >= 0) gains += diff; else losses -= diff;
+        }
+        if (losses === 0) return 100;
+        let rs = gains / losses;
+        return 100 - (100 / (1 + rs));
     }
 
     function initApp() {
@@ -157,17 +183,10 @@
         document.getElementById('chart_container').innerHTML = '';
 
         new TradingView.widget({
-            "autosize": true, 
-            "symbol": symbol, 
-            "interval": "1", 
-            "theme": "dark", 
-            "style": "1",
-            "locale": "br", 
-            "container_id": "chart_container", 
-            "hide_top_toolbar": isDesktop ? false : true, 
-            "hide_side_toolbar": isDesktop ? false : true,
-            "allow_symbol_change": true,
-            "save_image": false
+            "autosize": true, "symbol": symbol, "interval": "1", "theme": "dark", "style": "1",
+            "locale": "br", "container_id": "chart_container", "hide_top_toolbar": isDesktop ? false : true,
+            "studies": ["RSI@tv-basicstudies", "EMA@tv-basicstudies"],
+            "allow_symbol_change": true
         });
         
         let pair = symbol.split(':')[1].toLowerCase();
@@ -176,27 +195,57 @@
         const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${pair}@ticker`);
         
         ws.onmessage = (e) => {
-            price = parseFloat(JSON.parse(e.data).c);
-            document.getElementById('priceText').innerText = `$ ${price.toFixed(symbol.includes('OIL') ? 2 : 2)}`;
-            const box = document.getElementById('statusBox');
-            const txt = document.getElementById('statusText');
+            const data = JSON.parse(e.data);
+            currentPrice = parseFloat(data.c);
+            pricesHistory.push(currentPrice);
+            if (pricesHistory.length > 50) pricesHistory.shift();
+
+            document.getElementById('priceText').innerText = `$ ${currentPrice.toFixed(2)}`;
             
-            if (price % 2 === 0) {
-                txt.innerText = "🔥 OPORTUNIDADE";
-                box.className = "status-bar buy";
+            // 1. Lógica Sinal Geral (Mantida como estava)
+            const boxGen = document.getElementById('statusBox');
+            const txtGen = document.getElementById('statusText');
+            if (currentPrice % 2 === 0) {
+                txtGen.innerText = "🔥 ALTA VOL";
+                boxGen.className = "status-bar buy";
             } else {
-                txt.innerText = "⚠️ AGUARDAR";
-                box.className = "status-bar sell";
+                txtGen.innerText = "⚠️ CALMA";
+                boxGen.className = "status-bar sell";
+            }
+
+            // 2. Lógica Técnica (RSI + EMA 9 + EMA 21)
+            const rsi = calculateRSI(pricesHistory, 14);
+            const ema9 = calculateEMA(pricesHistory, 9);
+            const ema21 = calculateEMA(pricesHistory, 21);
+            
+            const boxRsi = document.getElementById('rsiBox');
+            const txtRsi = document.getElementById('rsiText');
+
+            if (ema9 && ema21) {
+                // Filtro de Compra: Preço acima das médias E RSI abaixo de 65 (para não comprar no topo)
+                if (currentPrice > ema9 && ema9 > ema21 && rsi < 65) {
+                    txtRsi.innerText = "✅ COMPRA TÉCNICA";
+                    boxRsi.className = "status-bar buy";
+                } 
+                // Filtro de Venda: Preço abaixo das médias E RSI acima de 35
+                else if (currentPrice < ema9 && ema9 < ema21 && rsi > 35) {
+                    txtRsi.innerText = "🔻 VENDA TÉCNICA";
+                    boxRsi.className = "status-bar sell";
+                } 
+                else {
+                    txtRsi.innerText = "⏳ NEUTRO / RSI: " + Math.round(rsi);
+                    boxRsi.className = "status-bar wait";
+                }
             }
         };
     }
 
     function calc() {
-        if (price === 0) return;
+        if (currentPrice === 0) return;
         const tp = parseFloat(document.getElementById('tpP').value);
         const sl = parseFloat(document.getElementById('slP').value);
-        document.getElementById('resTP').innerText = `$ ${(price * (1 + tp/100)).toFixed(2)}`;
-        document.getElementById('resSL').innerText = `$ ${(price * (1 - sl/100)).toFixed(2)}`;
+        document.getElementById('resTP').innerText = `$ ${(currentPrice * (1 + tp/100)).toFixed(2)}`;
+        document.getElementById('resSL').innerText = `$ ${(currentPrice * (1 - sl/100)).toFixed(2)}`;
         document.getElementById('results').style.display = 'block';
     }
 
