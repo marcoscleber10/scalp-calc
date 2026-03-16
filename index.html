@@ -3,45 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ScalpCalc Inteligente</title>
+    <title>ScalpCalc Pro + Gráfico</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0a0e14; color: white; display: flex; justify-content: center; padding: 10px; margin: 0; }
-        .card { background: #151a21; padding: 20px; border-radius: 16px; width: 100%; max-width: 420px; border: 1px solid #2b3139; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
-        .price-box { font-size: 32px; font-weight: bold; color: #00ff88; text-align: center; margin: 15px 0; letter-spacing: 1px; }
+        .card { background: #151a21; padding: 20px; border-radius: 16px; width: 100%; max-width: 440px; border: 1px solid #2b3139; box-shadow: 0 8px 32px rgba(0,0,0,0.5); overflow: hidden;}
         
-        /* Estilo do Medidor de Entrada */
-        .signal-meter { background: #1c2128; padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 20px; border: 1px solid #2b3139; }
-        .signal-text { font-size: 18px; font-weight: bold; margin-bottom: 5px; }
-        .progress-bar { background: #2b3139; height: 10px; border-radius: 5px; overflow: hidden; margin-top: 10px; }
+        .price-box { font-size: 32px; font-weight: bold; color: #00ff88; text-align: center; margin: 10px 0; letter-spacing: 1px; }
+        
+        /* Painel de Sinal */
+        .signal-meter { background: #1c2128; padding: 12px; border-radius: 12px; text-align: center; margin-bottom: 15px; border: 1px solid #2b3139; }
+        .signal-text { font-size: 16px; font-weight: bold; margin-bottom: 4px; }
+        .progress-bar { background: #2b3139; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 8px; }
         .progress-fill { height: 100%; width: 0%; transition: 0.5s; background: #848e9c; }
         
-        .flex { display: flex; gap: 10px; margin-bottom: 10px; }
-        .flex div { flex: 1; }
-        label { font-size: 11px; color: #848e9c; text-transform: uppercase; font-weight: bold; }
-        input, select { width: 100%; padding: 12px; margin-top: 5px; background: #2b3139; border: 1px solid #474d57; color: white; border-radius: 8px; box-sizing: border-box; }
+        /* Área do Gráfico Embutido */
+        .chart-container { width: 100%; height: 250px; margin-bottom: 15px; border-radius: 12px; overflow: hidden; border: 1px solid #2b3139; }
         
-        button { width: 100%; padding: 16px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; background: #00ff88; color: black; font-size: 16px; margin-top: 10px; }
-        .res { margin-top: 20px; padding: 15px; border-radius: 12px; background: #1c2128; border-left: 4px solid #00ff88; display: none; }
+        .flex { display: flex; gap: 8px; margin-bottom: 8px; }
+        .flex div { flex: 1; }
+        label { font-size: 10px; color: #848e9c; text-transform: uppercase; font-weight: bold; display: block; margin-bottom: 2px;}
+        input, select { width: 100%; padding: 10px; background: #2b3139; border: 1px solid #474d57; color: white; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
+        
+        button { width: 100%; padding: 14px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; background: #00ff88; color: black; font-size: 15px; margin-top: 8px; transition: 0.2s;}
+        button:active { transform: scale(0.98); background: #00cc6e; }
+        
+        .res { margin-top: 15px; padding: 12px; border-radius: 12px; background: #1c2128; border-left: 4px solid #00ff88; display: none; font-size: 14px;}
     </style>
 </head>
 <body>
     <div class="card">
-        <h3 style="text-align:center; margin-top:0; color:#848e9c">Mestre do Scalping</h3>
+        <h3 style="text-align:center; margin-top:0; color:#848e9c; font-size: 16px;">Mestre do Scalping</h3>
         
         <select id="exchangeSelect" onchange="changeExchange()">
-            <option value="binance">Binance (Mercado Global)</option>
-            <option value="hyperliquid">Hyperliquid (DEX)</option>
+            <option value="binance">Binance (BTC/USDT)</option>
+            <option value="hyperliquid">Hyperliquid (BTC/USDC)</option>
         </select>
 
         <div class="price-box" id="priceDisplay">Carregando...</div>
 
         <div class="signal-meter">
-            <div id="entrySignal" class="signal-text" style="color:#848e9c">Analisando Mercado...</div>
-            <div id="entryAdvice" style="font-size:12px; color:#848e9c">Aguarde 14 atualizações para sinalizar</div>
+            <div id="entrySignal" class="signal-text" style="color:#848e9c">Analisando...</div>
             <div class="progress-bar">
                 <div id="meterFill" class="progress-fill"></div>
             </div>
         </div>
+
+        <div class="chart-container">
+            <div class="tradingview-widget-container" style="height:100%;width:100%">
+              <div id="tradingview_chart" style="height:100%;width:100%"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+              <script type="text/javascript">
+              new TradingView.widget(
+              {
+              "autosize": true,
+              "symbol": "BINANCE:BTCUSDT",
+              "interval": "1",
+              "timezone": "Etc/UTC",
+              "theme": "dark",
+              "style": "1",
+              "locale": "br",
+              "toolbar_bg": "#f1f3f6",
+              "enable_publishing": false,
+              "hide_legend": true,
+              "save_image": false,
+              "container_id": "tradingview_chart"
+            }
+              );
+              </script>
+            </div>
+            </div>
 
         <div class="flex">
             <div><label>Seu Capital ($)</label><input type="number" id="capital" value="300"></div>
@@ -49,16 +79,16 @@
         </div>
 
         <div class="flex">
-            <div><label>Ganho Desejado %</label><input type="number" id="tpPerc" value="1.0" step="0.1"></div>
-            <div><label>Perda Máxima %</label><input type="number" id="slPerc" value="1.0" step="0.1"></div>
+            <div><label>Ganho %</label><input type="number" id="tpPerc" value="1.0" step="0.1"></div>
+            <div><label>Perda %</label><input type="number" id="slPerc" value="1.0" step="0.1"></div>
         </div>
 
         <button onclick="calculate()">VER MEUS ALVOS AGORA</button>
 
         <div id="results" class="res">
-            <div style="margin-bottom:8px">🟢 <b>Venda em (Lucro):</b> <span id="tp" style="color:#00ff88; float:right"></span></div>
-            <div style="margin-bottom:8px">🔴 <b>Venda em (Stop):</b> <span id="sl" style="color:#ff3e3e; float:right"></span></div>
-            <div style="border-top:1px solid #2b3139; padding-top:8px; font-size:13px">
+            <div style="margin-bottom:6px">🟢 <b>Venda em (Lucro):</b> <span id="tp" style="color:#00ff88; float:right"></span></div>
+            <div style="margin-bottom:6px">🔴 <b>Venda em (Stop):</b> <span id="sl" style="color:#ff3e3e; float:right"></span></div>
+            <div style="border-top:1px solid #2b3139; padding-top:6px; font-size:12px">
                 💰 <b>Valor Total da Operação:</b> <span id="posSize" style="float:right"></span>
             </div>
         </div>
@@ -104,7 +134,6 @@
                 let rsi = 100 - (100 / (1 + (gains / (losses || 0.001))));
                 
                 const signal = document.getElementById('entrySignal');
-                const advice = document.getElementById('entryAdvice');
                 const fill = document.getElementById('meterFill');
                 
                 fill.style.width = rsi + '%';
@@ -112,17 +141,14 @@
                 if(rsi <= 35) {
                     signal.innerText = "🔥 OPORTUNIDADE DE COMPRA";
                     signal.style.color = "#00ff88";
-                    advice.innerText = "O preço caiu muito e pode subir em breve!";
                     fill.style.background = "#00ff88";
                 } else if(rsi >= 65) {
                     signal.innerText = "⚠️ HORA DE VENDER / AGUARDAR";
                     signal.style.color = "#ff3e3e";
-                    advice.innerText = "O preço subiu demais, risco de queda alto.";
                     fill.style.background = "#ff3e3e";
                 } else {
                     signal.innerText = "⚖️ MERCADO NEUTRO";
                     signal.style.color = "#848e9c";
-                    advice.innerText = "Sem sinal claro. Aguarde um movimento maior.";
                     fill.style.background = "#848e9c";
                 }
             }
@@ -146,6 +172,9 @@
             document.getElementById('priceDisplay').innerText = "Conectando...";
             const ex = document.getElementById('exchangeSelect').value;
             ex === 'binance' ? connectBinance() : connectHyperliquid();
+            
+            // O widget do TradingView precisa ser recarregado se mudarmos de exchange,
+            // mas para simplificar e manter leve, deixaremos o gráfico da Binance fixo por enquanto.
         }
 
         connectBinance();
