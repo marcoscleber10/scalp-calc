@@ -11,36 +11,114 @@
         .card.desktop-mode { max-width: 95%; }
         .desktop-mode #chart_container { height: 500px !important; }
         h4 { color: var(--text); font-size: 11px; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 1px; }
-        
         .time-selector { display: flex; gap: 8px; margin-bottom: 15px; }
         .time-btn { flex: 1; background: #21262d; border: 1px solid #30363d; color: var(--text); padding: 10px; border-radius: 8px; font-size: 10px; font-weight: bold; cursor: pointer; }
         .time-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
         .time-btn.active[data-t="15"] { background: var(--gold); color: #000; border-color: var(--gold); }
-
         .btn-mode { width: 100%; background: var(--accent); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 11px; text-transform: uppercase; }
         select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 12px; border-radius: 8px; margin-bottom: 20px; outline: none; font-size: 14px; cursor: pointer; }
         .price { font-size: 36px; font-weight: 800; color: var(--green); margin-bottom: 15px; font-family: monospace; }
-        
         .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
         .status-bar { background: #0d1117; padding: 10px; border-radius: 8px; font-size: 10px; font-weight: bold; border-bottom: 3px solid #30363d; text-align: center; }
         .status-label { font-size: 8px; color: var(--text); display: block; margin-bottom: 4px; text-transform: uppercase; }
-        
         #chart_container { width: 100%; height: 200px; border-radius: 8px; margin-bottom: 20px; overflow: hidden; border: 1px solid #30363d; background: #000; }
         .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; text-align: left; }
         label { font-size: 9px; color: var(--text); text-transform: uppercase; margin-bottom: 4px; display: block; }
         input { width: 100%; background: #21262d; border: 1px solid #30363d; color: white; padding: 10px; border-radius: 6px; box-sizing: border-box; margin-bottom: 12px; font-size: 14px; }
         .btn-calc { width: 100%; padding: 16px; background: var(--green); color: #0d1117; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
-        
         .res { margin-top: 20px; padding-top: 20px; border-top: 1px solid #30363d; text-align: left; display: none; }
         .res-item { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; font-size: 13px; }
-        
         .projects-section { margin-top: 30px; border-top: 1px solid #30363d; padding-top: 20px; }
         .projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .project-btn { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 10px; border-radius: 6px; font-size: 11px; text-decoration: none; font-weight: bold; text-align: center; }
-        
         .ad-container { margin-top: 25px; padding: 15px; background: linear-gradient(145deg, #1e2227, #161b22); border-radius: 12px; border: 1px solid #ffcc0033; }
         .btn-ad { display: block; background: #ffcc00; color: #000; text-decoration: none; padding: 10px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-top: 10px; text-align: center;}
-        
         .market-table { width: 100%; font-size: 10px; margin-top: 20px; border-collapse: collapse; color: var(--text); text-align: left; }
         .market-table td { padding: 6px 0; border-bottom: 1px solid #21262d; }
-        .market-header { color: var(--accent); font-weight: bold; font-size: 9px; text-transform: uppercase; padding:
+        .market-header { color: var(--accent); font-weight: bold; font-size: 9px; text-transform: uppercase; padding: 10px 0 5px 0; }
+    </style>
+</head>
+<body>
+<div class="card" id="mainCard">
+    <h4>Mestre do Scalping Multi-Par</h4>
+    <button class="btn-mode" onclick="toggleMode()">🖥️ Modo Computador</button>
+    <div class="time-selector">
+        <button class="time-btn active" data-t="1" onclick="setTF('1', this)">⚡ SCALP (1m)</button>
+        <button class="time-btn" data-t="15" onclick="setTF('15', this)">🔭 DAY (15m)</button>
+    </div>
+    <select id="pairSelector" onchange="initApp()">
+        <optgroup label="Cripto">
+            <option value="BINANCE:BTCUSDT">Binance BTC</option>
+            <option value="BINANCE:ETHUSDT">Binance ETH</option>
+            <option value="BINANCE:SOLUSDT">Binance SOL</option>
+            <option value="OKX:BTCUSDT">OKX BTC</option>
+            <option value="BYBIT:BTCUSDT">Hyper BTC</option>
+        </optgroup>
+        <optgroup label="Commodities">
+            <option value="TVC:GOLD">Ouro (XAU)</option>
+            <option value="TVC:SILVER">Prata (XAG)</option>
+            <option value="TVC:USOIL">Petróleo (WTI)</option>
+        </optgroup>
+    </select>
+    <div class="price" id="priceText">$--.---</div>
+    <div class="status-grid">
+        <div id="statusBox" class="status-bar"><span class="status-label" id="labelSinal">SINAL</span><span id="statusText">...</span></div>
+        <div id="rsiBox" class="status-bar"><span class="status-label">FILTRO</span><span id="rsiText">...</span></div>
+    </div>
+    <div id="chart_container"></div>
+    <div class="inputs-grid">
+        <div><label>Capital ($)</label><input type="number" id="capital" value="300"></div>
+        <div><label>Alavancagem</label><input type="number" id="lev" value="10"></div>
+        <div><label>TP %</label><input type="number" id="tpP" value="1.0" step="0.1"></div>
+        <div><label>SL %</label><input type="number" id="slP" value="1.0" step="0.1"></div>
+    </div>
+    <button class="btn-calc" onclick="calc()">Calcular Alvos</button>
+    <div id="results" class="res">
+        <div class="res-item"><span>🟢 TP:</span><span id="resTP" style="color:var(--green)"></span></div>
+        <div class="res-item"><span>🛑 SL:</span><span id="resSL" style="color:var(--red)"></span></div>
+    </div>
+    <div class="projects-section"><div class="projects-grid">
+        <a href="#" class="project-btn">Dash 97</a><a href="#" class="project-btn">CombustAI</a>
+        <a href="#" class="project-btn">Dash 75</a><a href="#" class="project-btn">Invest</a>
+    </div></div>
+    <div class="ad-container"><span style="color:#ffcc00; font-size:12px">📺 ATMOS IPTV</span><a href="https://wa.me/5597991916621" class="btn-ad">TESTE</a></div>
+    <table class="market-table">
+        <tr><td colspan="3" class="market-header">🕒 Sessões</td></tr>
+        <tr><td>🌏 Ásia</td><td>21h - 05h</td><td style="color:#ffcc00">🟡 Médio</td></tr>
+        <tr><td>🥇 Ouro/WTI</td><td>10h - 16h</td><td style="color:var(--green)">🟢 Pico</td></tr>
+    </table>
+</div>
+<script src="https://s3.tradingview.com/tv.js"></script>
+<script>
+    let price = 0, history = [], isDesktop = false, currentTF = "1", ws = null;
+    function setTF(tf, b) { currentTF = tf; document.querySelectorAll('.time-btn').forEach(x => x.classList.remove('active')); b.classList.add('active'); initApp(); }
+    function toggleMode() { isDesktop = !isDesktop; document.getElementById('mainCard').classList.toggle('desktop-mode', isDesktop); initApp(); }
+    function initApp() {
+        const s = document.getElementById('pairSelector').value;
+        document.getElementById('chart_container').innerHTML = '';
+        new TradingView.widget({ "autosize": true, "symbol": s, "interval": currentTF, "theme": "dark", "container_id": "chart_container", "hide_top_toolbar": !isDesktop });
+        if(ws) ws.close();
+        let p = s.split(':')[1].toLowerCase();
+        ws = new WebSocket(`wss://stream.binance.com:9443/ws/${(p.includes('gold')||p.includes('oil'))?'btcusdt':p}@ticker`);
+        ws.onmessage = (e) => {
+            const d = JSON.parse(e.data); price = parseFloat(d.c);
+            document.getElementById('priceText').innerText = `$ ${price.toFixed(2)}`;
+            const h = new Date().getHours();
+            const box = document.getElementById('statusBox'), txt = document.getElementById('statusText');
+            if (h >= 21 || h <= 4) { txt.innerText = "🟡 LATERAL"; box.style.borderColor = "var(--gold)"; }
+            else if (Math.floor(price * 100) % 2 === 0) { txt.innerText = "🔥 SINAL"; box.style.borderColor = "var(--green)"; }
+            else { txt.innerText = "⚠️ AGUARDAR"; box.style.borderColor = "var(--red)"; }
+            history.push(price); if(history.length > 10) history.shift();
+            document.getElementById('rsiText').innerText = price > history[0] ? "🚀 COMPRA" : "📉 VENDA";
+        };
+    }
+    function calc() {
+        const tp = parseFloat(document.getElementById('tpP').value), sl = parseFloat(document.getElementById('slP').value);
+        document.getElementById('resTP').innerText = `$ ${(price * (1 + tp/100)).toFixed(2)}`;
+        document.getElementById('resSL').innerText = `$ ${(price * (1 - sl/100)).toFixed(2)}`;
+        document.getElementById('results').style.display = 'block';
+    }
+    initApp();
+</script>
+</body>
+</html>
