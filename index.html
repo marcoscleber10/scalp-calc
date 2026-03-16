@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mestre do Scalping Pro</title>
     <style>
-        :root { --bg: #0d1117; --card: #161b22; --green: #00ff88; --red: #ff3e3e; --text: #8b949e; --accent: #f39c12; }
+        :root { --bg: #0d1117; --card: #161b22; --green: #00ff88; --red: #ff3e3e; --text: #8b949e; --gold: #ffcc00; }
         body { background-color: var(--bg); color: white; font-family: sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
         .card { background: var(--card); padding: 24px; border-radius: 16px; width: 100%; max-width: 380px; text-align: center; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         h4 { color: var(--text); font-size: 11px; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 1px; }
@@ -18,19 +18,21 @@
         .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; text-align: left; }
         label { font-size: 9px; color: var(--text); text-transform: uppercase; margin-bottom: 4px; display: block; }
         input { width: 100%; background: #21262d; border: 1px solid #30363d; color: white; padding: 10px; border-radius: 6px; box-sizing: border-box; margin-bottom: 12px; font-size: 14px; }
-        .btn-calc { width: 100%; padding: 16px; background: var(--green); color: #0d1117; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-bottom: 10px; }
+        .btn-calc { width: 100%; padding: 16px; background: var(--green); color: #0d1117; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-bottom: 5px; }
         
-        /* Estilo da Publicidade */
-        .ad-container { margin-top: 25px; padding: 15px; background: linear-gradient(145deg, #1e2227, #161b22); border-radius: 12px; border: 1px solid #ffcc0033; position: relative; overflow: hidden; }
-        .ad-title { color: #ffcc00; font-size: 14px; font-weight: bold; margin-bottom: 8px; display: block; }
-        .ad-text { font-size: 11px; color: #ced4da; margin-bottom: 12px; line-height: 1.4; }
-        .btn-ad { display: block; background: #ffcc00; color: #000; text-decoration: none; padding: 10px; border-radius: 6px; font-size: 12px; font-weight: bold; transition: 0.3s; }
-        .btn-ad:hover { background: #e6b800; transform: scale(1.02); }
-
-        .res { margin-top: 20px; padding-top: 20px; border-top: 1px solid #30363d; text-align: left; display: none; }
+        .res { margin-top: 20px; padding-bottom: 20px; text-align: left; display: none; }
         .res-item { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; font-size: 13px; }
         .val-group { text-align: right; }
         .cash-val { font-size: 11px; color: var(--text); display: block; }
+
+        /* Estilo da Publicidade Atmos no Rodapé */
+        .ad-footer { margin-top: 20px; padding-top: 20px; border-top: 1px solid #30363d; }
+        .ad-banner { background: linear-gradient(145deg, #1e2227, #161b22); padding: 15px; border-radius: 12px; border: 1px solid #ffcc0033; }
+        .ad-title { color: var(--gold); font-size: 14px; font-weight: bold; margin-bottom: 5px; display: block; }
+        .ad-price { color: #fff; font-size: 18px; font-weight: 800; margin-bottom: 10px; display: block; }
+        .ad-desc { font-size: 10px; color: #8b949e; margin-bottom: 15px; line-height: 1.4; }
+        .btn-wa { display: block; background: var(--gold); color: #000; text-decoration: none; padding: 12px; border-radius: 8px; font-size: 12px; font-weight: bold; transition: 0.3s; text-transform: uppercase; }
+        .btn-wa:hover { background: #e6b800; transform: translateY(-2px); }
     </style>
 </head>
 <body>
@@ -45,7 +47,7 @@
     </select>
 
     <div class="price" id="priceText">$--.---</div>
-    <div id="statusBox" class="status-bar">ANALISANDO...</div>
+    <div id="statusBox" class="status-bar">ANALISANDO MERCADO...</div>
     <div id="chart_container"></div>
 
     <div class="inputs-grid">
@@ -74,12 +76,15 @@
         </div>
     </div>
 
-    <div class="ad-container">
-        <span class="ad-title">📺 DIA DO CONSUMIDOR ATMOS</span>
-        <p class="ad-text">Todos os canais liberados, milhares de filmes e séries por apenas <b>R$ 30,00/mês</b>. Teste grátis agora!</p>
-        <a href="https://wa.me/5597991916621?text=Olá!+Vi+a+promoção+Atmos+no+Mestre+do+Scalping+e+quero+meu+teste+grátis" target="_blank" class="btn-ad">
-            QUERO TESTAR GRÁTIS
-        </a>
+    <div class="ad-footer">
+        <div class="ad-banner">
+            <span class="ad-title">DIA DO CONSUMIDOR ATMOS</span>
+            <span class="ad-price">R$ 30,00/mês</span>
+            <p class="ad-desc">Canais liberados + Filmes e Séries. O melhor IPTV do mercado com suporte 24h.</p>
+            <a href="https://wa.me/5597991916621?text=Olá!+Vi+a+promoção+Atmos+no+Mestre+do+Scalping+e+quero+um+teste+grátis" target="_blank" class="btn-wa">
+                Quero Testar Grátis
+            </a>
+        </div>
     </div>
 </div>
 
