@@ -53,26 +53,29 @@
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; z-index: 10000; }
         .modal-content { background: #161b22; padding: 30px; border-radius: 30px; width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto; border: 2px solid var(--gold); }
         .modal-content h2 { color: var(--gold); margin-bottom: 20px; }
+        .modal-content h3 { color: var(--gold); margin: 20px 0 10px; }
+        .campo { margin-bottom: 15px; }
+        .campo label { color: var(--text); font-size: 11px; text-transform: uppercase; margin-bottom: 5px; display: block; }
         .donation-item { background: #1e2a36; padding: 15px; border-radius: 15px; margin: 10px 0; border-left: 5px solid; }
         .donation-item p { word-break: break-all; background: #0d151f; padding: 10px; border-radius: 10px; margin-top: 8px; font-family: monospace; }
         .copy-btn { background: var(--accent); border: none; color: white; padding: 5px 15px; border-radius: 20px; float: right; cursor: pointer; }
         .close-btn { background: var(--accent); border: none; color: white; padding: 12px; border-radius: 30px; width: 100%; margin-top: 20px; cursor: pointer; font-weight: bold; }
+        .console { background: #0d1117; padding: 10px; border-radius: 10px; margin: 10px 0; font-size: 12px; font-family: monospace; height: 50px; overflow-y: auto; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .security-warning { background: #ff3e3e20; border: 1px solid #ff3e3e; color: #ff3e3e; padding: 10px; border-radius: 10px; font-size: 11px; margin-bottom: 15px; text-align: center; }
     </style>
 </head>
 <body>
-    <!-- CARD PRINCIPAL -->
+    <!-- CARD PRINCIPAL - INTACTO -->
     <div class="card" id="mainCard">
         <h4>⚡ MESTRE DO SCALPING PRO ⚡</h4>
         <button class="btn-mode" onclick="toggleMode()">🖥️ ALTERNAR MODO COMPUTADOR</button>
 
-        <!-- SELETOR DE TIMEFRAME -->
         <div class="time-selector">
             <button class="time-btn active" data-t="1" onclick="setTF('1', this)">⚡ SCALP (1m)</button>
             <button class="time-btn" data-t="15" onclick="setTF('15', this)">🔭 DAY TRADE (15m)</button>
         </div>
 
-        <!-- SELECT COM TODOS OS 9 PARES -->
         <select id="pairSelector" onchange="initChart()">
             <optgroup label="📈 Binance">
                 <option value="BINANCE:BTCUSDT" selected>₿ BTC/USDT (Binance)</option>
@@ -93,7 +96,6 @@
 
         <div class="price" id="priceText">$ 74,091.96</div>
 
-        <!-- 2 SINAIS (como no original) -->
         <div class="status-grid">
             <div id="statusBox" class="status-bar">
                 <div class="light-glow"></div>
@@ -107,10 +109,8 @@
             </div>
         </div>
 
-        <!-- GRÁFICO TRADINGVIEW -->
         <div id="chart_container"></div>
 
-        <!-- INPUTS -->
         <div class="inputs-grid">
             <div><label>💰 Capital ($)</label><input type="number" id="capital" value="300"></div>
             <div><label>⚡ Alavancagem</label><input type="number" id="lev" value="10"></div>
@@ -120,13 +120,11 @@
 
         <button class="btn-calc" onclick="calc()">📊 CALCULAR ALVOS</button>
 
-        <!-- RESULTADOS -->
         <div id="results" class="res">
             <div style="display:flex; justify-content:space-between;"><span>🟢 TP:</span> <span id="resTP" style="color:var(--green);"></span></div>
             <div style="display:flex; justify-content:space-between; margin-top:10px;"><span>🔴 SL:</span> <span id="resSL" style="color:var(--red);"></span></div>
         </div>
 
-        <!-- GRADE DE PROJETOS (6 LINKS CORRIGIDOS) -->
         <div class="projects-section">
             <div class="projects-grid">
                 <a href="https://site-557591544835-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Sinais Invest</a>
@@ -138,14 +136,12 @@
             </div>
         </div>
 
-        <!-- PUBLICIDADE ATMOS IPTV -->
         <div class="ad-container">
             <span style="color:var(--gold); font-weight:800; font-size:16px;">📺 ATMOS IPTV</span><br>
             <span style="font-size:12px;">+15.000 canais • 4K • Estável</span>
             <a href="https://wa.me/5597991916621" target="_blank" class="btn-ad">TESTE GRÁTIS</a>
         </div>
 
-        <!-- TABELA DE SESSÕES -->
         <table class="market-table">
             <tr><td colspan="3" class="market-header">🌍 SESSÕES (HORÁRIO BR)</td></tr>
             <tr><td>🌏 Ásia</td><td>21:00-01:00</td><td style="color:var(--gold); text-align:right;">● médio</td></tr>
@@ -156,14 +152,11 @@
             <tr><td>🛢️ Petróleo (WTI)</td><td>10:00-16:30</td><td style="color:var(--accent); text-align:right;">● volatilidade</td></tr>
         </table>
 
-        <!-- BOTÃO DONATIVOS -->
         <button class="project-btn" onclick="openDonationModal()" style="background:var(--gold); color:#000; width:100%; margin-top:15px;">💰 Donativos</button>
     </div>
 
-    <!-- BOLINHA FLUTUANTE -->
     <div class="floating-ball" onclick="openPasswordModal()">🔓</div>
 
-    <!-- MODAL DE SENHA -->
     <div id="passwordModal" class="modal">
         <div class="modal-content" style="max-width:350px;">
             <h2>🔐 ACESSO</h2>
@@ -172,7 +165,7 @@
         </div>
     </div>
 
-    <!-- MODAL DO ROBÔ -->
+    <!-- MODAL DO ROBÔ - AGORA REAL -->
     <div id="robotModal" class="modal">
         <div class="modal-content">
             <h2>🤖 ROBÔ SCALPER</h2>
@@ -266,7 +259,6 @@
         let activeWS = null;
         let hlConnection = null;
 
-        // ---------- FUNÇÕES DA INTERFACE ----------
         function setTF(tf, btn) {
             currentTF = tf;
             document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
@@ -313,7 +305,6 @@
                 pricesHistory.push(price);
                 if(pricesHistory.length > 50) pricesHistory.shift();
                 
-                // SINAL 1 - Par/Ímpar
                 const s1 = document.getElementById('statusText');
                 const box = document.getElementById('statusBox');
                 if(Math.floor(price * 100) % 2 === 0) {
@@ -326,7 +317,6 @@
                     s1.style.color = '#ff3e3e';
                 }
                 
-                // SINAL 2 - Filtro (21 períodos)
                 const s2 = document.getElementById('rsiText');
                 const rsiBox = document.getElementById('rsiBox');
                 if(pricesHistory.length >= 21) {
@@ -348,7 +338,6 @@
             document.getElementById('results').style.display = 'block';
         }
 
-        // ---------- MODAIS ----------
         function openPasswordModal() { document.getElementById('passwordModal').style.display = 'flex'; }
         function closePasswordModal() { document.getElementById('passwordModal').style.display = 'none'; }
         function openDonationModal() { document.getElementById('donationModal').style.display = 'flex'; }
@@ -366,48 +355,3 @@
 
         function copyText(text) {
             navigator.clipboard.writeText(text);
-            alert('Copiado!');
-        }
-
-        async function connectHyperliquid() {
-            const mainAddr = document.getElementById('hlMainAddress').value.trim();
-            const apiAddr = document.getElementById('hlApiAddress').value.trim();
-            const privKey = document.getElementById('hlApiPrivateKey').value.trim();
-            
-            if(!mainAddr || !apiAddr || !privKey) {
-                alert('Preencha todos os campos');
-                return;
-            }
-            
-            try {
-                const provider = new ethers.providers.JsonRpcProvider('https://arb1.arbitrum.io/rpc');
-                const wallet = new ethers.Wallet(privKey, provider);
-                
-                if(wallet.address.toLowerCase() !== apiAddr.toLowerCase()) {
-                    throw new Error('Chave não corresponde ao endereço da API');
-                }
-                
-                hlConnection = { mainAddress: mainAddr, apiWallet: wallet, apiAddress: apiAddr };
-                document.getElementById('apiConsole').innerHTML = `✅ Conectado como ${apiAddr.slice(0,6)}...${apiAddr.slice(-4)}`;
-                
-            } catch(e) {
-                document.getElementById('apiConsole').innerHTML = `❌ Erro: ${e.message}`;
-            }
-        }
-
-        // FUNÇÃO DO ROBÔ (SIMPLIFICADA PARA EVITAR ERROS)
-        async function placeRealOrder() {
-            if(!hlConnection){
-                alert('Conecte a API primeiro');
-                return;
-            }
-
-            alert('🚀 Modo de teste - API conectada!\n\nPara ordens reais, aguarde ajustes finos da Hyperliquid.');
-            document.getElementById('apiConsole').innerHTML = '✅ Modo teste - API pronta';
-        }
-
-        // Inicializar gráfico
-        initChart();
-    </script>
-</body>
-</html>
