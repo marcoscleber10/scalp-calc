@@ -21,13 +21,11 @@
         select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 12px; border-radius: 8px; margin-bottom: 20px; outline: none; font-size: 14px; cursor: pointer; }
         .price { font-size: 36px; font-weight: 800; color: var(--green); margin-bottom: 15px; font-family: monospace; }
         
-        /* Grid de status com 3 colunas (agora 3 sinais) */
         .status-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 15px; }
         .status-bar { background: #0d1117; padding: 10px; border-radius: 8px; font-size: 10px; font-weight: bold; border-bottom: 3px solid #30363d; text-align: center; position: relative; overflow: hidden; }
         .status-label { font-size: 8px; color: var(--text); display: block; margin-bottom: 4px; text-transform: uppercase; }
         .status-value { font-size: 12px; font-weight: bold; display: block; }
         
-        /* Efeito de Painel de Luz */
         .light-glow { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: currentColor; filter: blur(4px); opacity: 0.5; }
 
         #chart_container { width: 100%; height: 200px; border-radius: 8px; margin-bottom: 20px; overflow: hidden; border: 1px solid #30363d; background: #000; }
@@ -51,7 +49,6 @@
         .market-table td { padding: 6px 0; border-bottom: 1px solid #21262d; }
         .market-header { color: var(--accent); font-weight: bold; font-size: 9px; text-transform: uppercase; padding: 10px 0 5px 0; }
 
-        /* Bolinha flutuante (senha) */
         .floating-ball { position: fixed; bottom: 30px; right: 30px; width: 70px; height: 70px; background: radial-gradient(circle at 30% 30%, var(--green), #0f8f5c); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #0b0f14; font-weight: 900; font-size: 26px; box-shadow: 0 10px 25px #00ff8880, 0 0 30px #00ff88; cursor: pointer; z-index: 9999; border: 2px solid #f0f4fa; user-select: none; }
         .password-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #030405dd; backdrop-filter: blur(12px); display: none; align-items: center; justify-content: center; z-index: 10000; }
         .password-card { background: #151e2a; padding: 35px 30px; border-radius: 30px; width: 320px; border: 2px solid var(--green); box-shadow: 0 0 50px #00ff8870; text-align: center; }
@@ -71,7 +68,6 @@
 </head>
 <body>
 
-<!-- CARD PRINCIPAL (MANTIDO) -->
 <div class="card" id="mainCard">
     <h4>Mestre do Scalping Multi-Par</h4>
     <button class="btn-mode" onclick="toggleMode()">🖥️ Alternar Modo Computador</button>
@@ -103,7 +99,6 @@
 
     <div class="price" id="priceText">$--.---</div>
 
-    <!-- GRADE COM 3 SINAIS (agora com OPÇÃO 3) -->
     <div class="status-grid">
         <div id="statusBox" class="status-bar">
             <div class="light-glow"></div>
@@ -138,12 +133,12 @@
         <div class="res-item"><span>🛑 Saída Perda (SL):</span><span id="resSL" style="color:var(--red); font-weight: bold;"></span></div>
     </div>
 
-    <!-- GRADE DE PROJETOS COM LINKS CORRETOS -->
+    <!-- GRADE DE PROJETOS COM LINKS E NOMES ATUALIZADOS -->
     <div class="projects-section">
         <div class="projects-grid">
-            <a href="https://site-557591544835-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Dashboard 97</a>
+            <a href="https://site-557591544835-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Sinais Invest</a>
             <a href="https://site-combustai-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">CombustAI</a>
-            <a href="https://site-559791916621-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Dashboard 75</a>
+            <a href="https://site-559791916621-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Registro DCA</a>
             <a href="https://pepinometro-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Pepinômetro</a>
             <a href="https://historia-copas-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">História Copas</a>
             <a href="https://investopcao.culturabuilder.com" class="project-btn" target="_blank">InvestOpção</a>
@@ -166,10 +161,8 @@
     </table>
 </div>
 
-<!-- BOLINHA FLUTUANTE -->
 <div class="floating-ball" onclick="showPasswordModal()">🔓</div>
 
-<!-- MODAL DE SENHA -->
 <div id="passwordModal" class="password-modal">
     <div class="password-card">
         <h3>🔐 ACESSO AO ROBÔ</h3>
@@ -179,7 +172,6 @@
     </div>
 </div>
 
-<!-- PAINEL DO ROBÔ (mantido) -->
 <div id="robotPanel" class="robot-panel-overlay">
     <div class="robot-card">
         <h2>🤖 ROBÔ SCALPER PRO</h2>
@@ -217,7 +209,6 @@
 
 <script src="https://s3.tradingview.com/tv.js"></script>
 <script>
-    // ---------- CÓDIGO ORIGINAL (MANTIDO) ----------
     let price = 0;
     let pricesHistory = [];
     let isDesktop = false;
@@ -234,7 +225,6 @@
     function toggleMode() {
         isDesktop = !isDesktop;
         document.getElementById('mainCard').classList.toggle('desktop-mode', isDesktop);
-        // reinicia o gráfico para ajustar tamanho
         initApp();
     }
 
@@ -285,7 +275,6 @@
             pricesHistory.push(price);
             if (pricesHistory.length > 50) pricesHistory.shift();
 
-            // SINAL 1 (par/ímpar)
             const box = document.getElementById('statusBox');
             const txt = document.getElementById('statusText');
             if (Math.floor(price * 100) % 2 === 0) {
@@ -297,9 +286,7 @@
                 box.style.borderBottomColor = "var(--red)";
                 box.style.color = "var(--red)";
             }
-            // SINAL 2 (filtro técnico simulado)
             atualizarFiltroTecnico();
-            // SINAL 3 (momentum)
             atualizarMomentum();
         };
     }
@@ -317,7 +304,6 @@
         rsiBox.style.color = rsi > 50 ? "var(--green)" : "var(--red)";
     }
 
-    // NOVO: Sinal 3 - Momentum baseado na média dos últimos 3 preços
     function atualizarMomentum() {
         const momBox = document.getElementById('momBox');
         const momTxt = document.getElementById('momText');
@@ -325,7 +311,6 @@
             momTxt.innerText = "AGUARDANDO...";
             return;
         }
-        // pega os últimos 3 preços
         let lastThree = pricesHistory.slice(-3);
         let avg = lastThree.reduce((a,b) => a+b, 0) / lastThree.length;
         if (price > avg * 1.001) {
@@ -353,7 +338,6 @@
 
     initApp();
 
-    // ---------- FUNÇÕES DA BOLINHA E ROBÔ ----------
     function showPasswordModal() {
         document.getElementById('passwordModal').style.display = 'flex';
     }
