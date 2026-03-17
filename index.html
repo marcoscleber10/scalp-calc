@@ -66,22 +66,22 @@
         <h4>⚡ MESTRE DO SCALPING PRO ⚡</h4>
         <button class="btn-mode" onclick="toggleMode()">🖥️ ALTERNAR MODO COMPUTADOR</button>
 
-        <!-- Select com TODOS os 9 pares -->
+        <!-- Select com TODOS os pares (11 opções) -->
         <select id="pairSelector" onchange="initChart()">
             <optgroup label="📈 Binance">
                 <option value="BINANCE:BTCUSDT" selected>₿ BTC/USDT (Binance)</option>
                 <option value="BINANCE:ETHUSDT">⟠ ETH/USDT (Binance)</option>
                 <option value="BINANCE:SOLUSDT">◎ SOL/USDT (Binance)</option>
             </optgroup>
-            <optgroup label="🌀 Hyperliquid">
+            <optgroup label="🌀 Hyperliquid Cripto">
                 <option value="BYBIT:BTCUSDT">₿ BTC/USD (Hyperliquid)</option>
                 <option value="BYBIT:ETHUSDT">⟠ ETH/USD (Hyperliquid)</option>
                 <option value="BYBIT:SOLUSDT">◎ SOL/USD (Hyperliquid)</option>
             </optgroup>
-            <optgroup label="🏅 Metais & Energia">
-                <option value="TVC:GOLD">🥇 Ouro (XAU/USD)</option>
-                <option value="TVC:SILVER">🥈 Prata (XAG/USD)</option>
-                <option value="TVC:USOIL">🛢️ Petróleo WTI</option>
+            <optgroup label="🏅 Hyperliquid Metais & Energia">
+                <option value="TVC:GOLD">🥇 Ouro (XAU/USD) - Hyperliquid</option>
+                <option value="TVC:SILVER">🥈 Prata (XAG/USD) - Hyperliquid</option>
+                <option value="TVC:USOIL">🛢️ Petróleo WTI - Hyperliquid</option>
             </optgroup>
         </select>
 
@@ -145,17 +145,16 @@
     <!-- Bolinha Flutuante -->
     <div class="floating-ball" onclick="openPasswordModal()">🔓</div>
 
-    <!-- Modal de Senha (NOVA SENHA: Maria1301) -->
+    <!-- Modal de Senha (SENHA: Maria1301) -->
     <div id="passwordModal" class="modal">
         <div class="modal-content" style="max-width:350px;">
             <h2>🔐 ACESSO</h2>
             <input type="password" id="passInput" maxlength="8" placeholder="********" style="text-align:center; font-size:24px; letter-spacing:4px;">
             <button class="close-btn" onclick="checkPassword()" style="margin-top:15px;">VALIDAR</button>
-            <!-- A senha não aparece mais no HTML -->
         </div>
     </div>
 
-    <!-- Modal do Robô (CORRIGIDO) -->
+    <!-- Modal do Robô (COM FUNÇÃO CORRIGIDA) -->
     <div id="robotModal" class="modal">
         <div class="modal-content">
             <h2>🤖 ROBÔ SCALPER</h2>
@@ -374,135 +373,134 @@
             }
         }
 
+        // ===== FUNÇÃO CORRIGIDA CONFORME SUGESTÃO DO CHATGPT =====
         async function placeRealOrder() {
-            if(!hlConnection) {
-                alert('Conecte a API primeiro');
+            if (!hlConnection) {
+                alert("Conecte a API primeiro");
                 return;
             }
-            
-            const capital = parseFloat(document.getElementById('botCapital').value);
-            const pair = document.getElementById('botPair').value;
-            const sl = parseFloat(document.getElementById('botSL').value)/100;
-            const tp = parseFloat(document.getElementById('botTP').value)/100;
-            
-            if(capital < 1) {
-                alert('Capital mínimo: 1 USDC');
+
+            const capital = parseFloat(document.getElementById("botCapital").value);
+            const pair = document.getElementById("botPair").value;
+            const sl = parseFloat(document.getElementById("botSL").value) / 100;
+            const tp = parseFloat(document.getElementById("botTP").value) / 100;
+
+            if (capital < 1) {
+                alert("Capital mínimo: 1 USDC");
                 return;
             }
-            
-            if(!price || price === 0) {
-                alert('Aguardando preço...');
+
+            if (!price || price === 0) {
+                alert("Aguardando preço...");
                 return;
             }
-            
+
+            const assetMap = {
+                BTC: 0,
+                ETH: 1,
+                SOL: 2
+            };
+
+            const asset = assetMap[pair];
+            const size = (capital / price).toFixed(6);
+
+            const action = {
+                type: "order",
+                orders: [{
+                    a: asset,
+                    b: true,
+                    p: price.toFixed(2),
+                    s: size,
+                    r: false,
+                    t: { limit: { tif: "Ioc" } }
+                }],
+                grouping: "na"
+            };
+
+            const nonce = Date.now();
+
+            // DOMAIN CORRETO - Hyperliquid no Arbitrum
+            const domain = {
+                name: "Hyperliquid",
+                version: "1",
+                chainId: 42161,
+                verifyingContract: "0x0000000000000000000000000000000000000000"
+            };
+
+            const types = {
+                Action: [
+                    { name: "type", type: "string" },
+                    { name: "orders", type: "Order[]" },
+                    { name: "grouping", type: "string" }
+                ],
+                Order: [
+                    { name: "a", type: "uint32" },
+                    { name: "b", type: "bool" },
+                    { name: "p", type: "string" },
+                    { name: "s", type: "string" },
+                    { name: "r", type: "bool" },
+                    { name: "t", type: "OrderType" }
+                ],
+                OrderType: [
+                    { name: "limit", type: "Limit" }
+                ],
+                Limit: [
+                    { name: "tif", type: "string" }
+                ]
+            };
+
             try {
-                const assetIndex = pair === 'BTC' ? 0 : (pair === 'ETH' ? 1 : 2);
-                const quantity = (capital / price).toFixed(6);
-                
-                const action = {
-                    type: "order",
-                    orders: [{
-                        a: assetIndex,
-                        b: true,
-                        p: price.toFixed(2),
-                        s: quantity,
-                        r: false,
-                        t: { limit: { tif: "Ioc" } }
-                    }],
-                    grouping: "na"
-                };
-                
-                const nonce = Date.now();
-                
-                const domain = {
-                    name: "Exchange",
-                    version: "1",
-                    chainId: 1337,
-                    verifyingContract: "0x0000000000000000000000000000000000000000"
-                };
-                
-                const types = {
-                    Action: [
-                        { name: "type", type: "string" },
-                        { name: "orders", type: "Order[]" },
-                        { name: "grouping", type: "string" }
-                    ],
-                    Order: [
-                        { name: "a", type: "uint32" },
-                        { name: "b", type: "bool" },
-                        { name: "p", type: "string" },
-                        { name: "s", type: "string" },
-                        { name: "r", type: "bool" },
-                        { name: "t", type: "OrderType" }
-                    ],
-                    OrderType: [
-                        { name: "limit", type: "Limit" }
-                    ],
-                    Limit: [
-                        { name: "tif", type: "string" }
-                    ]
-                };
-                
-                const value = {
-                    type: "order",
-                    orders: [{
-                        a: assetIndex,
-                        b: true,
-                        p: price.toFixed(2),
-                        s: quantity,
-                        r: false,
-                        t: { limit: { tif: "Ioc" } }
-                    }],
-                    grouping: "na"
-                };
-                
-                document.getElementById('apiConsole').innerHTML = `⏳ Assinando ordem...`;
-                const signature = await hlConnection.apiWallet._signTypedData(domain, types, value);
-                
+                document.getElementById("apiConsole").innerHTML = "⏳ Assinando ordem...";
+
+                const signature = await hlConnection.apiWallet._signTypedData(
+                    domain,
+                    types,
+                    action
+                );
+
                 const requestBody = {
-                    action: action,
-                    nonce: nonce,
-                    signature: signature,
+                    action,
+                    nonce,
+                    signature,
                     vaultAddress: null
                 };
-                
-                document.getElementById('apiConsole').innerHTML = `⏳ Enviando ordem...`;
-                
-                const response = await fetch('https://api.hyperliquid.xyz/exchange', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+
+                document.getElementById("apiConsole").innerHTML = "⏳ Enviando ordem...";
+
+                const response = await fetch("https://api.hyperliquid.xyz/exchange", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(requestBody)
                 });
-                
-                const responseText = await response.text();
-                
-                let result;
-                try {
-                    result = JSON.parse(responseText);
-                } catch (e) {
-                    document.getElementById('apiConsole').innerHTML = `❌ Erro: ${responseText}`;
-                    return;
-                }
-                
+
+                const result = await response.json();
+                console.log("Resposta Hyperliquid:", result);
+
                 if (result.response && result.response.data && result.response.data.statuses) {
                     const status = result.response.data.statuses[0];
                     if (status.error) {
-                        document.getElementById('apiConsole').innerHTML = `❌ Erro: ${status.error}`;
+                        document.getElementById("apiConsole").innerHTML = `❌ Erro: ${status.error}`;
                         alert(`Erro: ${status.error}`);
                     } else {
-                        document.getElementById('apiConsole').innerHTML = `✅ Ordem executada!`;
-                        
+                        document.getElementById("apiConsole").innerHTML = `✅ Ordem executada!`;
+
                         const stopPrice = price * (1 - sl);
                         const takePrice = price * (1 + tp);
-                        
-                        alert(`✅ Ordem executada!\n\nComprar ${quantity} ${pair} a $${price.toFixed(2)}\nStop: $${stopPrice.toFixed(2)}\nTake: $${takePrice.toFixed(2)}`);
+
+                        alert(`✅ Ordem executada com sucesso!\n\n` +
+                              `Comprar ${size} ${pair} a $${price.toFixed(2)}\n` +
+                              `Stop: $${stopPrice.toFixed(2)} (${sl * 100}%)\n` +
+                              `Take: $${takePrice.toFixed(2)} (${tp * 100}%)`);
                     }
+                } else if (result.status === "ok" || result.ok) {
+                    document.getElementById("apiConsole").innerHTML = "✅ Ordem executada!";
                 } else {
-                    document.getElementById('apiConsole').innerHTML = `✅ Resposta: ${JSON.stringify(result)}`;
+                    document.getElementById("apiConsole").innerHTML = "❌ Erro: " + JSON.stringify(result);
                 }
-                
-            } catch(err) {
-                document.getElementById('apiConsole').innerHTML = `❌ Erro: ${err.message}`;
+
+            } catch (err) {
+                console.error("Erro completo:", err);
+                document.getElementById("apiConsole").innerHTML = `❌ Erro: ${err.message}`;
                 alert(`Erro: ${err.message}`);
             }
         }
