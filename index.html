@@ -496,25 +496,33 @@
         <button class="time-btn" data-t="15" onclick="setTF('15', this)">🔭 DAY TRADE (15m)</button>
     </div>
 
+    <!-- SELECT CORRIGIDO COM TODOS OS PARES (INCLUINDO HYPERLIQUID) -->
     <select id="pairSelector" onchange="initApp()">
         <optgroup label="📈 Cripto (Binance)">
             <option value="BINANCE:BTCUSDT" selected>₿ BTC/USDT (Binance)</option>
             <option value="BINANCE:ETHUSDT">⟠ ETH/USDT (Binance)</option>
             <option value="BINANCE:SOLUSDT">◎ SOL/USDT (Binance)</option>
         </optgroup>
-        <optgroup label="🌀 Outras Exchanges">
+        <optgroup label="🌀 Hyperliquid">
+            <option value="BYBIT:BTCUSDT">₿ BTC/USD (Hyperliquid)</option>
+            <option value="BYBIT:ETHUSDT">⟠ ETH/USD (Hyperliquid)</option>
+            <option value="BYBIT:SOLUSDT">◎ SOL/USD (Hyperliquid)</option>
+        </optgroup>
+        <optgroup label="💱 Outras Exchanges">
             <option value="OKX:BTCUSDT">₿ BTC/USDT (OKX)</option>
+            <option value="OKX:ETHUSDT">⟠ ETH/USDT (OKX)</option>
             <option value="BYBIT:SOLUSDT">◎ SOL/USDT (Bybit)</option>
         </optgroup>
         <optgroup label="🏅 Metais & Energia">
-            <option value="TVC:GOLD">🥇 Ouro (XAU/USD)</option>
-            <option value="TVC:USOIL">🛢️ Petróleo WTI</option>
+            <option value="TVC:GOLD">🥇 Ouro (XAU/USD) - Hyperliquid</option>
+            <option value="TVC:SILVER">🥈 Prata (XAG/USD) - Hyperliquid</option>
+            <option value="TVC:USOIL">🛢️ Petróleo WTI - Hyperliquid</option>
         </optgroup>
     </select>
 
     <div class="price" id="priceText">$ 0.00</div>
 
-    <!-- Badge de confluência (aparece quando todos os sinais concordam) -->
+    <!-- Badge de confluência -->
     <div id="confluenciaBadge" class="confluencia-badge" style="display: none;">—</div>
 
     <!-- Grade de 3 sinais -->
@@ -706,7 +714,11 @@
         });
         if(activeWS) activeWS.close();
         let pair = symbol.split(':')[1].toLowerCase();
-        let streamPair = (pair === 'gold' || pair === 'silver' || pair === 'usoil') ? 'btcusdt' : pair;
+        // Para os pares da Hyperliquid (BYBIT:xxx), usamos o mesmo ativo para o WebSocket da Binance (apenas para preço)
+        let streamPair = (pair === 'gold' || pair === 'silver' || pair === 'usoil') ? 'btcusdt' : 
+                         (pair.includes('btc') ? 'btcusdt' : 
+                          pair.includes('eth') ? 'ethusdt' : 
+                          pair.includes('sol') ? 'solusdt' : 'btcusdt');
         activeWS = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`);
         activeWS.onmessage = (e) => {
             const data = JSON.parse(e.data);
