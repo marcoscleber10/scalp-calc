@@ -1,79 +1,101 @@
 <style>
-    /* Estilo da Bolinha Secreta */
+    /* Bolinha Secreta - Praticamente invisível no canto */
     .secret-trigger {
         position: fixed;
-        bottom: 20px;
-        right: 20px;
-        width: 12px;
-        height: 12px;
+        bottom: 15px;
+        right: 15px;
+        width: 10px;
+        height: 10px;
         background: var(--green);
         border-radius: 50%;
         cursor: pointer;
-        opacity: 0.3; /* Quase invisível */
+        opacity: 0.1; 
         z-index: 9999;
         transition: opacity 0.3s;
     }
-    .secret-trigger:hover { opacity: 1; box-shadow: 0 0 10px var(--green); }
+    .secret-trigger:hover { opacity: 1; }
 
-    /* Painel do Robô (Invisível por padrão) */
-    #robotPanel {
-        display: none; 
-        margin-top: 20px;
-        padding: 15px;
-        background: #1c2128;
-        border: 1px dashed var(--green);
-        border-radius: 12px;
-    }
-    .robot-status { color: var(--green); font-family: monospace; font-size: 11px; text-align: left; }
-    
-    /* Overlay da Senha */
-    #passwordOverlay {
+    /* Overlay de Senha */
+    #authOverlay {
         display: none;
         position: fixed;
         top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.9);
+        background: rgba(13, 17, 23, 0.98);
         z-index: 10000;
         justify-content: center;
         align-items: center;
         flex-direction: column;
     }
+
+    /* Painel do Robô - Escondido por padrão */
+    #robotDashboard {
+        display: none;
+        margin-top: 25px;
+        padding: 20px;
+        background: #0d1117;
+        border: 1px dashed var(--green);
+        border-radius: 12px;
+        text-align: left;
+    }
+
+    .log-window {
+        background: #000;
+        color: var(--green);
+        font-family: monospace;
+        font-size: 10px;
+        padding: 10px;
+        height: 80px;
+        overflow-y: auto;
+        border-radius: 6px;
+        margin-top: 10px;
+        border: 1px solid #30363d;
+    }
 </style>
 
-<div id="robotPanel">
-    <h4 style="color:var(--green); margin-bottom:10px;">🤖 AUTOMAÇÃO HYPERLIQUID</h4>
-    <div class="robot-status">
-        > STATUS: AGUARDANDO SINAL...<br>
-        > API: CONNECTED (AGENT WALLET)<br>
-        > ESTRATÉGIA: SCALPING GRID
+<div id="robotDashboard">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+        <span style="color:var(--green); font-weight:bold; font-size:12px;">🤖 HYPERLIQUID BOT V1.0</span>
+        <span id="botLed" style="width:10px; height:10px; background:var(--red); border-radius:50%; box-shadow: 0 0 5px var(--red);"></span>
     </div>
-    <button class="btn-calc" style="margin-top:10px; background:var(--accent); color:white;" onclick="alert('Iniciando Automação...')">ATIVAR ROBÔ</button>
+
+    <div class="status-grid" style="grid-template-columns: 1fr 1fr 1fr; gap:5px;">
+        <div class="status-bar" style="padding:5px;">
+            <span class="status-label">P&L HOJE</span>
+            <span id="botPnL" style="color:var(--green)">+$ 0.00</span>
+        </div>
+        <div class="status-bar" style="padding:5px;">
+            <span class="status-label">ORDENS</span>
+            <span id="botOrders">0</span>
+        </div>
+        <div class="status-bar" style="padding:5px;">
+            <span class="status-label">MARGEM</span>
+            <span id="botMargin">0.0x</span>
+        </div>
+    </div>
+
+    <div class="log-window" id="botLogs">> Aguardando comando de ativação...</div>
+
+    <button class="btn-calc" style="margin-top:15px; background:var(--accent); color:white;" onclick="toggleRobot()">ATIVAR EXECUÇÃO</button>
 </div>
 
-<div class="secret-trigger" onclick="showPassPrompt()"></div>
+<div class="secret-trigger" onclick="openAuth()"></div>
 
-<div id="passwordOverlay">
-    <h3 style="color:var(--green)">ACESSO RESTRITO</h3>
-    <input type="password" id="secretPass" placeholder="Digite a Senha" style="width:200px; text-align:center;">
-    <button class="btn-mode" style="width:200px;" onclick="checkPass()">ENTRAR</button>
+<div id="authOverlay">
+    <h4 style="color:var(--green); margin-bottom:20px;">ACESSO AO NÚCLEO</h4>
+    <input type="password" id="passInput" placeholder="Sua Senha" style="width:200px; text-align:center;">
+    <button class="btn-mode" style="width:200px; margin-top:10px;" onclick="validatePass()">DESBLOQUEAR</button>
+    <button class="btn-mode" style="width:200px; background:transparent; border:1px solid #30363d; margin-top:10px;" onclick="closeAuth()">VOLTAR</button>
 </div>
 
 <script>
-    // Função para mostrar o campo de senha
-    function showPassPrompt() {
-        document.getElementById('passwordOverlay').style.display = 'flex';
-        document.getElementById('secretPass').focus();
-    }
+    let botActive = false;
 
-    // Função para verificar senha (defina sua senha aqui)
-    function checkPass() {
-        const pass = document.getElementById('secretPass').value;
-        if(pass === "1234") { // TROQUE "1234" PELA SUA SENHA
-            document.getElementById('passwordOverlay').style.display = 'none';
-            document.getElementById('robotPanel').style.display = 'block';
-            window.scrollTo(0, document.body.scrollHeight); // Rola para o robô
-        } else {
-            alert("Senha Incorreta!");
-            document.getElementById('passwordOverlay').style.display = 'none';
-        }
-    }
-</script>
+    function openAuth() { document.getElementById('authOverlay').style.display = 'flex'; }
+    function closeAuth() { document.getElementById('authOverlay').style.display = 'none'; }
+
+    function validatePass() {
+        const pass = document.getElementById('passInput').value;
+        if(pass === "1234") { // TROQUE PELA SUA SENHA
+            document.getElementById('authOverlay').style.display = 'none';
+            document.getElementById('robotDashboard').style.display = '
+.
