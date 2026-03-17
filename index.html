@@ -145,7 +145,7 @@
     <!-- Bolinha Flutuante -->
     <div class="floating-ball" onclick="openPasswordModal()">🔓</div>
 
-    <!-- Modal de Senha (SENHA: 123456) -->
+    <!-- Modal de Senha -->
     <div id="passwordModal" class="modal">
         <div class="modal-content" style="max-width:350px;">
             <h2>🔐 ACESSO</h2>
@@ -175,10 +175,9 @@
                 <input type="password" id="hlApiPrivateKey" placeholder="0x...">
             </div>
             
-            <!-- Checkbox para salvar chave localmente -->
             <div class="checkbox-container">
                 <input type="checkbox" id="saveKeyCheckbox"> 
-                <label for="saveKeyCheckbox">Salvar chave localmente (não recomendado em dispositivos compartilhados)</label>
+                <label for="saveKeyCheckbox">Salvar chave localmente</label>
             </div>
 
             <button class="btn-mode" onclick="connectHyperliquid()" style="background:var(--accent);">🔌 Validar e Conectar</button>
@@ -187,7 +186,7 @@
             <h3>📝 Ordem Real</h3>
             <div class="campo">
                 <label>Capital (USDC)</label>
-                <input type="number" id="botCapital" value="1" step="0.1" min="0.1">
+                <input type="number" id="botCapital" value="10" step="0.1" min="0.1">
             </div>
             <div class="grid-2">
                 <div><label>Stop Loss %</label><input type="number" id="botSL" value="1.5" step="0.1"></div>
@@ -212,8 +211,7 @@
         <div class="modal-content">
             <h2>💰 Donativos</h2>
             <p style="background:#1e2a36; padding:15px; border-radius:15px; margin-bottom:20px;">
-                Este projeto é desenvolvido de forma independente, <strong>sem fins lucrativos</strong>. 
-                Contribuições ajudam a manter os custos de servidor. Obrigado! 🙏
+                Projeto independente, sem fins lucrativos. Contribuições ajudam a manter os custos. Obrigado!
             </p>
             
             <div class="donation-item" style="border-left-color:#8a2be2;">
@@ -221,11 +219,11 @@
                 <p>cloggedparrot01@walletofsatoshi.com <button class="copy-btn" onclick="copyText('cloggedparrot01@walletofsatoshi.com')">Copiar</button></p>
             </div>
             <div class="donation-item" style="border-left-color:#f7931a;">
-                <strong>₿ Bitcoin (On-Chain)</strong>
+                <strong>₿ Bitcoin</strong>
                 <p>bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5 <button class="copy-btn" onclick="copyText('bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5')">Copiar</button></p>
             </div>
             <div class="donation-item" style="border-left-color:#627eea;">
-                <strong>🔷 EVM (ETH / Polygon)</strong>
+                <strong>🔷 EVM</strong>
                 <p>0xAd944bA180610F1Fe43151eD81c0084C918c68e1 <button class="copy-btn" onclick="copyText('0xAd944bA180610F1Fe43151eD81c0084C918c68e1')">Copiar</button></p>
             </div>
             <div class="donation-item" style="border-left-color:#14f195;">
@@ -249,7 +247,6 @@
         let pricesHistory = [];
         let hlConnection = null;
 
-        // Carregar chave salva ao iniciar
         window.onload = function() {
             const savedKey = localStorage.getItem('hlPrivateKey');
             if (savedKey) {
@@ -258,7 +255,6 @@
             }
         };
 
-        // ---------- FUNÇÕES DA INTERFACE ----------
         function toggleMode() {
             document.getElementById('mainCard').classList.toggle('desktop-mode');
         }
@@ -274,13 +270,10 @@
                 "theme": "dark",
                 "style": "1",
                 "locale": "br",
-                "container_id": "chart_container",
-                "hide_top_toolbar": false,
-                "hide_legend": false
+                "container_id": "chart_container"
             });
         }
 
-        // WebSocket de preços
         const ws = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@ticker');
         ws.onmessage = (e) => {
             const data = JSON.parse(e.data);
@@ -289,7 +282,6 @@
             pricesHistory.push(price);
             if(pricesHistory.length > 50) pricesHistory.shift();
             
-            // Sinal 1 - Par/Ímpar
             const s1 = document.getElementById('statusText');
             if(Math.floor(price * 100) % 2 === 0) {
                 s1.innerText = '🔥 OPORTUNIDADE';
@@ -299,7 +291,6 @@
                 s1.style.color = '#ff3e3e';
             }
             
-            // Sinal 2 - Filtro (21 períodos)
             const s2 = document.getElementById('rsiText');
             if(pricesHistory.length >= 21) {
                 const compra = price > pricesHistory[pricesHistory.length - 21];
@@ -307,7 +298,6 @@
                 s2.style.color = compra ? '#00ff88' : '#ff3e3e';
             }
             
-            // Sinal 3 - Momentum (3 períodos)
             const s3 = document.getElementById('momText');
             if(pricesHistory.length >= 3) {
                 const avg = (pricesHistory.slice(-3).reduce((a,b)=>a+b,0))/3;
@@ -332,7 +322,6 @@
             document.getElementById('results').style.display = 'block';
         }
 
-        // ---------- MODAIS ----------
         function openPasswordModal() { document.getElementById('passwordModal').style.display = 'flex'; }
         function closePasswordModal() { document.getElementById('passwordModal').style.display = 'none'; }
         function openDonationModal() { document.getElementById('donationModal').style.display = 'flex'; }
@@ -353,7 +342,6 @@
             alert('Copiado!');
         }
 
-        // ---------- HYPERLIQUID (CONEXÃO) ----------
         async function connectHyperliquid() {
             const mainAddr = document.getElementById('hlMainAddress').value.trim();
             const apiAddr = document.getElementById('hlApiAddress').value.trim();
@@ -386,7 +374,6 @@
             }
         }
 
-        // ---------- ORDEM REAL (AGORA FUNCIONAL) ----------
         async function placeRealOrder() {
             if(!hlConnection) {
                 alert('Conecte a API primeiro');
@@ -409,13 +396,9 @@
             }
             
             try {
-                // Determinar asset index
                 const assetIndex = pair === 'BTC' ? 0 : (pair === 'ETH' ? 1 : 2);
-                
-                // Calcular quantidade
                 const quantity = (capital / price).toFixed(6);
                 
-                // Montar ordem no formato correto
                 const action = {
                     type: "order",
                     orders: [{
@@ -431,7 +414,6 @@
                 
                 const nonce = Date.now();
                 
-                // Estrutura EIP-712
                 const domain = {
                     name: "Exchange",
                     version: "1",
@@ -475,4 +457,57 @@
                 };
                 
                 document.getElementById('apiConsole').innerHTML = `⏳ Assinando ordem...`;
-                const signature = await hlConnection.apiWallet._signTyp.
+                const signature = await hlConnection.apiWallet._signTypedData(domain, types, value);
+                
+                const requestBody = {
+                    action: action,
+                    nonce: nonce,
+                    signature: signature,
+                    vaultAddress: null
+                };
+                
+                document.getElementById('apiConsole').innerHTML = `⏳ Enviando ordem...`;
+                
+                const response = await fetch('https://api.hyperliquid.xyz/exchange', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestBody)
+                });
+                
+                const responseText = await response.text();
+                
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (e) {
+                    document.getElementById('apiConsole').innerHTML = `❌ Erro: ${responseText}`;
+                    return;
+                }
+                
+                if (result.response && result.response.data && result.response.data.statuses) {
+                    const status = result.response.data.statuses[0];
+                    if (status.error) {
+                        document.getElementById('apiConsole').innerHTML = `❌ Erro: ${status.error}`;
+                        alert(`Erro: ${status.error}`);
+                    } else {
+                        document.getElementById('apiConsole').innerHTML = `✅ Ordem executada!`;
+                        
+                        const stopPrice = price * (1 - sl);
+                        const takePrice = price * (1 + tp);
+                        
+                        alert(`✅ Ordem executada!\n\nComprar ${quantity} ${pair} a $${price.toFixed(2)}\nStop: $${stopPrice.toFixed(2)}\nTake: $${takePrice.toFixed(2)}`);
+                    }
+                } else {
+                    document.getElementById('apiConsole').innerHTML = `✅ Resposta: ${JSON.stringify(result)}`;
+                }
+                
+            } catch(err) {
+                document.getElementById('apiConsole').innerHTML = `❌ Erro: ${err.message}`;
+                alert(`Erro: ${err.message}`);
+            }
+        }
+
+        initChart();
+    </script>
+</body>
+</html>
