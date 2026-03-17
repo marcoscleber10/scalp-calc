@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+h<!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mestre do Scalping Pro + API Real</title>
+    <title>Mestre do Scalping Pro + Ordem Real</title>
     <style>
         :root {
             --bg: #0d1117;
@@ -35,12 +35,8 @@
             box-shadow: 0 20px 40px rgba(0,0,0,0.6);
             transition: max-width 0.3s ease;
         }
-        .card.desktop-mode {
-            max-width: 95%;
-        }
-        .desktop-mode #chart_container {
-            height: 500px !important;
-        }
+        .card.desktop-mode { max-width: 95%; }
+        .desktop-mode #chart_container { height: 500px !important; }
         h4 {
             color: var(--text);
             font-size: 12px;
@@ -126,8 +122,6 @@
             border-radius: 20px;
             border: 1px solid #2a3340;
             text-align: center;
-            position: relative;
-            overflow: hidden;
             transition: all 0.3s;
         }
         .status-bar strong {
@@ -298,7 +292,6 @@
             letter-spacing: 1.5px;
             padding-top: 15px;
         }
-        /* Bolinha flutuante */
         .floating-ball {
             position: fixed;
             bottom: 30px;
@@ -319,91 +312,6 @@
             border: 2px solid white;
             user-select: none;
         }
-        /* Modais */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(10px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-        }
-        .modal-content {
-            background: #161b22;
-            border-radius: 30px;
-            padding: 30px;
-            width: 90%;
-            max-width: 500px;
-            border: 2px solid var(--gold);
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        .modal-content h2 {
-            color: var(--gold);
-            margin-top: 0;
-            font-size: 24px;
-        }
-        .donation-grid {
-            display: grid;
-            gap: 15px;
-            margin: 20px 0;
-        }
-        .donation-item {
-            background: #1e2a36;
-            padding: 18px;
-            border-radius: 24px;
-            border-left: 6px solid;
-        }
-        .donation-item.ln { border-left-color: #8a2be2; }
-        .donation-item.btc { border-left-color: #f7931a; }
-        .donation-item.eth { border-left-color: #627eea; }
-        .donation-item.sol { border-left-color: #14f195; }
-        .donation-item.pix { border-left-color: #32bcad; }
-        .donation-item h3 {
-            margin: 0 0 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: white;
-        }
-        .donation-item p {
-            margin: 5px 0;
-            color: var(--text);
-            font-size: 13px;
-            word-break: break-all;
-            background: #0d151f;
-            padding: 10px;
-            border-radius: 16px;
-            border: 1px solid #2f3e4e;
-            font-family: monospace;
-        }
-        .copy-btn {
-            background: var(--accent);
-            border: none;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 30px;
-            font-size: 11px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-left: 8px;
-            float: right;
-        }
-        .close-modal {
-            background: var(--accent);
-            border: none;
-            padding: 14px;
-            border-radius: 40px;
-            font-weight: bold;
-            width: 100%;
-            cursor: pointer;
-            font-size: 16px;
-            margin-top: 10px;
-        }
-        /* Modal de senha */
         .password-modal {
             position: fixed;
             top: 0; left: 0;
@@ -446,7 +354,7 @@
             font-size: 16px;
             box-shadow: 0 4px 0 #0a5e3a;
         }
-        /* Painel do robô (com campos de API) */
+        /* Painel do robô */
         .robot-panel-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -467,10 +375,6 @@
             border: 2px solid var(--gold);
             max-height: 80vh;
             overflow-y: auto;
-        }
-        .robot-card h2 {
-            color: var(--gold);
-            margin-top: 0;
         }
         .exchange-badge {
             display: flex;
@@ -520,13 +424,39 @@
             font-size: 13px;
             font-family: monospace;
         }
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            color: var(--text);
+            font-size: 12px;
+        }
+        .checkbox-container input {
+            width: auto;
+            margin-right: 8px;
+        }
+        .ordem-campos {
+            background: #1e2a38;
+            padding: 15px;
+            border-radius: 20px;
+            margin: 15px 0;
+        }
+        .ordem-campos input, .ordem-campos select {
+            width: 100%;
+            margin: 8px 0;
+            background: #0d151f;
+            border: 1px solid #3d4d62;
+            color: white;
+            padding: 12px;
+            border-radius: 40px;
+        }
         .console-robot {
             background: #0d1117;
             border-radius: 16px;
             padding: 15px;
             font-family: monospace;
             font-size: 12px;
-            height: 100px;
+            height: 80px;
             overflow-y: auto;
             border: 1px solid #30363d;
             margin: 20px 0;
@@ -563,7 +493,6 @@
         <button class="time-btn" data-t="15" onclick="setTF('15', this)">🔭 DAY TRADE (15m)</button>
     </div>
 
-    <!-- SELECT COMPLETO -->
     <select id="pairSelector" onchange="initApp()">
         <optgroup label="📈 Cripto (Binance)">
             <option value="BINANCE:BTCUSDT" selected>₿ BTC/USDT (Binance)</option>
@@ -588,10 +517,8 @@
 
     <div class="price" id="priceText">$ 0.00</div>
 
-    <!-- Badge de confluência -->
     <div id="confluenciaBadge" class="confluencia-badge" style="display: none;">—</div>
 
-    <!-- Grade de 3 sinais -->
     <div class="status-grid" id="statusGrid">
         <div id="statusBox" class="status-bar">
             <span class="status-label">SINAL GERAL</span>
@@ -624,7 +551,6 @@
         <div class="res-item"><span>📐 Posição:</span> <strong id="posSize">$0</strong></div>
     </div>
 
-    <!-- Grade de projetos -->
     <div class="projects-section">
         <div class="projects-grid">
             <a href="https://site-557591544835-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Sinais Invest</a>
@@ -664,7 +590,7 @@
     </div>
 </div>
 
-<!-- Painel do robô (AGORA COM CAMPOS DE API) -->
+<!-- Painel do robô -->
 <div id="robotPanel" class="robot-panel-overlay">
     <div class="robot-card">
         <h2>🤖 ROBÔ SCALPER</h2>
@@ -676,24 +602,47 @@
             <span class="ex-box" style="border-left-color:var(--gold);">HyperLiquid</span>
         </div>
 
-        <!-- ===== CAMPOS DA API (AGORA VISÍVEIS) ===== -->
+        <!-- ===== CAMPOS DA API ===== -->
         <h3 style="color:var(--gold); margin-top:20px;">🔐 Credenciais Hyperliquid</h3>
         <div class="campo-api">
             <label>Endereço da conta principal (MetaMask)</label>
-            <input type="text" id="hlMainAddress" placeholder="0x..." value="0x9a761Cc6331Fd28D0b04811135dfA233f6499C9Q">
+            <input type="text" id="hlMainAddress" placeholder="0x...">
         </div>
         <div class="campo-api">
             <label>Endereço da API wallet (público)</label>
-            <input type="text" id="hlApiAddress" placeholder="0x..." value="0x99f2348b7a7c5319f2df726a44ecd847326fcefe">
+            <input type="text" id="hlApiAddress" placeholder="0x...">
         </div>
         <div class="campo-api">
             <label>Chave privada da API wallet</label>
             <input type="password" id="hlApiPrivateKey" placeholder="0x...">
         </div>
-        <button class="btn-robot" onclick="connectHyperliquid()" style="background:var(--accent); margin-bottom:20px;">🔌 Validar e Conectar</button>
-        <div class="console-robot" id="apiConsole" style="height:50px; font-size:11px;">[API] Desconectado</div>
+        <div class="checkbox-container">
+            <input type="checkbox" id="saveKeyCheckbox"> <label for="saveKeyCheckbox">Salvar chave localmente (não recomendado em dispositivos compartilhados)</label>
+        </div>
+        <button class="btn-robot" onclick="connectHyperliquid()" style="background:var(--accent); margin-bottom:10px;">🔌 Validar e Conectar</button>
+        <div class="console-robot" id="apiConsole" style="height:40px;">[API] Desconectado</div>
 
-        <!-- Configurações avançadas -->
+        <!-- ===== CAMPOS DA ORDEM REAL ===== -->
+        <h3 style="color:var(--gold); margin-top:20px;">📝 Ordem Real</h3>
+        <div class="ordem-campos">
+            <label>💰 Capital (USDC)</label>
+            <input type="number" id="botCapital" value="1" step="0.1" min="0.1">
+            
+            <label>📉 Stop Loss (%)</label>
+            <input type="number" id="botSL" value="0.5" step="0.1">
+            
+            <label>📈 Take Profit (%)</label>
+            <input type="number" id="botTP" value="0.5" step="0.1">
+            
+            <label>🔄 Par</label>
+            <select id="botPair">
+                <option value="BTC">BTC/USDC</option>
+                <option value="ETH">ETH/USDC</option>
+                <option value="SOL">SOL/USDC</option>
+            </select>
+        </div>
+
+        <!-- Configurações avançadas (sliders) -->
         <div class="config-slider">
             <label>📊 Período do Filtro Técnico (atual: <span id="filtroPeriodValue">21</span>)</label>
             <input type="range" id="filtroPeriod" min="5" max="50" value="21" step="1" oninput="document.getElementById('filtroPeriodValue').innerText = this.value">
@@ -728,36 +677,36 @@
 
 <!-- Modal de Donativos -->
 <div id="donationModal" class="modal-overlay">
-    <div class="modal-content">
-        <h2>💰 Donativos</h2>
+    <div class="modal-content" style="background:#161b22; border-radius:30px; padding:30px; max-width:500px; border:2px solid var(--gold);">
+        <h2 style="color:var(--gold);">💰 Donativos</h2>
         <p style="background:#1e2a36; padding:20px; border-radius:24px; color:white; font-size:14px; line-height:1.6; margin-bottom:20px;">
             Este projeto é desenvolvido de forma independente, <strong>sem fins lucrativos</strong> e sem investidores por trás. 
             Cada ferramenta existe para servir traders reais – não para gerar lucro. Se te ajudou, considere contribuir com qualquer valor. 
             Sua doação cobre custos de servidor e desenvolvimento. Obrigado! 🙏
         </p>
-        <div class="donation-grid">
-            <div class="donation-item ln">
+        <div style="display:grid; gap:15px;">
+            <div class="donation-item" style="background:#1e2a36; padding:18px; border-radius:24px; border-left:6px solid #8a2be2;">
                 <h3>⚡ Lightning Network</h3>
-                <p>cloggedparrot01@walletofsatoshi.com <button class="copy-btn" onclick="copyToClipboard('cloggedparrot01@walletofsatoshi.com')">Copiar</button></p>
+                <p style="word-break:break-all; background:#0d151f; padding:10px; border-radius:16px;">cloggedparrot01@walletofsatoshi.com <button class="copy-btn" onclick="copyToClipboard('cloggedparrot01@walletofsatoshi.com')" style="background:var(--accent); border:none; color:white; padding:4px 10px; border-radius:20px; float:right;">Copiar</button></p>
             </div>
-            <div class="donation-item btc">
+            <div class="donation-item" style="background:#1e2a36; padding:18px; border-radius:24px; border-left:6px solid #f7931a;">
                 <h3>₿ Bitcoin (On-Chain)</h3>
-                <p>bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5 <button class="copy-btn" onclick="copyToClipboard('bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5')">Copiar</button></p>
+                <p style="word-break:break-all; background:#0d151f; padding:10px; border-radius:16px;">bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5 <button class="copy-btn" onclick="copyToClipboard('bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5')" style="background:var(--accent); border:none; color:white; padding:4px 10px; border-radius:20px; float:right;">Copiar</button></p>
             </div>
-            <div class="donation-item eth">
+            <div class="donation-item" style="background:#1e2a36; padding:18px; border-radius:24px; border-left:6px solid #627eea;">
                 <h3>🔷 EVM (ETH / Polygon)</h3>
-                <p>0xAd944bA180610F1Fe43151eD81c0084C918c68e1 <button class="copy-btn" onclick="copyToClipboard('0xAd944bA180610F1Fe43151eD81c0084C918c68e1')">Copiar</button></p>
+                <p style="word-break:break-all; background:#0d151f; padding:10px; border-radius:16px;">0xAd944bA180610F1Fe43151eD81c0084C918c68e1 <button class="copy-btn" onclick="copyToClipboard('0xAd944bA180610F1Fe43151eD81c0084C918c68e1')" style="background:var(--accent); border:none; color:white; padding:4px 10px; border-radius:20px; float:right;">Copiar</button></p>
             </div>
-            <div class="donation-item sol">
+            <div class="donation-item" style="background:#1e2a36; padding:18px; border-radius:24px; border-left:6px solid #14f195;">
                 <h3>◎ Solana</h3>
-                <p>EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm <button class="copy-btn" onclick="copyToClipboard('EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm')">Copiar</button></p>
+                <p style="word-break:break-all; background:#0d151f; padding:10px; border-radius:16px;">EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm <button class="copy-btn" onclick="copyToClipboard('EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm')" style="background:var(--accent); border:none; color:white; padding:4px 10px; border-radius:20px; float:right;">Copiar</button></p>
             </div>
-            <div class="donation-item pix">
+            <div class="donation-item" style="background:#1e2a36; padding:18px; border-radius:24px; border-left:6px solid #32bcad;">
                 <h3>🇧🇷 Pix</h3>
-                <p>127d59fc-1f37-4e8e-9fd4-295e1883727b <button class="copy-btn" onclick="copyToClipboard('127d59fc-1f37-4e8e-9fd4-295e1883727b')">Copiar</button></p>
+                <p style="word-break:break-all; background:#0d151f; padding:10px; border-radius:16px;">127d59fc-1f37-4e8e-9fd4-295e1883727b <button class="copy-btn" onclick="copyToClipboard('127d59fc-1f37-4e8e-9fd4-295e1883727b')" style="background:var(--accent); border:none; color:white; padding:4px 10px; border-radius:20px; float:right;">Copiar</button></p>
             </div>
         </div>
-        <button class="close-modal" onclick="closeDonationModal()">Fechar</button>
+        <button class="close-modal" onclick="closeDonationModal()" style="background:var(--accent); border:none; padding:14px; border-radius:40px; width:100%; margin-top:20px;">Fechar</button>
     </div>
 </div>
 
@@ -768,6 +717,15 @@
     let price = 0, pricesHistory = [], isDesktop = false, currentTF = "1", activeWS = null;
     let filtroPeriod = 21, momPeriod = 3, momMargin = 0.1;
     let hlConnection = { mainAddress: '', apiWallet: null, apiAddress: '' };
+
+    // Carregar chave salva se existir
+    window.onload = function() {
+        const savedKey = localStorage.getItem('hlPrivateKey');
+        if (savedKey) {
+            document.getElementById('hlApiPrivateKey').value = savedKey;
+            document.getElementById('saveKeyCheckbox').checked = true;
+        }
+    };
 
     function setTF(tf, btn) {
         currentTF = tf;
@@ -925,7 +883,6 @@
     }
     function closeRobotPanel() { document.getElementById('robotPanel').style.display = 'none'; }
 
-    // Conexão com a API
     async function connectHyperliquid() {
         const mainAddr = document.getElementById('hlMainAddress').value.trim();
         const apiAddr = document.getElementById('hlApiAddress').value.trim();
@@ -937,17 +894,31 @@
             if(wallet.address.toLowerCase() !== apiAddr.toLowerCase()) throw new Error('Chave não corresponde ao endereço da API');
             hlConnection = { mainAddress: mainAddr, apiWallet: wallet, apiAddress: apiAddr };
             document.getElementById('apiConsole').innerHTML = `[API] Conectado como ${apiAddr.slice(0,6)}...${apiAddr.slice(-4)} ✅`;
-        } catch(e) { alert('Erro: '+e.message); }
+
+            // Salvar chave se checkbox marcado
+            if (document.getElementById('saveKeyCheckbox').checked) {
+                localStorage.setItem('hlPrivateKey', privKey);
+            } else {
+                localStorage.removeItem('hlPrivateKey');
+            }
+        } catch(e) { 
+            document.getElementById('apiConsole').innerHTML = `[API] Erro: ${e.message}`;
+            alert('Erro: '+e.message); 
+        }
     }
 
-    // Ordem real
     async function placeRealOrder() {
-        if(!hlConnection.apiWallet) { alert('Conecte a API primeiro'); return; }
-        const sl = parseFloat(document.getElementById('botSL')?.value || 1.0)/100;
-        const tp = parseFloat(document.getElementById('botTP')?.value || 1.2)/100;
-        const capital = parseFloat(document.getElementById('botCapital')?.value || 10);
-        const pair = document.getElementById('botPair')?.value || 'BTC';
+        if(!hlConnection.apiWallet) { 
+            alert('Conecte a API primeiro'); 
+            return; 
+        }
+        const sl = parseFloat(document.getElementById('botSL').value)/100;
+        const tp = parseFloat(document.getElementById('botTP').value)/100;
+        const capital = parseFloat(document.getElementById('botCapital').value);
+        const pair = document.getElementById('botPair').value;
         if(!price) { alert('Aguardando preço...'); return; }
+        if(capital < 0.1) { alert('Capital mínimo é 0.1 USDC'); return; }
+
         const assetIndex = pair === 'BTC' ? 0 : (pair === 'ETH' ? 1 : 2);
         const quantity = (capital / price).toFixed(6);
         const orderAction = {
@@ -1022,9 +993,13 @@
             if (result.response?.data?.statuses?.[0]?.error) {
                 document.getElementById('apiConsole').innerHTML += `<br>[❌] ${result.response.data.statuses[0].error}`;
             } else {
-                document.getElementById('apiConsole').innerHTML += `<br>[✅] Ordem enviada: ${quantity} ${pair}`;
+                document.getElementById('apiConsole').innerHTML += `<br>[✅] Ordem enviada: ${quantity} ${pair} a $${price}`;
+                document.getElementById('apiConsole').innerHTML += `<br>[TP/SL] Stop: $${(price*(1-sl)).toFixed(2)} | Take: $${(price*(1+tp)).toFixed(2)}`;
             }
-        } catch(err) { alert('Erro: '+err.message); }
+        } catch(err) { 
+            document.getElementById('apiConsole').innerHTML += `<br>[ERRO] ${err.message}`;
+            alert('Erro: '+err.message); 
+        }
     }
 
     function initBot() {
