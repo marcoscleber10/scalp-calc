@@ -355,3 +355,175 @@
 
         function copyText(text) {
             navigator.clipboard.writeText(text);
+            alert('Copiado!');
+        }
+
+        async function connectHyperliquid() {
+            const mainAddr = document.getElementById('hlMainAddress').value.trim();
+            const apiAddr = document.getElementById('hlApiAddress').value.trim();
+            const privKey = document.getElementById('hlApiPrivateKey').value.trim();
+            
+            if(!mainAddr || !apiAddr || !privKey) {
+                alert('Preencha todos os campos');
+                return;
+            }
+            
+            try {
+                const provider = new ethers.providers.JsonRpcProvider('https://arb1.arbitrum.io/rpc');
+                const wallet = new ethers.Wallet(privKey, provider);
+                
+                if(wallet.address.toLowerCase() !== apiAddr.toLowerCase()) {
+                    throw new Error('Chave não corresponde ao endereço da API');
+                }
+                
+                hlConnection = { mainAddress: mainAddr, apiWallet: wallet, apiAddress: apiAddr };
+                document.getElementById('apiConsole').innerHTML = `✅ Conectado como ${apiAddr.slice(0,6)}...${apiAddr.slice(-4)}`;
+                
+            } catch(e) {
+                document.getElementById('apiConsole').innerHTML = `❌ Erro: ${e.message}`;
+            }
+        }
+
+        // ===== FUNÇÃO DO ROBÔ REAL =====
+        async function placeRealOrder() {
+            if(!hlConnection){
+                alert('Conecte a API primeiro');
+                return;
+            }
+
+            const capital = parseFloat(document.getElementById('botCapital').value);
+            const pair = document.getElementById('botPair').value;
+            const sl = parseFloat(document.getElementById('botSL').value)/100;
+            const tp = parseFloat(document.getElementById('botTP').value)/100;
+
+            if(capital < 1){
+                alert('Capital mínimo: 1 USDC');
+                return;
+            }
+
+            if(!price || price === 0){
+                alert('Aguardando preço...');
+                return;
+            }
+
+            try {
+                const assetMap = { BTC: 0, ETH: 1, SOL: 2 };
+                const assetId = assetMap[pair];
+
+                const size = (capital / price).toFixed(6).toString();
+                const priceStr = price.toFixed(2).toString();
+
+                const action = {
+                    type: "order",
+                    orders: [{
+                        a: assetId,
+                        b: true,
+                        p: priceStr,
+                        s: size,
+                        r: false,
+                        t: { limit: { tif: "Ioc" } }
+                    }],
+                    grouping: "na"
+                };
+
+                const nonce = Date.now();
+
+                const domain = {
+                    name: "Hyperliquid",
+                    version: "1",
+                    chainId: 42161,
+                    verifyingContract: "0x0000000000000000000000000000000000000000"
+                };
+
+                const types = {
+                    Action: [
+                        { name: "type", type: "string" },
+                        { name: "orders", type: "Order[]" },
+                        { name: "grouping", type: "string" }
+                    ],
+                    Order: [
+                        { name: "a", type: "uint32" },
+                        { name: "b", type: "bool" },
+                        { name: "p", type: "string" },
+                        { name: "s", type: "string" },
+                        { name: "r", type: "bool" },
+                        { name: "t", type: "OrderType" }
+                    ],
+                    OrderType: [
+                        { name: "limit", type: "Limit" }
+                    ],
+                    Limit: [
+                        { name: "tif", type: "string" }
+                    ]
+                };
+
+                document.getElementById('apiConsole').innerHTML = '⏳ Assinando ordem...';
+
+                const signature = await hlConnection.apiWallet._signTypedData(
+                    domain,
+                    types,
+                    action
+                );
+
+                const sig = ethers.utils.splitSignature(signature);
+
+                const requestBody = {
+                    action: action,
+                    nonce: nonce,
+                    signature: {
+                        r: sig.r,
+                        s: sig.s,
+                        v: sig.v
+                    },
+                    vaultAddress: null
+                };
+
+                document.getElementById('apiConsole').innerHTML = '⏳ Enviando ordem...';
+
+                const response = await fetch('https://api.hyperliquid.xyz/exchange', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestBody)
+                });
+
+                const responseText = await response.text();
+                
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (e) {
+                    document.getElementById('apiConsole').innerHTML = 
+                        '❌ Resposta da API:<br>' + responseText.substring(0, 200);
+                    return;
+                }
+
+                if (result.status === "ok" || 
+                    (result.response && result.response.data && 
+                     !result.response.data.statuses[0]?.error)) {
+                    
+                    document.getElementById('apiConsole').innerHTML = '✅ Ordem executada!';
+
+                    const stopPrice = price * (1 - sl);
+                    const takePrice = price * (1 + tp);
+
+                    alert(`✅ ORDEM REAL EXECUTADA!\n\n` +
+                          `Comprar ${size} ${pair}\n` +
+                          `Preço: $${price.toFixed(2)}\n` +
+                          `Stop: $${stopPrice.toFixed(2)}\n` +
+                          `Take: $${takePrice.toFixed(2)}`);
+                } else {
+                    const errorMsg = result.response?.data?.statuses[0]?.error || 
+                                    JSON.stringify(result);
+                    document.getElementById('apiConsole').innerHTML = '❌ Erro: ' + errorMsg;
+                }
+
+            } catch(err) {
+                document.getElementById('apiConsole').innerHTML = '❌ Erro: ' + err.message;
+                alert('Erro: ' + err.message);
+            }
+        }
+
+        initChart();
+    </script>
+</body>
+</html>
