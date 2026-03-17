@@ -165,7 +165,7 @@
         </div>
     </div>
 
-    <!-- MODAL DO ROBÔ - AGORA REAL -->
+    <!-- MODAL DO ROBÔ - CORRIGIDO COM TAMANHO MÍNIMO -->
     <div id="robotModal" class="modal">
         <div class="modal-content">
             <h2>🤖 ROBÔ SCALPER</h2>
@@ -195,7 +195,8 @@
             <h3>📝 Ordem Real</h3>
             <div class="campo">
                 <label>Capital (USDC)</label>
-                <input type="number" id="botCapital" value="1" step="0.1" min="0.1">
+                <input type="number" id="botCapital" value="10" step="1" min="5">
+                <small style="color:var(--text);">Mínimo: 5 USDC para BTC</small>
             </div>
             <div class="grid-2">
                 <div><label>Stop Loss %</label><input type="number" id="botSL" value="1.5" step="0.1"></div>
@@ -384,7 +385,7 @@
             }
         }
 
-        // ===== FUNÇÃO DO ROBÔ REAL =====
+        // ===== FUNÇÃO DO ROBÔ REAL - CORRIGIDA COM TAMANHO MÍNIMO =====
         async function placeRealOrder() {
             if(!hlConnection){
                 alert('Conecte a API primeiro');
@@ -393,11 +394,9 @@
 
             const capital = parseFloat(document.getElementById('botCapital').value);
             const pair = document.getElementById('botPair').value;
-            const sl = parseFloat(document.getElementById('botSL').value)/100;
-            const tp = parseFloat(document.getElementById('botTP').value)/100;
 
-            if(capital < 1){
-                alert('Capital mínimo: 1 USDC');
+            if(capital < 5){
+                alert('Capital mínimo: 5 USDC (para atingir 0.0001 BTC)');
                 return;
             }
 
@@ -410,8 +409,16 @@
                 const assetMap = { BTC: 0, ETH: 1, SOL: 2 };
                 const assetId = assetMap[pair];
 
-                const size = (capital / price).toFixed(6).toString();
+                // Garantir tamanho mínimo de 0.0001 BTC
+                const size = (capital / price).toFixed(6);
+                
+                if(parseFloat(size) < 0.0001 && pair === 'BTC') {
+                    alert(`Tamanho muito pequeno. Mínimo é 0.0001 BTC. Use pelo menos ${(0.0001 * price).toFixed(2)} USDC`);
+                    return;
+                }
+
                 const priceStr = price.toFixed(2).toString();
+                const nonce = Date.now();
 
                 const action = {
                     type: "order",
@@ -419,20 +426,17 @@
                         a: assetId,
                         b: true,
                         p: priceStr,
-                        s: size,
+                        s: size.toString(),
                         r: false,
                         t: { limit: { tif: "Ioc" } }
                     }],
                     grouping: "na"
                 };
 
-                const nonce = Date.now();
-
                 const domain = {
                     name: "Hyperliquid",
                     version: "1",
-                    chainId: 42161,
-                    verifyingContract: "0x0000000000000000000000000000000000000000"
+                    chainId: 42161
                 };
 
                 const types = {
@@ -457,19 +461,25 @@
                     ]
                 };
 
-                document.getElementById('apiConsole').innerHTML = '⏳ Assinando ordem...';
+                const valueToSign = {
+                    type: "order",
+                    orders: action.orders,
+                    grouping: "na"
+                };
+
+                document.getElementById('apiConsole').innerHTML = '⏳ Assinando...';
 
                 const signature = await hlConnection.apiWallet._signTypedData(
                     domain,
                     types,
-                    action
+                    valueToSign
                 );
 
                 const sig = ethers.utils.splitSignature(signature);
 
                 const requestBody = {
-                    action: action,
-                    nonce: nonce,
+                    action,
+                    nonce,
                     signature: {
                         r: sig.r,
                         s: sig.s,
@@ -478,7 +488,7 @@
                     vaultAddress: null
                 };
 
-                document.getElementById('apiConsole').innerHTML = '⏳ Enviando ordem...';
+                document.getElementById('apiConsole').innerHTML = '⏳ Enviando...';
 
                 const response = await fetch('https://api.hyperliquid.xyz/exchange', {
                     method: 'POST',
@@ -486,40 +496,36 @@
                     body: JSON.stringify(requestBody)
                 });
 
-                const responseText = await response.text();
-                
+                const text = await response.text();
                 let result;
+
                 try {
-                    result = JSON.parse(responseText);
-                } catch (e) {
-                    document.getElementById('apiConsole').innerHTML = 
-                        '❌ Resposta da API:<br>' + responseText.substring(0, 200);
+                    result = JSON.parse(text);
+                } catch {
+                    document.getElementById('apiConsole').innerHTML = '❌ Resposta inválida:<br>' + text;
                     return;
                 }
 
-                if (result.status === "ok" || 
-                    (result.response && result.response.data && 
-                     !result.response.data.statuses[0]?.error)) {
+                if(result.status === "ok" || (result.response?.data?.statuses?.[0]?.resting?.oid)){
+                    document.getElementById('apiConsole').innerHTML = '✅ Ordem enviada!';
                     
-                    document.getElementById('apiConsole').innerHTML = '✅ Ordem executada!';
-
+                    const sl = parseFloat(document.getElementById('botSL').value)/100;
+                    const tp = parseFloat(document.getElementById('botTP').value)/100;
                     const stopPrice = price * (1 - sl);
                     const takePrice = price * (1 + tp);
-
+                    
                     alert(`✅ ORDEM REAL EXECUTADA!\n\n` +
                           `Comprar ${size} ${pair}\n` +
                           `Preço: $${price.toFixed(2)}\n` +
                           `Stop: $${stopPrice.toFixed(2)}\n` +
                           `Take: $${takePrice.toFixed(2)}`);
                 } else {
-                    const errorMsg = result.response?.data?.statuses[0]?.error || 
-                                    JSON.stringify(result);
-                    document.getElementById('apiConsole').innerHTML = '❌ Erro: ' + errorMsg;
+                    const errorMsg = result.response?.data?.statuses?.[0]?.error || JSON.stringify(result);
+                    document.getElementById('apiConsole').innerHTML = '❌ ' + errorMsg;
                 }
 
-            } catch(err) {
-                document.getElementById('apiConsole').innerHTML = '❌ Erro: ' + err.message;
-                alert('Erro: ' + err.message);
+            } catch(e){
+                document.getElementById('apiConsole').innerHTML = '❌ ' + e.message;
             }
         }
 
