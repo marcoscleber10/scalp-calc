@@ -5,248 +5,340 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mestre do Scalping Pro</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { background: #0d1117; color: white; display: flex; justify-content: center; padding: 15px; }
-        .card { background: #161b22; padding: 20px; border-radius: 20px; width: 100%; max-width: 420px; border: 1px solid #30363d; }
-        h4 { color: #8b949e; text-align: center; margin-bottom: 15px; }
-        .btn { background: #2f81f7; color: white; border: none; padding: 12px; border-radius: 30px; font-weight: bold; width: 100%; margin: 5px 0; cursor: pointer; }
-        .price { font-size: 36px; color: #00ff88; text-align: center; margin: 15px 0; font-family: monospace; }
-        .status-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 15px 0; }
-        .status-box { background: #0d1117; padding: 10px; border-radius: 10px; text-align: center; border-bottom: 3px solid #30363d; }
-        .status-label { color: #8b949e; font-size: 10px; }
-        .status-value { font-weight: bold; font-size: 12px; }
-        #chart_container { width: 100%; height: 200px; background: #000; border-radius: 10px; margin: 15px 0; }
-        input, select { background: #21262d; border: 1px solid #30363d; color: white; padding: 12px; border-radius: 20px; width: 100%; margin: 5px 0; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .btn-calc { background: #00ff88; color: #000; font-weight: bold; padding: 15px; border: none; border-radius: 30px; width: 100%; margin: 10px 0; }
-        .projects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 15px 0; }
-        .project-btn { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 10px; border-radius: 20px; text-align: center; text-decoration: none; font-size: 11px; cursor: pointer; }
-        .floating-ball { position: fixed; bottom: 30px; right: 30px; width: 70px; height: 70px; background: #00ff88; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; color: #000; cursor: pointer; z-index: 9999; }
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 10000; }
-        .modal-content { background: #161b22; padding: 30px; border-radius: 30px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; border: 2px solid #ffcc00; }
-        .modal-content h2 { color: #ffcc00; margin-bottom: 20px; }
+        :root {
+            --bg: #0d1117;
+            --card: #161b22;
+            --green: #00ff88;
+            --red: #ff3e3e;
+            --text: #8b949e;
+            --accent: #2f81f7;
+            --gold: #ffcc00;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+        body { background-color: var(--bg); color: white; display: flex; justify-content: center; padding: 20px; }
+        .card { background: var(--card); padding: 24px; border-radius: 24px; width: 100%; max-width: 420px; border: 1px solid #30363d; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+        h4 { color: var(--text); font-size: 12px; text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px dashed #30363d; }
+        .btn-mode { width: 100%; background: var(--accent); color: white; border: none; padding: 12px; border-radius: 40px; font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 12px; text-transform: uppercase; }
+        select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 15px; border-radius: 40px; margin-bottom: 20px; font-size: 14px; cursor: pointer; }
+        .price { font-size: 42px; font-weight: 800; color: var(--green); text-align: center; margin-bottom: 15px; font-family: 'Courier New', monospace; text-shadow: 0 0 10px #00ff8840; }
+        .status-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .status-bar { background: #0f141c; padding: 12px 5px; border-radius: 20px; border: 1px solid #2a3340; text-align: center; }
+        .status-label { font-size: 9px; color: var(--text); text-transform: uppercase; letter-spacing: 1px; display: block; }
+        .status-value { font-size: 14px; font-weight: bold; display: block; margin-top: 4px; }
+        #chart_container { width: 100%; height: 220px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #30363d; background: #000; }
+        .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
+        label { font-size: 9px; color: var(--text); text-transform: uppercase; margin-bottom: 4px; display: block; }
+        input { width: 100%; background: #21262d; border: 1px solid #30363d; color: white; padding: 12px; border-radius: 20px; font-size: 14px; }
+        .btn-calc { width: 100%; padding: 16px; background: var(--green); color: #0d1117; border: none; border-radius: 40px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 16px; box-shadow: 0 6px 0 #0b5e3c; transform: translateY(-2px); transition: 0.1s; margin-top: 10px; }
+        .btn-calc:active { transform: translateY(4px); box-shadow: 0 2px 0 #0b5e3c; }
+        .projects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 20px 0; }
+        .project-btn { background: #1a222c; color: #c9d1d9; border: 1px solid #30363d; padding: 12px 5px; border-radius: 30px; font-size: 11px; font-weight: 600; text-decoration: none; text-align: center; display: block; cursor: pointer; }
+        .project-btn:hover { background: #26323f; }
+        .floating-ball { position: fixed; bottom: 30px; right: 30px; width: 70px; height: 70px; background: radial-gradient(circle at 30% 30%, var(--green), #0f8f5c); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #0b0f14; font-weight: 900; font-size: 28px; box-shadow: 0 10px 25px #00ff8880; cursor: pointer; z-index: 9999; border: 2px solid white; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; z-index: 10000; }
+        .modal-content { background: #161b22; padding: 30px; border-radius: 30px; width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto; border: 2px solid var(--gold); }
+        .modal-content h2 { color: var(--gold); margin-bottom: 20px; }
+        .modal-content h3 { color: var(--gold); margin: 20px 0 10px; }
+        .campo { margin-bottom: 15px; }
+        .campo label { color: var(--text); font-size: 11px; text-transform: uppercase; margin-bottom: 5px; display: block; }
         .donation-item { background: #1e2a36; padding: 15px; border-radius: 15px; margin: 10px 0; border-left: 5px solid; }
-        .donation-item p { word-break: break-all; background: #0d151f; padding: 10px; border-radius: 10px; margin-top: 8px; }
-        .copy-btn { background: #2f81f7; border: none; color: white; padding: 5px 15px; border-radius: 20px; float: right; cursor: pointer; }
-        .close-btn { background: #2f81f7; border: none; color: white; padding: 12px; border-radius: 30px; width: 100%; margin-top: 20px; cursor: pointer; }
+        .donation-item p { word-break: break-all; background: #0d151f; padding: 10px; border-radius: 10px; margin-top: 8px; font-family: monospace; }
+        .copy-btn { background: var(--accent); border: none; color: white; padding: 5px 15px; border-radius: 20px; float: right; cursor: pointer; }
+        .close-btn { background: var(--accent); border: none; color: white; padding: 12px; border-radius: 30px; width: 100%; margin-top: 20px; cursor: pointer; font-weight: bold; }
+        .console { background: #0d1117; padding: 10px; border-radius: 10px; margin: 10px 0; font-size: 12px; font-family: monospace; height: 50px; overflow-y: auto; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     </style>
 </head>
 <body>
-<div class="card">
-    <h4>⚡ MESTRE DO SCALPING PRO ⚡</h4>
-    <button class="btn" onclick="toggleMode()">ALTERNAR MODO</button>
-    
-    <select id="pairSelector">
-        <option value="BINANCE:BTCUSDT">BTC/USDT (Binance)</option>
-        <option value="BINANCE:ETHUSDT">ETH/USDT (Binance)</option>
-        <option value="BYBIT:BTCUSDT">BTC/USD (Hyperliquid)</option>
-        <option value="TVC:GOLD">Ouro (XAU/USD)</option>
-    </select>
-    
-    <div class="price" id="priceText">$ 0.00</div>
-    
-    <div class="status-grid">
-        <div class="status-box"><span class="status-label">SINAL GERAL</span><span class="status-value" id="statusText">CONECTANDO</span></div>
-        <div class="status-box"><span class="status-label">FILTRO</span><span class="status-value" id="rsiText">AGUARDE</span></div>
-        <div class="status-box"><span class="status-label">MOMENTUM</span><span class="status-value" id="momText">⏳</span></div>
-    </div>
-    
-    <div id="chart_container"></div>
-    
-    <div class="grid-2">
-        <div><label>💰 Capital</label><input type="number" id="capital" value="300"></div>
-        <div><label>⚡ Alavancagem</label><input type="number" id="lev" value="10"></div>
-        <div><label>✅ Gain %</label><input type="number" id="tpP" value="1.0"></div>
-        <div><label>🛑 Stop %</label><input type="number" id="slP" value="1.0"></div>
-    </div>
-    
-    <button class="btn-calc" onclick="calc()">CALCULAR NÍVEIS</button>
-    
-    <div class="projects-grid">
-        <a href="#" class="project-btn">Sinais Invest</a>
-        <a href="#" class="project-btn">CombustAI</a>
-        <a href="#" class="project-btn">Registro DCA</a>
-        <a href="#" class="project-btn">Pepinômetro</a>
-        <a href="#" class="project-btn">História Copas</a>
-        <a href="#" class="project-btn">InvestOpção</a>
-        <button class="project-btn" onclick="openDonationModal()" style="background:#ffcc00; color:#000;">💰 Donativos</button>
-    </div>
-</div>
+    <!-- Card Principal -->
+    <div class="card">
+        <h4>⚡ MESTRE DO SCALPING PRO ⚡</h4>
+        <button class="btn-mode" onclick="toggleMode()">🖥️ ALTERNAR MODO</button>
 
-<!-- Bolinha Flutuante -->
-<div class="floating-ball" onclick="openRobotPanel()">🔓</div>
-
-<!-- Modal de Donativos -->
-<div id="donationModal" class="modal">
-    <div class="modal-content">
-        <h2>💰 Donativos</h2>
-        <p style="background:#1e2a36; padding:15px; border-radius:15px; margin-bottom:20px;">
-            Este projeto é desenvolvido de forma independente, <strong>sem fins lucrativos</strong>. 
-            Contribuições ajudam a manter os custos de servidor. Obrigado! 🙏
-        </p>
-        <div class="donation-item" style="border-left-color:#8a2be2;">
-            <strong>⚡ Lightning Network</strong>
-            <p>cloggedparrot01@walletofsatoshi.com <button class="copy-btn" onclick="copyText(this)">Copiar</button></p>
-        </div>
-        <div class="donation-item" style="border-left-color:#f7931a;">
-            <strong>₿ Bitcoin</strong>
-            <p>bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5 <button class="copy-btn" onclick="copyText(this)">Copiar</button></p>
-        </div>
-        <div class="donation-item" style="border-left-color:#627eea;">
-            <strong>🔷 EVM</strong>
-            <p>0xAd944bA180610F1Fe43151eD81c0084C918c68e1 <button class="copy-btn" onclick="copyText(this)">Copiar</button></p>
-        </div>
-        <div class="donation-item" style="border-left-color:#14f195;">
-            <strong>◎ Solana</strong>
-            <p>EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm <button class="copy-btn" onclick="copyText(this)">Copiar</button></p>
-        </div>
-        <div class="donation-item" style="border-left-color:#32bcad;">
-            <strong>🇧🇷 Pix</strong>
-            <p>127d59fc-1f37-4e8e-9fd4-295e1883727b <button class="copy-btn" onclick="copyText(this)">Copiar</button></p>
-        </div>
-        <button class="close-btn" onclick="closeDonationModal()">Fechar</button>
-    </div>
-</div>
-
-<!-- Modal do Robô -->
-<div id="robotModal" class="modal">
-    <div class="modal-content">
-        <h2>🤖 ROBÔ SCALPER</h2>
-        <p style="color:#00ff88;">🔓 Acesso autorizado</p>
-        
-        <h3 style="color:#ffcc00;">🔐 Credenciais</h3>
-        <input type="text" id="hlMainAddress" placeholder="Endereço da conta principal" value="0x9a761Cc6331Fd28D0b04811135dfA233f6499C9Q">
-        <input type="text" id="hlApiAddress" placeholder="Endereço da API wallet" value="0x99f2348b7a7c5319f2df726a44ecd847326fcefe">
-        <input type="password" id="hlApiPrivateKey" placeholder="Chave privada">
-        <button class="btn" onclick="connectHyperliquid()">🔌 Validar e Conectar</button>
-        <div style="background:#0d1117; padding:10px; border-radius:10px; margin:10px 0; font-size:12px;" id="apiConsole">[API] Desconectado</div>
-        
-        <h3 style="color:#ffcc00;">📝 Ordem Real</h3>
-        <input type="number" id="botCapital" value="1" step="0.1">
-        <div class="grid-2">
-            <input type="number" id="botSL" value="0.5" placeholder="Stop %">
-            <input type="number" id="botTP" value="0.5" placeholder="Take %">
-        </div>
-        <select id="botPair">
-            <option value="BTC">BTC/USDC</option>
-            <option value="ETH">ETH/USDC</option>
-            <option value="SOL">SOL/USDC</option>
+        <!-- Select com TODOS os pares -->
+        <select id="pairSelector" onchange="initChart()">
+            <optgroup label="📈 Binance">
+                <option value="BINANCE:BTCUSDT" selected>₿ BTC/USDT (Binance)</option>
+                <option value="BINANCE:ETHUSDT">⟠ ETH/USDT (Binance)</option>
+                <option value="BINANCE:SOLUSDT">◎ SOL/USDT (Binance)</option>
+            </optgroup>
+            <optgroup label="🌀 Hyperliquid">
+                <option value="BYBIT:BTCUSDT">₿ BTC/USD (Hyperliquid)</option>
+                <option value="BYBIT:ETHUSDT">⟠ ETH/USD (Hyperliquid)</option>
+                <option value="BYBIT:SOLUSDT">◎ SOL/USD (Hyperliquid)</option>
+            </optgroup>
+            <optgroup label="🏅 Metais & Energia">
+                <option value="TVC:GOLD">🥇 Ouro (XAU/USD)</option>
+                <option value="TVC:SILVER">🥈 Prata (XAG/USD)</option>
+                <option value="TVC:USOIL">🛢️ Petróleo WTI</option>
+            </optgroup>
         </select>
-        
-        <button class="btn-calc" onclick="placeRealOrder()" style="background:#ffcc00; color:#000;">🚀 ENVIAR ORDEM REAL</button>
-        <button class="close-btn" onclick="closeRobotModal()" style="margin-top:10px;">Fechar</button>
-    </div>
-</div>
 
-<script src="https://s3.tradingview.com/tv.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-<script>
-    let price = 0, pricesHistory = [];
-    let hlConnection = null;
-    
-    function toggleMode() { alert('Modo alternado'); }
-    
-    // Gráfico TradingView
-    new TradingView.widget({
-        "autosize": true,
-        "symbol": "BINANCE:BTCUSDT",
-        "interval": "1",
-        "theme": "dark",
-        "container_id": "chart_container"
-    });
-    
-    // WebSocket para preço
-    const ws = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@ticker');
-    ws.onmessage = (e) => {
-        price = parseFloat(JSON.parse(e.data).c);
-        document.getElementById('priceText').innerText = `$ ${price.toFixed(2)}`;
-        pricesHistory.push(price);
-        if(pricesHistory.length > 50) pricesHistory.shift();
-        
-        // Sinal 1 - Par/Ímpar
-        const status = document.getElementById('statusText');
-        if(Math.floor(price * 100) % 2 === 0) {
-            status.innerText = '🔥 OPORTUNIDADE';
-            status.style.color = '#00ff88';
-        } else {
-            status.innerText = '⚠️ AGUARDAR';
-            status.style.color = '#ff3e3e';
-        }
-        
-        // Sinal 2 - Filtro (21 períodos)
-        const rsi = document.getElementById('rsiText');
-        if(pricesHistory.length >= 21) {
-            const compra = price > pricesHistory[pricesHistory.length - 21];
-            rsi.innerText = compra ? '🚀 COMPRA' : '📉 VENDA';
-            rsi.style.color = compra ? '#00ff88' : '#ff3e3e';
-        }
-        
-        // Sinal 3 - Momentum (3 períodos)
-        const mom = document.getElementById('momText');
-        if(pricesHistory.length >= 3) {
-            const avg = (pricesHistory.slice(-3).reduce((a,b)=>a+b,0))/3;
-            if(price > avg * 1.001) { mom.innerText = '📈 ALTA'; mom.style.color = '#00ff88'; }
-            else if(price < avg * 0.999) { mom.innerText = '📉 BAIXA'; mom.style.color = '#ff3e3e'; }
-            else { mom.innerText = '⚖️ NEUTRO'; mom.style.color = '#ffcc00'; }
-        }
-    };
-    
-    function calc() {
-        const tp = price * (1 + parseFloat(document.getElementById('tpP').value)/100);
-        const sl = price * (1 - parseFloat(document.getElementById('slP').value)/100);
-        alert(`TP: $${tp.toFixed(2)}\nSL: $${sl.toFixed(2)}`);
-    }
-    
-    // Modais
-    function openDonationModal() { document.getElementById('donationModal').style.display = 'flex'; }
-    function closeDonationModal() { document.getElementById('donationModal').style.display = 'none'; }
-    function openRobotPanel() { document.getElementById('robotModal').style.display = 'flex'; }
-    function closeRobotModal() { document.getElementById('robotModal').style.display = 'none'; }
-    
-    function copyText(btn) {
-        const text = btn.parentElement.innerText.replace('Copiar', '').trim();
-        navigator.clipboard.writeText(text);
-        alert('Copiado!');
-    }
-    
-    // Conexão Hyperliquid
-    async function connectHyperliquid() {
-        const mainAddr = document.getElementById('hlMainAddress').value.trim();
-        const apiAddr = document.getElementById('hlApiAddress').value.trim();
-        const privKey = document.getElementById('hlApiPrivateKey').value.trim();
-        
-        if(!mainAddr || !apiAddr || !privKey) {
-            alert('Preencha todos os campos');
-            return;
-        }
-        
-        try {
-            const provider = new ethers.providers.JsonRpcProvider('https://arb1.arbitrum.io/rpc');
-            const wallet = new ethers.Wallet(privKey, provider);
+        <div class="price" id="priceText">$ 73,972.21</div>
+
+        <!-- 3 Sinais -->
+        <div class="status-grid">
+            <div class="status-bar"><span class="status-label">SINAL GERAL</span><span class="status-value" id="statusText">⚠️ AGUARDAR</span></div>
+            <div class="status-bar"><span class="status-label">FILTRO</span><span class="status-value" id="rsiText">📉 VENDA</span></div>
+            <div class="status-bar"><span class="status-label">MOMENTUM</span><span class="status-value" id="momText">⚖️ NEUTRO</span></div>
+        </div>
+
+        <!-- Gráfico TradingView -->
+        <div id="chart_container"></div>
+
+        <!-- Inputs de cálculo -->
+        <div class="inputs-grid">
+            <div><label>💰 Capital ($)</label><input type="number" id="capital" value="300"></div>
+            <div><label>⚡ Alavancagem</label><input type="number" id="lev" value="10"></div>
+            <div><label>✅ Gain %</label><input type="number" id="tpP" value="1.0" step="0.1"></div>
+            <div><label>🛑 Stop %</label><input type="number" id="slP" value="1.0" step="0.1"></div>
+        </div>
+
+        <button class="btn-calc" onclick="calc()">📊 CALCULAR NÍVEIS</button>
+
+        <!-- Grade de Projetos com Donativos -->
+        <div class="projects-grid">
+            <a href="#" class="project-btn">Sinais Invest</a>
+            <a href="#" class="project-btn">CombustAI</a>
+            <a href="#" class="project-btn">Registro DCA</a>
+            <a href="#" class="project-btn">Pepinômetro</a>
+            <a href="#" class="project-btn">História Copas</a>
+            <a href="#" class="project-btn">InvestOpção</a>
+            <button class="project-btn" onclick="openDonationModal()" style="background:var(--gold); color:#000;">💰 Donativos</button>
+        </div>
+    </div>
+
+    <!-- Bolinha Flutuante -->
+    <div class="floating-ball" onclick="openPasswordModal()">🔓</div>
+
+    <!-- Modal de Senha -->
+    <div id="passwordModal" class="modal">
+        <div class="modal-content" style="max-width:350px;">
+            <h2>🔐 ACESSO</h2>
+            <input type="password" id="passInput" maxlength="6" placeholder="******" style="text-align:center; font-size:24px; letter-spacing:8px;">
+            <button class="close-btn" onclick="checkPassword()" style="margin-top:15px;">VALIDAR</button>
+            <p style="color:#808fa0; text-align:center; margin-top:15px;">senha: 123456</p>
+        </div>
+    </div>
+
+    <!-- Modal do Robô -->
+    <div id="robotModal" class="modal">
+        <div class="modal-content">
+            <h2>🤖 ROBÔ SCALPER</h2>
+            <p style="color:var(--green);">🔓 Acesso autorizado</p>
             
-            if(wallet.address.toLowerCase() !== apiAddr.toLowerCase()) {
-                throw new Error('Chave não corresponde ao endereço da API');
+            <h3>🔐 Credenciais Hyperliquid</h3>
+            <div class="campo">
+                <label>Endereço da conta principal</label>
+                <input type="text" id="hlMainAddress" value="0x9a761Cc6331Fd28D0b04811135dfA233f6499C9Q">
+            </div>
+            <div class="campo">
+                <label>Endereço da API wallet</label>
+                <input type="text" id="hlApiAddress" value="0x99f2348b7a7c5319f2df726a44ecd847326fcefe">
+            </div>
+            <div class="campo">
+                <label>Chave privada</label>
+                <input type="password" id="hlApiPrivateKey" placeholder="0x...">
+            </div>
+            <button class="btn-mode" onclick="connectHyperliquid()" style="background:var(--accent);">🔌 Validar e Conectar</button>
+            <div class="console" id="apiConsole">[API] Desconectado</div>
+
+            <h3>📝 Ordem Real</h3>
+            <div class="campo">
+                <label>Capital (USDC)</label>
+                <input type="number" id="botCapital" value="1" step="0.1" min="0.1">
+            </div>
+            <div class="grid-2">
+                <div><label>Stop Loss %</label><input type="number" id="botSL" value="0.5" step="0.1"></div>
+                <div><label>Take Profit %</label><input type="number" id="botTP" value="0.5" step="0.1"></div>
+            </div>
+            <div class="campo">
+                <label>Par</label>
+                <select id="botPair">
+                    <option value="BTC">BTC/USDC</option>
+                    <option value="ETH">ETH/USDC</option>
+                    <option value="SOL">SOL/USDC</option>
+                </select>
+            </div>
+
+            <button class="btn-calc" onclick="placeRealOrder()" style="background:var(--gold); color:#000; margin-top:15px;">🚀 ENVIAR ORDEM REAL</button>
+            <button class="close-btn" onclick="closeRobotModal()" style="margin-top:10px;">Fechar</button>
+        </div>
+    </div>
+
+    <!-- Modal de Donativos -->
+    <div id="donationModal" class="modal">
+        <div class="modal-content">
+            <h2>💰 Donativos</h2>
+            <p style="background:#1e2a36; padding:15px; border-radius:15px; margin-bottom:20px;">
+                Este projeto é desenvolvido de forma independente, <strong>sem fins lucrativos</strong>. 
+                Contribuições ajudam a manter os custos de servidor. Obrigado! 🙏
+            </p>
+            
+            <div class="donation-item" style="border-left-color:#8a2be2;">
+                <strong>⚡ Lightning Network</strong>
+                <p>cloggedparrot01@walletofsatoshi.com <button class="copy-btn" onclick="copyText('cloggedparrot01@walletofsatoshi.com')">Copiar</button></p>
+            </div>
+            <div class="donation-item" style="border-left-color:#f7931a;">
+                <strong>₿ Bitcoin (On-Chain)</strong>
+                <p>bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5 <button class="copy-btn" onclick="copyText('bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5')">Copiar</button></p>
+            </div>
+            <div class="donation-item" style="border-left-color:#627eea;">
+                <strong>🔷 EVM (ETH / Polygon)</strong>
+                <p>0xAd944bA180610F1Fe43151eD81c0084C918c68e1 <button class="copy-btn" onclick="copyText('0xAd944bA180610F1Fe43151eD81c0084C918c68e1')">Copiar</button></p>
+            </div>
+            <div class="donation-item" style="border-left-color:#14f195;">
+                <strong>◎ Solana</strong>
+                <p>EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm <button class="copy-btn" onclick="copyText('EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm')">Copiar</button></p>
+            </div>
+            <div class="donation-item" style="border-left-color:#32bcad;">
+                <strong>🇧🇷 Pix</strong>
+                <p>127d59fc-1f37-4e8e-9fd4-295e1883727b <button class="copy-btn" onclick="copyText('127d59fc-1f37-4e8e-9fd4-295e1883727b')">Copiar</button></p>
+            </div>
+            
+            <button class="close-btn" onclick="closeDonationModal()">Fechar</button>
+        </div>
+    </div>
+
+    <script src="https://s3.tradingview.com/tv.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <script>
+        // ---------- VARIÁVEIS GLOBAIS ----------
+        let price = 73972.21;
+        let pricesHistory = [];
+        let hlConnection = null;
+
+        // ---------- FUNÇÕES DA INTERFACE ----------
+        function toggleMode() {
+            document.querySelector('.card').classList.toggle('desktop-mode');
+        }
+
+        function initChart() {
+            const symbol = document.getElementById('pairSelector').value;
+            document.getElementById('chart_container').innerHTML = '';
+            new TradingView.widget({
+                "autosize": true,
+                "symbol": symbol,
+                "interval": "1",
+                "theme": "dark",
+                "style": "1",
+                "container_id": "chart_container"
+            });
+        }
+
+        // WebSocket de preços
+        const ws = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@ticker');
+        ws.onmessage = (e) => {
+            const data = JSON.parse(e.data);
+            price = parseFloat(data.c);
+            document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
+            pricesHistory.push(price);
+            if(pricesHistory.length > 50) pricesHistory.shift();
+            
+            // Sinal 1 - Par/Ímpar
+            const s1 = document.getElementById('statusText');
+            if(Math.floor(price * 100) % 2 === 0) {
+                s1.innerText = '🔥 OPORTUNIDADE';
+                s1.style.color = '#00ff88';
+            } else {
+                s1.innerText = '⚠️ AGUARDAR';
+                s1.style.color = '#ff3e3e';
             }
             
-            hlConnection = { mainAddress: mainAddr, apiWallet: wallet, apiAddress: apiAddr };
-            document.getElementById('apiConsole').innerHTML = `[API] Conectado como ${apiAddr.slice(0,6)}...${apiAddr.slice(-4)} ✅`;
-        } catch(e) {
-            document.getElementById('apiConsole').innerHTML = `[API] Erro: ${e.message}`;
+            // Sinal 2 - Filtro (21 períodos)
+            const s2 = document.getElementById('rsiText');
+            if(pricesHistory.length >= 21) {
+                const compra = price > pricesHistory[pricesHistory.length - 21];
+                s2.innerText = compra ? '🚀 COMPRA' : '📉 VENDA';
+                s2.style.color = compra ? '#00ff88' : '#ff3e3e';
+            }
+            
+            // Sinal 3 - Momentum (3 períodos)
+            const s3 = document.getElementById('momText');
+            if(pricesHistory.length >= 3) {
+                const avg = (pricesHistory.slice(-3).reduce((a,b)=>a+b,0))/3;
+                if(price > avg * 1.001) {
+                    s3.innerText = '📈 ALTA';
+                    s3.style.color = '#00ff88';
+                } else if(price < avg * 0.999) {
+                    s3.innerText = '📉 BAIXA';
+                    s3.style.color = '#ff3e3e';
+                } else {
+                    s3.innerText = '⚖️ NEUTRO';
+                    s3.style.color = '#ffcc00';
+                }
+            }
+        };
+
+        function calc() {
+            const tp = price * (1 + parseFloat(document.getElementById('tpP').value)/100);
+            const sl = price * (1 - parseFloat(document.getElementById('slP').value)/100);
+            alert(`TP: $${tp.toFixed(2)}\nSL: $${sl.toFixed(2)}`);
         }
-    }
-    
-    // Ordem Real (simplificada para teste)
-    async function placeRealOrder() {
-        if(!hlConnection) {
-            alert('Conecte a API primeiro');
-            return;
+
+        // ---------- MODAIS ----------
+        function openPasswordModal() { document.getElementById('passwordModal').style.display = 'flex'; }
+        function closePasswordModal() { document.getElementById('passwordModal').style.display = 'none'; }
+        function openDonationModal() { document.getElementById('donationModal').style.display = 'flex'; }
+        function closeDonationModal() { document.getElementById('donationModal').style.display = 'none'; }
+        function closeRobotModal() { document.getElementById('robotModal').style.display = 'none'; }
+
+        function checkPassword() {
+            if(document.getElementById('passInput').value === '123456') {
+                closePasswordModal();
+                document.getElementById('robotModal').style.display = 'flex';
+            } else {
+                alert('Senha incorreta');
+            }
         }
-        
-        const capital = parseFloat(document.getElementById('botCapital').value);
-        const pair = document.getElementById('botPair').value;
-        
-        alert(`Ordem de teste: Comprar ${capital} USDC de ${pair}\n(Modo simulação - API ainda em ajuste)`);
-    }
-</script>
+
+        function copyText(text) {
+            navigator.clipboard.writeText(text);
+            alert('Copiado!');
+        }
+
+        // ---------- HYPERLIQUID ----------
+        async function connectHyperliquid() {
+            const mainAddr = document.getElementById('hlMainAddress').value.trim();
+            const apiAddr = document.getElementById('hlApiAddress').value.trim();
+            const privKey = document.getElementById('hlApiPrivateKey').value.trim();
+            
+            if(!mainAddr || !apiAddr || !privKey) {
+                alert('Preencha todos os campos');
+                return;
+            }
+            
+            try {
+                const provider = new ethers.providers.JsonRpcProvider('https://arb1.arbitrum.io/rpc');
+                const wallet = new ethers.Wallet(privKey, provider);
+                
+                if(wallet.address.toLowerCase() !== apiAddr.toLowerCase()) {
+                    throw new Error('Chave não corresponde ao endereço da API');
+                }
+                
+                hlConnection = { mainAddress: mainAddr, apiWallet: wallet, apiAddress: apiAddr };
+                document.getElementById('apiConsole').innerHTML = `✅ Conectado como ${apiAddr.slice(0,6)}...${apiAddr.slice(-4)}`;
+            } catch(e) {
+                document.getElementById('apiConsole').innerHTML = `❌ Erro: ${e.message}`;
+            }
+        }
+
+        async function placeRealOrder() {
+            if(!hlConnection) {
+                alert('Conecte a API primeiro');
+                return;
+            }
+            
+            const capital = parseFloat(document.getElementById('botCapital').value);
+            const pair = document.getElementById('botPair').value;
+            const sl = document.getElementById('botSL').value;
+            const tp = document.getElementById('botTP').value;
+            
+            alert(`Ordem de teste:\nComprar ${capital} USDC de ${pair}\nStop: ${sl}% | Take: ${tp}%\n\n(Modo simulação - API em ajuste)`);
+        }
+
+        // Inicializar gráfico
+        initChart();
+    </script>
 </body>
 </html>
