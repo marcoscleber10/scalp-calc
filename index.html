@@ -22,9 +22,11 @@
         .price { font-size: 36px; font-weight: 800; color: var(--green); margin-bottom: 15px; font-family: monospace; }
         
         .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .status-bar { background: #0d1117; padding: 10px; border-radius: 8px; font-size: 10px; font-weight: bold; border-bottom: 3px solid #30363d; text-align: center; }
+        .status-bar { background: #0d1117; padding: 10px; border-radius: 8px; font-size: 10px; font-weight: bold; border-bottom: 3px solid #30363d; text-align: center; position: relative; overflow: hidden; }
         .status-label { font-size: 8px; color: var(--text); display: block; margin-bottom: 4px; text-transform: uppercase; }
         
+        .light-glow { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: currentColor; filter: blur(4px); opacity: 0.5; }
+
         #chart_container { width: 100%; height: 200px; border-radius: 8px; margin-bottom: 20px; overflow: hidden; border: 1px solid #30363d; background: #000; }
         .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; text-align: left; }
         label { font-size: 9px; color: var(--text); text-transform: uppercase; margin-bottom: 4px; display: block; }
@@ -81,10 +83,12 @@
 
     <div class="status-grid">
         <div id="statusBox" class="status-bar">
+            <div class="light-glow"></div>
             <span class="status-label" id="labelSinal">SINAL GERAL</span>
             <span id="statusText">CONECTANDO...</span>
         </div>
         <div id="rsiBox" class="status-bar">
+            <div class="light-glow"></div>
             <span class="status-label" id="labelFiltro">FILTRO TÉCNICO</span>
             <span id="rsiText">COLETANDO...</span>
         </div>
@@ -108,17 +112,17 @@
 
     <div class="projects-section">
         <div class="projects-grid">
-            <a href="#" class="project-btn">Dashboard 97</a>
-            <a href="#" class="project-btn">CombustAI</a>
-            <a href="#" class="project-btn">Dashboard 75</a>
-            <a href="#" class="project-btn">Pepinômetro</a>
-            <a href="#" class="project-btn">História Copas</a>
-            <a href="#" class="project-btn">InvestOpção</a>
+            <a href="https://site-559791916621-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">Dashboard 97</a>
+            <a href="https://site-combustai-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">CombustAI</a>
+            <a href="https://site-557591544835-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">Dashboard 75</a>
+            <a href="https://pepinometro-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">Pepinômetro</a>
+            <a href="https://historia-copas-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">História Copas</a>
+            <a href="https://investopcao.culturabuilder.com" target="_blank" class="project-btn">InvestOpção</a>
         </div>
     </div>
 
     <div class="ad-container">
-        <span style="color:#ffcc00; font-size: 12px; font-weight: bold;">📺 ATMOS IPTV</span>
+        <span style="color:#ffcc00; font-size: 12px; font-weight: bold;">📺 ATMOS IPTV / SÍTIO MÃE MARIA</span>
         <a href="https://wa.me/5597991916621" target="_blank" class="btn-ad">TESTE GRÁTIS</a>
     </div>
 
@@ -140,105 +144,4 @@
     let pricesHistory = [];
     let isDesktop = false;
     let currentTF = "1";
-    let activeWS = null;
-
-    function setTF(tf, btn) {
-        currentTF = tf;
-        document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        initApp();
-    }
-
-    function toggleMode() {
-        isDesktop = !isDesktop;
-        document.getElementById('mainCard').classList.toggle('desktop-mode', isDesktop);
-        initApp();
-    }
-
-    function initApp() {
-        const symbol = document.getElementById('pairSelector').value;
-        const container = document.getElementById('chart_container');
-        container.innerHTML = ''; 
-
-        new TradingView.widget({
-            "autosize": true,
-            "symbol": symbol,
-            "interval": currentTF,
-            "theme": "dark",
-            "style": "1",
-            "locale": "br",
-            "container_id": "chart_container",
-            "hide_top_toolbar": !isDesktop,
-            "hide_legend": false
-        });
-        
-        if(activeWS) activeWS.close();
-        
-        let pair = symbol.split(':')[1].toLowerCase();
-        let streamPair = (pair === 'gold' || pair === 'silver' || pair === 'usoil') ? 'btcusdt' : pair;
-
-        activeWS = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`);
-        
-        activeWS.onmessage = (e) => {
-            const data = JSON.parse(e.data);
-            price = parseFloat(data.c);
-            
-            const priceEl = document.getElementById('priceText');
-            const labelSinal = document.getElementById('labelSinal');
-            
-            priceEl.innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-            
-            if(pair === 'gold' || pair === 'silver') {
-                labelSinal.innerText = "SINAL METAIS";
-                labelSinal.style.color = "var(--gold)";
-            } else if (pair === 'usoil') {
-                labelSinal.innerText = "SINAL ENERGIA";
-                labelSinal.style.color = "var(--accent)";
-            } else {
-                labelSinal.innerText = "SINAL GERAL";
-                labelSinal.style.color = "var(--text)";
-            }
-            
-            pricesHistory.push(price);
-            if (pricesHistory.length > 50) pricesHistory.shift();
-
-            const box = document.getElementById('statusBox');
-            const txt = document.getElementById('statusText');
-            
-            if (Math.floor(price * 100) % 2 === 0) {
-                txt.innerText = "🔥 OPORTUNIDADE";
-                box.style.borderBottomColor = "var(--green)";
-                box.style.color = "var(--green)";
-            } else {
-                txt.innerText = "⚠️ AGUARDAR";
-                box.style.borderBottomColor = "var(--red)";
-                box.style.color = "var(--red)";
-            }
-            atualizarFiltroTecnico(pair);
-        };
-    }
-
-    function atualizarFiltroTecnico(pair) {
-        const rsiBox = document.getElementById('rsiBox');
-        const rsiTxt = document.getElementById('rsiText');
-        if (pricesHistory.length < 21) {
-            rsiTxt.innerText = "COLETANDO: " + pricesHistory.length + "/21";
-            return;
-        }
-        const rsi = 50; // Simplificado para manter fluidez
-        rsiTxt.innerText = rsi > 50 ? "🚀 COMPRA" : "📉 VENDA";
-        rsiBox.style.borderBottomColor = rsi > 50 ? "var(--green)" : "var(--red)";
-    }
-
-    function calc() {
-        const tp = parseFloat(document.getElementById('tpP').value);
-        const sl = parseFloat(document.getElementById('slP').value);
-        document.getElementById('resTP').innerText = `$ ${(price * (1 + tp/100)).toFixed(2)}`;
-        document.getElementById('resSL').innerText = `$ ${(price * (1 - sl/100)).toFixed(2)}`;
-        document.getElementById('results').style.display = 'block';
-    }
-
-    initApp();
-</script>
-</body>
-</html>
+    let
