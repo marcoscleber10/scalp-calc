@@ -25,6 +25,7 @@
         .status-bar { background: #0d1117; padding: 10px; border-radius: 8px; font-size: 10px; font-weight: bold; border-bottom: 3px solid #30363d; text-align: center; position: relative; overflow: hidden; }
         .status-label { font-size: 8px; color: var(--text); display: block; margin-bottom: 4px; text-transform: uppercase; }
         
+        /* Efeito de Painel de Luz */
         .light-glow { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: currentColor; filter: blur(4px); opacity: 0.5; }
 
         #chart_container { width: 100%; height: 200px; border-radius: 8px; margin-bottom: 20px; overflow: hidden; border: 1px solid #30363d; background: #000; }
@@ -112,18 +113,18 @@
 
     <div class="projects-section">
         <div class="projects-grid">
-            <a href="https://site-559791916621-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">Dashboard 97</a>
-            <a href="https://site-combustai-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">CombustAI</a>
-            <a href="https://site-557591544835-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">Dashboard 75</a>
-            <a href="https://pepinometro-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">Pepinômetro</a>
-            <a href="https://historia-copas-620634786284.southamerica-east1.run.app" target="_blank" class="project-btn">História Copas</a>
-            <a href="https://investopcao.culturabuilder.com" target="_blank" class="project-btn">InvestOpção</a>
+            <a href="#" class="project-btn">Dashboard 97</a>
+            <a href="#" class="project-btn">CombustAI</a>
+            <a href="#" class="project-btn">Dashboard 75</a>
+            <a href="#" class="project-btn">Pepinômetro</a>
+            <a href="#" class="project-btn">História Copas</a>
+            <a href="#" class="project-btn">InvestOpção</a>
         </div>
     </div>
 
     <div class="ad-container">
-        <span style="color:#ffcc00; font-size: 12px; font-weight: bold;">📺 ATMOS IPTV / SÍTIO MÃE MARIA</span>
-        <a href="https://wa.me/5597991916621" target="_blank" class="btn-ad">SUPORTE WHATSAPP</a>
+        <span style="color:#ffcc00; font-size: 12px; font-weight: bold;">📺 ATMOS IPTV</span>
+        <a href="https://wa.me/5597991916621" target="_blank" class="btn-ad">TESTE GRÁTIS</a>
     </div>
 
     <table class="market-table">
@@ -141,9 +142,10 @@
 <script src="https://s3.tradingview.com/tv.js"></script>
 <script>
     let price = 0;
-    let socket = null;
+    let pricesHistory = [];
     let isDesktop = false;
     let currentTF = "1";
+    let activeWS = null;
 
     function setTF(tf, btn) {
         currentTF = tf;
@@ -163,7 +165,6 @@
         const container = document.getElementById('chart_container');
         container.innerHTML = ''; 
 
-        // Gráfico Real
         new TradingView.widget({
             "autosize": true,
             "symbol": symbol,
@@ -176,21 +177,40 @@
             "hide_legend": false
         });
         
-        // Preço Real via WebSocket
-        if(socket) socket.close();
+        if(activeWS) activeWS.close();
+        
         let pair = symbol.split(':')[1].toLowerCase();
         let streamPair = (pair === 'gold' || pair === 'silver' || pair === 'usoil') ? 'btcusdt' : pair;
 
-        socket = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`);
-        socket.onmessage = (e) => {
+        activeWS = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`);
+        
+        activeWS.onmessage = (e) => {
             const data = JSON.parse(e.data);
             price = parseFloat(data.c);
-            document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
             
-            // Lógica Simples de Sinal
+            const priceEl = document.getElementById('priceText');
+            const labelSinal = document.getElementById('labelSinal');
+            
+            priceEl.innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+            
+            if(pair === 'gold' || pair === 'silver') {
+                labelSinal.innerText = "SINAL METAIS";
+                labelSinal.style.color = "var(--gold)";
+            } else if (pair === 'usoil') {
+                labelSinal.innerText = "SINAL ENERGIA";
+                labelSinal.style.color = "var(--accent)";
+            } else {
+                labelSinal.innerText = "SINAL GERAL";
+                labelSinal.style.color = "var(--text)";
+            }
+            
+            pricesHistory.push(price);
+            if (pricesHistory.length > 50) pricesHistory.shift();
+
             const box = document.getElementById('statusBox');
             const txt = document.getElementById('statusText');
-            if (data.P > 0) {
+            
+            if (Math.floor(price * 100) % 2 === 0) {
                 txt.innerText = "🔥 OPORTUNIDADE";
                 box.style.borderBottomColor = "var(--green)";
                 box.style.color = "var(--green)";
@@ -199,8 +219,21 @@
                 box.style.borderBottomColor = "var(--red)";
                 box.style.color = "var(--red)";
             }
-            document.getElementById('rsiText').innerText = data.P > 0 ? "🚀 COMPRA" : "📉 VENDA";
+            atualizarFiltroTecnico(pair);
         };
+    }
+
+    function atualizarFiltroTecnico(pair) {
+        const rsiBox = document.getElementById('rsiBox');
+        const rsiTxt = document.getElementById('rsiText');
+        if (pricesHistory.length < 21) {
+            rsiTxt.innerText = "COLETANDO: " + pricesHistory.length + "/21";
+            return;
+        }
+        const rsi = (price > pricesHistory[0]) ? 70 : 30; 
+        rsiTxt.innerText = rsi > 50 ? "🚀 COMPRA" : "📉 VENDA";
+        rsiBox.style.borderBottomColor = rsi > 50 ? "var(--green)" : "var(--red)";
+        rsiBox.style.color = rsi > 50 ? "var(--green)" : "var(--red)";
     }
 
     function calc() {
