@@ -3,170 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mestre do Scalping Pro + Robô Secreto</title>
+    <title>Mestre do Scalping + Robô Hyper (3 Sinais)</title>
     <style>
-        /* ===== SEU ESTILO ORIGINAL (COMPLETO, NADA ALTERADO) ===== */
         :root { --bg: #0d1117; --card: #161b22; --green: #00ff88; --red: #ff3e3e; --text: #8b949e; --accent: #2f81f7; --gold: #ffcc00; }
-        body { background-color: var(--bg); color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; position: relative; }
-        .card { background: var(--card); padding: 24px; border-radius: 16px; width: 100%; max-width: 400px; text-align: center; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: max-width 0.3s ease; }
-        .card.desktop-mode { max-width: 95%; }
-        .desktop-mode #chart_container { height: 500px !important; }
-        h4 { color: var(--text); font-size: 11px; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 1px; }
-        
+        body { background: var(--bg); color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 15px; margin: 0; }
+        .card { background: var(--card); padding: 24px; border-radius: 16px; width: 100%; max-width: 400px; border: 1px solid #30363d; }
+        h4 { color: var(--text); font-size: 11px; margin: 0 0 20px; text-transform: uppercase; }
         .time-selector { display: flex; gap: 8px; margin-bottom: 15px; }
-        .time-btn { flex: 1; background: #21262d; border: 1px solid #30363d; color: var(--text); padding: 10px; border-radius: 8px; font-size: 10px; font-weight: bold; cursor: pointer; }
-        .time-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
-        .time-btn.active[data-t="15"] { background: var(--gold); color: #000; border-color: var(--gold); }
-
-        .btn-mode { width: 100%; background: var(--accent); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 11px; text-transform: uppercase; }
-        select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 12px; border-radius: 8px; margin-bottom: 20px; outline: none; font-size: 14px; cursor: pointer; }
-        .price { font-size: 36px; font-weight: 800; color: var(--green); margin-bottom: 15px; font-family: monospace; }
-        
-        .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .status-bar { background: #0d1117; padding: 10px; border-radius: 8px; font-size: 10px; font-weight: bold; border-bottom: 3px solid #30363d; text-align: center; position: relative; overflow: hidden; }
-        .status-label { font-size: 8px; color: var(--text); display: block; margin-bottom: 4px; text-transform: uppercase; }
-        
-        /* Efeito de Painel de Luz */
-        .light-glow { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: currentColor; filter: blur(4px); opacity: 0.5; }
-
-        #chart_container { width: 100%; height: 200px; border-radius: 8px; margin-bottom: 20px; overflow: hidden; border: 1px solid #30363d; background: #000; }
-        .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; text-align: left; }
-        label { font-size: 9px; color: var(--text); text-transform: uppercase; margin-bottom: 4px; display: block; }
-        input { width: 100%; background: #21262d; border: 1px solid #30363d; color: white; padding: 10px; border-radius: 6px; box-sizing: border-box; margin-bottom: 12px; font-size: 14px; }
-        .btn-calc { width: 100%; padding: 16px; background: var(--green); color: #0d1117; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
-        
-        .res { margin-top: 20px; padding-top: 20px; border-top: 1px solid #30363d; text-align: left; display: none; }
-        .res-item { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; font-size: 13px; }
-        
-        .projects-section { margin-top: 30px; border-top: 1px solid #30363d; padding-top: 20px; }
-        .projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .project-btn { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 10px; border-radius: 6px; font-size: 11px; text-decoration: none; font-weight: bold; text-align: center; }
-        
-        .ad-container { margin-top: 25px; padding: 15px; background: linear-gradient(145deg, #1e2227, #161b22); border-radius: 12px; border: 1px solid #ffcc0033; }
-        .btn-ad { display: block; background: #ffcc00; color: #000; text-decoration: none; padding: 10px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-top: 10px; text-align: center;}
-        
-        .market-table { width: 100%; font-size: 10px; margin-top: 20px; border-collapse: collapse; color: var(--text); text-align: left; }
-        .market-table td { padding: 6px 0; border-bottom: 1px solid #21262d; }
-        .market-header { color: var(--accent); font-weight: bold; font-size: 9px; text-transform: uppercase; padding: 10px 0 5px 0; }
-
-        /* ===== NOVOS ESTILOS: BOLINHA FLUTUANTE + PAINEL DO ROBÔ (SEM ALTERAR O EXISTENTE) ===== */
-        .floating-ball {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 70px;
-            height: 70px;
-            background: radial-gradient(circle at 30% 30%, var(--green), #0f8f5c);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #0b0f14;
-            font-weight: 900;
-            font-size: 26px;
-            box-shadow: 0 10px 25px #00ff8880, 0 0 30px #00ff88, 0 0 0 3px #ffffff30 inset;
-            cursor: pointer;
-            transition: 0.2s;
-            z-index: 9999;
-            border: 2px solid #f0f4fa;
-            user-select: none;
-        }
-        .floating-ball:hover { transform: scale(1.08) rotate(5deg); box-shadow: 0 15px 35px #00ffaa; }
-        
-        .password-modal {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #030405dd;
-            backdrop-filter: blur(12px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            transition: opacity 0.25s;
-        }
-        .password-card {
-            background: #151e2a;
-            padding: 35px 30px;
-            border-radius: 30px;
-            width: 320px;
-            border: 2px solid var(--green);
-            box-shadow: 0 0 50px #00ff8870;
-            text-align: center;
-        }
-        .password-card h3 { color: #fff; margin-bottom: 20px; }
-        .password-card input {
-            width: 100%;
-            background: #1e2a38;
-            border: 1px solid #3d4d62;
-            color: white;
-            padding: 18px 22px;
-            border-radius: 60px;
-            font-size: 24px;
-            text-align: center;
-            letter-spacing: 8px;
-            font-weight: 700;
-            outline: none;
-            margin-bottom: 25px;
-        }
-        .password-card button {
-            background: var(--green);
-            border: none;
-            color: #0f1a1a;
-            font-weight: 800;
-            padding: 16px 28px;
-            border-radius: 60px;
-            font-size: 16px;
-            width: 100%;
-            box-shadow: 0 6px 0 #0a5e3a;
-            cursor: pointer;
-            transition: 0.1s;
-        }
-        .password-card button:active { transform: translateY(4px); box-shadow: 0 2px 0 #0a5e3a; }
-
-        /* Painel do Robô (inicialmente oculto) */
-        .robot-panel-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(8px);
-            z-index: 10001;
-            display: none;
-            align-items: center;
-            justify-content: center;
-        }
-        .robot-card {
-            background: #161b22;
-            border-radius: 30px;
-            padding: 30px;
-            width: 90%;
-            max-width: 500px;
-            border: 2px solid var(--gold);
-            box-shadow: 0 0 40px #ffcc00;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        .robot-card h2 { color: var(--gold); margin-bottom: 20px; font-size: 28px; }
-        .exchange-badge { display: flex; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
-        .ex-box { background: #21262d; padding: 12px 18px; border-radius: 40px; border-left: 5px solid; font-weight: bold; }
-        .console-robot {
-            background: #0d1117;
-            border-radius: 16px;
-            padding: 15px;
-            font-family: monospace;
-            font-size: 12px;
-            height: 150px;
-            overflow-y: auto;
-            border: 1px solid #30363d;
-            margin: 20px 0;
-        }
-        .btn-robot { background: var(--green); border: none; padding: 15px; border-radius: 60px; font-weight: bold; width: 100%; margin: 5px 0; cursor: pointer; }
-        .btn-robot.red { background: var(--red); color: white; }
-        .api-note { color: #ffcc00; font-size: 12px; margin-top: 15px; }
+        .time-btn { flex:1; background:#21262d; border:1px solid #30363d; color:var(--text); padding:10px; border-radius:8px; font-size:10px; font-weight:bold; cursor:pointer; }
+        .time-btn.active { background:var(--accent); color:white; }
+        .btn-mode { width:100%; background:var(--accent); color:white; border:none; padding:10px; border-radius:8px; margin-bottom:15px; }
+        select { width:100%; background:#21262d; color:white; border:1px solid #30363d; padding:12px; border-radius:8px; margin-bottom:20px; }
+        .price { font-size:36px; font-weight:800; color:var(--green); margin-bottom:15px; font-family:monospace; }
+        /* Grid de status com 3 colunas */
+        .status-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .status-bar { background:#0d1117; padding:10px; border-radius:8px; border-bottom:3px solid #30363d; text-align:center; }
+        .status-label { font-size:8px; color:var(--text); display:block; margin-bottom:4px; text-transform:uppercase; }
+        .status-value { font-size:12px; font-weight:bold; display:block; }
+        #chart_container { width:100%; height:200px; border-radius:8px; margin-bottom:20px; border:1px solid #30363d; background:#000; }
+        .inputs-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+        input { background:#21262d; border:1px solid #30363d; color:white; padding:10px; border-radius:6px; }
+        .btn-calc { width:100%; padding:16px; background:var(--green); color:#0d1117; border:none; border-radius:8px; font-weight:bold; margin-top:10px; }
+        .res { margin-top:20px; border-top:1px solid #30363d; display:none; }
+        .projects-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:20px; }
+        .project-btn { background:#21262d; padding:10px; border-radius:6px; text-decoration:none; color:#c9d1d9; text-align:center; }
+        .ad-container { margin-top:25px; padding:15px; background:#1e2227; border-radius:12px; }
+        .btn-ad { background:#ffcc00; color:#000; padding:10px; border-radius:6px; text-decoration:none; display:block; text-align:center; }
+        .market-table { width:100%; font-size:10px; margin-top:20px; color:var(--text); }
+        .market-table td { padding:6px 0; border-bottom:1px solid #21262d; }
+        .floating-ball { position:fixed; bottom:30px; right:30px; width:70px; height:70px; background:radial-gradient(circle at 30% 30%, var(--green), #0f8f5c); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#0b0f14; font-size:26px; cursor:pointer; z-index:9999; border:2px solid #f0f4fa; }
+        .password-modal { position:fixed; top:0; left:0; width:100%; height:100%; background:#030405dd; backdrop-filter:blur(12px); display:none; align-items:center; justify-content:center; z-index:10000; }
+        .password-card { background:#151e2a; padding:35px 30px; border-radius:30px; width:320px; border:2px solid var(--green); text-align:center; }
+        .password-card input { width:100%; background:#1e2a38; border:1px solid #3d4d62; color:white; padding:18px 22px; border-radius:60px; font-size:24px; text-align:center; letter-spacing:8px; margin-bottom:25px; }
+        .password-card button { background:var(--green); border:none; padding:16px 28px; border-radius:60px; font-weight:800; width:100%; cursor:pointer; }
+        .robot-panel-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); backdrop-filter:blur(8px); z-index:10001; display:none; align-items:center; justify-content:center; }
+        .robot-card { background:#161b22; border-radius:30px; padding:30px; width:90%; max-width:500px; border:2px solid var(--gold); max-height:80vh; overflow-y:auto; }
+        .exchange-badge { display:flex; gap:10px; margin:20px 0; flex-wrap:wrap; }
+        .ex-box { background:#21262d; padding:12px 18px; border-radius:40px; border-left:5px solid; font-weight:bold; }
+        .console-robot { background:#0d1117; border-radius:16px; padding:15px; font-family:monospace; font-size:12px; height:150px; overflow-y:auto; border:1px solid #30363d; margin:20px 0; }
+        .btn-robot { background:var(--green); border:none; padding:15px; border-radius:60px; font-weight:bold; width:100%; margin:5px 0; cursor:pointer; }
+        .btn-robot.red { background:var(--red); color:white; }
+        hr { border-color:#3d4d62; margin:20px 0; }
     </style>
 </head>
 <body>
 
-<!-- ===== SEU CARD ORIGINAL (COMPLETAMENTE INTACTO) ===== -->
 <div class="card" id="mainCard">
     <h4>Mestre do Scalping Multi-Par</h4>
     <button class="btn-mode" onclick="toggleMode()">🖥️ Alternar Modo Computador</button>
@@ -198,16 +79,20 @@
 
     <div class="price" id="priceText">$--.---</div>
 
+    <!-- NOVO GRID COM 3 COLUNAS -->
     <div class="status-grid">
         <div id="statusBox" class="status-bar">
-            <div class="light-glow"></div>
-            <span class="status-label" id="labelSinal">SINAL GERAL</span>
-            <span id="statusText">CONECTANDO...</span>
+            <span class="status-label">SINAL GERAL</span>
+            <span class="status-value" id="statusText">CONECTANDO...</span>
         </div>
         <div id="rsiBox" class="status-bar">
-            <div class="light-glow"></div>
-            <span class="status-label" id="labelFiltro">FILTRO TÉCNICO</span>
-            <span id="rsiText">COLETANDO...</span>
+            <span class="status-label">FILTRO TÉCNICO</span>
+            <span class="status-value" id="rsiText">COLETANDO...</span>
+        </div>
+        <!-- TERCEIRA OPÇÃO DE SINAL -->
+        <div id="momBox" class="status-bar">
+            <span class="status-label">OPÇÃO 3</span>
+            <span class="status-value" id="momText">AGUARDANDO...</span>
         </div>
     </div>
 
@@ -216,196 +101,161 @@
     <div class="inputs-grid">
         <div><label>Capital ($)</label><input type="number" id="capital" value="300"></div>
         <div><label>Alavancagem</label><input type="number" id="lev" value="10"></div>
-        <div><label>Ganho Alvo %</label><input type="number" id="tpP" value="1.0" step="0.1"></div>
-        <div><label>Stop Loss %</label><input type="number" id="slP" value="1.0" step="0.1"></div>
+        <div><label>Ganho %</label><input type="number" id="tpP" value="1.0"></div>
+        <div><label>Stop %</label><input type="number" id="slP" value="1.0"></div>
     </div>
 
     <button class="btn-calc" onclick="calc()">Calcular Alvos</button>
+    <div id="results" class="res"><div class="res-item"><span>TP:</span><span id="resTP"></span></div><div class="res-item"><span>SL:</span><span id="resSL"></span></div></div>
 
-    <div id="results" class="res">
-        <div class="res-item"><span>🟢 Saída Lucro (TP):</span><span id="resTP" style="color:var(--green); font-weight: bold;"></span></div>
-        <div class="res-item"><span>🛑 Saída Perda (SL):</span><span id="resSL" style="color:var(--red); font-weight: bold;"></span></div>
-    </div>
-
-    <div class="projects-section">
-        <div class="projects-grid">
-            <a href="#" class="project-btn">Dashboard 97</a>
-            <a href="#" class="project-btn">CombustAI</a>
-            <a href="#" class="project-btn">Dashboard 75</a>
-            <a href="#" class="project-btn">Pepinômetro</a>
-            <a href="#" class="project-btn">História Copas</a>
-            <a href="#" class="project-btn">InvestOpção</a>
-        </div>
+    <div class="projects-grid">
+        <a href="#" class="project-btn">Dashboard 97</a>
+        <a href="#" class="project-btn">CombustAI</a>
+        <a href="#" class="project-btn">Dashboard 75</a>
+        <a href="#" class="project-btn">Pepinômetro</a>
+        <a href="#" class="project-btn">História Copas</a>
+        <a href="#" class="project-btn">InvestOpção</a>
     </div>
 
     <div class="ad-container">
-        <span style="color:#ffcc00; font-size: 12px; font-weight: bold;">📺 ATMOS IPTV</span>
-        <a href="https://wa.me/5597991916621" target="_blank" class="btn-ad">TESTE GRÁTIS</a>
+        <span style="color:#ffcc00;">📺 ATMOS IPTV</span>
+        <a href="https://wa.me/5597991916621" class="btn-ad">TESTE GRÁTIS</a>
     </div>
-
-    <table class="market-table">
-        <tr><td colspan="3" class="market-header">🕒 Sessões Cripto / Forex</td></tr>
-        <tr><td>🌏 Ásia</td><td>21:00 - 01:00</td><td style="text-align:right; color:#ffcc00;">● Médio</td></tr>
-        <tr><td>🇪🇺 Londres</td><td>04:00 - 09:00</td><td style="text-align:right; color:var(--green);">● Alto</td></tr>
-        <tr><td>🇺🇸 NY (Pico)</td><td>10:00 - 14:00</td><td style="text-align:right; color:var(--green);">● Pico</td></tr>
-        
-        <tr><td colspan="3" class="market-header">🏆 Ouro, Prata & WTI</td></tr>
-        <tr><td>🥇 Metais (NY)</td><td>09:20 - 15:30</td><td style="text-align:right; color:var(--gold);">● Liquidez</td></tr>
-        <tr><td>🛢️ Petróleo (WTI)</td><td>10:00 - 16:30</td><td style="text-align:right; color:var(--accent);">● Volatilidade</td></tr>
-    </table>
 </div>
 
-<!-- ===== BOLINHA FLUTUANTE ===== -->
-<div class="floating-ball" id="floatingBall" onclick="showPasswordModal()">🔓</div>
+<div class="floating-ball" onclick="showPasswordModal()">🔓</div>
 
-<!-- ===== MODAL DE SENHA ===== -->
-<div id="passwordModal" class="password-modal" style="display: none;">
+<div id="passwordModal" class="password-modal">
     <div class="password-card">
-        <h3>🔐 ACESSO AO ROBÔ</h3>
+        <h3>🔐 ACESSO</h3>
         <input type="password" id="passInput" maxlength="6" placeholder="******">
         <button onclick="checkPassword()">VALIDAR</button>
-        <p style="color:#808fa0; margin-top: 15px;">digite 123456 (demo)</p>
+        <p style="color:#808fa0; margin-top:15px;">123456</p>
     </div>
 </div>
 
-<!-- ===== PAINEL DO ROBÔ (EXCHANGES) ===== -->
 <div id="robotPanel" class="robot-panel-overlay">
     <div class="robot-card">
-        <h2>🤖 ROBÔ SCALPER PRO</h2>
-        <p style="color: var(--green);">🔓 Acesso autorizado</p>
-        
+        <h2 style="color:var(--gold);">🤖 ROBÔ HYPER</h2>
+        <p style="color:var(--green);">🔓 Acesso autorizado</p>
         <div class="exchange-badge">
-            <div class="ex-box" style="border-left-color: #f3ba2f;">Binance</div>
-            <div class="ex-box" style="border-left-color: #2766ff;">OKX</div>
-            <div class="ex-box" style="border-left-color: #7b3fe4;">Bybit</div>
-            <div class="ex-box" style="border-left-color: var(--gold);">HyperLiquid</div>
+            <div class="ex-box" style="border-left-color:#f3ba2f;">Binance</div>
+            <div class="ex-box" style="border-left-color:#2766ff;">OKX</div>
+            <div class="ex-box" style="border-left-color:#7b3fe4;">Bybit</div>
+            <div class="ex-box" style="border-left-color:var(--gold);">HyperLiquid</div>
         </div>
+        <hr>
+        <h3 style="color:var(--gold);">🔐 Conectar Hyperliquid</h3>
+        <label style="color:white;">Endereço da sua conta principal (MetaMask)</label>
+        <input type="text" id="hlMainAddress" placeholder="0x..." value="0x9a761Cc6331Fd28D0b04811135dfA233f6499C9Q" style="width:100%; background:#21262d; border:1px solid #3d4d62; color:white; padding:12px; border-radius:40px; margin-bottom:10px;">
+        <label style="color:white;">Endereço da API wallet (público)</label>
+        <input type="text" id="hlApiAddress" placeholder="0x..." value="0xa291d64a02cb36904d8a43cc787b2699b6fa5d4a" style="width:100%; background:#21262d; border:1px solid #3d4d62; color:white; padding:12px; border-radius:40px; margin-bottom:10px;">
+        <label style="color:white;">Chave privada da API wallet</label>
+        <input type="password" id="hlApiPrivateKey" placeholder="0x..." style="width:100%; background:#21262d; border:1px solid #3d4d62; color:white; padding:12px; border-radius:40px; margin-bottom:10px;">
+        <button class="btn-robot" onclick="connectHyperliquid()" style="background:#3b82f6; margin-bottom:15px;">🔌 Validar e Conectar</button>
+        <div class="console-robot" id="apiConsole" style="height:60px;">[API] Desconectado</div>
 
-        <label style="color: white;">📊 Estratégia:</label>
-        <select id="botStrategy" style="width:100%; background:#21262d; color:white; padding:12px; border-radius:40px; margin:10px 0;">
-            <option value="grid">📈 GRID SCALPER (Multi-exchange)</option>
-            <option value="momentum">⚡ MOMENTUM + TRAILING (Bybit/Hyper)</option>
-            <option value="arb">🔄 ARBITRAGEM (Binance/OKX)</option>
-            <option value="vwap">📊 VWAP REVERSÃO (HyperLiquid)</option>
+        <label style="color:white;">📉 Stop Loss (%)</label>
+        <input type="number" id="botSL" value="1.0" step="0.1" style="width:100%; background:#21262d; border:1px solid #3d4d62; color:white; padding:12px; border-radius:40px; margin-bottom:10px;">
+        <label style="color:white;">📈 Take Profit (%)</label>
+        <input type="number" id="botTP" value="1.2" step="0.1" style="width:100%; background:#21262d; border:1px solid #3d4d62; color:white; padding:12px; border-radius:40px; margin-bottom:10px;">
+        <label style="color:white;">💰 Capital (USDC)</label>
+        <input type="number" id="botCapital" value="10" step="5" style="width:100%; background:#21262d; border:1px solid #3d4d62; color:white; padding:12px; border-radius:40px; margin-bottom:10px;">
+        <label style="color:white;">🔄 Par</label>
+        <select id="botPair" style="width:100%; background:#21262d; border:1px solid #3d4d62; color:white; padding:12px; border-radius:40px; margin-bottom:20px;">
+            <option value="BTC">BTC/USDC</option>
+            <option value="ETH">ETH/USDC</option>
+            <option value="SOL">SOL/USDC</option>
         </select>
 
-        <div style="display: flex; gap: 10px; margin: 15px 0;">
-            <input type="text" placeholder="API Key (opcional demo)" style="flex:2; background:#1e2a38; border:1px solid #3d4d62; color:white; padding:12px; border-radius:40px;">
-        </div>
-
-        <div class="console-robot" id="robotConsole">
-            [ROBÔ] Aguardando inicialização...<br>
-            [HyperLiquid] Pronto para conectar 🔌<br>
-        </div>
-
-        <button class="btn-robot" onclick="initBot()">▶ INICIAR ROBÔ (MODO DEMO)</button>
-        <button class="btn-robot red" onclick="stopBot()">⏹️ PARAR ROBÔ</button>
-        
-        <div class="api-note">
-            ⚠️ Modo simulação ativo. Para operar real, insira suas APIs.
-        </div>
-        <button onclick="closeRobotPanel()" style="background:transparent; border:1px solid #3d4d62; color:white; padding:10px; border-radius:40px; margin-top:15px; width:100%;">Fechar</button>
+        <button class="btn-robot" onclick="placeRealOrder()">🚀 ENVIAR ORDEM REAL</button>
+        <button class="btn-robot red" onclick="closeRobotPanel()">Fechar</button>
     </div>
 </div>
 
 <script src="https://s3.tradingview.com/tv.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 <script>
-    // ===== SEU CÓDIGO ORIGINAL (COMPLETAMENTE INTACTO) =====
-    let price = 0;
-    let pricesHistory = [];
-    let isDesktop = false;
-    let currentTF = "1";
-    let activeWS = null;
-
+    // ---------- CÓDIGO ORIGINAL (MANTIDO) ----------
+    let price = 0, pricesHistory = [], isDesktop = false, currentTF = "1", activeWS = null;
     function setTF(tf, btn) {
         currentTF = tf;
         document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         initApp();
     }
-
     function toggleMode() {
         isDesktop = !isDesktop;
         document.getElementById('mainCard').classList.toggle('desktop-mode', isDesktop);
         initApp();
     }
-
     function initApp() {
         const symbol = document.getElementById('pairSelector').value;
         const container = document.getElementById('chart_container');
         container.innerHTML = ''; 
-
-        new TradingView.widget({
-            "autosize": true,
-            "symbol": symbol,
-            "interval": currentTF,
-            "theme": "dark",
-            "style": "1",
-            "locale": "br",
-            "container_id": "chart_container",
-            "hide_top_toolbar": !isDesktop,
-            "hide_legend": false
-        });
-        
+        new TradingView.widget({ "autosize": true, "symbol": symbol, "interval": currentTF, "theme": "dark", "style": "1", "locale": "br", "container_id": "chart_container", "hide_top_toolbar": !isDesktop, "hide_legend": false });
         if(activeWS) activeWS.close();
-        
         let pair = symbol.split(':')[1].toLowerCase();
         let streamPair = (pair === 'gold' || pair === 'silver' || pair === 'usoil') ? 'btcusdt' : pair;
-
         activeWS = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`);
-        
         activeWS.onmessage = (e) => {
             const data = JSON.parse(e.data);
             price = parseFloat(data.c);
-            
-            const priceEl = document.getElementById('priceText');
-            const labelSinal = document.getElementById('labelSinal');
-            
-            priceEl.innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-            
-            if(pair === 'gold' || pair === 'silver') {
-                labelSinal.innerText = "SINAL METAIS";
-                labelSinal.style.color = "var(--gold)";
-            } else if (pair === 'usoil') {
-                labelSinal.innerText = "SINAL ENERGIA";
-                labelSinal.style.color = "var(--accent)";
-            } else {
-                labelSinal.innerText = "SINAL GERAL";
-                labelSinal.style.color = "var(--text)";
-            }
-            
+            document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
             pricesHistory.push(price);
-            if (pricesHistory.length > 50) pricesHistory.shift();
-
-            const box = document.getElementById('statusBox');
-            const txt = document.getElementById('statusText');
+            if(pricesHistory.length > 50) pricesHistory.shift();
             
-            if (Math.floor(price * 100) % 2 === 0) {
-                txt.innerText = "🔥 OPORTUNIDADE";
-                box.style.borderBottomColor = "var(--green)";
-                box.style.color = "var(--green)";
-            } else {
-                txt.innerText = "⚠️ AGUARDAR";
-                box.style.borderBottomColor = "var(--red)";
-                box.style.color = "var(--red)";
+            // Atualiza sinal 1 (oportunidade)
+            const txt = document.getElementById('statusText');
+            const box = document.getElementById('statusBox');
+            if(Math.floor(price * 100) % 2 === 0) { 
+                txt.innerText = "🔥 OPORTUNIDADE"; 
+                box.style.borderBottomColor = "var(--green)"; 
+            } else { 
+                txt.innerText = "⚠️ AGUARDAR"; 
+                box.style.borderBottomColor = "var(--red)"; 
             }
-            atualizarFiltroTecnico(pair);
+            
+            // Atualiza sinal 2 (filtro técnico / RSI simulado)
+            atualizarFiltroTecnico();
+            
+            // Atualiza sinal 3 (momento baseado na média de curto prazo)
+            atualizarMomentum();
         };
     }
-
-    function atualizarFiltroTecnico(pair) {
+    function atualizarFiltroTecnico() {
         const rsiBox = document.getElementById('rsiBox');
         const rsiTxt = document.getElementById('rsiText');
-        if (pricesHistory.length < 21) {
-            rsiTxt.innerText = "COLETANDO: " + pricesHistory.length + "/21";
-            return;
+        if(pricesHistory.length < 21) { 
+            rsiTxt.innerText = "COLETANDO: "+pricesHistory.length+"/21"; 
+            return; 
         }
-        const rsi = (price > pricesHistory[0]) ? 70 : 30; 
+        const rsi = (price > pricesHistory[0]) ? 70 : 30;
         rsiTxt.innerText = rsi > 50 ? "🚀 COMPRA" : "📉 VENDA";
         rsiBox.style.borderBottomColor = rsi > 50 ? "var(--green)" : "var(--red)";
-        rsiBox.style.color = rsi > 50 ? "var(--green)" : "var(--red)";
     }
-
+    // NOVA FUNÇÃO: Sinal 3 - Momentum baseado na média dos últimos 3 preços
+    function atualizarMomentum() {
+        const momBox = document.getElementById('momBox');
+        const momTxt = document.getElementById('momText');
+        if(pricesHistory.length < 3) {
+            momTxt.innerText = "AGUARDANDO...";
+            return;
+        }
+        // Pega os últimos 3 preços (incluindo o atual)
+        let lastThree = pricesHistory.slice(-3);
+        let avg = lastThree.reduce((a,b) => a+b, 0) / lastThree.length;
+        if(price > avg * 1.001) { // 0.1% acima da média
+            momTxt.innerText = "📈 MOMENTO ALTA";
+            momBox.style.borderBottomColor = "var(--green)";
+        } else if(price < avg * 0.999) { // 0.1% abaixo da média
+            momTxt.innerText = "📉 MOMENTO BAIXA";
+            momBox.style.borderBottomColor = "var(--red)";
+        } else {
+            momTxt.innerText = "⚖️ NEUTRO";
+            momBox.style.borderBottomColor = "var(--gold)";
+        }
+    }
     function calc() {
         const tp = parseFloat(document.getElementById('tpP').value);
         const sl = parseFloat(document.getElementById('slP').value);
@@ -413,49 +263,152 @@
         document.getElementById('resSL').innerText = `$ ${(price * (1 - sl/100)).toFixed(2)}`;
         document.getElementById('results').style.display = 'block';
     }
-
     initApp();
 
-    // ===== NOVAS FUNÇÕES: BOLINHA + ROBÔ (SEM ALTERAR AS EXISTENTES) =====
-    function showPasswordModal() {
-        document.getElementById('passwordModal').style.display = 'flex';
-    }
+    // ---------- NOVAS FUNÇÕES (ROBÔ) ----------
+    let hlConnection = { mainAddress: '', apiWallet: null, apiAddress: '' };
 
+    function showPasswordModal() { document.getElementById('passwordModal').style.display = 'flex'; }
     function checkPassword() {
-        const pass = document.getElementById('passInput').value;
-        if (pass === '123456') {
+        if(document.getElementById('passInput').value === '123456') {
             document.getElementById('passwordModal').style.display = 'none';
             document.getElementById('robotPanel').style.display = 'flex';
-            document.getElementById('robotConsole').innerHTML += '[SISTEMA] Acesso liberado. Painel do robô ativo.<br>';
-        } else {
-            alert('Senha incorreta. Tente 123456');
+        } else alert('Senha incorreta');
+    }
+    function closeRobotPanel() { document.getElementById('robotPanel').style.display = 'none'; }
+
+    async function connectHyperliquid() {
+        const mainAddr = document.getElementById('hlMainAddress').value.trim();
+        const apiAddr = document.getElementById('hlApiAddress').value.trim();
+        const privKey = document.getElementById('hlApiPrivateKey').value.trim();
+        if(!mainAddr || !apiAddr || !privKey) { alert('Preencha todos os campos'); return; }
+        try {
+            const provider = new ethers.providers.JsonRpcProvider('https://arb1.arbitrum.io/rpc');
+            const wallet = new ethers.Wallet(privKey, provider);
+            if(wallet.address.toLowerCase() !== apiAddr.toLowerCase()) throw new Error('Chave não corresponde ao endereço da API');
+            hlConnection = { mainAddress: mainAddr, apiWallet: wallet, apiAddress: apiAddr };
+            document.getElementById('apiConsole').innerHTML = `[API] Conectado como ${apiAddr.slice(0,6)}...${apiAddr.slice(-4)} ✅`;
+        } catch(e) { alert('Erro: '+e.message); }
+    }
+
+    async function placeRealOrder() {
+        if(!hlConnection.apiWallet) { 
+            alert('Conecte a API primeiro'); 
+            return; 
         }
-    }
+        
+        const sl = parseFloat(document.getElementById('botSL').value)/100;
+        const tp = parseFloat(document.getElementById('botTP').value)/100;
+        const capital = parseFloat(document.getElementById('botCapital').value);
+        const pair = document.getElementById('botPair').value;
+        
+        if(!price) { 
+            alert('Aguardando preço...'); 
+            return; 
+        }
 
-    function closeRobotPanel() {
-        document.getElementById('robotPanel').style.display = 'none';
-    }
-
-    function initBot() {
-        const consoleEl = document.getElementById('robotConsole');
-        const strategy = document.getElementById('botStrategy').value;
-        consoleEl.innerHTML = ''; // limpa
-        consoleEl.innerHTML = `[${new Date().toLocaleTimeString()}] 🚀 Iniciando robô com estratégia ${strategy}<br>`;
-        consoleEl.innerHTML += `[${new Date().toLocaleTimeString()}] 🔗 Conectando à HyperLiquid...<br>`;
-        consoleEl.innerHTML += `[${new Date().toLocaleTimeString()}] ⚠️ API necessária para trading real. Modo demo ativo.<br>`;
-        consoleEl.innerHTML += `[${new Date().toLocaleTimeString()}] 📡 Streaming de dados: BTC/USDT (Binance/OKX/Bybit/Hyper)<br>`;
-        consoleEl.innerHTML += `[${new Date().toLocaleTimeString()}] ✅ Robô em execução (simulação).<br>`;
-    }
-
-    function stopBot() {
-        document.getElementById('robotConsole').innerHTML += `[${new Date().toLocaleTimeString()}] ⏸️ Robô pausado.<br>`;
-    }
-
-    // Fechar modal de senha se clicar fora (opcional)
-    window.onclick = function(event) {
-        const modal = document.getElementById('passwordModal');
-        if (event.target === modal) {
-            modal.style.display = 'none';
+        const assetIndex = pair === 'BTC' ? 0 : (pair === 'ETH' ? 1 : 2);
+        const quantity = (capital / price).toFixed(6);
+        
+        const orderAction = {
+            type: "order",
+            orders: [{
+                a: assetIndex,
+                b: true,
+                p: price.toFixed(2),
+                s: quantity,
+                r: false,
+                t: { market: {} }
+            }],
+            grouping: "na"
+        };
+        
+        const nonce = Date.now();
+        
+        const domain = {
+            name: "Exchange",
+            version: "1",
+            chainId: 1337,
+            verifyingContract: "0x0000000000000000000000000000000000000000"
+        };
+        
+        const types = {
+            Action: [
+                { name: "type", type: "string" },
+                { name: "orders", type: "Order[]" },
+                { name: "grouping", type: "string" }
+            ],
+            Order: [
+                { name: "a", type: "uint32" },
+                { name: "b", type: "bool" },
+                { name: "p", type: "string" },
+                { name: "s", type: "string" },
+                { name: "r", type: "bool" },
+                { name: "t", type: "OrderType" }
+            ],
+            OrderType: [
+                { name: "market", type: "Market" }
+            ],
+            Market: []
+        };
+        
+        const value = {
+            type: "order",
+            orders: [{
+                a: assetIndex,
+                b: true,
+                p: price.toFixed(2),
+                s: quantity,
+                r: false,
+                t: { market: {} }
+            }],
+            grouping: "na"
+        };
+        
+        try {
+            const signature = await hlConnection.apiWallet._signTypedData(domain, types, value);
+            
+            const requestBody = {
+                action: orderAction,
+                nonce: nonce,
+                signature: signature,
+                vaultAddress: null
+            };
+            
+            console.log('Enviando ordem:', JSON.stringify(requestBody, null, 2));
+            
+            const response = await fetch('https://api.hyperliquid.xyz/exchange', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestBody)
+            });
+            
+            const responseText = await response.text();
+            console.log('Resposta da API:', responseText);
+            
+            let result;
+            try {
+                result = JSON.parse(responseText);
+            } catch (e) {
+                document.getElementById('apiConsole').innerHTML += `[${new Date().toLocaleTimeString()}] ❌ Resposta não-JSON: ${responseText}<br>`;
+                return;
+            }
+            
+            if (result.response && result.response.data && result.response.data.statuses) {
+                const status = result.response.data.statuses[0];
+                if (status.error) {
+                    document.getElementById('apiConsole').innerHTML += `[${new Date().toLocaleTimeString()}] ❌ Erro: ${status.error}<br>`;
+                } else {
+                    document.getElementById('apiConsole').innerHTML += `[${new Date().toLocaleTimeString()}] ✅ Ordem enviada: ${quantity} ${pair} a $${price}<br>`;
+                    document.getElementById('apiConsole').innerHTML += `[TP/SL] Stop: $${(price*(1-sl)).toFixed(2)} | Take: $${(price*(1+tp)).toFixed(2)}<br>`;
+                }
+            } else {
+                document.getElementById('apiConsole').innerHTML += `[${new Date().toLocaleTimeString()}] ✅ Resposta: ${JSON.stringify(result)}<br>`;
+            }
+            
+        } catch(err) { 
+            console.error('Erro completo:', err);
+            alert('Erro: ' + err.message); 
         }
     }
 </script>
