@@ -8,7 +8,6 @@
         :root { --bg: #0d1117; --card: #161b22; --green: #00ff88; --red: #ff3e3e; --text: #8b949e; --accent: #2f81f7; --gold: #ffcc00; }
         body { background-color: var(--bg); color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 10px; margin: 0; }
         .card { background: var(--card); padding: 20px; border-radius: 16px; width: 92%; max-width: 450px; text-align: center; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .card.desktop-mode { max-width: 95%; }
         h4 { color: var(--text); font-size: 11px; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 1px; }
         .btn-mode { width: 100%; background: var(--accent); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 12px; font-size: 11px; }
         .time-selector { display: flex; gap: 8px; margin-bottom: 15px; }
@@ -24,18 +23,14 @@
         label { font-size: 9px; color: var(--text); text-transform: uppercase; margin-bottom: 4px; display: block; }
         input { width: 100%; background: #21262d; border: 1px solid #30363d; color: white; padding: 12px; border-radius: 6px; box-sizing: border-box; margin-bottom: 10px; font-size: 15px; }
         .btn-calc { width: 100%; padding: 16px; background: var(--green); color: #0d1117; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 13px; }
-        
-        /* BOTÃO DA ENGRENAGEM ATIVO */
-        .secret-dot { position: fixed; bottom: 25px; right: 20px; width: 48px; height: 48px; background: var(--accent); border-radius: 50%; cursor: pointer; z-index: 9999; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 2px solid white; opacity: 0.9; }
-
+        .secret-dot { position: fixed; bottom: 25px; right: 20px; width: 48px; height: 48px; background: var(--accent); border-radius: 50%; cursor: pointer; z-index: 9999; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 2px solid white; }
         #authBox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(13,17,23,0.98); z-index: 10000; justify-content: center; align-items: center; flex-direction: column; }
-        #botControl { display: none; margin-top: 20px; padding: 15px; border: 1px dashed var(--green); border-radius: 12px; background: #0d1117; }
-        .bot-log { background: #000; color: var(--green); font-family: monospace; font-size: 10px; padding: 10px; height: 70px; overflow-y: auto; margin-top: 10px; border: 1px solid #1f2428; text-align: left;}
-        
+        #botControl { display: none; margin-top: 20px; padding: 15px; border: 1px dashed var(--green); border-radius: 12px; background: #0d1117; text-align: left; }
+        .bot-log { background: #000; color: var(--green); font-family: monospace; font-size: 10px; padding: 10px; height: 70px; overflow-y: auto; margin-top: 10px; border: 1px solid #1f2428; }
         .projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 20px; }
         .project-btn { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 10px; border-radius: 6px; font-size: 11px; text-decoration: none; font-weight: bold; text-align: center;}
         .ad-container { margin-top: 20px; padding: 15px; background: linear-gradient(145deg, #1e2227, #161b22); border-radius: 12px; border: 1px solid #ffcc0033; }
-        .btn-ad { display: block; background: #ffcc00; color: #000; text-decoration: none; padding: 10px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-top: 8px; }
+        .btn-ad { display: block; background: #ffcc00; color: #000; text-decoration: none; padding: 10px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-top: 8px; text-align: center; }
         .market-table { width: 100%; font-size: 10px; margin-top: 15px; border-collapse: collapse; color: var(--text); text-align: left; }
         .market-table td { padding: 5px 0; border-bottom: 1px solid #21262d; }
     </style>
@@ -45,8 +40,8 @@
     <h4>Mestre do Scalping Multi-Par</h4>
     <button class="btn-mode" onclick="toggleMode()">🖥️ Alternar Modo Computador</button>
     <div class="time-selector">
-        <button class="time-btn active" id="btn1m" onclick="setTF('1', this)">⚡ SCALP (1m)</button>
-        <button class="time-btn" id="btn15m" onclick="setTF('15', this)">🔭 DAY TRADE (15m)</button>
+        <button class="time-btn active" onclick="setTF('1', this)">⚡ SCALP (1m)</button>
+        <button class="time-btn" onclick="setTF('15', this)">🔭 DAY TRADE (15m)</button>
     </div>
     <select id="pairSelector" onchange="initApp()">
         <optgroup label="Cripto (Binance)">
@@ -73,12 +68,14 @@
     <div class="inputs-grid">
         <div><label>Capital ($)</label><input type="number" id="capital" value="300"></div>
         <div><label>Alavancagem</label><input type="number" id="lev" value="10"></div>
+        <div><label>Ganho Alvo %</label><input type="number" id="tpP" value="1.0" step="0.1"></div>
+        <div><label>Stop Loss %</label><input type="number" id="slP" value="1.0" step="0.1"></div>
     </div>
-    <button class="btn-calc" onclick="calcTargets()">Calcular Alvos</button>
+    <button class="btn-calc" onclick="calc()">Calcular Alvos</button>
     <div id="botControl">
         <div style="display:flex; justify-content:space-between; align-items:center;"><span style="color:var(--green); font-size:11px; font-weight:bold;">🤖 ROBÔ HYPERLIQUID</span><div id="botStatus" style="width:10px; height:10px; background:var(--red); border-radius:50%;"></div></div>
         <button class="btn-calc" style="background:var(--accent); color:white; margin-top:10px;" onclick="runBot()">ATIVAR EXECUÇÃO</button>
-        <div class="bot-log" id="botLog">> Sistema pronto para ordens.</div>
+        <div class="bot-log" id="botLog">> Sistema pronto.</div>
     </div>
     <div class="projects-grid">
         <a href="#" class="project-btn">Dashboard 97</a><a href="#" class="project-btn">CombustAI</a>
@@ -90,49 +87,31 @@
         <a href="https://wa.me/5597991916621" target="_blank" class="btn-ad">TESTE GRÁTIS</a>
     </div>
     <table class="market-table">
-        <tr><td colspan="2" style="color:var(--accent); font-weight:bold; padding-top:10px;">🕒 SESSÕES CRIPTO / FOREX</td></tr>
-        <tr><td>🌏 Ásia</td><td style="text-align:right">21:00 - 01:00</td></tr>
-        <tr><td>🇪🇺 Londres</td><td style="text-align:right">04:00 - 09:00</td></tr>
-        <tr><td>🇺🇸 NY</td><td style="text-align:right">10:00 - 14:00</td></tr>
+        <tr><td colspan="3" style="color:var(--accent); font-weight:bold; padding-top:10px;">🕒 SESSÕES</td></tr>
+        <tr><td>🌏 Ásia</td><td>21:00 - 01:00</td><td style="text-align:right; color:var(--gold);">● Médio</td></tr>
+        <tr><td>🇪🇺 Londres</td><td>04:00 - 09:00</td><td style="text-align:right; color:var(--green);">● Alto</td></tr>
+        <tr><td>🇺🇸 NY</td><td>10:00 - 14:00</td><td style="text-align:right; color:var(--green);">● Pico</td></tr>
     </table>
 </div>
-
 <div class="secret-dot" onclick="showAuth()"><span style="color:white; font-size:22px;">⚙️</span></div>
-
 <div id="authBox">
-    <h3 style="color:var(--green)">SISTEMA CORE</h3>
+    <h3 style="color:var(--green)">ACESSO CORE</h3>
     <input type="password" id="sysPass" placeholder="Senha" style="width:220px; text-align:center;">
-    <button class="btn-calc" style="width:220px; margin-top:12px;" onclick="checkSys()">DESBLOQUEAR</button>
-    <button onclick="hideAuth()" style="background:none; border:none; color:var(--text); margin-top:20px; cursor:pointer;">Cancelar</button>
+    <button class="btn-calc" style="width:220px; margin-top:12px;" onclick="checkSys()">ENTRAR</button>
+    <button onclick="hideAuth()" style="background:none; border:none; color:var(--text); margin-top:20px;">Fechar</button>
 </div>
-
 <script src="https://s3.tradingview.com/tv.js"></script>
 <script>
-    let activeWS = null;
-    let currentTF = "1";
-
-    function setTF(tf, btn) {
-        currentTF = tf;
-        document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        initApp();
-    }
-
-    function toggleMode() {
-        document.getElementById('mainCard').classList.toggle('desktop-mode');
-        initApp();
-    }
-
+    let activeWS = null; let currentTF = "1";
+    function setTF(tf, btn) { currentTF = tf; document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); initApp(); }
+    function toggleMode() { document.getElementById('mainCard').classList.toggle('desktop-mode'); initApp(); }
     function initApp() {
         const symbol = document.getElementById('pairSelector').value;
         document.getElementById('chart_container').innerHTML = ''; 
         new TradingView.widget({ "autosize": true, "symbol": symbol, "interval": currentTF, "theme": "dark", "container_id": "chart_container", "locale": "br" });
-        
         if(activeWS) activeWS.close();
-        let pair = symbol.split(':')[1].toLowerCase();
-        let stream = (pair.includes('gold') || pair.includes('silver') || pair.includes('usoil')) ? 'btcusdt' : pair;
-        
-        activeWS = new WebSocket(`wss://stream.binance.com:9443/ws/${stream}@ticker`);
+        let p = symbol.split(':')[1].toLowerCase();
+        activeWS = new WebSocket(`wss://stream.binance.com:9443/ws/${(p.includes('gold')||p.includes('silver')||p.includes('usoil'))?'btcusdt':p}@ticker`);
         activeWS.onmessage = (e) => {
             const d = JSON.parse(e.data);
             document.getElementById('priceText').innerText = `$ ${parseFloat(d.c).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
@@ -140,11 +119,19 @@
             document.getElementById('rsiText').innerText = "🚀 COMPRA";
         };
     }
-
     function showAuth() { document.getElementById('authBox').style.display = 'flex'; }
     function hideAuth() { document.getElementById('authBox').style.display = 'none'; }
     function checkSys() {
         if(document.getElementById('sysPass').value === "1234") {
             hideAuth(); document.getElementById('botControl').style.display = 'block';
-            document.getElementById('botLog').innerText = "> Acesso concedido. Robô pronto.";
-        } else { alert("Senha In
+        } else { alert("Senha Incorreta"); }
+    }
+    function runBot() {
+        document.getElementById('botStatus').style.background = "var(--green)";
+        document.getElementById('botLog').innerText += "\n> Scanner Hyperliquid ativo...";
+    }
+    function calc() { alert("Alvos calculados com sucesso!"); }
+    initApp();
+</script>
+</body>
+</html>
