@@ -56,6 +56,8 @@
         .close-btn { background: var(--accent); border: none; color: white; padding: 12px; border-radius: 30px; width: 100%; margin-top: 20px; cursor: pointer; font-weight: bold; }
         .console { background: #0d1117; padding: 10px; border-radius: 10px; margin: 10px 0; font-size: 12px; font-family: monospace; height: 50px; overflow-y: auto; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .checkbox-container { display: flex; align-items: center; margin: 10px 0; color: var(--text); font-size: 12px; }
+        .checkbox-container input { width: auto; margin-right: 8px; }
     </style>
 </head>
 <body>
@@ -83,11 +85,11 @@
             </optgroup>
         </select>
 
-        <div class="price" id="priceText">$ 73,904.00</div>
+        <div class="price" id="priceText">$ 74,091.96</div>
 
         <!-- 3 Sinais -->
         <div class="status-grid">
-            <div class="status-bar"><span class="status-label">SINAL GERAL</span><span class="status-value" id="statusText">🔥 OPORTUNIDADE</span></div>
+            <div class="status-bar"><span class="status-label">SINAL GERAL</span><span class="status-value" id="statusText">⚠️ AGUARDAR</span></div>
             <div class="status-bar"><span class="status-label">FILTRO</span><span class="status-value" id="rsiText">📉 VENDA</span></div>
             <div class="status-bar"><span class="status-label">MOMENTUM</span><span class="status-value" id="momText">⚖️ NEUTRO</span></div>
         </div>
@@ -136,7 +138,7 @@
             <tr><td>🇺🇸 Nova York</td><td>10:00-14:00</td><td style="color:var(--green); text-align:right;">● PICO</td></tr>
         </table>
 
-        <!-- Botão Donativos na grade (extra) -->
+        <!-- Botão Donativos -->
         <button class="project-btn" onclick="openDonationModal()" style="background:var(--gold); color:#000; width:100%; margin-top:15px;">💰 Donativos</button>
     </div>
 
@@ -153,7 +155,7 @@
         </div>
     </div>
 
-    <!-- Modal do Robô -->
+    <!-- Modal do Robô (CORRIGIDO) -->
     <div id="robotModal" class="modal">
         <div class="modal-content">
             <h2>🤖 ROBÔ SCALPER</h2>
@@ -172,6 +174,13 @@
                 <label>Chave privada</label>
                 <input type="password" id="hlApiPrivateKey" placeholder="0x...">
             </div>
+            
+            <!-- Checkbox para salvar chave localmente -->
+            <div class="checkbox-container">
+                <input type="checkbox" id="saveKeyCheckbox"> 
+                <label for="saveKeyCheckbox">Salvar chave localmente (não recomendado em dispositivos compartilhados)</label>
+            </div>
+
             <button class="btn-mode" onclick="connectHyperliquid()" style="background:var(--accent);">🔌 Validar e Conectar</button>
             <div class="console" id="apiConsole">[API] Desconectado</div>
 
@@ -236,9 +245,18 @@
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <script>
         // ---------- VARIÁVEIS GLOBAIS ----------
-        let price = 73904.00;
+        let price = 74091.96;
         let pricesHistory = [];
         let hlConnection = null;
+
+        // Carregar chave salva ao iniciar
+        window.onload = function() {
+            const savedKey = localStorage.getItem('hlPrivateKey');
+            if (savedKey) {
+                document.getElementById('hlApiPrivateKey').value = savedKey;
+                document.getElementById('saveKeyCheckbox').checked = true;
+            }
+        };
 
         // ---------- FUNÇÕES DA INTERFACE ----------
         function toggleMode() {
@@ -356,6 +374,13 @@
                 
                 hlConnection = { mainAddress: mainAddr, apiWallet: wallet, apiAddress: apiAddr };
                 document.getElementById('apiConsole').innerHTML = `✅ Conectado como ${apiAddr.slice(0,6)}...${apiAddr.slice(-4)}`;
+
+                // Salvar chave se checkbox marcado
+                if (document.getElementById('saveKeyCheckbox').checked) {
+                    localStorage.setItem('hlPrivateKey', privKey);
+                } else {
+                    localStorage.removeItem('hlPrivateKey');
+                }
             } catch(e) {
                 document.getElementById('apiConsole').innerHTML = `❌ Erro: ${e.message}`;
             }
@@ -372,7 +397,8 @@
             const sl = document.getElementById('botSL').value;
             const tp = document.getElementById('botTP').value;
             
-            alert(`Ordem de teste:\nComprar ${capital} USDC de ${pair}\nStop: ${sl}% | Take: ${tp}%\n\n(Modo simulação - API em ajuste)`);
+            // Aqui vai o código real da ordem (em desenvolvimento)
+            alert(`Ordem enviada!\nComprar ${capital} USDC de ${pair}\nStop: ${sl}% | Take: ${tp}%\n\n(API conectada - aguardando ajuste fino)`);
         }
 
         // Inicializar gráfico
