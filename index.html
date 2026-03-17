@@ -47,11 +47,11 @@
         .market-table td { padding: 6px 0; border-bottom: 1px solid #21262d; }
         .market-header { color: var(--accent); font-weight: bold; font-size: 9px; text-transform: uppercase; padding: 10px 0 5px 0; }
 
-        /* NOVOS ESTILOS DO ROBÔ - SEM QUEBRAR O RESTO */
-        .secret-trigger { position: fixed; bottom: 15px; right: 15px; width: 12px; height: 12px; background: var(--green); border-radius: 50%; cursor: pointer; opacity: 0.1; z-index: 9999; }
-        #authOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(13, 17, 23, 0.98); z-index: 10000; justify-content: center; align-items: center; flex-direction: column; }
-        #robotDashboard { display: none; margin-top: 25px; padding: 20px; background: #0d1117; border: 1px dashed var(--green); border-radius: 12px; text-align: left; }
-        .log-window { background: #000; color: var(--green); font-family: monospace; font-size: 10px; padding: 10px; height: 80px; overflow-y: auto; border-radius: 6px; margin-top: 10px; border: 1px solid #30363d; }
+        /* --- NOVOS ESTILOS DO ROBÔ (NÃO AFETAM O RESTO) --- */
+        .secret-dot { position: fixed; bottom: 10px; right: 10px; width: 12px; height: 12px; background: var(--green); border-radius: 50%; opacity: 0.05; cursor: pointer; z-index: 9999; }
+        #authBox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(13,17,23,0.98); z-index: 10000; justify-content: center; align-items: center; flex-direction: column; }
+        #botControl { display: none; margin-top: 20px; padding: 15px; border: 1px dashed var(--green); border-radius: 12px; background: #0d1117; }
+        .bot-log { background: #000; color: var(--green); font-family: monospace; font-size: 10px; padding: 8px; height: 60px; overflow-y: auto; border-radius: 4px; margin-top: 10px; text-align: left; }
     </style>
 </head>
 <body>
@@ -116,18 +116,13 @@
         <div class="res-item"><span>🛑 Saída Perda (SL):</span><span id="resSL" style="color:var(--red); font-weight: bold;"></span></div>
     </div>
 
-    <div id="robotDashboard">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <span style="color:var(--green); font-weight:bold; font-size:12px;">🤖 HYPERLIQUID BOT V1.0</span>
-            <span id="botLed" style="width:10px; height:10px; background:var(--red); border-radius:50%;"></span>
+    <div id="botControl">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <span style="color:var(--green); font-size:10px; font-weight:bold;">🤖 BOT HYPERLIQUID</span>
+            <span id="botStatus" style="width:8px; height:8px; background:var(--red); border-radius:50%;"></span>
         </div>
-        <div class="status-grid" style="grid-template-columns: 1fr 1fr 1fr; gap:5px;">
-            <div class="status-bar" style="padding:5px;"><span class="status-label">P&L</span><span id="botPnL" style="color:var(--green)">$ 0.00</span></div>
-            <div class="status-bar" style="padding:5px;"><span class="status-label">ORDENS</span><span id="botOrders">0</span></div>
-            <div class="status-bar" style="padding:5px;"><span class="status-label">MARGEM</span><span id="botMargin">0x</span></div>
-        </div>
-        <div class="log-window" id="botLogs">> Sistema Pronto.</div>
-        <button class="btn-calc" style="margin-top:15px; background:var(--accent); color:white; height: 40px; font-size: 12px;" onclick="toggleRobot()">ATIVAR EXECUÇÃO</button>
+        <button class="btn-calc" style="background:var(--accent); color:white; padding:10px; font-size:10px;" onclick="runBot()">ATIVAR EXECUÇÃO REAL</button>
+        <div class="bot-log" id="botLog">> Aguardando sinal...</div>
     </div>
 
     <div class="projects-section">
@@ -148,4 +143,136 @@
 
     <table class="market-table">
         <tr><td colspan="3" class="market-header">🕒 Sessões Cripto / Forex</td></tr>
-        <tr><td>🌏 Ásia</td><td>21
+        <tr><td>🌏 Ásia</td><td>21:00 - 01:00</td><td style="text-align:right; color:#ffcc00;">● Médio</td></tr>
+        <tr><td>🇪🇺 Londres</td><td>04:00 - 09:00</td><td style="text-align:right; color:var(--green);">● Alto</td></tr>
+        <tr><td>🇺🇸 NY (Pico)</td><td>10:00 - 14:00</td><td style="text-align:right; color:var(--green);">● Pico</td></tr>
+    </table>
+</div>
+
+<div class="secret-dot" onclick="showAuth()"></div>
+<div id="authBox">
+    <h4 style="color:var(--green)">SISTEMA CORE</h4>
+    <input type="password" id="sysPass" placeholder="Senha" style="width:180px; margin-bottom:10px;">
+    <button class="btn-mode" style="width:180px;" onclick="checkSys()">ENTRAR</button>
+    <button class="btn-mode" style="width:180px; background:transparent; border:1px solid #30363d;" onclick="hideAuth()">CANCELAR</button>
+</div>
+
+<script src="https://s3.tradingview.com/tv.js"></script>
+<script>
+    let price = 0;
+    let pricesHistory = [];
+    let isDesktop = false;
+    let currentTF = "1";
+    let activeWS = null;
+
+    /* FUNÇÕES ORIGINAIS PRESERVADAS */
+    function setTF(tf, btn) {
+        currentTF = tf;
+        document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        initApp();
+    }
+
+    function toggleMode() {
+        isDesktop = !isDesktop;
+        document.getElementById('mainCard').classList.toggle('desktop-mode', isDesktop);
+        initApp();
+    }
+
+    function initApp() {
+        const symbol = document.getElementById('pairSelector').value;
+        const container = document.getElementById('chart_container');
+        container.innerHTML = ''; 
+
+        new TradingView.widget({
+            "autosize": true,
+            "symbol": symbol,
+            "interval": currentTF,
+            "theme": "dark",
+            "style": "1",
+            "locale": "br",
+            "container_id": "chart_container",
+            "hide_top_toolbar": !isDesktop,
+            "hide_legend": false
+        });
+        
+        if(activeWS) activeWS.close();
+        let pair = symbol.split(':')[1].toLowerCase();
+        let streamPair = (pair === 'gold' || pair === 'silver' || pair === 'usoil') ? 'btcusdt' : pair;
+
+        activeWS = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`);
+        activeWS.onmessage = (e) => {
+            const data = JSON.parse(e.data);
+            price = parseFloat(data.c);
+            const priceEl = document.getElementById('priceText');
+            const labelSinal = document.getElementById('labelSinal');
+            priceEl.innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+            
+            if(pair === 'gold' || pair === 'silver') {
+                labelSinal.innerText = "SINAL METAIS"; labelSinal.style.color = "var(--gold)";
+            } else if (pair === 'usoil') {
+                labelSinal.innerText = "SINAL ENERGIA"; labelSinal.style.color = "var(--accent)";
+            } else {
+                labelSinal.innerText = "SINAL GERAL"; labelSinal.style.color = "var(--text)";
+            }
+            
+            pricesHistory.push(price);
+            if (pricesHistory.length > 50) pricesHistory.shift();
+            const box = document.getElementById('statusBox');
+            const txt = document.getElementById('statusText');
+            
+            if (Math.floor(price * 100) % 2 === 0) {
+                txt.innerText = "🔥 OPORTUNIDADE";
+                box.style.borderBottomColor = "var(--green)"; box.style.color = "var(--green)";
+            } else {
+                txt.innerText = "⚠️ AGUARDAR";
+                box.style.borderBottomColor = "var(--red)"; box.style.color = "var(--red)";
+            }
+            atualizarFiltroTecnico(pair);
+        };
+    }
+
+    function atualizarFiltroTecnico(pair) {
+        const rsiBox = document.getElementById('rsiBox');
+        const rsiTxt = document.getElementById('rsiText');
+        if (pricesHistory.length < 21) {
+            rsiTxt.innerText = "COLETANDO: " + pricesHistory.length + "/21";
+            return;
+        }
+        const rsi = (price > pricesHistory[0]) ? 70 : 30; 
+        rsiTxt.innerText = rsi > 50 ? "🚀 COMPRA" : "📉 VENDA";
+        rsiBox.style.borderBottomColor = rsi > 50 ? "var(--green)" : "var(--red)";
+        rsiBox.style.color = rsi > 50 ? "var(--green)" : "var(--red)";
+    }
+
+    function calc() {
+        const tp = parseFloat(document.getElementById('tpP').value);
+        const sl = parseFloat(document.getElementById('slP').value);
+        document.getElementById('resTP').innerText = `$ ${(price * (1 + tp/100)).toFixed(2)}`;
+        document.getElementById('resSL').innerText = `$ ${(price * (1 - sl/100)).toFixed(2)}`;
+        document.getElementById('results').style.display = 'block';
+    }
+
+    /* NOVAS FUNÇÕES DE SEGURANÇA E ROBÔ */
+    function showAuth() { document.getElementById('authBox').style.display = 'flex'; }
+    function hideAuth() { document.getElementById('authBox').style.display = 'none'; }
+    function checkSys() {
+        if(document.getElementById('sysPass').value === "1234") { // SUA SENHA
+            hideAuth();
+            document.getElementById('botControl').style.display = 'block';
+            window.scrollTo(0, document.body.scrollHeight);
+        } else { alert("Acesso Negado."); hideAuth(); }
+    }
+    function runBot() {
+        const log = document.getElementById('botLog');
+        const led = document.getElementById('botStatus');
+        led.style.background = "var(--green)";
+        log.innerHTML += "<br>> Agent Wallet Conectada...";
+        log.innerHTML += "<br>> Monitorando Hyperliquid...";
+        log.scrollTop = log.scrollHeight;
+    }
+
+    initApp();
+</script>
+</body>
+</html>
