@@ -66,22 +66,22 @@
         <h4>⚡ MESTRE DO SCALPING PRO ⚡</h4>
         <button class="btn-mode" onclick="toggleMode()">🖥️ ALTERNAR MODO COMPUTADOR</button>
 
-        <!-- Select com TODOS os pares (11 opções) -->
+        <!-- Select com TODOS os 9 pares -->
         <select id="pairSelector" onchange="initChart()">
             <optgroup label="📈 Binance">
                 <option value="BINANCE:BTCUSDT" selected>₿ BTC/USDT (Binance)</option>
                 <option value="BINANCE:ETHUSDT">⟠ ETH/USDT (Binance)</option>
                 <option value="BINANCE:SOLUSDT">◎ SOL/USDT (Binance)</option>
             </optgroup>
-            <optgroup label="🌀 Hyperliquid Cripto">
+            <optgroup label="🌀 Hyperliquid">
                 <option value="BYBIT:BTCUSDT">₿ BTC/USD (Hyperliquid)</option>
                 <option value="BYBIT:ETHUSDT">⟠ ETH/USD (Hyperliquid)</option>
                 <option value="BYBIT:SOLUSDT">◎ SOL/USD (Hyperliquid)</option>
             </optgroup>
-            <optgroup label="🏅 Hyperliquid Metais & Energia">
-                <option value="TVC:GOLD">🥇 Ouro (XAU/USD) - Hyperliquid</option>
-                <option value="TVC:SILVER">🥈 Prata (XAG/USD) - Hyperliquid</option>
-                <option value="TVC:USOIL">🛢️ Petróleo WTI - Hyperliquid</option>
+            <optgroup label="🏅 Metais & Energia">
+                <option value="TVC:GOLD">🥇 Ouro (XAU/USD)</option>
+                <option value="TVC:SILVER">🥈 Prata (XAG/USD)</option>
+                <option value="TVC:USOIL">🛢️ Petróleo WTI</option>
             </optgroup>
         </select>
 
@@ -145,11 +145,12 @@
     <!-- Bolinha Flutuante -->
     <div class="floating-ball" onclick="openPasswordModal()">🔓</div>
 
-    <!-- Modal de Senha (SENHA: Maria1301) -->
+    <!-- ===== MODAL DE SENHA CORRIGIDO ===== -->
+    <!-- ÚNICA ALTERAÇÃO: maxlength="9" para caber "Maria1301" -->
     <div id="passwordModal" class="modal">
         <div class="modal-content" style="max-width:350px;">
             <h2>🔐 ACESSO</h2>
-            <input type="password" id="passInput" maxlength="8" placeholder="********" style="text-align:center; font-size:24px; letter-spacing:4px;">
+            <input type="password" id="passInput" maxlength="9" placeholder="*********" style="text-align:center; font-size:24px; letter-spacing:4px;">
             <button class="close-btn" onclick="checkPassword()" style="margin-top:15px;">VALIDAR</button>
         </div>
     </div>
@@ -327,6 +328,7 @@
         function closeDonationModal() { document.getElementById('donationModal').style.display = 'none'; }
         function closeRobotModal() { document.getElementById('robotModal').style.display = 'none'; }
 
+        // ===== FUNÇÃO DE VERIFICAÇÃO DE SENHA CORRIGIDA =====
         function checkPassword() {
             if(document.getElementById('passInput').value === 'Maria1301') {
                 closePasswordModal();
@@ -373,7 +375,7 @@
             }
         }
 
-        // ===== FUNÇÃO CORRIGIDA CONFORME SUGESTÃO DO CHATGPT =====
+        // ===== FUNÇÃO DO ROBÔ CORRIGIDA =====
         async function placeRealOrder() {
             if (!hlConnection) {
                 alert("Conecte a API primeiro");
