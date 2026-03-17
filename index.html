@@ -2,138 +2,108 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mestre do Scalping Pro</title>
     <style>
         :root { --bg: #0d1117; --card: #161b22; --green: #00ff88; --red: #ff3e3e; --text: #8b949e; --accent: #2f81f7; --gold: #ffcc00; }
         body { background-color: var(--bg); color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
-        .card { background: var(--card); padding: 24px; border-radius: 16px; width: 100%; max-width: 400px; text-align: center; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative; }
-        
-        /* Cabeçalho e Botões de Topo */
+        .card { background: var(--card); padding: 24px; border-radius: 16px; width: 100%; max-width: 400px; text-align: center; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: max-width 0.3s ease; }
+        .card.desktop-mode { max-width: 95%; }
+        .desktop-mode #chart_container { height: 500px !important; }
         h4 { color: var(--text); font-size: 11px; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 1px; }
-        .btn-mode { width: 100%; background: var(--accent); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 11px; text-transform: uppercase; }
+        
         .time-selector { display: flex; gap: 8px; margin-bottom: 15px; }
         .time-btn { flex: 1; background: #21262d; border: 1px solid #30363d; color: var(--text); padding: 10px; border-radius: 8px; font-size: 10px; font-weight: bold; cursor: pointer; }
         .time-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+        .time-btn.active[data-t="15"] { background: var(--gold); color: #000; border-color: var(--gold); }
 
-        /* Inputs e Preço */
-        select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; }
+        .btn-mode { width: 100%; background: var(--accent); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 11px; text-transform: uppercase; }
+        select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 12px; border-radius: 8px; margin-bottom: 20px; outline: none; font-size: 14px; cursor: pointer; }
         .price { font-size: 36px; font-weight: 800; color: var(--green); margin-bottom: 15px; font-family: monospace; }
         
-        /* Status Bars */
         .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .status-bar { background: #0d1117; padding: 10px; border-radius: 8px; font-size: 10px; font-weight: bold; border-bottom: 3px solid #30363d; text-align: center; position: relative; }
+        .status-bar { background: #0d1117; padding: 10px; border-radius: 8px; font-size: 10px; font-weight: bold; border-bottom: 3px solid #30363d; text-align: center; position: relative; overflow: hidden; }
         .status-label { font-size: 8px; color: var(--text); display: block; margin-bottom: 4px; text-transform: uppercase; }
+        
+        .light-glow { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: currentColor; filter: blur(4px); opacity: 0.5; }
 
-        /* Gráfico */
-        #chart_container { width: 100%; height: 200px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #30363d; background: #000; }
-
-        /* Grid de Configuração (4 Campos das Imagens) */
+        #chart_container { width: 100%; height: 200px; border-radius: 8px; margin-bottom: 20px; overflow: hidden; border: 1px solid #30363d; background: #000; }
         .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; text-align: left; }
         label { font-size: 9px; color: var(--text); text-transform: uppercase; margin-bottom: 4px; display: block; }
         input { width: 100%; background: #21262d; border: 1px solid #30363d; color: white; padding: 10px; border-radius: 6px; box-sizing: border-box; margin-bottom: 12px; font-size: 14px; }
         .btn-calc { width: 100%; padding: 16px; background: var(--green); color: #0d1117; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
-
-        /* Robô Hyperliquid (Área que aparece na imagem) */
-        #botArea { display: none; margin-top: 15px; padding: 15px; border: 1px dashed var(--green); border-radius: 10px; background: rgba(0, 255, 136, 0.05); }
-
-        /* Grid de Projetos */
+        
+        .res { margin-top: 20px; padding-top: 20px; border-top: 1px solid #30363d; text-align: left; display: none; }
+        .res-item { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; font-size: 13px; }
+        
         .projects-section { margin-top: 30px; border-top: 1px solid #30363d; padding-top: 20px; }
         .projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .project-btn { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 12px; border-radius: 6px; font-size: 11px; font-weight: bold; text-align: center; cursor: pointer; }
-
-        /* Atmos IPTV */
+        .project-btn { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 10px; border-radius: 6px; font-size: 11px; text-decoration: none; font-weight: bold; text-align: center; display: flex; align-items: center; justify-content: center; }
+        
         .ad-container { margin-top: 25px; padding: 15px; background: linear-gradient(145deg, #1e2227, #161b22); border-radius: 12px; border: 1px solid #ffcc0033; }
         .btn-ad { display: block; background: #ffcc00; color: #000; text-decoration: none; padding: 10px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-top: 10px; text-align: center;}
-
-        /* Sessões */
+        
         .market-table { width: 100%; font-size: 10px; margin-top: 20px; border-collapse: collapse; color: var(--text); text-align: left; }
         .market-table td { padding: 6px 0; border-bottom: 1px solid #21262d; }
-
-        /* Botão Configuração Secreto */
-        .secret-dot { position: fixed; bottom: 20px; right: 20px; width: 40px; height: 40px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; opacity: 0.3; }
+        .market-header { color: var(--accent); font-weight: bold; font-size: 9px; text-transform: uppercase; padding: 10px 0 5px 0; }
     </style>
 </head>
 <body>
 
 <div class="card" id="mainCard">
     <h4>Mestre do Scalping Multi-Par</h4>
-    <button class="btn-mode">🖥️ Alternar Modo Computador</button>
+    <button class="btn-mode" onclick="toggleMode()">🖥️ Alternar Modo Computador</button>
 
     <div class="time-selector">
-        <button class="time-btn active">⚡ SCALP (1m)</button>
-        <button class="time-btn">🔭 DAY TRADE (15m)</button>
+        <button class="time-btn active" data-t="1" onclick="setTF('1', this)">⚡ SCALP (1m)</button>
+        <button class="time-btn" data-t="15" onclick="setTF('15', this)">🔭 DAY TRADE (15m)</button>
     </div>
 
-    <select id="pairSelector">
-        <option value="BINANCE:BTCUSDT">Binance - BTC/USDT</option>
-        <option value="BYBIT:BTCUSDT">Hyperliquid - BTC/USD</option>
-        <option value="TVC:GOLD">Ouro (XAUUSD)</option>
+    <select id="pairSelector" onchange="initApp()">
+        <optgroup label="Cripto (Binance)">
+            <option value="BINANCE:BTCUSDT">Binance - BTC/USDT</option>
+            <option value="BINANCE:ETHUSDT">Binance - ETH/USDT</option>
+            <option value="BINANCE:SOLUSDT">Binance - SOL/USDT</option>
+        </optgroup>
+        <optgroup label="Cripto (OKX / Hyperliquid)">
+            <option value="OKX:BTCUSDT">OKX - BTC/USDT</option>
+            <option value="OKX:ETHUSDT">OKX - ETH/USDT</option>
+            <option value="BYBIT:BTCUSDT">Hyperliquid - BTC/USD</option>
+            <option value="BYBIT:ETHUSDT">Hyperliquid - ETH/USD</option>
+            <option value="BYBIT:SOLUSDT">Hyperliquid - SOL/USD</option>
+        </optgroup>
+        <optgroup label="Metais & Commodities">
+            <option value="TVC:GOLD">Hyperliquid - Ouro (XAUUSD)</option>
+            <option value="TVC:SILVER">Hyperliquid - Prata (XAGUSD)</option>
+            <option value="TVC:USOIL">Hyperliquid - Petróleo (WTI)</option>
+        </optgroup>
     </select>
 
-    <div class="price" id="priceText">$ 75.622,69</div>
+    <div class="price" id="priceText">$--.---</div>
 
     <div class="status-grid">
-        <div class="status-bar" style="color: var(--green); border-color: var(--green);">
-            <span class="status-label">SINAL GERAL</span>
-            <span>🔥 OPORTUNIDADE</span>
+        <div id="statusBox" class="status-bar">
+            <div class="light-glow"></div>
+            <span class="status-label" id="labelSinal">SINAL GERAL</span>
+            <span id="statusText">CONECTANDO...</span>
         </div>
-        <div class="status-bar" style="color: var(--green); border-color: var(--green);">
-            <span class="status-label">FILTRO TÉCNICO</span>
-            <span>🚀 COMPRA</span>
+        <div id="rsiBox" class="status-bar">
+            <div class="light-glow"></div>
+            <span class="status-label" id="labelFiltro">FILTRO TÉCNICO</span>
+            <span id="rsiText">COLETANDO...</span>
         </div>
     </div>
 
     <div id="chart_container"></div>
 
     <div class="inputs-grid">
-        <div><label>Capital ($)</label><input type="number" value="300"></div>
-        <div><label>Alavancagem</label><input type="number" value="10"></div>
-        <div><label>Ganho Alvo %</label><input type="number" value="1.0"></div>
-        <div><label>Stop Loss %</label><input type="number" value="1.0"></div>
+        <div><label>Capital ($)</label><input type="number" id="capital" value="300"></div>
+        <div><label>Alavancagem</label><input type="number" id="lev" value="10"></div>
+        <div><label>Ganho Alvo %</label><input type="number" id="tpP" value="1.0" step="0.1"></div>
+        <div><label>Stop Loss %</label><input type="number" id="slP" value="1.0" step="0.1"></div>
     </div>
 
-    <button class="btn-calc" onclick="alert('Executando Ordem...')">Calcular Alvos</button>
+    <button class="btn-calc" onclick="calc()">Calcular Alvos</button>
 
-    <div id="botArea">
-        <span style="color:var(--green); font-size:10px; font-weight:bold;">🤖 ROBÔ HYPERLIQUID ATIVO</span>
-    </div>
-
-    <div class="projects-section">
-        <div class="projects-grid">
-            <div class="project-btn" onclick="location.href='#'">Dashboard 97</div>
-            <div class="project-btn" onclick="location.href='#'">CombustAI</div>
-            <div class="project-btn" onclick="location.href='#'">Dashboard 75</div>
-            <div class="project-btn" onclick="location.href='#'">Pepinômetro</div>
-            <div class="project-btn" onclick="location.href='#'">História Copas</div>
-            <div class="project-btn" onclick="location.href='#'">InvestOpção</div>
-        </div>
-    </div>
-
-    <div class="ad-container">
-        <span style="color:#ffcc00; font-size: 11px; font-weight: bold;">📺 ATMOS IPTV / SÍTIO MÃE MARIA</span>
-        <a href="https://wa.me/5597991916621" target="_blank" class="btn-ad">SUPORTE WHATSAPP</a>
-    </div>
-
-    <table class="market-table">
-        <tr><td>🌏 Ásia</td><td>21:00 - 01:00</td><td style="text-align:right; color:#ffcc00;">● Médio</td></tr>
-        <tr><td>🇪🇺 Londres</td><td>04:00 - 09:00</td><td style="text-align:right; color:var(--green);">● Alto</td></tr>
-        <tr><td>🇺🇸 NY</td><td>10:00 - 14:00</td><td style="text-align:right; color:var(--green);">● Pico</td></tr>
-    </table>
-</div>
-
-<div class="secret-dot" onclick="let p=prompt('Senha:'); if(p=='123') document.getElementById('botArea').style.display='block'">⚙️</div>
-
-<script src="https://s3.tradingview.com/tv.js"></script>
-<script>
-    function loadChart() {
-        new TradingView.widget({
-            "autosize": true, "symbol": document.getElementById('pairSelector').value,
-            "interval": "1", "theme": "dark", "container_id": "chart_container", "locale": "br"
-        });
-    }
-    document.getElementById('pairSelector').onchange = loadChart;
-    loadChart();
-</script>
-</body>
-</html>
+    <div id="results" class="res">
+        <div class="res-item"><span>🟢 Saída Lucro (TP):</span><span id="resTP" style
