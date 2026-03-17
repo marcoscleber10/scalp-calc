@@ -3,89 +3,493 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mestre do Scalping Pro + Donativos</title>
+    <title>Mestre do Scalping Pro + Sinais Avançados</title>
     <style>
-        :root { --bg: #0d1117; --card: #161b22; --green: #00ff88; --red: #ff3e3e; --text: #8b949e; --accent: #2f81f7; --gold: #ffcc00; }
-        body { background-color: var(--bg); color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
-        .card { background: var(--card); padding: 24px; border-radius: 16px; width: 100%; max-width: 400px; text-align: center; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: max-width 0.3s ease; }
-        .card.desktop-mode { max-width: 95%; }
-        .desktop-mode #chart_container { height: 500px !important; }
-        h4 { color: var(--text); font-size: 11px; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 1px; }
-        
-        .time-selector { display: flex; gap: 8px; margin-bottom: 15px; }
-        .time-btn { flex: 1; background: #21262d; border: 1px solid #30363d; color: var(--text); padding: 10px; border-radius: 8px; font-size: 10px; font-weight: bold; cursor: pointer; }
-        .time-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
-        .time-btn.active[data-t="15"] { background: var(--gold); color: #000; border-color: var(--gold); }
-
-        .btn-mode { width: 100%; background: var(--accent); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 11px; text-transform: uppercase; }
-        select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 12px; border-radius: 8px; margin-bottom: 20px; outline: none; font-size: 14px; cursor: pointer; }
-        .price { font-size: 36px; font-weight: 800; color: var(--green); margin-bottom: 15px; font-family: monospace; }
-        
-        .status-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .status-bar { background: #0d1117; padding: 10px; border-radius: 8px; font-size: 10px; font-weight: bold; border-bottom: 3px solid #30363d; text-align: center; position: relative; overflow: hidden; }
-        .status-label { font-size: 8px; color: var(--text); display: block; margin-bottom: 4px; text-transform: uppercase; }
-        .status-value { font-size: 12px; font-weight: bold; display: block; }
-        
-        .light-glow { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: currentColor; filter: blur(4px); opacity: 0.5; }
-
-        #chart_container { width: 100%; height: 200px; border-radius: 8px; margin-bottom: 20px; overflow: hidden; border: 1px solid #30363d; background: #000; }
-        .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; text-align: left; }
-        label { font-size: 9px; color: var(--text); text-transform: uppercase; margin-bottom: 4px; display: block; }
-        input { width: 100%; background: #21262d; border: 1px solid #30363d; color: white; padding: 10px; border-radius: 6px; box-sizing: border-box; margin-bottom: 12px; font-size: 14px; }
-        .btn-calc { width: 100%; padding: 16px; background: var(--green); color: #0d1117; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
-        
-        .res { margin-top: 20px; padding-top: 20px; border-top: 1px solid #30363d; text-align: left; display: none; }
-        .res-item { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; font-size: 13px; }
-        
-        .projects-section { margin-top: 30px; border-top: 1px solid #30363d; padding-top: 20px; }
-        .projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .project-btn { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 10px; border-radius: 6px; font-size: 11px; text-decoration: none; font-weight: bold; text-align: center; display: block; cursor: pointer; }
-        .project-btn:hover { background: #2d3748; }
-        
-        .ad-container { margin-top: 25px; padding: 15px; background: linear-gradient(145deg, #1e2227, #161b22); border-radius: 12px; border: 1px solid #ffcc0033; }
-        .btn-ad { display: block; background: #ffcc00; color: #000; text-decoration: none; padding: 10px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-top: 10px; text-align: center;}
-        
-        .market-table { width: 100%; font-size: 10px; margin-top: 20px; border-collapse: collapse; color: var(--text); text-align: left; }
-        .market-table td { padding: 6px 0; border-bottom: 1px solid #21262d; }
-        .market-header { color: var(--accent); font-weight: bold; font-size: 9px; text-transform: uppercase; padding: 10px 0 5px 0; }
-
+        :root {
+            --bg: #0d1117;
+            --card: #161b22;
+            --green: #00ff88;
+            --red: #ff3e3e;
+            --text: #8b949e;
+            --accent: #2f81f7;
+            --gold: #ffcc00;
+            --purple: #9d4edd;
+        }
+        body {
+            background-color: var(--bg);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
+        .card {
+            background: var(--card);
+            padding: 24px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            border: 1px solid #30363d;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            transition: max-width 0.3s ease;
+        }
+        .card.desktop-mode {
+            max-width: 95%;
+        }
+        .desktop-mode #chart_container {
+            height: 500px !important;
+        }
+        h4 {
+            color: var(--text);
+            font-size: 12px;
+            margin: 0 0 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 1px dashed #30363d;
+            padding-bottom: 12px;
+        }
+        .time-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .time-btn {
+            flex: 1;
+            background: #21262d;
+            border: 1px solid #30363d;
+            color: var(--text);
+            padding: 12px 5px;
+            border-radius: 40px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .time-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        .time-btn.active[data-t="15"] {
+            background: var(--gold);
+            color: #000;
+            border-color: var(--gold);
+        }
+        .btn-mode {
+            width: 100%;
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 15px;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+        select {
+            width: 100%;
+            background: #21262d;
+            color: white;
+            border: 1px solid #30363d;
+            padding: 15px;
+            border-radius: 40px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239aa4b3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 18px center;
+            background-size: 16px;
+        }
+        .price {
+            font-size: 42px;
+            font-weight: 800;
+            color: var(--green);
+            margin-bottom: 15px;
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 0 10px #00ff8840;
+        }
+        .status-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .status-bar {
+            background: #0f141c;
+            padding: 12px 5px;
+            border-radius: 20px;
+            border: 1px solid #2a3340;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        .status-bar strong {
+            font-size: 14px;
+            display: block;
+            margin-top: 4px;
+        }
+        .status-label {
+            font-size: 9px;
+            color: var(--text);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .confluencia-badge {
+            background: linear-gradient(90deg, var(--gold), #b8860b);
+            color: black;
+            font-weight: bold;
+            font-size: 12px;
+            padding: 6px 12px;
+            border-radius: 40px;
+            margin-bottom: 15px;
+            display: inline-block;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.7; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 0.7; transform: scale(1); }
+        }
+        .borda-confluencia {
+            box-shadow: 0 0 20px var(--gold);
+            border: 2px solid var(--gold) !important;
+        }
+        #chart_container {
+            width: 100%;
+            height: 220px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #30363d;
+            background: #000;
+        }
+        .inputs-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            text-align: left;
+            margin-bottom: 15px;
+        }
+        label {
+            font-size: 9px;
+            color: var(--text);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            display: block;
+        }
+        input {
+            width: 100%;
+            background: #21262d;
+            border: 1px solid #30363d;
+            color: white;
+            padding: 12px;
+            border-radius: 20px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        .btn-calc {
+            width: 100%;
+            padding: 16px;
+            background: var(--green);
+            color: #0d1117;
+            border: none;
+            border-radius: 40px;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 16px;
+            box-shadow: 0 6px 0 #0b5e3c;
+            transform: translateY(-2px);
+            transition: 0.1s;
+            margin-top: 10px;
+        }
+        .btn-calc:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #0b5e3c;
+        }
+        .res {
+            margin-top: 20px;
+            padding: 18px;
+            background: #0f151d;
+            border-radius: 24px;
+            display: none;
+            border: 1px solid #2a3440;
+        }
+        .projects-section {
+            margin-top: 30px;
+            border-top: 1px solid #30363d;
+            padding-top: 20px;
+        }
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        .project-btn {
+            background: #1a222c;
+            color: #c9d1d9;
+            border: 1px solid #30363d;
+            padding: 12px 5px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 600;
+            text-decoration: none;
+            text-align: center;
+            display: block;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .project-btn:hover {
+            background: #26323f;
+            border-color: var(--accent);
+        }
+        .project-btn.donate {
+            background: var(--gold);
+            color: #000;
+            border-color: #b8860b;
+            font-weight: 800;
+        }
+        .ad-container {
+            margin-top: 25px;
+            padding: 15px;
+            background: #161e28;
+            border-radius: 30px;
+            border: 1px solid #ffcc0040;
+        }
+        .btn-ad {
+            display: inline-block;
+            background: #ffcc00;
+            color: #000;
+            text-decoration: none;
+            padding: 12px 32px;
+            border-radius: 40px;
+            font-weight: 800;
+            margin-top: 10px;
+            border: 1px solid #ffcc66;
+            box-shadow: 0 4px 0 #8f651f;
+            transform: translateY(-2px);
+            transition: 0.1s;
+        }
+        .btn-ad:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #8f651f;
+        }
+        .market-table {
+            width: 100%;
+            font-size: 11px;
+            margin-top: 20px;
+            border-collapse: collapse;
+            color: #b6c2d2;
+        }
+        .market-table td {
+            padding: 8px 4px;
+            border-bottom: 1px solid #222b35;
+        }
+        .market-header {
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            padding-top: 15px;
+        }
         /* Bolinha flutuante */
-        .floating-ball { position: fixed; bottom: 30px; right: 30px; width: 70px; height: 70px; background: radial-gradient(circle at 30% 30%, var(--green), #0f8f5c); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #0b0f14; font-weight: 900; font-size: 26px; box-shadow: 0 10px 25px #00ff8880, 0 0 30px #00ff88; cursor: pointer; z-index: 9999; border: 2px solid #f0f4fa; user-select: none; }
-        
+        .floating-ball {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 70px;
+            height: 70px;
+            background: radial-gradient(circle at 30% 30%, var(--green), #0f8f5c);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0b0f14;
+            font-weight: 900;
+            font-size: 28px;
+            box-shadow: 0 10px 25px #00ff8880, 0 0 30px #00ff88;
+            cursor: pointer;
+            z-index: 9999;
+            border: 2px solid white;
+            user-select: none;
+        }
         /* Modais */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 10000; }
-        .modal-content { background: #161b22; border-radius: 30px; padding: 30px; width: 90%; max-width: 450px; border: 2px solid var(--gold); max-height: 80vh; overflow-y: auto; }
-        .modal-content h2 { color: var(--gold); margin-top: 0; }
-        .modal-content p { color: var(--text); line-height: 1.5; }
-        .donation-grid { display: grid; gap: 15px; margin: 20px 0; }
-        .donation-item { background: #21262d; padding: 15px; border-radius: 16px; border-left: 4px solid var(--green); }
-        .donation-item h3 { margin: 0 0 5px; color: white; font-size: 16px; }
-        .donation-item a { color: var(--accent); word-break: break-all; text-decoration: none; }
-        .donation-item a:hover { text-decoration: underline; }
-        .close-modal { background: var(--accent); border: none; padding: 12px 20px; border-radius: 40px; font-weight: bold; width: 100%; cursor: pointer; margin-top: 10px; }
-
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+        .modal-content {
+            background: #161b22;
+            border-radius: 30px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            border: 2px solid var(--gold);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-content h2 {
+            color: var(--gold);
+            margin-top: 0;
+            font-size: 24px;
+        }
+        .donation-grid {
+            display: grid;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .donation-item {
+            background: #1e2a36;
+            padding: 18px;
+            border-radius: 24px;
+            border-left: 6px solid;
+        }
+        .donation-item.ln { border-left-color: #8a2be2; }
+        .donation-item.btc { border-left-color: #f7931a; }
+        .donation-item.eth { border-left-color: #627eea; }
+        .donation-item.sol { border-left-color: #14f195; }
+        .donation-item.pix { border-left-color: #32bcad; }
+        .donation-item h3 {
+            margin: 0 0 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+        }
+        .donation-item p {
+            margin: 5px 0;
+            color: var(--text);
+            font-size: 13px;
+            word-break: break-all;
+            background: #0d151f;
+            padding: 10px;
+            border-radius: 16px;
+            border: 1px solid #2f3e4e;
+            font-family: monospace;
+        }
+        .copy-btn {
+            background: var(--accent);
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: 8px;
+            float: right;
+        }
+        .close-modal {
+            background: var(--accent);
+            border: none;
+            padding: 14px;
+            border-radius: 40px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
         /* Modal de senha */
-        .password-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #030405dd; backdrop-filter: blur(12px); display: none; align-items: center; justify-content: center; z-index: 10000; }
-        .password-card { background: #151e2a; padding: 35px 30px; border-radius: 30px; width: 320px; border: 2px solid var(--green); text-align: center; }
-        .password-card h3 { color: #fff; margin-bottom: 20px; }
-        .password-card input { width: 100%; background: #1e2a38; border: 1px solid #3d4d62; color: white; padding: 18px 22px; border-radius: 60px; font-size: 24px; text-align: center; letter-spacing: 8px; margin-bottom: 25px; }
-        .password-card button { background: var(--green); border: none; padding: 16px 28px; border-radius: 60px; font-weight: 800; width: 100%; cursor: pointer; }
-
+        .password-modal {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #030405dd;
+            backdrop-filter: blur(12px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+        .password-card {
+            background: #151e2a;
+            padding: 35px 30px;
+            border-radius: 40px;
+            width: 320px;
+            border: 2px solid var(--green);
+            text-align: center;
+        }
+        .password-card input {
+            width: 100%;
+            background: #1e2a38;
+            border: 1px solid #3d4d62;
+            color: white;
+            padding: 18px;
+            border-radius: 40px;
+            font-size: 24px;
+            text-align: center;
+            letter-spacing: 8px;
+            margin-bottom: 25px;
+        }
+        .password-card button {
+            background: var(--green);
+            border: none;
+            padding: 16px;
+            border-radius: 40px;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0 4px 0 #0a5e3a;
+        }
         /* Painel do robô */
-        .robot-panel-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); z-index: 10001; display: none; align-items: center; justify-content: center; }
-        .robot-card { background: #161b22; border-radius: 30px; padding: 30px; width: 90%; max-width: 500px; border: 2px solid var(--gold); max-height: 80vh; overflow-y: auto; }
-        .exchange-badge { display: flex; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
-        .ex-box { background: #21262d; padding: 12px 18px; border-radius: 40px; border-left: 5px solid; font-weight: bold; }
-        .console-robot { background: #0d1117; border-radius: 16px; padding: 15px; font-family: monospace; font-size: 12px; height: 150px; overflow-y: auto; border: 1px solid #30363d; margin: 20px 0; }
-        .btn-robot { background: var(--green); border: none; padding: 15px; border-radius: 60px; font-weight: bold; width: 100%; margin: 5px 0; cursor: pointer; }
-        .btn-robot.red { background: var(--red); color: white; }
+        .robot-panel-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px);
+            z-index: 10001;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .robot-card {
+            background: #161b22;
+            border-radius: 30px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            border: 2px solid var(--gold);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .config-slider {
+            background: #1e2a38;
+            padding: 15px;
+            border-radius: 20px;
+            margin: 15px 0;
+        }
+        .config-slider label {
+            color: white;
+            font-size: 12px;
+        }
+        .config-slider input {
+            width: 100%;
+            margin: 5px 0;
+        }
     </style>
 </head>
 <body>
 
 <div class="card" id="mainCard">
-    <h4>Mestre do Scalping Multi-Par</h4>
-    <button class="btn-mode" onclick="toggleMode()">🖥️ Alternar Modo Computador</button>
+    <h4>⚡ MESTRE DO SCALPING PRO ⚡</h4>
+    <button class="btn-mode" onclick="toggleMode()">🖥️ ALTERNAR MODO COMPUTADOR</button>
 
     <div class="time-selector">
         <button class="time-btn active" data-t="1" onclick="setTF('1', this)">⚡ SCALP (1m)</button>
@@ -93,62 +497,60 @@
     </div>
 
     <select id="pairSelector" onchange="initApp()">
-        <optgroup label="Cripto (Binance)">
-            <option value="BINANCE:BTCUSDT">Binance - BTC/USDT</option>
-            <option value="BINANCE:ETHUSDT">Binance - ETH/USDT</option>
-            <option value="BINANCE:SOLUSDT">Binance - SOL/USDT</option>
+        <optgroup label="📈 Cripto (Binance)">
+            <option value="BINANCE:BTCUSDT" selected>₿ BTC/USDT (Binance)</option>
+            <option value="BINANCE:ETHUSDT">⟠ ETH/USDT (Binance)</option>
+            <option value="BINANCE:SOLUSDT">◎ SOL/USDT (Binance)</option>
         </optgroup>
-        <optgroup label="Cripto (OKX / Hyperliquid)">
-            <option value="OKX:BTCUSDT">OKX - BTC/USDT</option>
-            <option value="OKX:ETHUSDT">OKX - ETH/USDT</option>
-            <option value="BYBIT:BTCUSDT">Hyperliquid - BTC/USD</option>
-            <option value="BYBIT:ETHUSDT">Hyperliquid - ETH/USD</option>
-            <option value="BYBIT:SOLUSDT">Hyperliquid - SOL/USD</option>
+        <optgroup label="🌀 Outras Exchanges">
+            <option value="OKX:BTCUSDT">₿ BTC/USDT (OKX)</option>
+            <option value="BYBIT:SOLUSDT">◎ SOL/USDT (Bybit)</option>
         </optgroup>
-        <optgroup label="Metais & Commodities">
-            <option value="TVC:GOLD">Hyperliquid - Ouro (XAUUSD)</option>
-            <option value="TVC:SILVER">Hyperliquid - Prata (XAGUSD)</option>
-            <option value="TVC:USOIL">Hyperliquid - Petróleo (WTI)</option>
+        <optgroup label="🏅 Metais & Energia">
+            <option value="TVC:GOLD">🥇 Ouro (XAU/USD)</option>
+            <option value="TVC:USOIL">🛢️ Petróleo WTI</option>
         </optgroup>
     </select>
 
-    <div class="price" id="priceText">$--.---</div>
+    <div class="price" id="priceText">$ 0.00</div>
 
-    <div class="status-grid">
+    <!-- Badge de confluência (aparece quando todos os sinais concordam) -->
+    <div id="confluenciaBadge" class="confluencia-badge" style="display: none;">—</div>
+
+    <!-- Grade de 3 sinais -->
+    <div class="status-grid" id="statusGrid">
         <div id="statusBox" class="status-bar">
-            <div class="light-glow"></div>
-            <span class="status-label" id="labelSinal">SINAL GERAL</span>
-            <span class="status-value" id="statusText">CONECTANDO...</span>
+            <span class="status-label">SINAL GERAL</span>
+            <strong id="statusText">📡 CONECTANDO</strong>
         </div>
         <div id="rsiBox" class="status-bar">
-            <div class="light-glow"></div>
-            <span class="status-label" id="labelFiltro">FILTRO TÉCNICO</span>
-            <span class="status-value" id="rsiText">COLETANDO...</span>
+            <span class="status-label">FILTRO TÉCNICO</span>
+            <strong id="rsiText">⚙️ AGUARDE</strong>
         </div>
         <div id="momBox" class="status-bar">
-            <div class="light-glow"></div>
             <span class="status-label">OPÇÃO 3</span>
-            <span class="status-value" id="momText">AGUARDANDO...</span>
+            <strong id="momText">⏳</strong>
         </div>
     </div>
 
     <div id="chart_container"></div>
 
     <div class="inputs-grid">
-        <div><label>Capital ($)</label><input type="number" id="capital" value="300"></div>
-        <div><label>Alavancagem</label><input type="number" id="lev" value="10"></div>
-        <div><label>Ganho Alvo %</label><input type="number" id="tpP" value="1.0" step="0.1"></div>
-        <div><label>Stop Loss %</label><input type="number" id="slP" value="1.0" step="0.1"></div>
+        <div><label>💰 Capital ($)</label><input type="number" id="capital" value="300"></div>
+        <div><label>⚡ Alavancagem</label><input type="number" id="lev" value="10"></div>
+        <div><label>✅ Gain %</label><input type="number" id="tpP" value="1.0" step="0.1"></div>
+        <div><label>🛑 Stop %</label><input type="number" id="slP" value="1.0" step="0.1"></div>
     </div>
 
-    <button class="btn-calc" onclick="calc()">Calcular Alvos</button>
+    <button class="btn-calc" onclick="calc()">📊 CALCULAR NÍVEIS</button>
 
     <div id="results" class="res">
-        <div class="res-item"><span>🟢 Saída Lucro (TP):</span><span id="resTP" style="color:var(--green); font-weight: bold;"></span></div>
-        <div class="res-item"><span>🛑 Saída Perda (SL):</span><span id="resSL" style="color:var(--red); font-weight: bold;"></span></div>
+        <div class="res-item"><span>🟢 TAKE PROFIT:</span> <strong id="resTP" style="color:var(--green);">$0.00</strong></div>
+        <div class="res-item"><span>🔴 STOP LOSS:</span> <strong id="resSL" style="color:var(--red);">$0.00</strong></div>
+        <div class="res-item"><span>📐 Posição:</span> <strong id="posSize">$0</strong></div>
     </div>
 
-    <!-- GRADE DE PROJETOS COM NOVO BOTÃO DONATIVOS -->
+    <!-- Grade de projetos com Donativos -->
     <div class="projects-section">
         <div class="projects-grid">
             <a href="https://site-557591544835-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Sinais Invest</a>
@@ -157,112 +559,110 @@
             <a href="https://pepinometro-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Pepinômetro</a>
             <a href="https://historia-copas-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">História Copas</a>
             <a href="https://investopcao.culturabuilder.com" class="project-btn" target="_blank">InvestOpção</a>
-            <!-- Novo botão Donativos -->
-            <button class="project-btn" onclick="openDonationModal()" style="background: var(--gold); color: #000; border-color: var(--gold);">💰 Donativos</button>
+            <button class="project-btn donate" onclick="openDonationModal()">💰 Donativos</button>
         </div>
     </div>
 
     <div class="ad-container">
-        <span style="color:#ffcc00; font-size: 12px; font-weight: bold;">📺 ATMOS IPTV</span>
+        <span style="color:var(--gold); font-weight:800; font-size:16px;">📺 ATMOS IPTV</span><br>
+        <span style="font-size:12px;">+15.000 canais • 4K</span>
         <a href="https://wa.me/5597991916621" target="_blank" class="btn-ad">TESTE GRÁTIS</a>
     </div>
 
     <table class="market-table">
-        <tr><td colspan="3" class="market-header">🕒 Sessões Cripto / Forex</td></tr>
-        <tr><td>🌏 Ásia</td><td>21:00 - 01:00</td><td style="text-align:right; color:#ffcc00;">● Médio</td></tr>
-        <tr><td>🇪🇺 Londres</td><td>04:00 - 09:00</td><td style="text-align:right; color:var(--green);">● Alto</td></tr>
-        <tr><td>🇺🇸 NY (Pico)</td><td>10:00 - 14:00</td><td style="text-align:right; color:var(--green);">● Pico</td></tr>
-        <tr><td colspan="3" class="market-header">🏆 Ouro, Prata & WTI</td></tr>
-        <tr><td>🥇 Metais (NY)</td><td>09:20 - 15:30</td><td style="text-align:right; color:var(--gold);">● Liquidez</td></tr>
-        <tr><td>🛢️ Petróleo (WTI)</td><td>10:00 - 16:30</td><td style="text-align:right; color:var(--accent);">● Volatilidade</td></tr>
+        <tr><td colspan="3" class="market-header">🌍 SESSÕES (HORÁRIO BR)</td></tr>
+        <tr><td>🌏 Ásia</td><td>21:00-01:00</td><td style="color:var(--gold);">● médio</td></tr>
+        <tr><td>🇪🇺 Londres</td><td>04:00-09:00</td><td style="color:var(--green);">● alto</td></tr>
+        <tr><td>🇺🇸 Nova York</td><td>10:00-14:00</td><td style="color:var(--green);">● PICO</td></tr>
     </table>
 </div>
 
-<!-- Bolinha flutuante (senha) -->
+<!-- Bolinha flutuante -->
 <div class="floating-ball" onclick="showPasswordModal()">🔓</div>
 
 <!-- Modal de senha -->
 <div id="passwordModal" class="password-modal">
     <div class="password-card">
-        <h3>🔐 ACESSO AO ROBÔ</h3>
+        <h3>🔐 ACESSO</h3>
         <input type="password" id="passInput" maxlength="6" placeholder="******">
         <button onclick="checkPassword()">VALIDAR</button>
         <p style="color:#808fa0; margin-top:15px;">123456</p>
     </div>
 </div>
 
-<!-- Painel do robô -->
+<!-- Painel do robô (com configurações avançadas) -->
 <div id="robotPanel" class="robot-panel-overlay">
     <div class="robot-card">
-        <h2>🤖 ROBÔ SCALPER PRO</h2>
-        <p style="color: var(--green);">🔓 Acesso autorizado</p>
-        <div class="exchange-badge">
-            <div class="ex-box" style="border-left-color: #f3ba2f;">Binance</div>
-            <div class="ex-box" style="border-left-color: #2766ff;">OKX</div>
-            <div class="ex-box" style="border-left-color: #7b3fe4;">Bybit</div>
-            <div class="ex-box" style="border-left-color: var(--gold);">HyperLiquid</div>
+        <h2 style="color:var(--gold);">🤖 ROBÔ SCALPER</h2>
+        <p style="color:var(--green);">🔓 Acesso autorizado</p>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px;">
+            <span class="ex-box" style="border-left-color:#f3ba2f;">Binance</span>
+            <span class="ex-box" style="border-left-color:#2766ff;">OKX</span>
+            <span class="ex-box" style="border-left-color:#7b3fe4;">Bybit</span>
+            <span class="ex-box" style="border-left-color:var(--gold);">HyperLiquid</span>
         </div>
 
-        <label style="color: white;">📊 Estratégia:</label>
+        <!-- Configurações avançadas dos sinais -->
+        <div class="config-slider">
+            <label>📊 Período do Filtro Técnico (atual: <span id="filtroPeriodValue">21</span>)</label>
+            <input type="range" id="filtroPeriod" min="5" max="50" value="21" step="1" oninput="document.getElementById('filtroPeriodValue').innerText = this.value">
+        </div>
+        <div class="config-slider">
+            <label>⚡ Período do Momentum (atual: <span id="momPeriodValue">3</span>)</label>
+            <input type="range" id="momPeriod" min="2" max="10" value="3" step="1" oninput="document.getElementById('momPeriodValue').innerText = this.value">
+        </div>
+        <div class="config-slider">
+            <label>📉 Margem do Momentum (%) (atual: <span id="momMarginValue">0.1</span>)</label>
+            <input type="range" id="momMargin" min="0.05" max="0.5" value="0.1" step="0.05" oninput="document.getElementById('momMarginValue').innerText = this.value">
+        </div>
+
+        <hr style="border-color:#3d4d62; margin:20px 0;">
+
+        <label style="color:white;">📊 Estratégia:</label>
         <select id="botStrategy" style="width:100%; background:#21262d; color:white; padding:12px; border-radius:40px; margin:10px 0;">
-            <option value="grid">📈 GRID SCALPER (Multi-exchange)</option>
-            <option value="momentum">⚡ MOMENTUM + TRAILING (Bybit/Hyper)</option>
-            <option value="arb">🔄 ARBITRAGEM (Binance/OKX)</option>
-            <option value="vwap">📊 VWAP REVERSÃO (HyperLiquid)</option>
+            <option value="grid">📈 GRID SCALPER</option>
+            <option value="momentum">⚡ MOMENTUM</option>
         </select>
 
-        <div style="display: flex; gap: 10px; margin: 15px 0;">
-            <input type="text" placeholder="API Key (opcional demo)" style="flex:2; background:#1e2a38; border:1px solid #3d4d62; color:white; padding:12px; border-radius:40px;">
+        <div class="console-robot" id="robotConsole" style="height:100px;">
+            [ROBÔ] Aguardando...
         </div>
 
-        <div class="console-robot" id="robotConsole">
-            [ROBÔ] Aguardando inicialização...<br>
-            [HyperLiquid] Pronto para conectar 🔌<br>
-        </div>
-
-        <button class="btn-robot" onclick="initBot()">▶ INICIAR ROBÔ (MODO DEMO)</button>
-        <button class="btn-robot red" onclick="stopBot()">⏹️ PARAR ROBÔ</button>
-        <div style="color:#ffcc00; font-size:12px; margin-top:15px;">⚠️ Modo simulação ativo. Para operar real, insira suas APIs.</div>
-        <button onclick="closeRobotPanel()" style="background:transparent; border:1px solid #3d4d62; color:white; padding:10px; border-radius:40px; margin-top:15px; width:100%;">Fechar</button>
+        <button class="btn-robot" onclick="initBot()">▶ INICIAR DEMO</button>
+        <button class="btn-robot red" onclick="stopBot()">⏹️ PARAR</button>
+        <button onclick="closeRobotPanel()" style="background:transparent; border:1px solid #3d4d62; color:white; padding:12px; border-radius:40px; margin-top:15px; width:100%;">Fechar</button>
     </div>
 </div>
 
-<!-- Modal de Donativos (nova aba) -->
+<!-- Modal de Donativos (com as carteiras fornecidas) -->
 <div id="donationModal" class="modal-overlay">
     <div class="modal-content">
-        <h2>💰 Donativos - Mantenha o Projeto Vivo</h2>
-        <p style="color: #fff; background: #1e2a3a; padding: 15px; border-radius: 16px; font-size: 14px;">
+        <h2>💰 Donativos</h2>
+        <p style="background:#1e2a36; padding:20px; border-radius:24px; color:white; font-size:14px; line-height:1.6; margin-bottom:20px;">
             Este projeto é desenvolvido de forma independente, <strong>sem fins lucrativos</strong> e sem investidores por trás. 
-            Cada análise, ferramenta e dado existe para servir traders reais – não para gerar lucro. 
-            Se esta ferramenta te ajudou de alguma forma, considere contribuir com qualquer valor. 
-            Sua doação cobre custos de servidor, domínio e desenvolvimento contínuo. 
-            Toda contribuição, grande ou pequena, mantém isso vivo. Obrigado! 🙏
+            Cada ferramenta existe para servir traders reais – não para gerar lucro. Se te ajudou, considere contribuir com qualquer valor. 
+            Sua doação cobre custos de servidor e desenvolvimento. Obrigado! 🙏
         </p>
         <div class="donation-grid">
-            <div class="donation-item">
+            <div class="donation-item ln">
                 <h3>⚡ Lightning Network</h3>
-                <p>Instruções: Siga Lemos</p>
-                <a href="https://lightningnetwork.com" target="_blank">lightningnetwork.com</a>
+                <p>cloggedparrot01@walletofsatoshi.com <button class="copy-btn" onclick="copyToClipboard('cloggedparrot01@walletofsatoshi.com')">Copiar</button></p>
             </div>
-            <div class="donation-item">
+            <div class="donation-item btc">
                 <h3>₿ Bitcoin (On-Chain)</h3>
-                <p>Instruções: Navegue</p>
-                <a href="https://bitcoincharts.com" target="_blank">bitcoincharts.com</a>
+                <p>bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5 <button class="copy-btn" onclick="copyToClipboard('bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5')">Copiar</button></p>
             </div>
-            <div class="donation-item">
+            <div class="donation-item eth">
                 <h3>🔷 EVM (ETH / Polygon)</h3>
-                <p>Instruções: Navegue</p>
-                <a href="https://evmchain.network" target="_blank">evmchain.network</a>
+                <p>0xAd944bA180610F1Fe43151eD81c0084C918c68e1 <button class="copy-btn" onclick="copyToClipboard('0xAd944bA180610F1Fe43151eD81c0084C918c68e1')">Copiar</button></p>
             </div>
-            <div class="donation-item">
+            <div class="donation-item sol">
                 <h3>◎ Solana</h3>
-                <p>Instruções: Soluções</p>
-                <a href="https://solana.com" target="_blank">solana.com</a>
+                <p>EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm <button class="copy-btn" onclick="copyToClipboard('EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm')">Copiar</button></p>
             </div>
-            <div class="donation-item">
+            <div class="donation-item pix">
                 <h3>🇧🇷 Pix</h3>
-                <p>Instruções: Investe no blockchain</p>
-                <a href="https://pix.com" target="_blank">pix.com</a>
+                <p>127d59fc-1f37-4e8e-9fd4-295e1883727b <button class="copy-btn" onclick="copyToClipboard('127d59fc-1f37-4e8e-9fd4-295e1883727b')">Copiar</button></p>
             </div>
         </div>
         <button class="close-modal" onclick="closeDonationModal()">Fechar</button>
@@ -270,13 +670,11 @@
 </div>
 
 <script src="https://s3.tradingview.com/tv.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 <script>
-    // ---------- CÓDIGO ORIGINAL (MANTIDO) ----------
-    let price = 0;
-    let pricesHistory = [];
-    let isDesktop = false;
-    let currentTF = "1";
-    let activeWS = null;
+    // ---------- CÓDIGO PRINCIPAL ----------
+    let price = 0, pricesHistory = [], isDesktop = false, currentTF = "1", activeWS = null;
+    let filtroPeriod = 21, momPeriod = 3, momMargin = 0.1; // valores padrão
 
     function setTF(tf, btn) {
         currentTF = tf;
@@ -295,7 +693,6 @@
         const symbol = document.getElementById('pairSelector').value;
         const container = document.getElementById('chart_container');
         container.innerHTML = ''; 
-
         new TradingView.widget({
             "autosize": true,
             "symbol": symbol,
@@ -307,80 +704,66 @@
             "hide_top_toolbar": !isDesktop,
             "hide_legend": false
         });
-        
         if(activeWS) activeWS.close();
-        
         let pair = symbol.split(':')[1].toLowerCase();
         let streamPair = (pair === 'gold' || pair === 'silver' || pair === 'usoil') ? 'btcusdt' : pair;
-
         activeWS = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`);
-        
         activeWS.onmessage = (e) => {
             const data = JSON.parse(e.data);
             price = parseFloat(data.c);
-            
-            const priceEl = document.getElementById('priceText');
-            const labelSinal = document.getElementById('labelSinal');
-            
-            priceEl.innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-            
-            if(pair === 'gold' || pair === 'silver') {
-                labelSinal.innerText = "SINAL METAIS";
-                labelSinal.style.color = "var(--gold)";
-            } else if (pair === 'usoil') {
-                labelSinal.innerText = "SINAL ENERGIA";
-                labelSinal.style.color = "var(--accent)";
-            } else {
-                labelSinal.innerText = "SINAL GERAL";
-                labelSinal.style.color = "var(--text)";
-            }
-            
+            document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
             pricesHistory.push(price);
-            if (pricesHistory.length > 50) pricesHistory.shift();
-
-            const box = document.getElementById('statusBox');
+            if(pricesHistory.length > 50) pricesHistory.shift();
+            
+            // Atualiza sinal 1 (par/ímpar)
             const txt = document.getElementById('statusText');
-            if (Math.floor(price * 100) % 2 === 0) {
-                txt.innerText = "🔥 OPORTUNIDADE";
-                box.style.borderBottomColor = "var(--green)";
+            const box = document.getElementById('statusBox');
+            if(Math.floor(price * 100) % 2 === 0) { 
+                txt.innerText = "🔥 OPORTUNIDADE"; 
+                box.style.borderBottomColor = "var(--green)"; 
                 box.style.color = "var(--green)";
-            } else {
-                txt.innerText = "⚠️ AGUARDAR";
-                box.style.borderBottomColor = "var(--red)";
+            } else { 
+                txt.innerText = "⚠️ AGUARDAR"; 
+                box.style.borderBottomColor = "var(--red)"; 
                 box.style.color = "var(--red)";
             }
+            
             atualizarFiltroTecnico();
             atualizarMomentum();
+            verificarConfluencia();
         };
     }
 
     function atualizarFiltroTecnico() {
         const rsiBox = document.getElementById('rsiBox');
         const rsiTxt = document.getElementById('rsiText');
-        if (pricesHistory.length < 21) {
-            rsiTxt.innerText = "COLETANDO: " + pricesHistory.length + "/21";
-            return;
+        if(pricesHistory.length < filtroPeriod) { 
+            rsiTxt.innerText = `COLETANDO ${pricesHistory.length}/${filtroPeriod}`; 
+            return; 
         }
-        const rsi = (price > pricesHistory[0]) ? 70 : 30; 
-        rsiTxt.innerText = rsi > 50 ? "🚀 COMPRA" : "📉 VENDA";
-        rsiBox.style.borderBottomColor = rsi > 50 ? "var(--green)" : "var(--red)";
-        rsiBox.style.color = rsi > 50 ? "var(--green)" : "var(--red)";
+        // Compara com o preço de 'filtroPeriod' candles atrás
+        const refPrice = pricesHistory[pricesHistory.length - filtroPeriod];
+        const isCompra = price > refPrice;
+        rsiTxt.innerText = isCompra ? "🚀 COMPRA" : "📉 VENDA";
+        rsiBox.style.borderBottomColor = isCompra ? "var(--green)" : "var(--red)";
+        rsiBox.style.color = isCompra ? "var(--green)" : "var(--red)";
     }
 
     function atualizarMomentum() {
         const momBox = document.getElementById('momBox');
         const momTxt = document.getElementById('momText');
-        if (pricesHistory.length < 3) {
-            momTxt.innerText = "AGUARDANDO...";
-            return;
+        if(pricesHistory.length < momPeriod) { 
+            momTxt.innerText = `AGUARD...`; 
+            return; 
         }
-        let lastThree = pricesHistory.slice(-3);
-        let avg = lastThree.reduce((a,b) => a+b, 0) / lastThree.length;
-        if (price > avg * 1.001) {
+        let last = pricesHistory.slice(-momPeriod);
+        let avg = last.reduce((a,b) => a+b, 0) / momPeriod;
+        let margem = momMargin / 100; // converter % para decimal
+        if(price > avg * (1 + margem)) {
             momTxt.innerText = "📈 MOMENTO ALTA";
             momBox.style.borderBottomColor = "var(--green)";
             momBox.style.color = "var(--green)";
-        } else if (price < avg * 0.999) {
+        } else if(price < avg * (1 - margem)) {
             momTxt.innerText = "📉 MOMENTO BAIXA";
             momBox.style.borderBottomColor = "var(--red)";
             momBox.style.color = "var(--red)";
@@ -391,51 +774,79 @@
         }
     }
 
+    function verificarConfluencia() {
+        const s1 = document.getElementById('statusText').innerText;
+        const s2 = document.getElementById('rsiText').innerText;
+        const s3 = document.getElementById('momText').innerText;
+        const badge = document.getElementById('confluenciaBadge');
+        const grid = document.getElementById('statusGrid');
+        
+        // Verifica se todos são verdes (oportunidade/compra/alta) ou todos vermelhos (aguardar/venda/baixa)
+        const todosVerdes = (s1.includes('OPORTUNIDADE') || s1.includes('COMPRA') || s1.includes('ALTA')) &&
+                            (s2.includes('COMPRA') || s2.includes('ALTA')) &&
+                            (s3.includes('ALTA'));
+        const todosVermelhos = (s1.includes('AGUARDAR') || s1.includes('VENDA') || s1.includes('BAIXA')) &&
+                               (s2.includes('VENDA') || s2.includes('BAIXA')) &&
+                               (s3.includes('BAIXA'));
+
+        if(todosVerdes || todosVermelhos) {
+            badge.style.display = 'inline-block';
+            badge.innerText = todosVerdes ? '🔥 CONFLUÊNCIA COMPRA' : '🔻 CONFLUÊNCIA VENDA';
+            grid.classList.add('borda-confluencia');
+        } else {
+            badge.style.display = 'none';
+            grid.classList.remove('borda-confluencia');
+        }
+    }
+
     function calc() {
         const tp = parseFloat(document.getElementById('tpP').value);
         const sl = parseFloat(document.getElementById('slP').value);
+        const capital = parseFloat(document.getElementById('capital').value);
+        const lev = parseFloat(document.getElementById('lev').value);
         document.getElementById('resTP').innerText = `$ ${(price * (1 + tp/100)).toFixed(2)}`;
         document.getElementById('resSL').innerText = `$ ${(price * (1 - sl/100)).toFixed(2)}`;
+        document.getElementById('posSize').innerText = `$ ${(capital * lev).toFixed(0)} (${lev}x)`;
         document.getElementById('results').style.display = 'block';
     }
+
+    // Monitorar mudanças nos sliders de configuração
+    setInterval(() => {
+        let newFiltro = parseInt(document.getElementById('filtroPeriod').value);
+        let newMom = parseInt(document.getElementById('momPeriod').value);
+        let newMargin = parseFloat(document.getElementById('momMargin').value);
+        if(newFiltro !== filtroPeriod) { filtroPeriod = newFiltro; atualizarFiltroTecnico(); }
+        if(newMom !== momPeriod) { momPeriod = newMom; atualizarMomentum(); }
+        if(newMargin !== momMargin) { momMargin = newMargin; atualizarMomentum(); }
+    }, 500);
 
     initApp();
 
     // ---------- FUNÇÕES DA BOLINHA E ROBÔ ----------
-    function showPasswordModal() {
-        document.getElementById('passwordModal').style.display = 'flex';
-    }
+    function showPasswordModal() { document.getElementById('passwordModal').style.display = 'flex'; }
     function checkPassword() {
-        if (document.getElementById('passInput').value === '123456') {
+        if(document.getElementById('passInput').value === '123456') {
             document.getElementById('passwordModal').style.display = 'none';
             document.getElementById('robotPanel').style.display = 'flex';
-        } else {
-            alert('Senha incorreta');
-        }
+        } else alert('Senha incorreta');
     }
-    function closeRobotPanel() {
-        document.getElementById('robotPanel').style.display = 'none';
-    }
+    function closeRobotPanel() { document.getElementById('robotPanel').style.display = 'none'; }
     function initBot() {
         const consoleEl = document.getElementById('robotConsole');
         const strategy = document.getElementById('botStrategy').value;
-        consoleEl.innerHTML = '';
-        consoleEl.innerHTML += `[${new Date().toLocaleTimeString()}] 🚀 Iniciando robô com estratégia ${strategy}<br>`;
-        consoleEl.innerHTML += `[${new Date().toLocaleTimeString()}] 🔗 Conectando à HyperLiquid...<br>`;
-        consoleEl.innerHTML += `[${new Date().toLocaleTimeString()}] ⚠️ Modo demo ativo.<br>`;
-        consoleEl.innerHTML += `[${new Date().toLocaleTimeString()}] 📡 Streaming de dados ativo<br>`;
-        consoleEl.innerHTML += `[${new Date().toLocaleTimeString()}] ✅ Robô em execução (simulação).<br>`;
+        consoleEl.innerHTML = `[${new Date().toLocaleTimeString()}] 🚀 Robô iniciado (${strategy})<br>`;
+        consoleEl.innerHTML += `[${new Date().toLocaleTimeString()}] ⚙️ Períodos: FT=${filtroPeriod}, MOM=${momPeriod}, Margem=${momMargin}%<br>`;
+        consoleEl.innerHTML += `[${new Date().toLocaleTimeString()}] 📡 Modo demo ativo`;
     }
-    function stopBot() {
-        document.getElementById('robotConsole').innerHTML += `[${new Date().toLocaleTimeString()}] ⏸️ Robô pausado.<br>`;
-    }
+    function stopBot() { document.getElementById('robotConsole').innerHTML += `<br>[${new Date().toLocaleTimeString()}] ⏸️ Robô pausado.`; }
 
     // ---------- FUNÇÕES DO MODAL DONATIVOS ----------
-    function openDonationModal() {
-        document.getElementById('donationModal').style.display = 'flex';
-    }
-    function closeDonationModal() {
-        document.getElementById('donationModal').style.display = 'none';
+    function openDonationModal() { document.getElementById('donationModal').style.display = 'flex'; }
+    function closeDonationModal() { document.getElementById('donationModal').style.display = 'none'; }
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            alert('Copiado: ' + text);
+        });
     }
 </script>
 </body>
