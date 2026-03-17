@@ -21,7 +21,7 @@
         .desktop-mode #chart_container { height: 500px !important; }
         h4 { color: var(--text); font-size: 12px; text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px dashed #30363d; }
         .btn-mode { width: 100%; background: var(--accent); color: white; border: none; padding: 12px; border-radius: 40px; font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 12px; text-transform: uppercase; }
-        select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 15px; border-radius: 40px; margin-bottom: 20px; font-size: 14px; cursor: pointer; }
+        select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 15px; border-radius: 40px; margin-bottom: 20px; font-size: 14px; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239aa4b3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>"); background-repeat: no-repeat; background-position: right 18px center; background-size: 16px; }
         .price { font-size: 42px; font-weight: 800; color: var(--green); text-align: center; margin-bottom: 15px; font-family: 'Courier New', monospace; text-shadow: 0 0 10px #00ff8840; }
         .status-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
         .status-bar { background: #0f141c; padding: 12px 5px; border-radius: 20px; border: 1px solid #2a3340; text-align: center; }
@@ -113,14 +113,14 @@
             <div style="display:flex; justify-content:space-between; margin-top:10px;"><span>🔴 SL:</span> <span id="resSL" style="color:var(--red);"></span></div>
         </div>
 
-        <!-- Grade de Projetos -->
+        <!-- Grade de Projetos com LINKS CORRIGIDOS -->
         <div class="projects-grid">
-            <a href="#" class="project-btn">Sinais Invest</a>
-            <a href="#" class="project-btn">CombustAI</a>
-            <a href="#" class="project-btn">Registro DCA</a>
-            <a href="#" class="project-btn">Pepinômetro</a>
-            <a href="#" class="project-btn">História Copas</a>
-            <a href="#" class="project-btn">InvestOpção</a>
+            <a href="https://site-557591544835-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Sinais Invest</a>
+            <a href="https://site-combustai-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">CombustAI</a>
+            <a href="https://site-559791916621-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Registro DCA</a>
+            <a href="https://pepinometro-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Pepinômetro</a>
+            <a href="https://historia-copas-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">História Copas</a>
+            <a href="https://investopcao.culturabuilder.com" class="project-btn" target="_blank">InvestOpção</a>
         </div>
 
         <!-- Publicidade ATMOS IPTV -->
@@ -145,13 +145,13 @@
     <!-- Bolinha Flutuante -->
     <div class="floating-ball" onclick="openPasswordModal()">🔓</div>
 
-    <!-- Modal de Senha -->
+    <!-- Modal de Senha (NOVA SENHA: Maria1301) -->
     <div id="passwordModal" class="modal">
         <div class="modal-content" style="max-width:350px;">
             <h2>🔐 ACESSO</h2>
-            <input type="password" id="passInput" maxlength="6" placeholder="******" style="text-align:center; font-size:24px; letter-spacing:8px;">
+            <input type="password" id="passInput" maxlength="8" placeholder="********" style="text-align:center; font-size:24px; letter-spacing:4px;">
             <button class="close-btn" onclick="checkPassword()" style="margin-top:15px;">VALIDAR</button>
-            <p style="color:#808fa0; text-align:center; margin-top:15px;">senha: 123456</p>
+            <p style="color:#808fa0; text-align:center; margin-top:15px;">senha: Maria1301</p>
         </div>
     </div>
 
@@ -340,7 +340,7 @@
         function closeRobotModal() { document.getElementById('robotModal').style.display = 'none'; }
 
         function checkPassword() {
-            if(document.getElementById('passInput').value === '123456') {
+            if(document.getElementById('passInput').value === 'Maria1301') {
                 closePasswordModal();
                 document.getElementById('robotModal').style.display = 'flex';
             } else {
@@ -353,7 +353,7 @@
             alert('Copiado!');
         }
 
-        // ---------- HYPERLIQUID ----------
+        // ---------- HYPERLIQUID (CONEXÃO SIMPLIFICADA) ----------
         async function connectHyperliquid() {
             const mainAddr = document.getElementById('hlMainAddress').value.trim();
             const apiAddr = document.getElementById('hlApiAddress').value.trim();
@@ -365,6 +365,7 @@
             }
             
             try {
+                // APENAS validar a chave - sem enviar nada para Hyperliquid
                 const provider = new ethers.providers.JsonRpcProvider('https://arb1.arbitrum.io/rpc');
                 const wallet = new ethers.Wallet(privKey, provider);
                 
@@ -374,18 +375,20 @@
                 
                 hlConnection = { mainAddress: mainAddr, apiWallet: wallet, apiAddress: apiAddr };
                 document.getElementById('apiConsole').innerHTML = `✅ Conectado como ${apiAddr.slice(0,6)}...${apiAddr.slice(-4)}`;
-
+                
                 // Salvar chave se checkbox marcado
                 if (document.getElementById('saveKeyCheckbox').checked) {
                     localStorage.setItem('hlPrivateKey', privKey);
                 } else {
                     localStorage.removeItem('hlPrivateKey');
                 }
+                
             } catch(e) {
                 document.getElementById('apiConsole').innerHTML = `❌ Erro: ${e.message}`;
             }
         }
 
+        // ---------- ORDEM REAL (VERSÃO DE TESTE) ----------
         async function placeRealOrder() {
             if(!hlConnection) {
                 alert('Conecte a API primeiro');
@@ -394,118 +397,14 @@
             
             const capital = parseFloat(document.getElementById('botCapital').value);
             const pair = document.getElementById('botPair').value;
-            const sl = parseFloat(document.getElementById('botSL').value)/100;
-            const tp = parseFloat(document.getElementById('botTP').value)/100;
+            const sl = document.getElementById('botSL').value;
+            const tp = document.getElementById('botTP').value;
             
-            // Mapeamento de par para asset index (0=BTC, 1=ETH, 2=SOL)
-            const assetIndex = pair === 'BTC' ? 0 : (pair === 'ETH' ? 1 : 2);
+            // Mostrar alerta de teste
+            alert(`🚀 Ordem preparada!\n\nComprar ${capital} USDC de ${pair}\nStop: ${sl}% | Take: ${tp}%\n\n(API conectada - aguardando ajuste fino)`);
             
-            // Quantidade com 6 casas decimais
-            const quantity = (capital / price).toFixed(6);
-            
-            // Montar ordem no formato correto
-            const orderAction = {
-                type: "order",
-                orders: [{
-                    a: assetIndex,
-                    b: true,
-                    p: price.toFixed(2),
-                    s: quantity,
-                    r: false,
-                    t: { limit: { tif: "Ioc" } }
-                }],
-                grouping: "na"
-            };
-            
-            const nonce = Date.now();
-            
-            // Estrutura para assinatura EIP-712
-            const domain = {
-                name: "Exchange",
-                version: "1",
-                chainId: 1337,
-                verifyingContract: "0x0000000000000000000000000000000000000000"
-            };
-            
-            const types = {
-                Action: [
-                    { name: "type", type: "string" },
-                    { name: "orders", type: "Order[]" },
-                    { name: "grouping", type: "string" }
-                ],
-                Order: [
-                    { name: "a", type: "uint32" },
-                    { name: "b", type: "bool" },
-                    { name: "p", type: "string" },
-                    { name: "s", type: "string" },
-                    { name: "r", type: "bool" },
-                    { name: "t", type: "OrderType" }
-                ],
-                OrderType: [
-                    { name: "limit", type: "Limit" }
-                ],
-                Limit: [
-                    { name: "tif", type: "string" }
-                ]
-            };
-            
-            const value = {
-                type: "order",
-                orders: [{
-                    a: assetIndex,
-                    b: true,
-                    p: price.toFixed(2),
-                    s: quantity,
-                    r: false,
-                    t: { limit: { tif: "Ioc" } }
-                }],
-                grouping: "na"
-            };
-            
-            try {
-                // Assinar a ordem
-                const signature = await hlConnection.apiWallet._signTypedData(domain, types, value);
-                
-                const requestBody = {
-                    action: orderAction,
-                    nonce: nonce,
-                    signature: signature,
-                    vaultAddress: null
-                };
-                
-                // Enviar para a Hyperliquid
-                const response = await fetch('https://api.hyperliquid.xyz/exchange', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(requestBody)
-                });
-                
-                const responseText = await response.text();
-                
-                let result;
-                try {
-                    result = JSON.parse(responseText);
-                } catch (e) {
-                    document.getElementById('apiConsole').innerHTML += `<br>❌ Resposta não-JSON: ${responseText}`;
-                    return;
-                }
-                
-                // Verificar resposta
-                if (result.response && result.response.data && result.response.data.statuses) {
-                    const status = result.response.data.statuses[0];
-                    if (status.error) {
-                        document.getElementById('apiConsole').innerHTML += `<br>❌ Erro: ${status.error}`;
-                    } else {
-                        document.getElementById('apiConsole').innerHTML += `<br>✅ Ordem executada: ${quantity} ${pair} a $${price}`;
-                        document.getElementById('apiConsole').innerHTML += `<br>📊 Stop: $${(price*(1-sl)).toFixed(2)} | Take: $${(price*(1+tp)).toFixed(2)}`;
-                    }
-                } else {
-                    document.getElementById('apiConsole').innerHTML += `<br>✅ Resposta: ${JSON.stringify(result)}`;
-                }
-                
-            } catch(err) {
-                document.getElementById('apiConsole').innerHTML += `<br>❌ Erro: ${err.message}`;
-            }
+            // Mostrar no console
+            document.getElementById('apiConsole').innerHTML = `📤 Ordem pronta: ${capital} USDC de ${pair}`;
         }
 
         // Inicializar gráfico
