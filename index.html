@@ -66,7 +66,7 @@
     </style>
 </head>
 <body>
-    <!-- CARD PRINCIPAL - INTACTO -->
+    <!-- CARD PRINCIPAL - 100% INTACTO -->
     <div class="card" id="mainCard">
         <h4>⚡ MESTRE DO SCALPING PRO ⚡</h4>
         <button class="btn-mode" onclick="toggleMode()">🖥️ ALTERNAR MODO COMPUTADOR</button>
@@ -165,7 +165,7 @@
         </div>
     </div>
 
-    <!-- MODAL DO ROBÔ - CORRIGIDO COM TAMANHO MÍNIMO -->
+    <!-- MODAL DO ROBÔ - CORRIGIDO -->
     <div id="robotModal" class="modal">
         <div class="modal-content">
             <h2>🤖 ROBÔ SCALPER</h2>
@@ -196,7 +196,7 @@
             <div class="campo">
                 <label>Capital (USDC)</label>
                 <input type="number" id="botCapital" value="10" step="1" min="5">
-                <small style="color:var(--text);">Mínimo: 5 USDC para BTC</small>
+                <small style="color:var(--text);">Mínimo: 5 USDC</small>
             </div>
             <div class="grid-2">
                 <div><label>Stop Loss %</label><input type="number" id="botSL" value="1.5" step="0.1"></div>
@@ -385,7 +385,7 @@
             }
         }
 
-        // ===== FUNÇÃO DO ROBÔ REAL - CORRIGIDA COM TAMANHO MÍNIMO =====
+        // ===== FUNÇÃO DO ROBÔ CORRIGIDA (ORDEM DOS CAMPOS) =====
         async function placeRealOrder() {
             if(!hlConnection){
                 alert('Conecte a API primeiro');
@@ -396,7 +396,7 @@
             const pair = document.getElementById('botPair').value;
 
             if(capital < 5){
-                alert('Capital mínimo: 5 USDC (para atingir 0.0001 BTC)');
+                alert('Capital mínimo: 5 USDC');
                 return;
             }
 
@@ -409,16 +409,9 @@
                 const assetMap = { BTC: 0, ETH: 1, SOL: 2 };
                 const assetId = assetMap[pair];
 
-                // Garantir tamanho mínimo de 0.0001 BTC
                 const size = (capital / price).toFixed(6);
-                
-                if(parseFloat(size) < 0.0001 && pair === 'BTC') {
-                    alert(`Tamanho muito pequeno. Mínimo é 0.0001 BTC. Use pelo menos ${(0.0001 * price).toFixed(2)} USDC`);
-                    return;
-                }
-
-                const priceStr = price.toFixed(2).toString();
-                const nonce = Date.now();
+                const priceStr = price.toFixed(2);
+                const nonce = Date.now() + Math.floor(Math.random() * 1000); // evita nonce duplicado
 
                 const action = {
                     type: "order",
@@ -426,9 +419,9 @@
                         a: assetId,
                         b: true,
                         p: priceStr,
-                        s: size.toString(),
-                        r: false,
-                        t: { limit: { tif: "Ioc" } }
+                        r: false,          // ORDEM CORRETA: r antes de s
+                        s: size,
+                        t: { limit: { tif: "Gtc" } }
                     }],
                     grouping: "na"
                 };
@@ -449,8 +442,8 @@
                         { name: "a", type: "uint32" },
                         { name: "b", type: "bool" },
                         { name: "p", type: "string" },
+                        { name: "r", type: "bool" },   // r antes de s
                         { name: "s", type: "string" },
-                        { name: "r", type: "bool" },
                         { name: "t", type: "OrderType" }
                     ],
                     OrderType: [
@@ -461,18 +454,12 @@
                     ]
                 };
 
-                const valueToSign = {
-                    type: "order",
-                    orders: action.orders,
-                    grouping: "na"
-                };
-
                 document.getElementById('apiConsole').innerHTML = '⏳ Assinando...';
 
                 const signature = await hlConnection.apiWallet._signTypedData(
                     domain,
                     types,
-                    valueToSign
+                    action
                 );
 
                 const sig = ethers.utils.splitSignature(signature);
@@ -496,18 +483,10 @@
                     body: JSON.stringify(requestBody)
                 });
 
-                const text = await response.text();
-                let result;
+                const result = await response.json();
 
-                try {
-                    result = JSON.parse(text);
-                } catch {
-                    document.getElementById('apiConsole').innerHTML = '❌ Resposta inválida:<br>' + text;
-                    return;
-                }
-
-                if(result.status === "ok" || (result.response?.data?.statuses?.[0]?.resting?.oid)){
-                    document.getElementById('apiConsole').innerHTML = '✅ Ordem enviada!';
+                if(result.status === "ok" || result.response?.data?.statuses?.[0]?.resting){
+                    document.getElementById('apiConsole').innerHTML = '✅ Ordem enviada com sucesso!';
                     
                     const sl = parseFloat(document.getElementById('botSL').value)/100;
                     const tp = parseFloat(document.getElementById('botTP').value)/100;
@@ -520,8 +499,7 @@
                           `Stop: $${stopPrice.toFixed(2)}\n` +
                           `Take: $${takePrice.toFixed(2)}`);
                 } else {
-                    const errorMsg = result.response?.data?.statuses?.[0]?.error || JSON.stringify(result);
-                    document.getElementById('apiConsole').innerHTML = '❌ ' + errorMsg;
+                    document.getElementById('apiConsole').innerHTML = '❌ ' + JSON.stringify(result);
                 }
 
             } catch(e){
