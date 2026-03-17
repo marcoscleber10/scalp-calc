@@ -7,162 +7,110 @@
     <style>
         :root { --bg: #0d1117; --card: #161b22; --green: #00ff88; --red: #ff3e3e; --text: #8b949e; --accent: #2f81f7; --gold: #ffcc00; }
         body { background-color: var(--bg); color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 10px; margin: 0; }
-        
-        /* CARD LARGO PARA CELULAR */
         .card { background: var(--card); padding: 20px; border-radius: 16px; width: 92%; max-width: 450px; text-align: center; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .card.desktop-mode { max-width: 95%; }
-        
         h4 { color: var(--text); font-size: 11px; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 1px; }
         .btn-mode { width: 100%; background: var(--accent); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 12px; font-size: 11px; }
-        
         .time-selector { display: flex; gap: 8px; margin-bottom: 15px; }
         .time-btn { flex: 1; background: #21262d; border: 1px solid #30363d; color: var(--text); padding: 12px; border-radius: 8px; font-size: 10px; font-weight: bold; cursor: pointer; }
         .time-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
-
         select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 14px; border-radius: 8px; margin-bottom: 15px; font-size: 14px; }
         .price { font-size: 38px; font-weight: 800; color: var(--green); margin-bottom: 15px; font-family: monospace; }
-        
         .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
         .status-bar { background: #0d1117; padding: 12px; border-radius: 8px; font-size: 10px; font-weight: bold; border-bottom: 3px solid #30363d; text-align: center; }
         .status-label { font-size: 8px; color: var(--text); display: block; margin-bottom: 4px; text-transform: uppercase; }
-
         #chart_container { width: 100%; height: 250px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #30363d; background: #000; }
-        
         .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: left; }
         label { font-size: 9px; color: var(--text); text-transform: uppercase; margin-bottom: 4px; display: block; }
         input { width: 100%; background: #21262d; border: 1px solid #30363d; color: white; padding: 12px; border-radius: 6px; box-sizing: border-box; margin-bottom: 10px; font-size: 15px; }
-        
         .btn-calc { width: 100%; padding: 16px; background: var(--green); color: #0d1117; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 13px; }
-        
-        /* BOTÃO SECRETO */
         .secret-dot { position: fixed; bottom: 20px; right: 20px; width: 45px; height: 45px; background: var(--accent); border-radius: 50%; cursor: pointer; z-index: 9999; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 2px solid white; }
-
         #authBox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(13,17,23,0.95); z-index: 10000; justify-content: center; align-items: center; flex-direction: column; }
         #botControl { display: none; margin-top: 20px; padding: 15px; border: 1px dashed var(--green); border-radius: 12px; background: #0d1117; }
-        .bot-log { background: #000; color: var(--green); font-family: monospace; font-size: 10px; padding: 10px; height: 60px; overflow-y: auto; margin-top: 10px; border: 1px solid #1f2428; }
-
+        .bot-log { background: #000; color: var(--green); font-family: monospace; font-size: 10px; padding: 10px; height: 60px; overflow-y: auto; margin-top: 10px; border: 1px solid #1f2428; text-align: left;}
         .projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 20px; }
         .project-btn { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 10px; border-radius: 6px; font-size: 11px; text-decoration: none; font-weight: bold; }
-        
         .ad-container { margin-top: 20px; padding: 15px; background: linear-gradient(145deg, #1e2227, #161b22); border-radius: 12px; border: 1px solid #ffcc0033; }
         .btn-ad { display: block; background: #ffcc00; color: #000; text-decoration: none; padding: 10px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-top: 8px; }
-        
         .market-table { width: 100%; font-size: 10px; margin-top: 15px; border-collapse: collapse; color: var(--text); text-align: left; }
         .market-table td { padding: 5px 0; border-bottom: 1px solid #21262d; }
     </style>
 </head>
 <body>
-
 <div class="card" id="mainCard">
     <h4>Mestre do Scalping Multi-Par</h4>
     <button class="btn-mode" onclick="toggleMode()">🖥️ Alternar Modo Computador</button>
-
     <div class="time-selector">
         <button class="time-btn active" onclick="setTF('1', this)">⚡ SCALP (1m)</button>
         <button class="time-btn" onclick="setTF('15', this)">🔭 DAY TRADE (15m)</button>
     </div>
-
     <select id="pairSelector" onchange="initApp()">
-        <option value="BINANCE:BTCUSDT">Binance - BTC/USDT</option>
-        <option value="BINANCE:ETHUSDT">Binance - ETH/USDT</option>
-        <option value="BINANCE:SOLUSDT">Binance - SOL/USDT</option>
-        <option value="TVC:GOLD">Ouro (XAUUSD)</option>
+        <optgroup label="Cripto (Binance)">
+            <option value="BINANCE:BTCUSDT">Binance - BTC/USDT</option>
+            <option value="BINANCE:ETHUSDT">Binance - ETH/USDT</option>
+            <option value="BINANCE:SOLUSDT">Binance - SOL/USDT</option>
+        </optgroup>
+        <optgroup label="Cripto (OKX / Hyperliquid)">
+            <option value="OKX:BTCUSDT">OKX - BTC/USDT</option>
+            <option value="OKX:ETHUSDT">OKX - ETH/USDT</option>
+            <option value="BYBIT:BTCUSDT">Hyperliquid - BTC/USD</option>
+            <option value="BYBIT:SOLUSDT">Hyperliquid - SOL/USD</option>
+        </optgroup>
+        <optgroup label="Metais & Commodities">
+            <option value="TVC:GOLD">Ouro (XAUUSD)</option>
+            <option value="TVC:SILVER">Prata (XAGUSD)</option>
+            <option value="TVC:USOIL">Petróleo (WTI)</option>
+        </optgroup>
     </select>
-
     <div class="price" id="priceText">$--.---</div>
-
     <div class="status-grid">
         <div id="statusBox" class="status-bar"><span class="status-label">SINAL GERAL</span><span id="statusText">CONECTANDO...</span></div>
         <div id="rsiBox" class="status-bar"><span class="status-label">FILTRO TÉCNICO</span><span id="rsiText">COLETANDO...</span></div>
     </div>
-
     <div id="chart_container"></div>
-
     <div class="inputs-grid">
         <div><label>Capital ($)</label><input type="number" id="capital" value="300"></div>
         <div><label>Alavancagem</label><input type="number" id="lev" value="10"></div>
     </div>
-
     <button class="btn-calc" onclick="calc()">Calcular Alvos</button>
-
     <div id="botControl">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <span style="color:var(--green); font-size:11px; font-weight:bold;">🤖 ROBÔ HYPERLIQUID</span>
-            <div id="botStatus" style="width:10px; height:10px; background:var(--red); border-radius:50%;"></div>
-        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center;"><span style="color:var(--green); font-size:11px; font-weight:bold;">🤖 ROBÔ HYPERLIQUID</span><div id="botStatus" style="width:10px; height:10px; background:var(--red); border-radius:50%;"></div></div>
         <button class="btn-calc" style="background:var(--accent); color:white; margin-top:10px;" onclick="runBot()">ATIVAR EXECUÇÃO</button>
-        <div class="bot-log" id="botLog">> Aguardando acesso...</div>
+        <div class="bot-log" id="botLog">> Sistema Hyperliquid pronto.</div>
     </div>
-
     <div class="projects-grid">
         <a href="#" class="project-btn">Dashboard 97</a>
         <a href="#" class="project-btn">CombustAI</a>
         <a href="#" class="project-btn">Dashboard 75</a>
         <a href="#" class="project-btn">Pepinômetro</a>
+        <a href="#" class="project-btn">História Copas</a>
+        <a href="#" class="project-btn">InvestOpção</a>
     </div>
-
     <div class="ad-container">
         <span style="color:#ffcc00; font-size: 12px; font-weight: bold;">📺 ATMOS IPTV / SÍTIO MÃE MARIA</span>
         <a href="https://wa.me/5597991916621" target="_blank" class="btn-ad">TESTE GRÁTIS</a>
     </div>
-
     <table class="market-table">
-        <tr><td colspan="2" style="color:var(--accent); font-weight:bold; padding-top:10px;">🕒 SESSÕES</td></tr>
-        <tr><td>🌏 Ásia</td><td style="text-align:right">21:00 - 01:00</td></tr>
-        <tr><td>🇪🇺 Londres</td><td style="text-align:right">04:00 - 09:00</td></tr>
-        <tr><td>🇺🇸 NY</td><td style="text-align:right">10:00 - 14:00</td></tr>
+        <tr><td colspan="2" style="color:var(--accent); font-weight:bold; padding-top:10px;">🕒 SESSÕES CRIPTO / FOREX</td></tr>
+        <tr><td>🌏 Ásia</td><td style="text-align:right">21:00 - 01:00 ● Médio</td></tr>
+        <tr><td>🇪🇺 Londres</td><td style="text-align:right">04:00 - 09:00 ● Alto</td></tr>
+        <tr><td>🇺🇸 NY</td><td style="text-align:right">10:00 - 14:00 ● Pico</td></tr>
     </table>
 </div>
-
 <div class="secret-dot" onclick="showAuth()"><span style="color:white; font-size:18px;">⚙️</span></div>
-
 <div id="authBox">
     <h3 style="color:var(--green)">ACESSO PRIVADO</h3>
     <input type="password" id="sysPass" placeholder="Senha" style="width:200px; text-align:center;">
     <button class="btn-calc" style="width:200px; margin-top:10px;" onclick="checkSys()">ENTRAR</button>
     <button onclick="hideAuth()" style="background:none; border:none; color:var(--text); margin-top:15px;">Cancelar</button>
 </div>
-
 <script src="https://s3.tradingview.com/tv.js"></script>
 <script>
     let activeWS = null;
-    function setTF(tf, btn) {
-        document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        initApp(tf);
-    }
-    function toggleMode() {
-        document.getElementById('mainCard').classList.toggle('desktop-mode');
-        initApp();
-    }
+    function setTF(tf, btn) { document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); initApp(tf); }
+    function toggleMode() { document.getElementById('mainCard').classList.toggle('desktop-mode'); initApp(); }
     function initApp(tf = "1") {
         const symbol = document.getElementById('pairSelector').value;
         document.getElementById('chart_container').innerHTML = ''; 
         new TradingView.widget({ "autosize": true, "symbol": symbol, "interval": tf, "theme": "dark", "container_id": "chart_container", "locale": "br" });
         if(activeWS) activeWS.close();
-        let pair = symbol.split(':')[1].toLowerCase();
-        activeWS = new WebSocket(`wss://stream.binance.com:9443/ws/${pair}@ticker`);
-        activeWS.onmessage = (e) => {
-            const data = JSON.parse(e.data);
-            document.getElementById('priceText').innerText = `$ ${parseFloat(data.c).toLocaleString('en-US')}`;
-            document.getElementById('statusText').innerText = "🔥 OPORTUNIDADE";
-            document.getElementById('rsiText').innerText = "🚀 COMPRA";
-        };
-    }
-    function showAuth() { document.getElementById('authBox').style.display = 'flex'; }
-    function hideAuth() { document.getElementById('authBox').style.display = 'none'; }
-    function checkSys() {
-        if(document.getElementById('sysPass').value === "1234") {
-            hideAuth();
-            document.getElementById('botControl').style.display = 'block';
-            document.getElementById('botLog').innerText = "> Sistema Hyperliquid pronto.";
-        } else { alert("Senha Incorreta"); }
-    }
-    function runBot() {
-        document.getElementById('botStatus').style.background = "var(--green)";
-        document.getElementById('botLog').innerText += "\n> Monitorando liquidez...";
-    }
-    initApp();
-</script>
-</body>
-</html>
