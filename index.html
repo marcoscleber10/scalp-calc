@@ -61,12 +61,10 @@
     </style>
 </head>
 <body>
-    <!-- Card Principal -->
     <div class="card" id="mainCard">
         <h4>⚡ MESTRE DO SCALPING PRO ⚡</h4>
         <button class="btn-mode" onclick="toggleMode()">🖥️ ALTERNAR MODO COMPUTADOR</button>
 
-        <!-- Select com TODOS os 9 pares -->
         <select id="pairSelector" onchange="initChart()">
             <optgroup label="📈 Binance">
                 <option value="BINANCE:BTCUSDT" selected>₿ BTC/USDT (Binance)</option>
@@ -87,17 +85,14 @@
 
         <div class="price" id="priceText">$ 74,091.96</div>
 
-        <!-- 3 Sinais -->
         <div class="status-grid">
             <div class="status-bar"><span class="status-label">SINAL GERAL</span><span class="status-value" id="statusText">⚠️ AGUARDAR</span></div>
             <div class="status-bar"><span class="status-label">FILTRO</span><span class="status-value" id="rsiText">📉 VENDA</span></div>
             <div class="status-bar"><span class="status-label">MOMENTUM</span><span class="status-value" id="momText">⚖️ NEUTRO</span></div>
         </div>
 
-        <!-- Gráfico TradingView -->
         <div id="chart_container"></div>
 
-        <!-- Inputs de cálculo -->
         <div class="inputs-grid">
             <div><label>💰 Capital ($)</label><input type="number" id="capital" value="300"></div>
             <div><label>⚡ Alavancagem</label><input type="number" id="lev" value="10"></div>
@@ -107,13 +102,11 @@
 
         <button class="btn-calc" onclick="calc()">📊 CALCULAR NÍVEIS</button>
 
-        <!-- Resultados -->
         <div id="results" class="res">
             <div style="display:flex; justify-content:space-between;"><span>🟢 TP:</span> <span id="resTP" style="color:var(--green);"></span></div>
             <div style="display:flex; justify-content:space-between; margin-top:10px;"><span>🔴 SL:</span> <span id="resSL" style="color:var(--red);"></span></div>
         </div>
 
-        <!-- Grade de Projetos com LINKS CORRETOS -->
         <div class="projects-grid">
             <a href="https://site-557591544835-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Sinais Invest</a>
             <a href="https://site-combustai-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">CombustAI</a>
@@ -123,14 +116,12 @@
             <a href="https://investopcao.culturabuilder.com" class="project-btn" target="_blank">InvestOpção</a>
         </div>
 
-        <!-- Publicidade ATMOS IPTV -->
         <div class="ad-container">
             <span style="color:var(--gold); font-weight:800; font-size:16px;">📺 ATMOS IPTV</span><br>
             <span style="font-size:12px;">+15.000 canais • 4K • Estável</span>
             <a href="https://wa.me/5597991916621" target="_blank" class="btn-ad">TESTE GRÁTIS</a>
         </div>
 
-        <!-- Tabela de Sessões -->
         <table class="market-table">
             <tr><td colspan="3" class="market-header">🌍 SESSÕES (HORÁRIO BR)</td></tr>
             <tr><td>🌏 Ásia</td><td>21:00-01:00</td><td style="color:var(--gold); text-align:right;">● médio</td></tr>
@@ -138,15 +129,11 @@
             <tr><td>🇺🇸 Nova York</td><td>10:00-14:00</td><td style="color:var(--green); text-align:right;">● PICO</td></tr>
         </table>
 
-        <!-- Botão Donativos -->
         <button class="project-btn" onclick="openDonationModal()" style="background:var(--gold); color:#000; width:100%; margin-top:15px;">💰 Donativos</button>
     </div>
 
-    <!-- Bolinha Flutuante -->
     <div class="floating-ball" onclick="openPasswordModal()">🔓</div>
 
-    <!-- ===== MODAL DE SENHA CORRIGIDO ===== -->
-    <!-- ÚNICA ALTERAÇÃO: maxlength="9" para caber "Maria1301" -->
     <div id="passwordModal" class="modal">
         <div class="modal-content" style="max-width:350px;">
             <h2>🔐 ACESSO</h2>
@@ -155,7 +142,6 @@
         </div>
     </div>
 
-    <!-- Modal do Robô (COM FUNÇÃO CORRIGIDA) -->
     <div id="robotModal" class="modal">
         <div class="modal-content">
             <h2>🤖 ROBÔ SCALPER</h2>
@@ -206,7 +192,6 @@
         </div>
     </div>
 
-    <!-- Modal de Donativos -->
     <div id="donationModal" class="modal">
         <div class="modal-content">
             <h2>💰 Donativos</h2>
@@ -242,7 +227,6 @@
     <script src="https://s3.tradingview.com/tv.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <script>
-        // ---------- VARIÁVEIS GLOBAIS ----------
         let price = 74091.96;
         let pricesHistory = [];
         let hlConnection = null;
@@ -328,7 +312,6 @@
         function closeDonationModal() { document.getElementById('donationModal').style.display = 'none'; }
         function closeRobotModal() { document.getElementById('robotModal').style.display = 'none'; }
 
-        // ===== FUNÇÃO DE VERIFICAÇÃO DE SENHA CORRIGIDA =====
         function checkPassword() {
             if(document.getElementById('passInput').value === 'Maria1301') {
                 closePasswordModal();
@@ -375,84 +358,78 @@
             }
         }
 
-        // ===== FUNÇÃO DO ROBÔ CORRIGIDA =====
+        // FUNÇÃO CORRIGIDA - MOSTRA RESPOSTA BRUTA
         async function placeRealOrder() {
-            if (!hlConnection) {
-                alert("Conecte a API primeiro");
+            if(!hlConnection){
+                alert('Conecte a API primeiro');
                 return;
             }
 
-            const capital = parseFloat(document.getElementById("botCapital").value);
-            const pair = document.getElementById("botPair").value;
-            const sl = parseFloat(document.getElementById("botSL").value) / 100;
-            const tp = parseFloat(document.getElementById("botTP").value) / 100;
+            const capital = parseFloat(document.getElementById('botCapital').value);
+            const pair = document.getElementById('botPair').value;
+            const sl = parseFloat(document.getElementById('botSL').value)/100;
+            const tp = parseFloat(document.getElementById('botTP').value)/100;
 
-            if (capital < 1) {
-                alert("Capital mínimo: 1 USDC");
+            if(capital < 1){
+                alert('Capital mínimo: 1 USDC');
                 return;
             }
 
-            if (!price || price === 0) {
-                alert("Aguardando preço...");
+            if(!price || price === 0){
+                alert('Aguardando preço...');
                 return;
             }
-
-            const assetMap = {
-                BTC: 0,
-                ETH: 1,
-                SOL: 2
-            };
-
-            const asset = assetMap[pair];
-            const size = (capital / price).toFixed(6);
-
-            const action = {
-                type: "order",
-                orders: [{
-                    a: asset,
-                    b: true,
-                    p: price.toFixed(2),
-                    s: size,
-                    r: false,
-                    t: { limit: { tif: "Ioc" } }
-                }],
-                grouping: "na"
-            };
-
-            const nonce = Date.now();
-
-            // DOMAIN CORRETO - Hyperliquid no Arbitrum
-            const domain = {
-                name: "Hyperliquid",
-                version: "1",
-                chainId: 42161,
-                verifyingContract: "0x0000000000000000000000000000000000000000"
-            };
-
-            const types = {
-                Action: [
-                    { name: "type", type: "string" },
-                    { name: "orders", type: "Order[]" },
-                    { name: "grouping", type: "string" }
-                ],
-                Order: [
-                    { name: "a", type: "uint32" },
-                    { name: "b", type: "bool" },
-                    { name: "p", type: "string" },
-                    { name: "s", type: "string" },
-                    { name: "r", type: "bool" },
-                    { name: "t", type: "OrderType" }
-                ],
-                OrderType: [
-                    { name: "limit", type: "Limit" }
-                ],
-                Limit: [
-                    { name: "tif", type: "string" }
-                ]
-            };
 
             try {
-                document.getElementById("apiConsole").innerHTML = "⏳ Assinando ordem...";
+                const assetMap = { BTC: 0, ETH: 1, SOL: 2 };
+                const assetIndex = assetMap[pair];
+
+                const quantity = (capital / price).toFixed(6);
+
+                const action = {
+                    type: "order",
+                    orders: [{
+                        a: assetIndex,
+                        b: true,
+                        p: price.toFixed(2),
+                        s: quantity,
+                        r: false,
+                        t: { limit: { tif: "Ioc" } }
+                    }],
+                    grouping: "na"
+                };
+
+                const nonce = Date.now();
+
+                const domain = {
+                    name: "Hyperliquid",
+                    version: "1",
+                    chainId: 42161
+                };
+
+                const types = {
+                    Action: [
+                        { name: "type", type: "string" },
+                        { name: "orders", type: "Order[]" },
+                        { name: "grouping", type: "string" }
+                    ],
+                    Order: [
+                        { name: "a", type: "uint32" },
+                        { name: "b", type: "bool" },
+                        { name: "p", type: "string" },
+                        { name: "s", type: "string" },
+                        { name: "r", type: "bool" },
+                        { name: "t", type: "OrderType" }
+                    ],
+                    OrderType: [
+                        { name: "limit", type: "Limit" }
+                    ],
+                    Limit: [
+                        { name: "tif", type: "string" }
+                    ]
+                };
+
+                document.getElementById('apiConsole').innerHTML = '⏳ Assinando ordem...';
 
                 const signature = await hlConnection.apiWallet._signTypedData(
                     domain,
@@ -461,53 +438,12 @@
                 );
 
                 const requestBody = {
-                    action,
-                    nonce,
-                    signature,
+                    action: action,
+                    nonce: nonce,
+                    signature: signature,
                     vaultAddress: null
                 };
 
-                document.getElementById("apiConsole").innerHTML = "⏳ Enviando ordem...";
+                document.getElementById('apiConsole').innerHTML = '⏳ Enviando ordem...';
 
-                const response = await fetch("https://api.hyperliquid.xyz/exchange", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(requestBody)
-                });
-
-                const result = await response.json();
-                console.log("Resposta Hyperliquid:", result);
-
-                if (result.response && result.response.data && result.response.data.statuses) {
-                    const status = result.response.data.statuses[0];
-                    if (status.error) {
-                        document.getElementById("apiConsole").innerHTML = `❌ Erro: ${status.error}`;
-                        alert(`Erro: ${status.error}`);
-                    } else {
-                        document.getElementById("apiConsole").innerHTML = `✅ Ordem executada!`;
-
-                        const stopPrice = price * (1 - sl);
-                        const takePrice = price * (1 + tp);
-
-                        alert(`✅ Ordem executada com sucesso!\n\n` +
-                              `Comprar ${size} ${pair} a $${price.toFixed(2)}\n` +
-                              `Stop: $${stopPrice.toFixed(2)} (${sl * 100}%)\n` +
-                              `Take: $${takePrice.toFixed(2)} (${tp * 100}%)`);
-                    }
-                } else if (result.status === "ok" || result.ok) {
-                    document.getElementById("apiConsole").innerHTML = "✅ Ordem executada!";
-                } else {
-                    document.getElementById("apiConsole").innerHTML = "❌ Erro: " + JSON.stringify(result);
-                }
-
-            } catch (err) {
-                console.error("Erro completo:", err);
-                document.getElementById("apiConsole").innerHTML = `❌ Erro: ${err.message}`;
-                alert(`Erro: ${err.message}`);
-            }
-        }
-
-        initChart();
-    </script>
-</body>
-</html>
+                const response = await fetch('https://api.hyperliquid.xyz
