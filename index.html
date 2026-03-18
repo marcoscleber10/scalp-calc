@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mestre do Scalping Pro - Hyperliquid v1</title>
+    <title>Mestre do Scalping Pro - Final</title>
     <style>
         :root {
             --bg: #0d1117; --card: #161b22; --green: #00ff88; --red: #ff3e3e;
@@ -11,145 +11,176 @@
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
         body { background-color: var(--bg); color: white; display: flex; justify-content: center; padding: 20px; }
+        .card { background: var(--card); padding: 24px; border-radius: 24px; width: 100%; max-width: 420px; border: 1px solid #30363d; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+        .card.desktop-mode { max-width: 95%; }
+        h4 { color: var(--text); font-size: 12px; text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px dashed #30363d; }
+        .btn-mode { width: 100%; background: var(--accent); color: white; border: none; padding: 12px; border-radius: 40px; font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 11px; }
+        .time-selector { display: flex; gap: 8px; margin-bottom: 15px; }
+        .time-btn { flex: 1; background: #21262d; border: 1px solid #30363d; color: var(--text); padding: 12px 5px; border-radius: 40px; font-size: 10px; cursor: pointer; }
+        .time-btn.active { background: var(--accent); color: white; }
+        select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 15px; border-radius: 40px; margin-bottom: 20px; appearance: none; }
+        .price { font-size: 38px; font-weight: 800; color: var(--green); text-align: center; margin-bottom: 15px; font-family: 'Courier New', monospace; }
         
-        /* CARD PRINCIPAL */
-        .card { 
-            background: var(--card); padding: 24px; border-radius: 24px; 
-            width: 100%; max-width: 420px; border: 1px solid #30363d; 
-            position: relative; box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-        }
+        .status-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px; }
+        .status-bar { background: #0f141c; padding: 10px 2px; border-radius: 15px; border: 1px solid #2a3340; text-align: center; border-bottom: 3px solid #333; }
+        .status-label { font-size: 8px; color: var(--text); text-transform: uppercase; display: block; margin-bottom: 4px; }
+        .status-value { font-size: 10px; font-weight: bold; display: block; }
 
-        /* 1. STATUS DO ROBÔ (A BOLINHA) */
-        .robot-status { 
-            position: absolute; top: 18px; right: 20px; 
-            display: flex; align-items: center; font-size: 10px; 
-            font-weight: bold; color: var(--text); 
-        }
-        .led { 
-            width: 10px; height: 10px; background: var(--green); 
-            border-radius: 50%; margin-right: 6px; 
-            box-shadow: 0 0 8px var(--green); animation: pulse 2s infinite; 
-        }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
-
-        h4 { color: var(--text); font-size: 11px; text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; }
+        #chart_container { width: 100%; height: 250px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #30363d; background: #000; }
+        .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        input { width: 100%; background: #21262d; border: 1px solid #30363d; color: white; padding: 10px; border-radius: 15px; }
+        .btn-calc { width: 100%; padding: 16px; background: var(--green); color: #0d1117; border: none; border-radius: 40px; font-weight: 800; cursor: pointer; text-transform: uppercase; }
+        .res { margin-top: 15px; padding: 15px; background: #0f151d; border-radius: 20px; display: none; border: 1px solid #2a3440; }
         
-        /* 2. SELETOR DE 9 PARES (HYPERLIQUID + METAIS) */
-        select { 
-            width: 100%; background: #21262d; color: white; border: 1px solid #30363d; 
-            padding: 14px; border-radius: 40px; margin-bottom: 15px; cursor: pointer;
-        }
+        /* TABELA DE SESSÕES */
+        .market-table { width: 100%; font-size: 11px; margin-top: 20px; border-collapse: collapse; color: #b6c2d2; }
+        .market-table td { padding: 8px 4px; border-bottom: 1px solid #222b35; }
+        .market-header { color: var(--accent); font-weight: 700; font-size: 10px; letter-spacing: 1.5px; padding-top: 15px; text-align: center; }
 
-        .price { font-size: 36px; font-weight: 800; color: var(--green); text-align: center; margin-bottom: 15px; }
-
-        /* SINAIS */
-        .status-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
-        .status-bar { background: #0f141c; padding: 10px; border-radius: 12px; border: 1px solid #2a3340; text-align: center; }
-        .status-label { font-size: 8px; color: var(--text); display: block; margin-bottom: 4px; }
-        .status-value { font-size: 10px; font-weight: bold; }
-
-        /* 3. TABELA DE HORÁRIOS EXPANDIDA */
-        .schedule { 
-            width: 100%; font-size: 11px; margin-bottom: 20px; 
-            background: #0d1117; border-radius: 15px; padding: 10px; border: 1px solid #222;
-        }
-        .schedule-title { color: var(--accent); font-weight: bold; text-align: center; margin-bottom: 8px; font-size: 10px; }
-        .row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #1c2128; }
-        .row:last-child { border: none; }
-        .active-time { color: var(--green); font-weight: bold; }
-
-        /* GRUPO DE BOTÕES (PROJETOS) */
-        .btn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-        .btn-link { 
-            background: #1c2128; color: #8b949e; border: 1px solid #30363d; 
-            padding: 10px 2px; border-radius: 15px; font-size: 9px; 
-            text-decoration: none; text-align: center; transition: 0.3s;
-        }
-        .btn-link:hover { border-color: var(--accent); color: white; }
-
-        /* 4. ABA DONATIVOS */
-        .btn-donations { 
-            width: 100%; background: var(--gold); color: #000; border: none; 
-            padding: 14px; border-radius: 40px; font-weight: 800; 
-            margin-top: 15px; cursor: pointer; text-transform: uppercase;
-        }
-
-        #chart_container { width: 100%; height: 230px; border-radius: 20px; margin-bottom: 15px; border: 1px solid #30363d; }
+        .projects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 20px; }
+        .project-btn { background: #1a222c; color: #c9d1d9; border: 1px solid #30363d; padding: 10px 2px; border-radius: 20px; font-size: 10px; text-decoration: none; text-align: center; display: block; }
+        
+        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); display:none; align-items:center; justify-content:center; z-index: 1000; padding: 20px; }
+        .modal-content { background:#161b22; padding:25px; border-radius:25px; width:100%; max-width:400px; border: 2px solid var(--gold); overflow-y: auto; max-height: 90vh; }
+        .donation-item { background: #1e2a36; padding: 12px; border-radius: 12px; margin: 8px 0; border-left: 4px solid var(--accent); font-size: 11px; }
+        .copy-btn { background: var(--accent); border: none; color: white; padding: 3px 8px; border-radius: 10px; float: right; cursor: pointer; font-size: 9px; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <div class="robot-status"><div class="led"></div> ROBÔ ON</div>
-    
-    <h4>⚡ MESTRE DO SCALPING PRO ⚡</h4>
+    <div class="card" id="mainCard">
+        <h4>⚡ MESTRE DO SCALPING PRO ⚡</h4>
+        <button class="btn-mode" onclick="toggleMode()">🖥️ ALTERNAR MODO COMPUTADOR</button>
 
-    <select id="pairSelector" onchange="changeSymbol()">
-        <optgroup label="Hyperliquid (Perp)">
-            <option value="HYPERLIQUID:BTC">₿ BTC-P (H.Liquid)</option>
-            <option value="HYPERLIQUID:SOL">◎ SOL-P (H.Liquid)</option>
-            <option value="HYPERLIQUID:HYPE">🚀 HYPE-P (H.Liquid)</option>
-        </optgroup>
-        <optgroup label="Cripto Spot">
-            <option value="BINANCE:ETHUSDT">Ξ ETH/USDT</option>
-            <option value="BINANCE:BNBUSDT">🔶 BNB/USDT</option>
-            <option value="BINANCE:XRPUSDT">💧 XRP/USDT</option>
-        </optgroup>
-        <optgroup label="Metais & Energia">
-            <option value="TVC:GOLD">🥇 OURO (XAU)</option>
-            <option value="TVC:SILVER">🥈 PRATA (XAG)</option>
-            <option value="TVC:USOIL">🛢️ PETRÓLEO WTI</option>
-        </optgroup>
-    </select>
+        <div class="time-selector">
+            <button class="time-btn active" onclick="setTF('1', this)">⚡ 1m</button>
+            <button class="time-btn" onclick="setTF('15', this)">🔭 15m</button>
+        </div>
 
-    <div class="price" id="priceDisplay">$ 0.00</div>
+        <select id="pairSelector" onchange="initChart()">
+            <optgroup label="Cripto">
+                <option value="BINANCE:BTCUSDT">₿ BTC/USDT</option>
+                <option value="BINANCE:SOLUSDT">◎ SOL/USDT</option>
+            </optgroup>
+            <optgroup label="Metais & Energia">
+                <option value="TVC:GOLD">🥇 OURO (XAU)</option>
+                <option value="TVC:SILVER">🥈 PRATA (XAG)</option>
+                <option value="TVC:USOIL">🛢️ PETRÓLEO WTI</option>
+            </optgroup>
+        </select>
 
-    <div class="status-grid">
-        <div class="status-bar"><span class="status-label">SINAL GERAL</span><span class="status-value" style="color:var(--green)">COMPRA</span></div>
-        <div class="status-bar"><span class="status-label">FILTRO</span><span class="status-value" style="color:var(--red)">VENDA</span></div>
-        <div class="status-bar"><span class="status-label">OPÇÃO 3</span><span class="status-value">NEUTRO</span></div>
+        <div class="price" id="priceText">$ 0.00</div>
+
+        <div class="status-grid">
+            <div id="box1" class="status-bar"><span class="status-label">SINAL GERAL</span><span class="status-value" id="s1">AGUARDAR</span></div>
+            <div id="box2" class="status-bar"><span class="status-label">FILTRO</span><span class="status-value" id="s2">ANALISANDO</span></div>
+            <div id="box3" class="status-bar"><span class="status-label">OPÇÃO 3</span><span class="status-value" id="s3">NEUTRO</span></div>
+        </div>
+
+        <div id="chart_container"></div>
+
+        <div class="inputs-grid">
+            <input type="number" id="capital" value="300">
+            <input type="number" id="lev" value="10">
+            <input type="number" id="tpP" value="1.0">
+            <input type="number" id="slP" value="1.0">
+        </div>
+        <button class="btn-calc" onclick="calc()">📊 CALCULAR ALVOS</button>
+
+        <div id="results" class="res">
+            <div style="display:flex; justify-content:space-between;"><span>🟢 TP:</span> <span id="resTP" style="color:var(--green);"></span></div>
+            <div style="display:flex; justify-content:space-between; margin-top:8px;"><span>🔴 SL:</span> <span id="resSL" style="color:var(--red);"></span></div>
+        </div>
+
+        <table class="market-table">
+            <tr><td colspan="3" class="market-header">🌍 MELHORES HORÁRIOS (BR)</td></tr>
+            <tr><td>🇪🇺 Londres</td><td>04:00-09:00</td><td style="color:var(--green);">● Alto</td></tr>
+            <tr><td>🇺🇸 Nova York</td><td>10:00-14:00</td><td style="color:var(--green);">● PICO</td></tr>
+            <tr><td>🥇 Ouro/WTI</td><td>09:30-15:00</td><td style="color:var(--gold);">● Volume</td></tr>
+        </table>
+
+        <div class="projects-grid">
+            <a href="https://site-557591544835-620634786284.southamerica-east1.run.app" class="project-btn">Sinais Invest</a>
+            <a href="https://site-combustai-620634786284.southamerica-east1.run.app" class="project-btn">CombustAI</a>
+            <a href="https://site-559791916621-620634786284.southamerica-east1.run.app" class="project-btn">Registro DCA</a>
+            <a href="https://pepinometro-620634786284.southamerica-east1.run.app" class="project-btn">Pepinômetro</a>
+            <a href="https://historia-copas-620634786284.southamerica-east1.run.app" class="project-btn">História Copas</a>
+            <a href="https://investopcao.culturabuilder.com" class="project-btn">InvestOpção</a>
+        </div>
+
+        <button onclick="openModal('donationModal')" style="width:100%; background:var(--gold); border:none; padding:12px; border-radius:40px; font-weight:800; margin-top:15px; cursor:pointer;">💰 DONATIVOS</button>
     </div>
 
-    <div id="chart_container"></div>
-
-    <div class="schedule">
-        <div class="schedule-title">📍 SESSÕES E VOLATILIDADE (BRT)</div>
-        <div class="row"><span>Frankfurt + Londres</span><span class="active-time">04:00 - 09:00</span></div>
-        <div class="row"><span>NY + Ouro (Pico)</span><span class="active-time">10:00 - 14:00</span></div>
-        <div class="row"><span>Abertura Ásia</span><span>21:00 - 01:00</span></div>
+    <div id="donationModal" class="modal">
+        <div class="modal-content">
+            <h2 style="color:var(--gold); text-align:center;">💰 CARTEIRAS</h2>
+            <div class="donation-item"><strong>Pix:</strong><br>127d59fc-1f37-4e8e-9fd4-295e1883727b <button class="copy-btn" onclick="copy('127d59fc-1f37-4e8e-9fd4-295e1883727b')">Copiar</button></div>
+            <div class="donation-item"><strong>BTC:</strong><br>bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5 <button class="copy-btn" onclick="copy('bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5')">Copiar</button></div>
+            <div class="donation-item"><strong>Solana:</strong><br>EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm <button class="copy-btn" onclick="copy('EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm')">Copiar</button></div>
+            <button class="btn-calc" onclick="closeModal('donationModal')" style="margin-top:15px;">Fechar</button>
+        </div>
     </div>
 
-    <div class="btn-grid">
-        <a href="#" class="btn-link">Sinais</a>
-        <a href="#" class="btn-link">CombustAI</a>
-        <a href="#" class="btn-link">DCA</a>
-        <a href="#" class="btn-link">Pepinômetro</a>
-        <a href="#" class="btn-link">Copas</a>
-        <a href="#" class="btn-link">Opção</a>
-    </div>
+    <script src="https://s3.tradingview.com/tv.js"></script>
+    <script>
+        let price = 0, hist = [], isDesk = false, tf = "1", socket = null;
 
-    <button class="btn-donations" onclick="alert('PIX: 127d59fc-1f37-4e8e-9fd4-295e1883727b\nSOL: EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm')">💰 ABA NATIVOS (DONATIVOS)</button>
-</div>
+        function setTF(time, btn) {
+            tf = time;
+            document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            initChart();
+        }
 
-<script src="https://s3.tradingview.com/tv.js"></script>
-<script>
-    function changeSymbol() {
-        const symbol = document.getElementById('pairSelector').value;
-        new TradingView.widget({
-            "autosize": true,
-            "symbol": symbol,
-            "interval": "5",
-            "timezone": "America/Sao_Paulo",
-            "theme": "dark",
-            "style": "1",
-            "container_id": "chart_container",
-            "hide_side_toolbar": true,
-            "enable_publishing": false,
-            "allow_symbol_change": false,
-            "save_image": false
-        });
-    }
-    changeSymbol();
-</script>
+        function toggleMode() {
+            isDesk = !isDesk;
+            document.getElementById('mainCard').classList.toggle('desktop-mode', isDesk);
+            initChart();
+        }
+
+        function initChart() {
+            const sym = document.getElementById('pairSelector').value;
+            new TradingView.widget({ "autosize": true, "symbol": sym, "interval": tf, "theme": "dark", "container_id": "chart_container", "hide_top_toolbar": !isDesk });
+            if(socket) socket.close();
+            let pair = sym.includes('BTC') ? 'btcusdt' : sym.includes('SOL') ? 'solusdt' : 'btcusdt';
+            socket = new WebSocket(`wss://stream.binance.com:9443/ws/${pair}@ticker`);
+            socket.onmessage = (e) => {
+                price = parseFloat(JSON.parse(e.data).c);
+                document.getElementById('priceText').innerText = `$ ${price.toLocaleString()}`;
+                hist.push(price); if(hist.length > 50) hist.shift();
+                
+                const s1 = document.getElementById('s1'), b1 = document.getElementById('box1');
+                const op1 = (Math.floor(price * 100) % 2 === 0);
+                s1.innerText = op1 ? "🔥 OPORTUN." : "⚠️ AGUARDAR";
+                s1.style.color = op1 ? "var(--green)" : "var(--red)";
+                b1.style.borderBottomColor = op1 ? "var(--green)" : "var(--red)";
+
+                if(hist.length >= 21) {
+                    const trend = price > hist[hist.length-21];
+                    document.getElementById('s2').innerText = trend ? "🚀 COMPRA" : "📉 VENDA";
+                    document.getElementById('s2').style.color = trend ? "var(--green)" : "var(--red)";
+                }
+                if(hist.length >= 50) {
+                    const conf = price > hist[0];
+                    document.getElementById('s3').innerText = conf ? "💎 FORTE" : "⚓ FRACO";
+                    document.getElementById('s3').style.color = conf ? "var(--green)" : "var(--red)";
+                }
+            };
+        }
+
+        function calc() {
+            const tp = price * (1 + parseFloat(document.getElementById('tpP').value)/100);
+            const sl = price * (1 - parseFloat(document.getElementById('slP').value)/100);
+            document.getElementById('resTP').innerText = `$${tp.toFixed(2)}`;
+            document.getElementById('resSL').innerText = `$${sl.toFixed(2)}`;
+            document.getElementById('results').style.display = 'block';
+        }
+
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        function copy(t) { navigator.clipboard.writeText(t); alert('Copiado!'); }
+
+        initChart();
+    </script>
 </body>
 </html>
