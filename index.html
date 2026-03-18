@@ -196,49 +196,6 @@
             font-size: 10px;
         }
         
-        /* MODO IMERSIVO - GRÁFICO EM TELA CHEIA */
-        #appContent {
-            transition: opacity 0.3s;
-        }
-        .hidden {
-            display: none !important;
-        }
-        .chart-fullscreen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 99999;
-            background: #000;
-        }
-        .chart-fullscreen #chart_container {
-            width: 100vw;
-            height: 100vh !important;
-        }
-        #expandChartBtn {
-            position: fixed;
-            bottom: 120px; /* acima da bolinha */
-            right: 30px;
-            z-index: 100000;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: var(--accent);
-            color: white;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.2s;
-        }
-        #expandChartBtn:hover {
-            transform: scale(1.1);
-        }
-        
         #chart_container { width: 100%; height: 220px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #30363d; background: #000; transition: height 0.3s; }
         .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
         label { font-size: 9px; color: var(--text); text-transform: uppercase; margin-bottom: 4px; display: block; }
@@ -274,143 +231,162 @@
         .vol-alta { background: #00ff8820; color: #00ff88; border: 1px solid #00ff88; }
         .vol-media { background: #ffcc0020; color: #ffcc00; border: 1px solid #ffcc00; }
         .vol-baixa { background: #ff3e3e20; color: #ff3e3e; border: 1px solid #ff3e3e; }
-
-        /* ===== NOVOS ESTILOS (APENAS ADICIONADOS, SEM ALTERAR OS EXISTENTES) ===== */
-        #proModeBtn, #restoreLayoutBtn {
-            transition: 0.2s;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-        }
-        #proModeBtn:hover, #restoreLayoutBtn:hover {
-            transform: scale(1.1);
-        }
-        #proModeBtn {
-            background: var(--gold);
-            color: #000;
-            font-weight: bold;
-        }
-        #restoreLayoutBtn {
-            background: var(--accent);
-            color: white;
-        }
-        /* Classes de layout (opcionais) */
-        body.layout-tela-cheia #appContent { display: none; }
-        body.layout-tela-cheia #chart_container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 99999; }
-        body.layout-combinado #appContent { display: block; } /* exemplo, mas não usado */
     </style>
 </head>
 <body>
-    <!-- Botão para expandir gráfico (existente) -->
-    <button id="expandChartBtn" onclick="toggleChartOnly()">⛶</button>
+    <!-- CARD PRINCIPAL - 100% INTACTO -->
+    <div class="card" id="mainCard">
+        <h4>⚡ MESTRE DO SCALPING PRO ⚡</h4>
+        <button class="btn-mode" onclick="toggleMode()">🖥️ ALTERNAR MODO COMPUTADOR</button>
 
-    <!-- TODO o conteúdo que não é o gráfico (será escondido no modo imersivo) -->
-    <div id="appContent">
-        <!-- CARD PRINCIPAL - 100% INTACTO -->
-        <div class="card" id="mainCard">
-            <h4>⚡ MESTRE DO SCALPING PRO ⚡</h4>
-            <button class="btn-mode" onclick="toggleMode()">🖥️ ALTERNAR MODO COMPUTADOR</button>
-
-            <div class="time-selector">
-                <button class="time-btn active" data-t="1" onclick="setTF('1', this)">⚡ SCALP (1m)</button>
-                <button class="time-btn" data-t="15" onclick="setTF('15', this)">🔭 DAY TRADE (15m)</button>
-            </div>
-
-            <select id="pairSelector" onchange="initChart()">
-                <optgroup label="📈 Binance">
-                    <option value="BINANCE:BTCUSDT" selected>₿ BTC/USDT (Binance)</option>
-                    <option value="BINANCE:ETHUSDT">⟠ ETH/USDT (Binance)</option>
-                    <option value="BINANCE:SOLUSDT">◎ SOL/USDT (Binance)</option>
-                </optgroup>
-                <optgroup label="🌀 Hyperliquid">
-                    <option value="BYBIT:BTCUSDT">₿ BTC/USD (Hyperliquid)</option>
-                    <option value="BYBIT:ETHUSDT">⟠ ETH/USD (Hyperliquid)</option>
-                    <option value="BYBIT:SOLUSDT">◎ SOL/USD (Hyperliquid)</option>
-                </optgroup>
-                <optgroup label="🏅 Metais & Energia">
-                    <option value="TVC:GOLD">🥇 Ouro (XAU/USD)</option>
-                    <option value="TVC:SILVER">🥈 Prata (XAG/USD)</option>
-                    <option value="TVC:USOIL">🛢️ Petróleo WTI</option>
-                </optgroup>
-            </select>
-
-            <div class="price" id="priceText">$ 74,069.05</div>
-
-            <!-- SCORE DE CONFLUÊNCIA -->
-            <div class="score-container">
-                <div class="score-text">
-                    <span>🔥 Confluência</span>
-                    <span id="scoreValue">40/100</span>
-                </div>
-                <div class="score-bar">
-                    <div class="score-fill" id="scoreFill" style="width:40%"></div>
-                </div>
-                <div class="score-text">
-                    <span id="scoreLabel">Evitar operação</span>
-                    <span id="probabilidade">Baixa probabilidade</span>
-                </div>
-            </div>
-
-            <!-- BADGE DE ALERTA (aparece quando confluência alta) -->
-            <div id="alertaBadge" class="badge-alerta" style="display: none;">🚨 ENTRADA FORTE DETECTADA</div>
-
-            <!-- 3 SINAIS -->
-            <div class="status-grid">
-                <div id="statusBox" class="status-bar">
-                    <div class="light-glow"></div>
-                    <span class="status-label">SINAL GERAL</span>
-                    <span class="status-value" id="statusText">⚠️ AGUARDAR</span>
-                </div>
-                <div id="rsiBox" class="status-bar">
-                    <div class="light-glow"></div>
-                    <span class="status-label">FILTRO TÉCNICO</span>
-                    <span class="status-value" id="rsiText">📉 VENDA</span>
-                </div>
-                <div id="momBox" class="status-bar">
-                    <div class="light-glow"></div>
-                    <span class="status-label">MOMENTUM</span>
-                    <span class="status-value" id="momText">⚖️ NEUTRO</span>
-                </div>
-            </div>
-
-            <!-- INDICADOR DE VOLATILIDADE -->
-            <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 11px;">
-                <span>📊 Volatilidade: <span id="volText">MÉDIA</span></span>
-                <span>⏰ Sessão: <span id="sessaoText">Londres</span></span>
-            </div>
-
-            <!-- MODO OPERAÇÃO - CHAVE ON/OFF -->
-            <div class="modo-operacao">
-                <span id="statusModo">Modo Operação: OFF</span>
-                <label class="switch">
-                    <input type="checkbox" id="lockScreenToggle">
-                    <span class="slider"></span>
-                </label>
-            </div>
-
-            <!-- ALARME DE PREÇO -->
-            <div class="alarme-section">
-                <div class="alarme-title">
-                    <span>🔔 ALARME DE PREÇO</span>
-                </div>
-                <div class="alarme-input-group">
-                    <input type="number" id="alarmePreco" class="alarme-input" placeholder="Preço alvo (ex: 75000)" step="100">
-                    <button class="alarme-btn" onclick="adicionarAlarme()">Adicionar</button>
-                </div>
-                <div class="alarme-lista" id="alarmeLista">
-                    <div style="color: var(--text); text-align: center; padding: 10px;">Nenhum alarme definido</div>
-                </div>
-            </div>
-
-            <!-- GRÁFICO TRADINGVIEW (fora do appContent para poder ser isolado) -->
+        <div class="time-selector">
+            <button class="time-btn active" data-t="1" onclick="setTF('1', this)">⚡ SCALP (1m)</button>
+            <button class="time-btn" data-t="15" onclick="setTF('15', this)">🔭 DAY TRADE (15m)</button>
         </div>
+
+        <select id="pairSelector" onchange="initChart()">
+            <optgroup label="📈 Binance">
+                <option value="BINANCE:BTCUSDT" selected>₿ BTC/USDT (Binance)</option>
+                <option value="BINANCE:ETHUSDT">⟠ ETH/USDT (Binance)</option>
+                <option value="BINANCE:SOLUSDT">◎ SOL/USDT (Binance)</option>
+            </optgroup>
+            <optgroup label="🌀 Hyperliquid">
+                <option value="BYBIT:BTCUSDT">₿ BTC/USD (Hyperliquid)</option>
+                <option value="BYBIT:ETHUSDT">⟠ ETH/USD (Hyperliquid)</option>
+                <option value="BYBIT:SOLUSDT">◎ SOL/USD (Hyperliquid)</option>
+            </optgroup>
+            <optgroup label="🏅 Metais & Energia">
+                <option value="TVC:GOLD">🥇 Ouro (XAU/USD)</option>
+                <option value="TVC:SILVER">🥈 Prata (XAG/USD)</option>
+                <option value="TVC:USOIL">🛢️ Petróleo WTI</option>
+            </optgroup>
+        </select>
+
+        <div class="price" id="priceText">$ 74,069.05</div>
+
+        <!-- SCORE DE CONFLUÊNCIA -->
+        <div class="score-container">
+            <div class="score-text">
+                <span>🔥 Confluência</span>
+                <span id="scoreValue">40/100</span>
+            </div>
+            <div class="score-bar">
+                <div class="score-fill" id="scoreFill" style="width:40%"></div>
+            </div>
+            <div class="score-text">
+                <span id="scoreLabel">Evitar operação</span>
+                <span id="probabilidade">Baixa probabilidade</span>
+            </div>
+        </div>
+
+        <!-- BADGE DE ALERTA (aparece quando confluência alta) -->
+        <div id="alertaBadge" class="badge-alerta" style="display: none;">🚨 ENTRADA FORTE DETECTADA</div>
+
+        <!-- 3 SINAIS -->
+        <div class="status-grid">
+            <div id="statusBox" class="status-bar">
+                <div class="light-glow"></div>
+                <span class="status-label">SINAL GERAL</span>
+                <span class="status-value" id="statusText">⚠️ AGUARDAR</span>
+            </div>
+            <div id="rsiBox" class="status-bar">
+                <div class="light-glow"></div>
+                <span class="status-label">FILTRO TÉCNICO</span>
+                <span class="status-value" id="rsiText">📉 VENDA</span>
+            </div>
+            <div id="momBox" class="status-bar">
+                <div class="light-glow"></div>
+                <span class="status-label">MOMENTUM</span>
+                <span class="status-value" id="momText">⚖️ NEUTRO</span>
+            </div>
+        </div>
+
+        <!-- INDICADOR DE VOLATILIDADE -->
+        <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 11px;">
+            <span>📊 Volatilidade: <span id="volText">MÉDIA</span></span>
+            <span>⏰ Sessão: <span id="sessaoText">Londres</span></span>
+        </div>
+
+        <!-- MODO OPERAÇÃO - CHAVE ON/OFF -->
+        <div class="modo-operacao">
+            <span id="statusModo">Modo Operação: OFF</span>
+            <label class="switch">
+                <input type="checkbox" id="lockScreenToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <!-- ALARME DE PREÇO -->
+        <div class="alarme-section">
+            <div class="alarme-title">
+                <span>🔔 ALARME DE PREÇO</span>
+            </div>
+            <div class="alarme-input-group">
+                <input type="number" id="alarmePreco" class="alarme-input" placeholder="Preço alvo (ex: 75000)" step="100">
+                <button class="alarme-btn" onclick="adicionarAlarme()">Adicionar</button>
+            </div>
+            <div class="alarme-lista" id="alarmeLista">
+                <div style="color: var(--text); text-align: center; padding: 10px;">Nenhum alarme definido</div>
+            </div>
+        </div>
+
+        <!-- GRÁFICO TRADINGVIEW -->
+        <div id="chart_container"></div>
+
+        <!-- INPUTS -->
+        <div class="inputs-grid">
+            <div><label>💰 Capital ($)</label><input type="number" id="capital" value="300"></div>
+            <div><label>⚡ Alavancagem</label><input type="number" id="lev" value="10"></div>
+            <div><label>✅ Gain %</label><input type="number" id="tpP" value="1.0" step="0.1"></div>
+            <div><label>🛑 Stop %</label><input type="number" id="slP" value="1.0" step="0.1"></div>
+        </div>
+
+        <button class="btn-calc" onclick="calc()">📊 CALCULAR ALVOS</button>
+
+        <!-- RESULTADOS -->
+        <div id="results" class="res">
+            <div style="display:flex; justify-content:space-between;"><span>🟢 TP:</span> <span id="resTP" style="color:var(--green);"></span></div>
+            <div style="display:flex; justify-content:space-between; margin-top:10px;"><span>🔴 SL:</span> <span id="resSL" style="color:var(--red);"></span></div>
+        </div>
+
+        <!-- GRADE DE PROJETOS -->
+        <div class="projects-section">
+            <div class="projects-grid">
+                <a href="https://site-557591544835-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Sinais Invest</a>
+                <a href="https://site-combustai-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">CombustAI</a>
+                <a href="https://site-559791916621-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Registro DCA</a>
+                <a href="https://pepinometro-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Pepinômetro</a>
+                <a href="https://historia-copas-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">História Copas</a>
+                <a href="https://investopcao.culturabuilder.com" class="project-btn" target="_blank">InvestOpção</a>
+            </div>
+        </div>
+
+        <!-- PUBLICIDADE ATMOS IPTV -->
+        <div class="ad-container">
+            <span style="color:var(--gold); font-weight:800; font-size:16px;">📺 ATMOS IPTV</span><br>
+            <span style="font-size:12px;">+15.000 canais • 4K • Estável</span>
+            <a href="https://wa.me/5597991916621" target="_blank" class="btn-ad">TESTE GRÁTIS</a>
+        </div>
+
+        <!-- TABELA DE SESSÕES -->
+        <table class="market-table">
+            <tr><td colspan="3" class="market-header">🌍 SESSÕES CRIPTO / FOREX</td></tr>
+            <tr><td>🌏 Ásia</td><td>21:00-01:00</td><td style="color:var(--gold); text-align:right;">● médio</td></tr>
+            <tr><td>🇪🇺 Londres</td><td>04:00-09:00</td><td style="color:var(--green); text-align:right;">● alto</td></tr>
+            <tr><td>🇺🇸 NY (Pico)</td><td>10:00-14:00</td><td style="color:var(--green); text-align:right;">● PICO</td></tr>
+            <tr><td colspan="3" class="market-header">🏆 EURO, PRATA & WTI</td></tr>
+            <tr><td>🥇 Metais (NY)</td><td>09:20-15:30</td><td style="color:var(--gold); text-align:right;">● liquidez</td></tr>
+            <tr><td>🛢️ Petróleo (WTI)</td><td>10:00-16:30</td><td style="color:var(--accent); text-align:right;">● volatilidade</td></tr>
+        </table>
+
+        <!-- BOTÃO DONATIVOS -->
+        <button class="project-btn" onclick="openDonationModal()" style="background:var(--gold); color:#000; width:100%; margin-top:15px;">💰 Donativos</button>
     </div>
 
-    <!-- Gráfico (fora do appContent) -->
-    <div id="chart_container"></div>
-
-    <!-- BOLINHA FLUTUANTE (existente) -->
+    <!-- BOLINHA FLUTUANTE -->
     <div class="floating-ball" onclick="openPasswordModal()">🔓</div>
 
-    <!-- MODAL DE SENHA (existente) -->
+    <!-- MODAL DE SENHA -->
     <div id="passwordModal" class="modal">
         <div class="modal-content" style="max-width:350px;">
             <h2>🔐 ACESSO</h2>
@@ -419,7 +395,7 @@
         </div>
     </div>
 
-    <!-- MODAL DO ROBÔ (existente) -->
+    <!-- MODAL DO ROBÔ - AGORA FUNCIONAL -->
     <div id="robotModal" class="modal">
         <div class="modal-content">
             <h2>🤖 ROBÔ SCALPER</h2>
@@ -431,15 +407,15 @@
 
             <h3>🔐 Credenciais Hyperliquid</h3>
             <div class="campo">
-                <label>Endereço da conta principal</label>
+                <label>Endereço da conta principal (MetaMask/SafePal)</label>
                 <input type="text" id="hlMainAddress" value="0x9a761Cc6331Fd28D0b04811135dfA233f6499C9C">
             </div>
             <div class="campo">
-                <label>Endereço da API wallet</label>
+                <label>Endereço da API wallet (Robonovo)</label>
                 <input type="text" id="hlApiAddress" value="0xa9adb7057b5531c077962289a69bbadc4973e381">
             </div>
             <div class="campo">
-                <label>Chave privada</label>
+                <label>Chave privada da API wallet</label>
                 <input type="password" id="hlApiPrivateKey" placeholder="0x...">
             </div>
 
@@ -472,7 +448,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE DONATIVOS (existente) -->
+    <!-- MODAL DE DONATIVOS -->
     <div id="donationModal" class="modal">
         <div class="modal-content">
             <h2>💰 Donativos</h2>
@@ -508,16 +484,16 @@
     <script src="https://s3.tradingview.com/tv.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <script>
-        // ---------- CÓDIGO ORIGINAL (MANTIDO INTACTO) ----------
+        // ---------- VARIÁVEIS GLOBAIS ----------
         let price = 74069.05;
         let pricesHistory = [];
         let isDesktop = false;
         let currentTF = "1";
         let activeWS = null;
+        let hlConnection = null;
         let alarmes = [];
         let modoOperacaoAtivo = false;
         let timeoutDescanso;
-        let chartFullscreen = false;
 
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioCtx = null;
@@ -801,69 +777,66 @@
             alert('Copiado!');
         }
 
-        // ---------- FUNÇÕES DO ROBÔ (EXISTENTES) ----------
-        let hlConnection = null;
-        const apiEndpoint = "https://api.hyperliquid.xyz/exchange";
-        const infoEndpoint = "https://api.hyperliquid.xyz/info";
-
-        async function getAssetId(coin) {
-            const res = await fetch(infoEndpoint, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ type: "meta" })
-            });
-            const data = await res.json();
-            const asset = data.universe.find(u => u.name.toUpperCase() === coin.toUpperCase());
-            if (!asset) throw new Error(`Ativo ${coin} não encontrado na Hyperliquid`);
-            return asset.asset;
-        }
-
         async function connectHyperliquid() {
             const mainAddr = document.getElementById('hlMainAddress').value.trim();
             const apiAddr = document.getElementById('hlApiAddress').value.trim();
             const privKey = document.getElementById('hlApiPrivateKey').value.trim();
-
-            if (!mainAddr || !apiAddr || !privKey) {
+            
+            if(!mainAddr || !apiAddr || !privKey) {
                 alert('Preencha todos os campos');
                 return;
             }
-
+            
             try {
-                const wallet = new ethers.Wallet(privKey);
-                if (wallet.address.toLowerCase() !== apiAddr.toLowerCase()) {
-                    throw new Error(`Chave privada não corresponde ao endereço informado!\nGerado: ${wallet.address}`);
+                const provider = new ethers.providers.JsonRpcProvider('https://arb1.arbitrum.io/rpc');
+                const wallet = new ethers.Wallet(privKey, provider);
+                
+                console.log('Endereço derivado:', wallet.address);
+                console.log('Endereço informado:', apiAddr);
+                
+                if(wallet.address.toLowerCase() !== apiAddr.toLowerCase()) {
+                    throw new Error(`Chave não corresponde.\nChave gera: ${wallet.address}\nInformado: ${apiAddr}`);
                 }
+                
                 hlConnection = { mainAddress: mainAddr, apiWallet: wallet, apiAddress: apiAddr };
                 document.getElementById('apiConsole').innerHTML = `✅ Conectado como ${apiAddr.slice(0,6)}...${apiAddr.slice(-4)}`;
-                console.log("Hyperliquid API Wallet conectada");
-            } catch (e) {
+                
+            } catch(e) {
                 document.getElementById('apiConsole').innerHTML = `❌ Erro: ${e.message}`;
                 alert(e.message);
             }
         }
 
+        // ===== FUNÇÃO DO ROBÔ - AGORA FUNCIONAL =====
         async function placeRealOrder() {
-            if (!hlConnection) {
-                alert('Conecte a API primeiro!');
+            if(!hlConnection){
+                alert('Conecte a API primeiro');
                 return;
             }
 
             const capital = parseFloat(document.getElementById('botCapital').value);
             const pair = document.getElementById('botPair').value;
-            const slPercent = parseFloat(document.getElementById('botSL').value) / 100;
-            const tpPercent = parseFloat(document.getElementById('botTP').value) / 100;
+            const sl = parseFloat(document.getElementById('botSL').value)/100;
+            const tp = parseFloat(document.getElementById('botTP').value)/100;
 
-            if (capital < 5) {
+            if(capital < 5){
                 alert('Capital mínimo: 5 USDC');
                 return;
             }
 
+            if(!price || price === 0){
+                alert('Aguardando preço...');
+                return;
+            }
+
             try {
-                const coin = pair;
-                const assetId = await getAssetId(coin);
-                const currentPrice = parseFloat(document.getElementById('priceText').innerText.replace(/[$,]/g, ''));
-                const priceStr = currentPrice.toFixed(2);
-                const size = (capital / currentPrice).toFixed(6);
+                const assetMap = { BTC:0, ETH:1, SOL:2, GOLD:3, SILVER:4, WTI:5 };
+                const assetId = assetMap[pair];
+                if (assetId === undefined) { alert('Par inválido'); return; }
+
+                const size = (capital / price).toFixed(6);
+                const priceStr = price.toFixed(2);
+                const nonce = Date.now() + Math.floor(Math.random() * 1000);
 
                 const action = {
                     type: "order",
@@ -871,9 +844,8 @@
                         a: assetId,
                         b: true,
                         p: priceStr,
-                        s: size,
                         r: false,
-                        c: "0x" + Date.now().toString(16).padStart(32, "0"),
+                        s: size,
                         t: { limit: { tif: "Gtc" } }
                     }],
                     grouping: "na"
@@ -895,9 +867,8 @@
                         { name: "a", type: "uint32" },
                         { name: "b", type: "bool" },
                         { name: "p", type: "string" },
-                        { name: "s", type: "string" },
                         { name: "r", type: "bool" },
-                        { name: "c", type: "string" },
+                        { name: "s", type: "string" },
                         { name: "t", type: "OrderType" }
                     ],
                     OrderType: [
@@ -908,12 +879,10 @@
                     ]
                 };
 
-                document.getElementById('apiConsole').innerHTML = '⏳ Assinando ordem com EIP-712...';
+                document.getElementById('apiConsole').innerHTML = '⏳ Assinando ordem...';
 
                 const signature = await hlConnection.apiWallet._signTypedData(domain, types, action);
                 const sig = ethers.utils.splitSignature(signature);
-
-                const nonce = Date.now();
 
                 const requestBody = {
                     action,
@@ -922,9 +891,9 @@
                     vaultAddress: null
                 };
 
-                document.getElementById('apiConsole').innerHTML = '⏳ Enviando ordem para Hyperliquid...';
+                document.getElementById('apiConsole').innerHTML = '⏳ Enviando ordem...';
 
-                const response = await fetch(apiEndpoint, {
+                const response = await fetch('https://api.hyperliquid.xyz/exchange', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(requestBody)
@@ -932,274 +901,22 @@
 
                 const result = await response.json();
 
-                if (result.status === "ok" && result.response?.data?.statuses?.[0]) {
-                    const status = result.response.data.statuses[0];
-                    const stopPrice = (currentPrice * (1 - slPercent)).toFixed(2);
-                    const takePrice = (currentPrice * (1 + tpPercent)).toFixed(2);
-
-                    document.getElementById('apiConsole').innerHTML = `✅ ORDEM ENVIADA COM SUCESSO!<br>Asset: ${pair}<br>Size: ${size}<br>Preço: ${priceStr}`;
-
-                    alert(`🚀 ORDEM REAL ENVIADA!\n\nPar: ${pair}\nQuantidade: ${size}\nPreço limite: ${priceStr}\nStop Loss: ${stopPrice}\nTake Profit: ${takePrice}\n\nStatus: ${status.resting ? 'Resting' : 'Filled'}`);
+                if(result.status === "ok" || result.response?.data?.statuses?.[0]?.resting){
+                    document.getElementById('apiConsole').innerHTML = '✅ Ordem enviada!';
+                    const stopPrice = price * (1 - sl);
+                    const takePrice = price * (1 + tp);
+                    alert(`✅ ORDEM REAL!\nComprar ${size} ${pair}\nPreço: $${price.toFixed(2)}\nStop: $${stopPrice.toFixed(2)}\nTake: $${takePrice.toFixed(2)}`);
                 } else {
-                    document.getElementById('apiConsole').innerHTML = `❌ Erro na Hyperliquid:<br>${JSON.stringify(result, null, 2)}`;
-                    alert('Erro ao enviar ordem. Veja o console.');
+                    document.getElementById('apiConsole').innerHTML = '❌ ' + JSON.stringify(result);
                 }
 
-            } catch (e) {
-                document.getElementById('apiConsole').innerHTML = `❌ Erro: ${e.message}`;
-                console.error(e);
-                alert(e.message);
+            } catch(e){
+                document.getElementById('apiConsole').innerHTML = '❌ ' + e.message;
             }
-        }
-
-        // ---------- FUNÇÃO EXISTENTE DE MODO IMERSIVO ----------
-        function toggleChartOnly() {
-            const chart = document.getElementById('chart_container');
-            const app = document.getElementById('appContent');
-            const btn = document.getElementById('expandChartBtn');
-
-            chartFullscreen = !chartFullscreen;
-
-            if (chartFullscreen) {
-                chart.classList.add('chart-fullscreen');
-                app.classList.add('hidden');
-                btn.innerText = '🔙';
-                btn.style.backgroundColor = 'var(--red)';
-            } else {
-                chart.classList.remove('chart-fullscreen');
-                app.classList.remove('hidden');
-                btn.innerText = '⛶';
-                btn.style.backgroundColor = 'var(--accent)';
-            }
-
-            setTimeout(initChart, 300);
         }
 
         iniciarTimerDescanso();
         initChart();
-
-        // ========== NOVAS FUNCIONALIDADES (APENAS ADICIONADAS, SEM ALTERAR O EXISTENTE) ==========
-        let isProUser = false;
-        let layoutAtual = 'normal';
-
-        // Sobrescreve initChart para considerar o modo PRO
-        const originalInitChart = initChart;
-        initChart = function() {
-            const symbol = document.getElementById('pairSelector').value;
-            const container = document.getElementById('chart_container');
-            container.innerHTML = '';
-            const widgetConfig = {
-                "autosize": true,
-                "symbol": symbol,
-                "interval": currentTF,
-                "theme": "dark",
-                "style": "1",
-                "locale": "br",
-                "container_id": "chart_container",
-                "hide_top_toolbar": !isDesktop,
-                "hide_legend": false
-            };
-            if (isProUser) {
-                widgetConfig.studies = [
-                    "RSI@tv-basicstudies",
-                    "MACD@tv-basicstudies",
-                    "BB@tv-basicstudies",
-                    "VWAP@tv-basicstudies",
-                    "ATR@tv-basicstudies"
-                ];
-            }
-            new TradingView.widget(widgetConfig);
-            
-            if(activeWS) activeWS.close();
-            
-            let pair = symbol.split(':')[1].toLowerCase();
-            let streamPair = (pair === 'gold' || pair === 'silver' || pair === 'usoil') ? 'btcusdt' : 
-                             (pair.includes('btc') ? 'btcusdt' : 
-                              pair.includes('eth') ? 'ethusdt' : 
-                              pair.includes('sol') ? 'solusdt' : 'btcusdt');
-            
-            activeWS = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`);
-            
-            activeWS.onmessage = (e) => {
-                const data = JSON.parse(e.data);
-                price = parseFloat(data.c);
-                document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
-                pricesHistory.push(price);
-                if(pricesHistory.length > 50) pricesHistory.shift();
-                
-                const s1 = document.getElementById('statusText');
-                const box = document.getElementById('statusBox');
-                let s1Valor = 0;
-                if(Math.floor(price * 100) % 2 === 0) {
-                    s1.innerText = '🔥 OPORTUNIDADE';
-                    box.style.borderBottomColor = '#00ff88';
-                    s1.style.color = '#00ff88';
-                    s1Valor = 30;
-                } else {
-                    s1.innerText = '⚠️ AGUARDAR';
-                    box.style.borderBottomColor = '#ff3e3e';
-                    s1.style.color = '#ff3e3e';
-                    s1Valor = 0;
-                }
-                
-                const s2 = document.getElementById('rsiText');
-                const rsiBox = document.getElementById('rsiBox');
-                let s2Valor = 0;
-                let s2Direcao = null;
-                if(pricesHistory.length >= 21) {
-                    const compra = price > pricesHistory[pricesHistory.length - 21];
-                    s2.innerText = compra ? '🚀 COMPRA' : '📉 VENDA';
-                    rsiBox.style.borderBottomColor = compra ? '#00ff88' : '#ff3e3e';
-                    s2.style.color = compra ? '#00ff88' : '#ff3e3e';
-                    s2Valor = 40;
-                    s2Direcao = compra ? 'compra' : 'venda';
-                } else {
-                    s2.innerText = `COLETANDO ${pricesHistory.length}/21`;
-                }
-                
-                const s3 = document.getElementById('momText');
-                const momBox = document.getElementById('momBox');
-                let s3Valor = 0;
-                let s3Direcao = null;
-                if(pricesHistory.length >= 3) {
-                    const avg = (pricesHistory.slice(-3).reduce((a,b)=>a+b,0))/3;
-                    if(price > avg * 1.001) {
-                        s3.innerText = '📈 ALTA';
-                        momBox.style.borderBottomColor = '#00ff88';
-                        s3.style.color = '#00ff88';
-                        s3Valor = 30;
-                        s3Direcao = 'compra';
-                    } else if(price < avg * 0.999) {
-                        s3.innerText = '📉 BAIXA';
-                        momBox.style.borderBottomColor = '#ff3e3e';
-                        s3.style.color = '#ff3e3e';
-                        s3Valor = 30;
-                        s3Direcao = 'venda';
-                    } else {
-                        s3.innerText = '⚖️ NEUTRO';
-                        momBox.style.borderBottomColor = '#ffcc00';
-                        s3.style.color = '#ffcc00';
-                    }
-                }
-                
-                let score = s1Valor + s2Valor + (s3Valor || 0);
-                if (s2Direcao && s3Direcao && s2Direcao !== s3Direcao) score = 0;
-                
-                document.getElementById('scoreFill').style.width = score + '%';
-                document.getElementById('scoreValue').innerText = score + '/100';
-                
-                let scoreLabel = 'Aguardando sinais';
-                let probabilidade = '';
-                let classeScore = 'baixa';
-                
-                if (score >= 80) {
-                    scoreLabel = '🔥 Confluência forte';
-                    probabilidade = 'Alta';
-                    classeScore = 'alta';
-                    document.getElementById('alertaBadge').style.display = 'inline-block';
-                    if (s2Direcao === 'compra') document.body.classList.add('alerta-compra');
-                    else if (s2Direcao === 'venda') document.body.classList.add('alerta-venda');
-                } else if (score >= 60) {
-                    scoreLabel = '⚡ Confluência moderada';
-                    probabilidade = 'Média';
-                    classeScore = 'media';
-                    document.getElementById('alertaBadge').style.display = 'none';
-                } else {
-                    scoreLabel = '⚠️ Evitar operação';
-                    probabilidade = 'Baixa';
-                    classeScore = 'baixa';
-                    document.getElementById('alertaBadge').style.display = 'none';
-                }
-                
-                document.getElementById('scoreFill').className = 'score-fill ' + classeScore;
-                document.getElementById('scoreLabel').innerText = scoreLabel;
-                document.getElementById('probabilidade').innerText = probabilidade;
-                
-                const hora = new Date().getHours();
-                const minutos = new Date().getMinutes();
-                const horaMin = hora + minutos/60;
-                let sessao = 'Fora do horário';
-                if (horaMin >= 21 || horaMin < 1) sessao = '🌏 Ásia';
-                else if (horaMin >= 4 && horaMin < 9) sessao = '🇪🇺 Londres';
-                else if (horaMin >= 10 && horaMin < 14) sessao = '🇺🇸 NY (Pico)';
-                else if (horaMin >= 9.33 && horaMin < 15.5) sessao = '🥇 Metais NY';
-                else if (horaMin >= 10 && horaMin < 16.5) sessao = '🛢️ Petróleo';
-                document.getElementById('sessaoText').innerText = sessao;
-                
-                verificarAlarmes();
-            };
-        };
-
-        // Função para ativar modo PRO
-        function ativarModoPro() {
-            if (isProUser) {
-                alert('Modo PRO já está ativo!');
-                return;
-            }
-            isProUser = true;
-            initChart();
-            alert('⚡ Modo PRO ativado! Agora você tem acesso a múltiplos indicadores (RSI, MACD, Bollinger, VWAP, ATR).');
-        }
-
-        // Função para restaurar layout anterior
-        function restaurarLayout() {
-            if (chartFullscreen) {
-                toggleChartOnly(); // sai do modo tela cheia
-            }
-            // Remove classes de layout extras se houver
-            document.body.classList.remove('layout-tela-cheia', 'layout-combinado');
-            document.body.classList.add('layout-normal');
-            layoutAtual = 'normal';
-        }
-
-        // Criar botões no DOM
-        window.addEventListener('load', function() {
-            // Botão PRO (amarelo)
-            const proBtn = document.createElement('button');
-            proBtn.id = 'proModeBtn';
-            proBtn.innerText = '⚡ PRO';
-            proBtn.style.position = 'fixed';
-            proBtn.style.bottom = '120px';
-            proBtn.style.right = '120px';
-            proBtn.style.zIndex = '100001';
-            proBtn.style.padding = '12px 16px';
-            proBtn.style.borderRadius = '40px';
-            proBtn.style.background = 'var(--gold)';
-            proBtn.style.color = '#000';
-            proBtn.style.border = 'none';
-            proBtn.style.fontWeight = 'bold';
-            proBtn.style.cursor = 'pointer';
-            proBtn.onclick = ativarModoPro;
-            document.body.appendChild(proBtn);
-
-            // Botão restaurar (seta)
-            const restoreBtn = document.createElement('button');
-            restoreBtn.id = 'restoreLayoutBtn';
-            restoreBtn.innerText = '⬅';
-            restoreBtn.style.position = 'fixed';
-            restoreBtn.style.bottom = '120px';
-            restoreBtn.style.right = '200px';
-            restoreBtn.style.zIndex = '100001';
-            restoreBtn.style.width = '60px';
-            restoreBtn.style.height = '60px';
-            restoreBtn.style.borderRadius = '50%';
-            restoreBtn.style.background = 'var(--accent)';
-            restoreBtn.style.color = 'white';
-            restoreBtn.style.border = 'none';
-            restoreBtn.style.fontSize = '24px';
-            restoreBtn.style.cursor = 'pointer';
-            restoreBtn.onclick = restaurarLayout;
-            document.body.appendChild(restoreBtn);
-        });
-
-        // Atualiza a função toggleChartOnly para manter o layoutAtual
-        const originalToggle = toggleChartOnly;
-        toggleChartOnly = function() {
-            originalToggle();
-            layoutAtual = chartFullscreen ? 'tela-cheia' : 'normal';
-            document.body.classList.remove('layout-normal', 'layout-tela-cheia', 'layout-combinado');
-            document.body.classList.add(layoutAtual === 'tela-cheia' ? 'layout-tela-cheia' : 'layout-normal');
-        };
     </script>
 </body>
 </html>
