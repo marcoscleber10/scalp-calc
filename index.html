@@ -13,6 +13,7 @@
             --text: #8b949e;
             --accent: #2f81f7;
             --gold: #ffcc00;
+            --purple: #9d4edd;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
         body { background-color: var(--bg); color: white; display: flex; justify-content: center; padding: 20px; }
@@ -32,6 +33,47 @@
         .status-label { font-size: 9px; color: var(--text); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px; }
         .status-value { font-size: 14px; font-weight: bold; display: block; }
         .light-glow { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: currentColor; filter: blur(4px); opacity: 0.5; }
+        
+        /* SCORE DE CONFLUÊNCIA */
+        .score-container { margin-bottom: 15px; }
+        .score-bar { background: #1e2a38; height: 20px; border-radius: 10px; overflow: hidden; margin: 5px 0; }
+        .score-fill { height: 100%; width: 0%; transition: width 0.3s; }
+        .score-fill.alta { background: linear-gradient(90deg, #00ff88, #00cc66); }
+        .score-fill.media { background: linear-gradient(90deg, #ffcc00, #ffaa00); }
+        .score-fill.baixa { background: linear-gradient(90deg, #ff3e3e, #cc0000); }
+        .score-text { display: flex; justify-content: space-between; font-size: 11px; color: var(--text); }
+        
+        /* ALERTAS */
+        @keyframes flashGreen {
+            0% { background-color: rgba(0,255,136,0); }
+            50% { background-color: rgba(0,255,136,0.3); }
+            100% { background-color: rgba(0,255,136,0); }
+        }
+        @keyframes flashRed {
+            0% { background-color: rgba(255,62,62,0); }
+            50% { background-color: rgba(255,62,62,0.3); }
+            100% { background-color: rgba(255,62,62,0); }
+        }
+        .alerta-compra { animation: flashGreen 0.5s ease-in-out 3; }
+        .alerta-venda { animation: flashRed 0.5s ease-in-out 3; }
+        
+        .badge-alerta {
+            background: var(--gold);
+            color: #000;
+            padding: 8px 12px;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 12px;
+            margin-bottom: 15px;
+            display: inline-block;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 0.8; transform: scale(1); }
+        }
+        
         #chart_container { width: 100%; height: 220px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #30363d; background: #000; transition: height 0.3s; }
         .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
         label { font-size: 9px; color: var(--text); text-transform: uppercase; margin-bottom: 4px; display: block; }
@@ -63,6 +105,10 @@
         .console { background: #0d1117; padding: 10px; border-radius: 10px; margin: 10px 0; font-size: 12px; font-family: monospace; height: 50px; overflow-y: auto; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .security-warning { background: #ff3e3e20; border: 1px solid #ff3e3e; color: #ff3e3e; padding: 10px; border-radius: 10px; font-size: 11px; margin-bottom: 15px; text-align: center; }
+        .vol-indicator { display: inline-block; padding: 4px 8px; border-radius: 20px; font-size: 10px; font-weight: bold; margin-left: 8px; }
+        .vol-alta { background: #00ff8820; color: #00ff88; border: 1px solid #00ff88; }
+        .vol-media { background: #ffcc0020; color: #ffcc00; border: 1px solid #ffcc00; }
+        .vol-baixa { background: #ff3e3e20; color: #ff3e3e; border: 1px solid #ff3e3e; }
     </style>
 </head>
 <body>
@@ -71,13 +117,11 @@
         <h4>⚡ MESTRE DO SCALPING PRO ⚡</h4>
         <button class="btn-mode" onclick="toggleMode()">🖥️ ALTERNAR MODO COMPUTADOR</button>
 
-        <!-- SELETOR DE TIMEFRAME -->
         <div class="time-selector">
             <button class="time-btn active" data-t="1" onclick="setTF('1', this)">⚡ SCALP (1m)</button>
             <button class="time-btn" data-t="15" onclick="setTF('15', this)">🔭 DAY TRADE (15m)</button>
         </div>
 
-        <!-- SELECT COM TODOS OS 9 PARES -->
         <select id="pairSelector" onchange="initChart()">
             <optgroup label="📈 Binance">
                 <option value="BINANCE:BTCUSDT" selected>₿ BTC/USDT (Binance)</option>
@@ -96,14 +140,32 @@
             </optgroup>
         </select>
 
-        <div class="price" id="priceText">$ 73,860.00</div>
+        <div class="price" id="priceText">$ 74,275.22</div>
 
-        <!-- 3 SINAIS (SINAL GERAL, FILTRO, OPÇÃO 3) -->
+        <!-- SCORE DE CONFLUÊNCIA -->
+        <div class="score-container">
+            <div class="score-text">
+                <span>🔥 Confluência</span>
+                <span id="scoreValue">0/100</span>
+            </div>
+            <div class="score-bar">
+                <div class="score-fill" id="scoreFill" style="width:0%"></div>
+            </div>
+            <div class="score-text">
+                <span id="scoreLabel">Aguardando sinais</span>
+                <span id="probabilidade"></span>
+            </div>
+        </div>
+
+        <!-- BADGE DE ALERTA (aparece quando confluência alta) -->
+        <div id="alertaBadge" class="badge-alerta" style="display: none;">🚨 ENTRADA FORTE DETECTADA</div>
+
+        <!-- 3 SINAIS -->
         <div class="status-grid">
             <div id="statusBox" class="status-bar">
                 <div class="light-glow"></div>
                 <span class="status-label">SINAL GERAL</span>
-                <span class="status-value" id="statusText">🔥 OPORTUNIDADE</span>
+                <span class="status-value" id="statusText">⚠️ AGUARDAR</span>
             </div>
             <div id="rsiBox" class="status-bar">
                 <div class="light-glow"></div>
@@ -112,9 +174,15 @@
             </div>
             <div id="momBox" class="status-bar">
                 <div class="light-glow"></div>
-                <span class="status-label">OPÇÃO 3</span>
+                <span class="status-label">MOMENTUM</span>
                 <span class="status-value" id="momText">⚖️ NEUTRO</span>
             </div>
+        </div>
+
+        <!-- INDICADOR DE VOLATILIDADE -->
+        <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 11px;">
+            <span>📊 Volatilidade: <span id="volText">MÉDIA</span></span>
+            <span>⏰ Sessão: <span id="sessaoText">Fora do horário</span></span>
         </div>
 
         <!-- GRÁFICO TRADINGVIEW -->
@@ -270,12 +338,18 @@
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <script>
         // ---------- VARIÁVEIS GLOBAIS ----------
-        let price = 73860.00;
+        let price = 74275.22;
         let pricesHistory = [];
         let isDesktop = false;
         let currentTF = "1";
         let activeWS = null;
         let hlConnection = null;
+        let alertaJaTocado = false;
+        let ultimaConfluencia = 0;
+
+        // Sons (opcional - descomente se tiver os arquivos)
+        // const alertaCompra = new Audio("buy.mp3");
+        // const alertaVenda = new Audio("sell.mp3");
 
         function setTF(tf, btn) {
             currentTF = tf;
@@ -326,46 +400,141 @@
                 // SINAL 1 - Par/Ímpar
                 const s1 = document.getElementById('statusText');
                 const box = document.getElementById('statusBox');
+                let s1Valor = 0;
                 if(Math.floor(price * 100) % 2 === 0) {
                     s1.innerText = '🔥 OPORTUNIDADE';
                     box.style.borderBottomColor = '#00ff88';
                     s1.style.color = '#00ff88';
+                    s1Valor = 30;
                 } else {
                     s1.innerText = '⚠️ AGUARDAR';
                     box.style.borderBottomColor = '#ff3e3e';
                     s1.style.color = '#ff3e3e';
+                    s1Valor = 0;
                 }
                 
                 // SINAL 2 - Filtro (21 períodos)
                 const s2 = document.getElementById('rsiText');
                 const rsiBox = document.getElementById('rsiBox');
+                let s2Valor = 0;
+                let s2Direcao = null;
                 if(pricesHistory.length >= 21) {
                     const compra = price > pricesHistory[pricesHistory.length - 21];
                     s2.innerText = compra ? '🚀 COMPRA' : '📉 VENDA';
                     rsiBox.style.borderBottomColor = compra ? '#00ff88' : '#ff3e3e';
                     s2.style.color = compra ? '#00ff88' : '#ff3e3e';
+                    s2Valor = compra ? 40 : 40;
+                    s2Direcao = compra ? 'compra' : 'venda';
                 } else {
                     s2.innerText = `COLETANDO ${pricesHistory.length}/21`;
+                    s2Valor = 0;
                 }
                 
                 // SINAL 3 - Momentum (3 períodos)
                 const s3 = document.getElementById('momText');
                 const momBox = document.getElementById('momBox');
+                let s3Valor = 0;
+                let s3Direcao = null;
                 if(pricesHistory.length >= 3) {
                     const avg = (pricesHistory.slice(-3).reduce((a,b)=>a+b,0))/3;
                     if(price > avg * 1.001) {
-                        s3.innerText = '📈 MOMENTO ALTA';
+                        s3.innerText = '📈 ALTA';
                         momBox.style.borderBottomColor = '#00ff88';
                         s3.style.color = '#00ff88';
+                        s3Valor = 30;
+                        s3Direcao = 'compra';
                     } else if(price < avg * 0.999) {
-                        s3.innerText = '📉 MOMENTO BAIXA';
+                        s3.innerText = '📉 BAIXA';
                         momBox.style.borderBottomColor = '#ff3e3e';
                         s3.style.color = '#ff3e3e';
+                        s3Valor = 30;
+                        s3Direcao = 'venda';
                     } else {
                         s3.innerText = '⚖️ NEUTRO';
                         momBox.style.borderBottomColor = '#ffcc00';
                         s3.style.color = '#ffcc00';
+                        s3Valor = 0;
+                        s3Direcao = null;
                     }
+                }
+                
+                // CALCULAR SCORE DE CONFLUÊNCIA
+                let score = s1Valor + s2Valor + s3Valor;
+                if (s2Direcao && s3Direcao && s2Direcao !== s3Direcao) {
+                    score = 0; // conflito de direção zera o score
+                }
+                
+                document.getElementById('scoreFill').style.width = score + '%';
+                document.getElementById('scoreValue').innerText = score + '/100';
+                
+                let scoreLabel = 'Aguardando sinais';
+                let probabilidade = '';
+                let classeScore = 'baixa';
+                
+                if (score >= 80) {
+                    scoreLabel = '🔥 Confluência forte - Operação prioritária';
+                    probabilidade = 'Alta probabilidade';
+                    classeScore = 'alta';
+                    
+                    // ALERTA VISUAL E SONORO
+                    document.getElementById('alertaBadge').style.display = 'inline-block';
+                    
+                    // Remover classe de alerta anterior
+                    document.body.classList.remove('alerta-compra', 'alerta-venda');
+                    
+                    if (s2Direcao === 'compra') {
+                        document.body.classList.add('alerta-compra');
+                        // if (typeof alertaCompra !== 'undefined') alertaCompra.play();
+                        // if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+                    } else if (s2Direcao === 'venda') {
+                        document.body.classList.add('alerta-venda');
+                        // if (typeof alertaVenda !== 'undefined') alertaVenda.play();
+                        // if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+                    }
+                    
+                } else if (score >= 60) {
+                    scoreLabel = '⚡ Confluência moderada';
+                    probabilidade = 'Média probabilidade';
+                    classeScore = 'media';
+                    document.getElementById('alertaBadge').style.display = 'none';
+                } else {
+                    scoreLabel = '⚠️ Evitar operação';
+                    probabilidade = 'Baixa probabilidade';
+                    classeScore = 'baixa';
+                    document.getElementById('alertaBadge').style.display = 'none';
+                }
+                
+                document.getElementById('scoreFill').className = 'score-fill ' + classeScore;
+                document.getElementById('scoreLabel').innerText = scoreLabel;
+                document.getElementById('probabilidade').innerText = probabilidade;
+                
+                // VERIFICAR SESSÃO
+                const hora = new Date().getHours();
+                const minutos = new Date().getMinutes();
+                const horaMin = hora + minutos/60;
+                
+                let sessao = 'Fora do horário';
+                if (horaMin >= 21 || horaMin < 1) sessao = '🌏 Ásia';
+                else if (horaMin >= 4 && horaMin < 9) sessao = '🇪🇺 Londres';
+                else if (horaMin >= 10 && horaMin < 14) sessao = '🇺🇸 NY (Pico)';
+                else if (horaMin >= 9.33 && horaMin < 15.5) sessao = '🥇 Metais NY';
+                else if (horaMin >= 10 && horaMin < 16.5) sessao = '🛢️ Petróleo';
+                
+                document.getElementById('sessaoText').innerText = sessao;
+                
+                // SIMULAR VOLATILIDADE (baseada na variação)
+                if (pricesHistory.length > 5) {
+                    const variacao = Math.abs(price - pricesHistory[pricesHistory.length-5]) / price * 100;
+                    let volText = 'MÉDIA';
+                    let volClass = 'vol-media';
+                    if (variacao > 0.5) {
+                        volText = 'ALTA';
+                        volClass = 'vol-alta';
+                    } else if (variacao < 0.1) {
+                        volText = 'BAIXA';
+                        volClass = 'vol-baixa';
+                    }
+                    document.getElementById('volText').innerHTML = `<span class="vol-indicator ${volClass}">${volText}</span>`;
                 }
             };
         }
