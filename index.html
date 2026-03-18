@@ -231,6 +231,57 @@
         .vol-alta { background: #00ff8820; color: #00ff88; border: 1px solid #00ff88; }
         .vol-media { background: #ffcc0020; color: #ffcc00; border: 1px solid #ffcc00; }
         .vol-baixa { background: #ff3e3e20; color: #ff3e3e; border: 1px solid #ff3e3e; }
+
+        /* ===== NOVOS ESTILOS PARA O MODAL DE POOLS ===== */
+        .pools-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            color: var(--text);
+        }
+        .pools-table th {
+            text-align: left;
+            padding: 8px 4px;
+            border-bottom: 2px solid var(--accent);
+            color: white;
+            font-weight: 600;
+        }
+        .pools-table td {
+            padding: 8px 4px;
+            border-bottom: 1px solid #2a3440;
+        }
+        .pools-table tr:hover {
+            background: #1e2a38;
+        }
+        .pool-badge {
+            background: var(--accent);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 12px;
+            font-size: 10px;
+        }
+        .ratio-bar {
+            background: #0d151f;
+            height: 16px;
+            width: 60px;
+            border-radius: 8px;
+            overflow: hidden;
+            display: inline-block;
+            position: relative;
+        }
+        .ratio-bar span {
+            display: block;
+            height: 100%;
+            background: var(--green);
+        }
+        .apr-high {
+            color: var(--green);
+            font-weight: bold;
+        }
+        .pool-modal-content {
+            max-width: 1200px !important;
+            width: 95% !important;
+        }
     </style>
 </head>
 <body>
@@ -349,7 +400,7 @@
             <div style="display:flex; justify-content:space-between; margin-top:10px;"><span>🔴 SL:</span> <span id="resSL" style="color:var(--red);"></span></div>
         </div>
 
-        <!-- GRADE DE PROJETOS -->
+        <!-- GRADE DE PROJETOS (com novo botão para pools) -->
         <div class="projects-section">
             <div class="projects-grid">
                 <a href="https://site-557591544835-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Sinais Invest</a>
@@ -358,6 +409,8 @@
                 <a href="https://pepinometro-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Pepinômetro</a>
                 <a href="https://historia-copas-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">História Copas</a>
                 <a href="https://investopcao.culturabuilder.com" class="project-btn" target="_blank">InvestOpção</a>
+                <!-- NOVO BOTÃO PARA POOLS DE LIQUIDEZ -->
+                <button class="project-btn" onclick="openPoolsModal()" style="background: var(--purple); color: white;">🌊 Pools de Liquidez</button>
             </div>
         </div>
 
@@ -395,7 +448,7 @@
         </div>
     </div>
 
-    <!-- MODAL DO ROBÔ - AGORA FUNCIONAL -->
+    <!-- MODAL DO ROBÔ -->
     <div id="robotModal" class="modal">
         <div class="modal-content">
             <h2>🤖 ROBÔ SCALPER</h2>
@@ -481,10 +534,44 @@
         </div>
     </div>
 
+    <!-- NOVO MODAL: POOLS DE LIQUIDEZ -->
+    <div id="poolsModal" class="modal">
+        <div class="modal-content pool-modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="color: var(--gold); margin: 0;">🌊 Pools de Liquidez</h2>
+                <button onclick="closePoolsModal()" style="background: none; border: none; color: var(--text); font-size: 24px; cursor: pointer;">✕</button>
+            </div>
+            <p style="color: var(--text); margin-bottom: 20px;">Track DeFi pools across Ethereum, Arbitrum, Base, and Solana.</p>
+            
+            <div style="overflow-x: auto;">
+                <table class="pools-table" id="poolsTable">
+                    <thead>
+                        <tr>
+                            <th>Pool</th>
+                            <th>Network</th>
+                            <th>DEX</th>
+                            <th>TVL</th>
+                            <th>Ratio</th>
+                            <th>Volume 24h</th>
+                            <th>APR</th>
+                            <th>Fee</th>
+                            <th>Age</th>
+                        </tr>
+                    </thead>
+                    <tbody id="poolsTableBody">
+                        <!-- Preenchido via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            <p style="color: var(--text); margin-top: 15px;">Mostrando 1–20 de 575 pools</p>
+            <button class="close-btn" onclick="closePoolsModal()" style="margin-top: 20px;">Fechar</button>
+        </div>
+    </div>
+
     <script src="https://s3.tradingview.com/tv.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <script>
-        // ---------- VARIÁVEIS GLOBAIS ----------
+        // ---------- CÓDIGO ORIGINAL (MANTIDO INTACTO) ----------
         let price = 74069.05;
         let pricesHistory = [];
         let isDesktop = false;
@@ -807,7 +894,6 @@
             }
         }
 
-        // ===== FUNÇÃO DO ROBÔ - AGORA FUNCIONAL =====
         async function placeRealOrder() {
             if(!hlConnection){
                 alert('Conecte a API primeiro');
@@ -914,6 +1000,64 @@
                 document.getElementById('apiConsole').innerHTML = '❌ ' + e.message;
             }
         }
+
+        // ---------- NOVAS FUNÇÕES PARA O MODAL DE POOLS ----------
+        function openPoolsModal() {
+            document.getElementById('poolsModal').style.display = 'flex';
+        }
+
+        function closePoolsModal() {
+            document.getElementById('poolsModal').style.display = 'none';
+        }
+
+        // Dados das pools (baseados na imagem fornecida)
+        const poolsData = [
+            { pool: "AMZNx / SOL", network: "Solana", dex: "Raydium Concentrated", tvl: "24.8K", ratio: "56/44", volume: "214.0K", apr: "900.5%", fee: "0.25%", age: "8mo" },
+            { pool: "COINx / SOL", network: "Solana", dex: "Raydium Concentrated", tvl: "135.9K", ratio: "83/17", volume: "260.7K", apr: "574.7%", fee: "0.80%", age: "2mo" },
+            { pool: "PAXG / EURC", network: "Solana", dex: "Raydium Concentrated", tvl: "7.0K", ratio: "83/17", volume: "20.2K", apr: "420.2%", fee: "0.40%", age: "11mo" },
+            { pool: "USD1 / WBNB", network: "Bsc", dex: "PancakeSwap V3", tvl: "20.9K", ratio: "18/82", volume: "1.95M", apr: "338.0%", fee: "0.01%", age: "11mo" },
+            { pool: "USDC / WHYPE", network: "Hyperliquid", dex: "Project X", tvl: "473.0K", ratio: "63/37", volume: "1.32M", apr: "296.0%", fee: "0.30%", age: "6mo" },
+            { pool: "WETH / USDC", network: "Solana", dex: "Orca Whirlpool", tvl: "31.7K", ratio: "86/14", volume: "82.8K", apr: "293.5%", fee: "0.30%", age: "2y 2mo" },
+            { pool: "SOL / WBTC", network: "Arbitrum", dex: "Uniswap V3", tvl: "10.2K", ratio: "78/22", volume: "8.2K", apr: "292.6%", fee: "1.00%", age: "1y 4mo" },
+            { pool: "HYPE / USDC", network: "Solana", dex: "Orca Whirlpool", tvl: "81.3K", ratio: "28/72", volume: "105.2K", apr: "291.8%", fee: "0.65%", age: "3mo" },
+            { pool: "SLVon / WETH", network: "Ethereum", dex: "Uniswap V3", tvl: "1.4K", ratio: "85/15", volume: "4.0K", apr: "278.5%", fee: "0.30%", age: "1mo" },
+            { pool: "HYPE / SOL", network: "Solana", dex: "Meteora DLMM", tvl: "33.2K", ratio: "8/92", volume: "196.8K", apr: "239.0%", fee: "0.10%", age: "5mo" },
+            { pool: "SOL / WETH", network: "Arbitrum", dex: "Uniswap V3", tvl: "124.0K", ratio: "70/30", volume: "257.2K", apr: "227.3%", fee: "0.30%", age: "2y 6mo" },
+            { pool: "SOL / USDC", network: "Base", dex: "Aerodrome Slipstream", tvl: "252.4K", ratio: "64/36", volume: "4.16M", apr: "224.3%", fee: "0.03%", age: "2h" },
+            { pool: "HOODx / SOL", network: "Solana", dex: "Raydium Concentrated", tvl: "448.9K", ratio: "20/80", volume: "269.8K", apr: "214.1%", fee: "1.00%", age: "8mo" },
+            { pool: "USDC / WHYPE", network: "Hyperliquid", dex: "Project X", tvl: "11.44M", ratio: "71/29", volume: "119.03M", apr: "187.4%", fee: "0.05%", age: "6mo" },
+            { pool: "GOOGLx / SOL", network: "Solana", dex: "Raydium Concentrated", tvl: "44.6K", ratio: "53/47", volume: "21.2K", apr: "173.1%", fee: "1.00%", age: "19d" },
+            { pool: "SOL / USDC", network: "Arbitrum", dex: "Uniswap V3", tvl: "135.5K", ratio: "72/28", volume: "62.7K", apr: "169.0%", fee: "1.00%", age: "2y 3mo" },
+            { pool: "HYPE / USDC", network: "Solana", dex: "Meteora DLMM", tvl: "1.27M", ratio: "20/80", volume: "2.75M", apr: "154.5%", fee: "0.20%", age: "4mo" },
+            { pool: "AAPLx / SOL", network: "Solana", dex: "Raydium Concentrated", tvl: "7.9K", ratio: "41/59", volume: "3.8K", apr: "149.0%", fee: "0.80%", age: "17d" },
+            { pool: "cbBTC / SOL", network: "Solana", dex: "Meteora DLMM", tvl: "43.9K", ratio: "83/17", volume: "570.1K", apr: "142.9%", fee: "0.03%", age: "1mo" },
+            { pool: "XAUt / USDT", network: "Ethereum", dex: "Uniswap V4", tvl: "7.6K", ratio: "32/68", volume: "57.8K", apr: "137.2%", fee: "0.05%", age: "5mo" }
+        ];
+
+        function renderPoolsTable() {
+            const tbody = document.getElementById('poolsTableBody');
+            tbody.innerHTML = '';
+            poolsData.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${p.pool}</strong></td>
+                    <td>${p.network}</td>
+                    <td>${p.dex}</td>
+                    <td>$${p.tvl}</td>
+                    <td>
+                        <div class="ratio-bar"><span style="width: ${p.ratio.split('/')[0]}%;"></span></div>
+                        ${p.ratio}
+                    </td>
+                    <td>$${p.volume}</td>
+                    <td class="apr-high">${p.apr}</td>
+                    <td>${p.fee}</td>
+                    <td>${p.age}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        renderPoolsTable();
 
         iniciarTimerDescanso();
         initChart();
