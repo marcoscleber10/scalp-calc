@@ -232,8 +232,8 @@
         .vol-media { background: #ffcc0020; color: #ffcc00; border: 1px solid #ffcc00; }
         .vol-baixa { background: #ff3e3e20; color: #ff3e3e; border: 1px solid #ff3e3e; }
 
-        /* ===== BOTÃO DE EXPANDIR GRÁFICO (FUNCIONAL) ===== */
-        #expandChartBtn {
+        /* ===== BOTÃO DE TELA CHEIA (FUNCIONAL) ===== */
+        #fullscreenBtn {
             position: fixed;
             bottom: 120px;
             right: 30px;
@@ -252,7 +252,7 @@
             justify-content: center;
             transition: 0.2s;
         }
-        #expandChartBtn:hover {
+        #fullscreenBtn:hover {
             transform: scale(1.1);
         }
         .fullscreen-mode .card,
@@ -270,7 +270,7 @@
         .fullscreen-mode .inputs-grid,
         .fullscreen-mode .btn-calc,
         .fullscreen-mode .res,
-        .fullscreen-mode .project-btn:not(#expandChartBtn) {
+        .fullscreen-mode .project-btn:not(#fullscreenBtn) {
             display: none !important;
         }
         .fullscreen-mode #chart_container {
@@ -283,13 +283,13 @@
             border-radius: 0;
             margin: 0;
         }
-        .fullscreen-mode #expandChartBtn {
+        .fullscreen-mode #fullscreenBtn {
             background: var(--red) !important;
         }
     </style>
 </head>
 <body>
-    <!-- CARD PRINCIPAL - INTACTO -->
+    <!-- CARD PRINCIPAL -->
     <div class="card" id="mainCard">
         <h4>⚡ MESTRE DO SCALPING PRO ⚡</h4>
         <button class="btn-mode" onclick="toggleMode()">🖥️ ALTERNAR MODO COMPUTADOR</button>
@@ -334,7 +334,7 @@
             </div>
         </div>
 
-        <!-- BADGE DE ALERTA (aparece quando confluência alta) -->
+        <!-- BADGE DE ALERTA -->
         <div id="alertaBadge" class="badge-alerta" style="display: none;">🚨 ENTRADA FORTE DETECTADA</div>
 
         <!-- 3 SINAIS -->
@@ -362,7 +362,7 @@
             <span>⏰ Sessão: <span id="sessaoText">NY (Pico)</span></span>
         </div>
 
-        <!-- MODO OPERAÇÃO - CHAVE ON/OFF -->
+        <!-- MODO OPERAÇÃO -->
         <div class="modo-operacao">
             <span id="statusModo">Modo Operação: OFF</span>
             <label class="switch">
@@ -385,7 +385,7 @@
             </div>
         </div>
 
-        <!-- GRÁFICO TRADINGVIEW -->
+        <!-- GRÁFICO -->
         <div id="chart_container"></div>
 
         <!-- INPUTS -->
@@ -404,7 +404,7 @@
             <div style="display:flex; justify-content:space-between; margin-top:10px;"><span>🔴 SL:</span> <span id="resSL" style="color:var(--red);"></span></div>
         </div>
 
-        <!-- GRADE DE PROJETOS -->
+        <!-- PROJETOS -->
         <div class="projects-section">
             <div class="projects-grid">
                 <a href="https://site-557591544835-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Sinais Invest</a>
@@ -416,14 +416,14 @@
             </div>
         </div>
 
-        <!-- PUBLICIDADE ATMOS IPTV -->
+        <!-- ATMOS -->
         <div class="ad-container">
             <span style="color:var(--gold); font-weight:800; font-size:16px;">📺 ATMOS IPTV</span><br>
             <span style="font-size:12px;">+15.000 canais • 4K • Estável</span>
             <a href="https://wa.me/5597991916621" target="_blank" class="btn-ad">TESTE GRÁTIS</a>
         </div>
 
-        <!-- TABELA DE SESSÕES -->
+        <!-- SESSÕES -->
         <table class="market-table">
             <tr><td colspan="3" class="market-header">🌍 SESSÕES CRIPTO / FOREX</td></tr>
             <tr><td>🌏 Ásia</td><td>21:00-01:00</td><td style="color:var(--gold); text-align:right;">● médio</td></tr>
@@ -434,17 +434,17 @@
             <tr><td>🛢️ Petróleo (WTI)</td><td>10:00-16:30</td><td style="color:var(--accent); text-align:right;">● volatilidade</td></tr>
         </table>
 
-        <!-- BOTÃO DONATIVOS -->
+        <!-- DONATIVOS -->
         <button class="project-btn" onclick="openDonationModal()" style="background:var(--gold); color:#000; width:100%; margin-top:15px;">💰 Donativos</button>
     </div>
 
     <!-- BOLINHA FLUTUANTE -->
     <div class="floating-ball" onclick="openPasswordModal()">🔓</div>
 
-    <!-- BOTÃO DE EXPANDIR GRÁFICO -->
-    <button id="expandChartBtn" onclick="toggleFullscreen()">⛶</button>
+    <!-- BOTÃO DE TELA CHEIA -->
+    <button id="fullscreenBtn" onclick="toggleFullscreen()">⛶</button>
 
-    <!-- MODAL DE SENHA -->
+    <!-- MODAIS (inalterados) -->
     <div id="passwordModal" class="modal">
         <div class="modal-content" style="max-width:350px;">
             <h2>🔐 ACESSO</h2>
@@ -453,33 +453,26 @@
         </div>
     </div>
 
-    <!-- MODAL DO ROBÔ -->
     <div id="robotModal" class="modal">
         <div class="modal-content">
             <h2>🤖 ROBÔ SCALPER</h2>
             <p style="color:var(--green);">🔓 Acesso autorizado</p>
-            
-            <div class="security-warning">
-                ⚠️ ATENÇÃO: Use apenas em ambiente local. Chave privada não é salva.
-            </div>
-
+            <div class="security-warning">⚠️ ATENÇÃO: Use apenas em ambiente local. Chave privada não é salva.</div>
             <h3>🔐 Credenciais Hyperliquid</h3>
             <div class="campo">
-                <label>Endereço da conta principal (MetaMask/SafePal)</label>
+                <label>Endereço da conta principal</label>
                 <input type="text" id="hlMainAddress" value="0x9a761Cc6331Fd28D0b04811135dfA233f6499C9C">
             </div>
             <div class="campo">
-                <label>Endereço da API wallet (Robonovo)</label>
+                <label>Endereço da API wallet</label>
                 <input type="text" id="hlApiAddress" value="0xa9adb7057b5531c077962289a69bbadc4973e381">
             </div>
             <div class="campo">
-                <label>Chave privada da API wallet</label>
+                <label>Chave privada</label>
                 <input type="password" id="hlApiPrivateKey" placeholder="0x...">
             </div>
-
             <button class="btn-mode" onclick="connectHyperliquid()" style="background:var(--accent);">🔌 Validar e Conectar</button>
             <div class="console" id="apiConsole">[API] Desconectado</div>
-
             <h3>📝 Ordem Real</h3>
             <div class="campo">
                 <label>Capital (USDC)</label>
@@ -500,41 +493,20 @@
                     <option value="WTI">🛢️ WTI (Petróleo)</option>
                 </select>
             </div>
-
             <button class="btn-calc" onclick="placeRealOrder()" style="background:var(--gold); color:#000; margin-top:15px;">🚀 ENVIAR ORDEM REAL</button>
             <button class="close-btn" onclick="closeRobotModal()" style="margin-top:10px;">Fechar</button>
         </div>
     </div>
 
-    <!-- MODAL DE DONATIVOS -->
     <div id="donationModal" class="modal">
         <div class="modal-content">
             <h2>💰 Donativos</h2>
-            <p style="background:#1e2a36; padding:15px; border-radius:15px; margin-bottom:20px;">
-                Projeto independente, sem fins lucrativos. Contribuições ajudam a manter os custos. Obrigado!
-            </p>
-            
-            <div class="donation-item" style="border-left-color:#8a2be2;">
-                <strong>⚡ Lightning Network</strong>
-                <p>cloggedparrot01@walletofsatoshi.com <button class="copy-btn" onclick="copyText('cloggedparrot01@walletofsatoshi.com')">Copiar</button></p>
-            </div>
-            <div class="donation-item" style="border-left-color:#f7931a;">
-                <strong>₿ Bitcoin</strong>
-                <p>bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5 <button class="copy-btn" onclick="copyText('bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5')">Copiar</button></p>
-            </div>
-            <div class="donation-item" style="border-left-color:#627eea;">
-                <strong>🔷 EVM</strong>
-                <p>0xAd944bA180610F1Fe43151eD81c0084C918c68e1 <button class="copy-btn" onclick="copyText('0xAd944bA180610F1Fe43151eD81c0084C918c68e1')">Copiar</button></p>
-            </div>
-            <div class="donation-item" style="border-left-color:#14f195;">
-                <strong>◎ Solana</strong>
-                <p>EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm <button class="copy-btn" onclick="copyText('EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm')">Copiar</button></p>
-            </div>
-            <div class="donation-item" style="border-left-color:#32bcad;">
-                <strong>🇧🇷 Pix</strong>
-                <p>127d59fc-1f37-4e8e-9fd4-295e1883727b <button class="copy-btn" onclick="copyText('127d59fc-1f37-4e8e-9fd4-295e1883727b')">Copiar</button></p>
-            </div>
-            
+            <p style="background:#1e2a36; padding:15px; border-radius:15px; margin-bottom:20px;">Projeto independente, sem fins lucrativos. Contribuições ajudam a manter os custos. Obrigado!</p>
+            <div class="donation-item" style="border-left-color:#8a2be2;"><strong>⚡ Lightning Network</strong><p>cloggedparrot01@walletofsatoshi.com <button class="copy-btn" onclick="copyText('cloggedparrot01@walletofsatoshi.com')">Copiar</button></p></div>
+            <div class="donation-item" style="border-left-color:#f7931a;"><strong>₿ Bitcoin</strong><p>bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5 <button class="copy-btn" onclick="copyText('bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5')">Copiar</button></p></div>
+            <div class="donation-item" style="border-left-color:#627eea;"><strong>🔷 EVM</strong><p>0xAd944bA180610F1Fe43151eD81c0084C918c68e1 <button class="copy-btn" onclick="copyText('0xAd944bA180610F1Fe43151eD81c0084C918c68e1')">Copiar</button></p></div>
+            <div class="donation-item" style="border-left-color:#14f195;"><strong>◎ Solana</strong><p>EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm <button class="copy-btn" onclick="copyText('EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm')">Copiar</button></p></div>
+            <div class="donation-item" style="border-left-color:#32bcad;"><strong>🇧🇷 Pix</strong><p>127d59fc-1f37-4e8e-9fd4-295e1883727b <button class="copy-btn" onclick="copyText('127d59fc-1f37-4e8e-9fd4-295e1883727b')">Copiar</button></p></div>
             <button class="close-btn" onclick="closeDonationModal()">Fechar</button>
         </div>
     </div>
@@ -542,7 +514,7 @@
     <script src="https://s3.tradingview.com/tv.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <script>
-        // ---------- CÓDIGO ORIGINAL (MANTIDO INTACTO) ----------
+        // ---------- CÓDIGO ORIGINAL (MANTIDO) ----------
         let price = 72227.81;
         let pricesHistory = [];
         let isDesktop = false;
@@ -568,7 +540,6 @@
                 gainNode.connect(audioCtx.destination);
                 osc.start();
                 osc.stop(audioCtx.currentTime + 0.5);
-                
                 setTimeout(() => {
                     const osc2 = audioCtx.createOscillator();
                     osc2.type = 'sine';
@@ -580,7 +551,6 @@
                     osc2.start();
                     osc2.stop(audioCtx.currentTime + 0.5);
                 }, 600);
-                
                 if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
             } catch (e) {}
         }
@@ -613,17 +583,13 @@
                 "hide_top_toolbar": !isDesktop,
                 "hide_legend": false
             });
-            
             if(activeWS) activeWS.close();
-            
             let pair = symbol.split(':')[1].toLowerCase();
             let streamPair = (pair === 'gold' || pair === 'silver' || pair === 'usoil') ? 'btcusdt' : 
                              (pair.includes('btc') ? 'btcusdt' : 
                               pair.includes('eth') ? 'ethusdt' : 
                               pair.includes('sol') ? 'solusdt' : 'btcusdt');
-            
             activeWS = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`);
-            
             activeWS.onmessage = (e) => {
                 const data = JSON.parse(e.data);
                 price = parseFloat(data.c);
@@ -972,10 +938,10 @@
             }
         }
 
-        // ===== FUNÇÃO PARA TELA CHEIA (CORRIGIDA) =====
+        // ===== NOVA FUNÇÃO DE TELA CHEIA (SIMPLES E FUNCIONAL) =====
         function toggleFullscreen() {
             const body = document.body;
-            const btn = document.getElementById('expandChartBtn');
+            const btn = document.getElementById('fullscreenBtn');
             
             if (body.classList.contains('fullscreen-mode')) {
                 body.classList.remove('fullscreen-mode');
@@ -990,8 +956,7 @@
             // Força o redimensionamento do gráfico
             setTimeout(() => {
                 window.dispatchEvent(new Event('resize'));
-                // Recria o gráfico para garantir que se ajuste
-                initChart();
+                initChart(); // Recria o gráfico para garantir o tamanho correto
             }, 100);
         }
 
