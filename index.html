@@ -396,7 +396,7 @@
         </div>
     </div>
 
-    <!-- MODAL DO ROBÔ - AGORA COM 6 PARES (cripto + metais) -->
+    <!-- MODAL DO ROBÔ - COM NOVA API -->
     <div id="robotModal" class="modal">
         <div class="modal-content">
             <h2>🤖 ROBÔ SCALPER</h2>
@@ -408,16 +408,19 @@
 
             <h3>🔐 Credenciais Hyperliquid</h3>
             <div class="campo">
-                <label>Endereço da conta principal</label>
-                <input type="text" id="hlMainAddress" value="0x9a761Cc6331Fd28D0b04811135dfA233f6499C9Q">
+                <label>Endereço da conta principal (MetaMask/SafePal)</label>
+                <input type="text" id="hlMainAddress" value="0x9a761Cc6331Fd28D0b04811135dfA233f6499C9C">
+                <small style="color:var(--text);">Sua carteira</small>
             </div>
             <div class="campo">
-                <label>Endereço da API wallet</label>
-                <input type="text" id="hlApiAddress" value="0x99f2348b7a7c5319f2df726a44ecd847326fcefe">
+                <label>Endereço da API wallet (Robonovo)</label>
+                <input type="text" id="hlApiAddress" value="0xa9adb7057b5531c077962289a69bbadc4973e381">
+                <small style="color:var(--text);">API wallet pública</small>
             </div>
             <div class="campo">
-                <label>Chave privada</label>
+                <label>Chave privada da API wallet</label>
                 <input type="password" id="hlApiPrivateKey" placeholder="0x...">
+                <small style="color:var(--text);">Cole a chave que você copiou</small>
             </div>
 
             <button class="btn-mode" onclick="connectHyperliquid()" style="background:var(--accent);">🔌 Validar e Conectar</button>
@@ -436,11 +439,9 @@
             <div class="campo">
                 <label>Par</label>
                 <select id="botPair">
-                    <!-- CRIPTO (3 pares) -->
                     <option value="BTC">₿ BTC/USDC</option>
                     <option value="ETH">⟠ ETH/USDC</option>
                     <option value="SOL">◎ SOL/USDC</option>
-                    <!-- METAIS (3 pares) -->
                     <option value="GOLD">🥇 XAU/USD (Ouro)</option>
                     <option value="SILVER">🥈 XAG/USD (Prata)</option>
                     <option value="WTI">🛢️ WTI (Petróleo)</option>
@@ -521,7 +522,7 @@
                 const gainNode = audioCtx.createGain();
                 
                 osc.type = 'sine';
-                osc.frequency.value = 880; // Nota Lá
+                osc.frequency.value = 880;
                 
                 gainNode.gain.value = 0.3;
                 
@@ -529,9 +530,8 @@
                 gainNode.connect(audioCtx.destination);
                 
                 osc.start();
-                osc.stop(audioCtx.currentTime + 0.5); // Toca por 0.5 segundos
+                osc.stop(audioCtx.currentTime + 0.5);
                 
-                // Repetir 3 vezes
                 setTimeout(() => {
                     const osc2 = audioCtx.createOscillator();
                     osc2.type = 'sine';
@@ -556,7 +556,6 @@
                     osc3.stop(audioCtx.currentTime + 0.5);
                 }, 1200);
                 
-                // Vibrar se for mobile
                 if (navigator.vibrate) {
                     navigator.vibrate([500, 200, 500]);
                 }
@@ -675,7 +674,7 @@
                 // CALCULAR SCORE DE CONFLUÊNCIA
                 let score = s1Valor + s2Valor + s3Valor;
                 if (s2Direcao && s3Direcao && s2Direcao !== s3Direcao) {
-                    score = 0; // conflito de direção zera o score
+                    score = 0;
                 }
                 
                 document.getElementById('scoreFill').style.width = score + '%';
@@ -686,14 +685,11 @@
                 let classeScore = 'baixa';
                 
                 if (score >= 80) {
-                    scoreLabel = '🔥 Confluência forte - Operação prioritária';
-                    probabilidade = 'Alta probabilidade';
+                    scoreLabel = '🔥 Confluência forte';
+                    probabilidade = 'Alta';
                     classeScore = 'alta';
-                    
-                    // ALERTA VISUAL E SONORO
                     document.getElementById('alertaBadge').style.display = 'inline-block';
                     
-                    // Remover classe de alerta anterior
                     document.body.classList.remove('alerta-compra', 'alerta-venda');
                     
                     if (s2Direcao === 'compra') {
@@ -704,12 +700,12 @@
                     
                 } else if (score >= 60) {
                     scoreLabel = '⚡ Confluência moderada';
-                    probabilidade = 'Média probabilidade';
+                    probabilidade = 'Média';
                     classeScore = 'media';
                     document.getElementById('alertaBadge').style.display = 'none';
                 } else {
                     scoreLabel = '⚠️ Evitar operação';
-                    probabilidade = 'Baixa probabilidade';
+                    probabilidade = 'Baixa';
                     classeScore = 'baixa';
                     document.getElementById('alertaBadge').style.display = 'none';
                 }
@@ -732,7 +728,7 @@
                 
                 document.getElementById('sessaoText').innerText = sessao;
                 
-                // SIMULAR VOLATILIDADE (baseada na variação)
+                // SIMULAR VOLATILIDADE
                 if (pricesHistory.length > 5) {
                     const variacao = Math.abs(price - pricesHistory[pricesHistory.length-5]) / price * 100;
                     let volText = 'MÉDIA';
@@ -770,14 +766,12 @@
                 return;
             }
             
-            // Adicionar à lista
             alarmes.push({
                 preco: preco,
                 ativo: true,
                 id: Date.now()
             });
             
-            // Atualizar interface
             atualizarListaAlarmes();
             precoInput.value = '';
         }
@@ -811,10 +805,9 @@
         function verificarAlarmes() {
             alarmes.forEach(alarme => {
                 if (alarme.ativo) {
-                    // Verificar se o preço atingiu o alvo (com margem de 0.1%)
                     const diff = Math.abs(price - alarme.preco) / alarme.preco;
-                    if (diff < 0.001) { // 0.1% de margem
-                        alarme.ativo = false; // Desativar após disparar
+                    if (diff < 0.001) {
+                        alarme.ativo = false;
                         tocarAlarme();
                         alert(`🔔 ALARME! Preço atingiu $${alarme.preco.toFixed(2)}`);
                         atualizarListaAlarmes();
@@ -826,13 +819,12 @@
         // ---------- FUNÇÕES DO MODO OPERAÇÃO ----------
         function iniciarTimerDescanso() {
             if (modoOperacaoAtivo) return;
-
             clearTimeout(timeoutDescanso);
             timeoutDescanso = setTimeout(() => {
                 if (!modoOperacaoAtivo) {
                     document.body.classList.add("modo-descanso");
                 }
-            }, 90000); // 90 segundos
+            }, 90000);
         }
 
         function resetTimer() {
@@ -842,19 +834,16 @@
             }
         }
 
-        // Event listeners para resetar o timer
         document.onmousemove = resetTimer;
         document.onkeydown = resetTimer;
         document.onclick = resetTimer;
-        document.ontouchstart = resetTimer; // para mobile
+        document.ontouchstart = resetTimer;
 
-        // Configurar o toggle do modo operação
         const toggle = document.getElementById("lockScreenToggle");
         const statusTexto = document.getElementById("statusModo");
 
         toggle.addEventListener("change", function() {
             modoOperacaoAtivo = this.checked;
-
             if (modoOperacaoAtivo) {
                 statusTexto.innerText = "Modo Operação: ON";
                 clearTimeout(timeoutDescanso);
@@ -887,6 +876,7 @@
             alert('Copiado!');
         }
 
+        // ===== FUNÇÃO DE CONEXÃO CORRIGIDA COM LOGS =====
         async function connectHyperliquid() {
             const mainAddr = document.getElementById('hlMainAddress').value.trim();
             const apiAddr = document.getElementById('hlApiAddress').value.trim();
@@ -901,8 +891,12 @@
                 const provider = new ethers.providers.JsonRpcProvider('https://arb1.arbitrum.io/rpc');
                 const wallet = new ethers.Wallet(privKey, provider);
                 
+                // Mostrar endereços para debug
+                console.log('Endereço derivado da chave:', wallet.address);
+                console.log('Endereço informado:', apiAddr);
+                
                 if(wallet.address.toLowerCase() !== apiAddr.toLowerCase()) {
-                    throw new Error('Chave não corresponde ao endereço da API');
+                    throw new Error(`Chave não corresponde ao endereço da API.\n\nChave gera: ${wallet.address}\nVocê informou: ${apiAddr}`);
                 }
                 
                 hlConnection = { mainAddress: mainAddr, apiWallet: wallet, apiAddress: apiAddr };
@@ -910,150 +904,22 @@
                 
             } catch(e) {
                 document.getElementById('apiConsole').innerHTML = `❌ Erro: ${e.message}`;
+                alert(e.message);
             }
         }
 
-        // ===== FUNÇÃO DO ROBÔ ATUALIZADA PARA 6 PARES =====
+        // ===== FUNÇÃO DO ROBÔ (DESATIVADA POR ENQUANTO) =====
         async function placeRealOrder() {
             if(!hlConnection){
                 alert('Conecte a API primeiro');
                 return;
             }
 
-            const capital = parseFloat(document.getElementById('botCapital').value);
-            const pair = document.getElementById('botPair').value;
-            const sl = parseFloat(document.getElementById('botSL').value)/100;
-            const tp = parseFloat(document.getElementById('botTP').value)/100;
-
-            if(capital < 5){
-                alert('Capital mínimo: 5 USDC');
-                return;
-            }
-
-            if(!price || price === 0){
-                alert('Aguardando preço...');
-                return;
-            }
-
-            try {
-                // Mapeamento para 6 pares (Hyperliquid)
-                // Cripto: BTC=0, ETH=1, SOL=2
-                // Metais: GOLD=3, SILVER=4, WTI=5
-                const assetMap = { 
-                    BTC: 0, 
-                    ETH: 1, 
-                    SOL: 2,
-                    GOLD: 3,
-                    SILVER: 4,
-                    WTI: 5
-                };
-                
-                const assetId = assetMap[pair];
-                
-                if (assetId === undefined) {
-                    alert('Par inválido');
-                    return;
-                }
-
-                const size = (capital / price).toFixed(6);
-                const priceStr = price.toFixed(2);
-                const nonce = Date.now() + Math.floor(Math.random() * 1000);
-
-                const action = {
-                    type: "order",
-                    orders: [{
-                        a: assetId,
-                        b: true,
-                        p: priceStr,
-                        r: false,
-                        s: size,
-                        t: { limit: { tif: "Gtc" } }
-                    }],
-                    grouping: "na"
-                };
-
-                const domain = {
-                    name: "Hyperliquid",
-                    version: "1",
-                    chainId: 42161
-                };
-
-                const types = {
-                    Action: [
-                        { name: "type", type: "string" },
-                        { name: "orders", type: "Order[]" },
-                        { name: "grouping", type: "string" }
-                    ],
-                    Order: [
-                        { name: "a", type: "uint32" },
-                        { name: "b", type: "bool" },
-                        { name: "p", type: "string" },
-                        { name: "r", type: "bool" },
-                        { name: "s", type: "string" },
-                        { name: "t", type: "OrderType" }
-                    ],
-                    OrderType: [
-                        { name: "limit", type: "Limit" }
-                    ],
-                    Limit: [
-                        { name: "tif", type: "string" }
-                    ]
-                };
-
-                document.getElementById('apiConsole').innerHTML = '⏳ Assinando...';
-
-                const signature = await hlConnection.apiWallet._signTypedData(
-                    domain,
-                    types,
-                    action
-                );
-
-                const sig = ethers.utils.splitSignature(signature);
-
-                const requestBody = {
-                    action,
-                    nonce,
-                    signature: {
-                        r: sig.r,
-                        s: sig.s,
-                        v: sig.v
-                    },
-                    vaultAddress: null
-                };
-
-                document.getElementById('apiConsole').innerHTML = '⏳ Enviando...';
-
-                const response = await fetch('https://api.hyperliquid.xyz/exchange', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(requestBody)
-                });
-
-                const result = await response.json();
-
-                if(result.status === "ok" || result.response?.data?.statuses?.[0]?.resting){
-                    document.getElementById('apiConsole').innerHTML = '✅ Ordem enviada com sucesso!';
-                    
-                    const stopPrice = price * (1 - sl);
-                    const takePrice = price * (1 + tp);
-                    
-                    alert(`✅ ORDEM REAL EXECUTADA!\n\n` +
-                          `Comprar ${size} ${pair}\n` +
-                          `Preço: $${price.toFixed(2)}\n` +
-                          `Stop: $${stopPrice.toFixed(2)}\n` +
-                          `Take: $${takePrice.toFixed(2)}`);
-                } else {
-                    document.getElementById('apiConsole').innerHTML = '❌ ' + JSON.stringify(result);
-                }
-
-            } catch(e){
-                document.getElementById('apiConsole').innerHTML = '❌ ' + e.message;
-            }
+            alert('🚀 Conexão OK! Aguardando ajustes finos para ordens reais.');
+            document.getElementById('apiConsole').innerHTML = '✅ API conectada - Pronto para trading';
         }
 
-        // Iniciar timer de descanso
         iniciarTimerDescanso();
-
         initChart();
     </script>
 </body>
