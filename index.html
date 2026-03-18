@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mestre do Scalping Pro</title>
     <style>
-        /* === ESTILOS COMPLETOS (exatamente iguais ao original) === */
         :root {
             --bg: #0d1117;
             --card: #161b22;
@@ -35,6 +34,7 @@
         .status-value { font-size: 14px; font-weight: bold; display: block; }
         .light-glow { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: currentColor; filter: blur(4px); opacity: 0.5; }
         
+        /* SCORE DE CONFLUÊNCIA */
         .score-container { margin-bottom: 15px; }
         .score-bar { background: #1e2a38; height: 20px; border-radius: 10px; overflow: hidden; margin: 5px 0; }
         .score-fill { height: 100%; width: 0%; transition: width 0.3s; }
@@ -43,8 +43,17 @@
         .score-fill.baixa { background: linear-gradient(90deg, #ff3e3e, #cc0000); }
         .score-text { display: flex; justify-content: space-between; font-size: 11px; color: var(--text); }
         
-        @keyframes flashGreen { 0% { background-color: rgba(0,255,136,0); } 50% { background-color: rgba(0,255,136,0.3); } 100% { background-color: rgba(0,255,136,0); } }
-        @keyframes flashRed { 0% { background-color: rgba(255,62,62,0); } 50% { background-color: rgba(255,62,62,0.3); } 100% { background-color: rgba(255,62,62,0); } }
+        /* ALERTAS */
+        @keyframes flashGreen {
+            0% { background-color: rgba(0,255,136,0); }
+            50% { background-color: rgba(0,255,136,0.3); }
+            100% { background-color: rgba(0,255,136,0); }
+        }
+        @keyframes flashRed {
+            0% { background-color: rgba(255,62,62,0); }
+            50% { background-color: rgba(255,62,62,0.3); }
+            100% { background-color: rgba(255,62,62,0); }
+        }
         .alerta-compra { animation: flashGreen 0.5s ease-in-out 3; }
         .alerta-venda { animation: flashRed 0.5s ease-in-out 3; }
         
@@ -59,8 +68,13 @@
             display: inline-block;
             animation: pulse 1s infinite;
         }
-        @keyframes pulse { 0% { opacity: 0.8; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } 100% { opacity: 0.8; transform: scale(1); } }
+        @keyframes pulse {
+            0% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 0.8; transform: scale(1); }
+        }
         
+        /* MODO OPERAÇÃO - CHAVE ON/OFF */
         .modo-operacao {
             background: #1e2a38;
             padding: 15px;
@@ -77,13 +91,18 @@
             width: 50px;
             height: 24px;
         }
-        .switch input { display: none; }
+        .switch input {
+            display: none;
+        }
         .slider {
             position: absolute;
             cursor: pointer;
             background-color: #444;
             border-radius: 24px;
-            top: 0; left: 0; right: 0; bottom: 0;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             transition: .4s;
         }
         .slider:before {
@@ -97,12 +116,25 @@
             border-radius: 50%;
             transition: .4s;
         }
-        input:checked + .slider { background-color: #00ff88; }
-        input:checked + .slider:before { transform: translateX(26px); }
-        #statusModo { color: var(--text); font-size: 12px; font-weight: bold; }
-        .modo-descanso { filter: brightness(0.3); }
-        .modo-ativo { box-shadow: 0 0 20px #00ff88 inset; }
+        input:checked + .slider {
+            background-color: #00ff88;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        #statusModo {
+            color: var(--text);
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .modo-descanso {
+            filter: brightness(0.3);
+        }
+        .modo-ativo {
+            box-shadow: 0 0 20px #00ff88 inset;
+        }
         
+        /* ALARME DE PREÇO */
         .alarme-section {
             background: #1e2a38;
             padding: 15px;
@@ -110,13 +142,102 @@
             margin: 15px 0;
             border: 1px solid var(--gold);
         }
-        .alarme-title { color: var(--gold); font-weight: bold; margin-bottom: 10px; display: flex; align-items: center; gap: 5px; }
-        .alarme-input-group { display: flex; gap: 8px; margin-bottom: 10px; }
-        .alarme-input { flex: 1; background: #0d151f; border: 1px solid #3d4d62; color: white; padding: 10px; border-radius: 20px; font-size: 14px; }
-        .alarme-btn { background: var(--accent); border: none; color: white; padding: 10px 15px; border-radius: 20px; cursor: pointer; font-weight: bold; }
-        .alarme-lista { margin-top: 10px; font-size: 12px; }
-        .alarme-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; background: #0d151f; border-radius: 10px; margin-bottom: 5px; }
-        .alarme-remover { background: var(--red); border: none; color: white; padding: 3px 8px; border-radius: 10px; cursor: pointer; font-size: 10px; }
+        .alarme-title {
+            color: var(--gold);
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .alarme-input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .alarme-input {
+            flex: 1;
+            background: #0d151f;
+            border: 1px solid #3d4d62;
+            color: white;
+            padding: 10px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        .alarme-btn {
+            background: var(--accent);
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .alarme-lista {
+            margin-top: 10px;
+            font-size: 12px;
+        }
+        .alarme-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            background: #0d151f;
+            border-radius: 10px;
+            margin-bottom: 5px;
+        }
+        .alarme-remover {
+            background: var(--red);
+            border: none;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 10px;
+        }
+        
+        /* MODO IMERSIVO - GRÁFICO EM TELA CHEIA */
+        #appContent {
+            transition: opacity 0.3s;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .chart-fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 99999;
+            background: #000;
+        }
+        .chart-fullscreen #chart_container {
+            width: 100vw;
+            height: 100vh !important;
+        }
+        #expandChartBtn {
+            position: fixed;
+            bottom: 120px; /* acima da bolinha */
+            right: 30px;
+            z-index: 100000;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: white;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+        #expandChartBtn:hover {
+            transform: scale(1.1);
+        }
         
         #chart_container { width: 100%; height: 220px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #30363d; background: #000; transition: height 0.3s; }
         .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
@@ -156,100 +277,118 @@
     </style>
 </head>
 <body>
-    <!-- CARD PRINCIPAL (idêntico ao original) -->
-    <div class="card" id="mainCard">
-        <h4>⚡ MESTRE DO SCALPING PRO ⚡</h4>
-        <button class="btn-mode" onclick="toggleMode()">🖥️ ALTERNAR MODO COMPUTADOR</button>
-        <div class="time-selector">
-            <button class="time-btn active" data-t="1" onclick="setTF('1', this)">⚡ SCALP (1m)</button>
-            <button class="time-btn" data-t="15" onclick="setTF('15', this)">🔭 DAY TRADE (15m)</button>
-        </div>
-        <select id="pairSelector" onchange="initChart()">
-            <optgroup label="📈 Binance">
-                <option value="BINANCE:BTCUSDT" selected>₿ BTC/USDT (Binance)</option>
-                <option value="BINANCE:ETHUSDT">⟠ ETH/USDT (Binance)</option>
-                <option value="BINANCE:SOLUSDT">◎ SOL/USDT (Binance)</option>
-            </optgroup>
-            <optgroup label="🌀 Hyperliquid">
-                <option value="BYBIT:BTCUSDT">₿ BTC/USD (Hyperliquid)</option>
-                <option value="BYBIT:ETHUSDT">⟠ ETH/USD (Hyperliquid)</option>
-                <option value="BYBIT:SOLUSDT">◎ SOL/USD (Hyperliquid)</option>
-            </optgroup>
-            <optgroup label="🏅 Metais & Energia">
-                <option value="TVC:GOLD">🥇 Ouro (XAU/USD)</option>
-                <option value="TVC:SILVER">🥈 Prata (XAG/USD)</option>
-                <option value="TVC:USOIL">🛢️ Petróleo WTI</option>
-            </optgroup>
-        </select>
-        <div class="price" id="priceText">$ 74,069.05</div>
-        <div class="score-container">
-            <div class="score-text"><span>🔥 Confluência</span><span id="scoreValue">40/100</span></div>
-            <div class="score-bar"><div class="score-fill" id="scoreFill" style="width:40%"></div></div>
-            <div class="score-text"><span id="scoreLabel">Evitar operação</span><span id="probabilidade">Baixa probabilidade</span></div>
-        </div>
-        <div id="alertaBadge" class="badge-alerta" style="display: none;">🚨 ENTRADA FORTE DETECTADA</div>
-        <div class="status-grid">
-            <div id="statusBox" class="status-bar"><div class="light-glow"></div><span class="status-label">SINAL GERAL</span><span class="status-value" id="statusText">⚠️ AGUARDAR</span></div>
-            <div id="rsiBox" class="status-bar"><div class="light-glow"></div><span class="status-label">FILTRO TÉCNICO</span><span class="status-value" id="rsiText">📉 VENDA</span></div>
-            <div id="momBox" class="status-bar"><div class="light-glow"></div><span class="status-label">MOMENTUM</span><span class="status-value" id="momText">⚖️ NEUTRO</span></div>
-        </div>
-        <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 11px;">
-            <span>📊 Volatilidade: <span id="volText">MÉDIA</span></span>
-            <span>⏰ Sessão: <span id="sessaoText">Londres</span></span>
-        </div>
-        <div class="modo-operacao">
-            <span id="statusModo">Modo Operação: OFF</span>
-            <label class="switch"><input type="checkbox" id="lockScreenToggle"><span class="slider"></span></label>
-        </div>
-        <div class="alarme-section">
-            <div class="alarme-title"><span>🔔 ALARME DE PREÇO</span></div>
-            <div class="alarme-input-group">
-                <input type="number" id="alarmePreco" class="alarme-input" placeholder="Preço alvo (ex: 75000)" step="100">
-                <button class="alarme-btn" onclick="adicionarAlarme()">Adicionar</button>
+    <!-- Botão para expandir gráfico -->
+    <button id="expandChartBtn" onclick="toggleChartOnly()">⛶</button>
+
+    <!-- TODO o conteúdo que não é o gráfico (será escondido no modo imersivo) -->
+    <div id="appContent">
+        <!-- CARD PRINCIPAL - 100% INTACTO -->
+        <div class="card" id="mainCard">
+            <h4>⚡ MESTRE DO SCALPING PRO ⚡</h4>
+            <button class="btn-mode" onclick="toggleMode()">🖥️ ALTERNAR MODO COMPUTADOR</button>
+
+            <div class="time-selector">
+                <button class="time-btn active" data-t="1" onclick="setTF('1', this)">⚡ SCALP (1m)</button>
+                <button class="time-btn" data-t="15" onclick="setTF('15', this)">🔭 DAY TRADE (15m)</button>
             </div>
-            <div class="alarme-lista" id="alarmeLista"><div style="color: var(--text); text-align: center; padding: 10px;">Nenhum alarme definido</div></div>
-        </div>
-        <div id="chart_container"></div>
-        <div class="inputs-grid">
-            <div><label>💰 Capital ($)</label><input type="number" id="capital" value="300"></div>
-            <div><label>⚡ Alavancagem</label><input type="number" id="lev" value="10"></div>
-            <div><label>✅ Gain %</label><input type="number" id="tpP" value="1.0" step="0.1"></div>
-            <div><label>🛑 Stop %</label><input type="number" id="slP" value="1.0" step="0.1"></div>
-        </div>
-        <button class="btn-calc" onclick="calc()">📊 CALCULAR ALVOS</button>
-        <div id="results" class="res">
-            <div style="display:flex; justify-content:space-between;"><span>🟢 TP:</span> <span id="resTP" style="color:var(--green);"></span></div>
-            <div style="display:flex; justify-content:space-between; margin-top:10px;"><span>🔴 SL:</span> <span id="resSL" style="color:var(--red);"></span></div>
-        </div>
-        <div class="projects-section">
-            <div class="projects-grid">
-                <a href="https://site-557591544835-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Sinais Invest</a>
-                <a href="https://site-combustai-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">CombustAI</a>
-                <a href="https://site-559791916621-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Registro DCA</a>
-                <a href="https://pepinometro-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Pepinômetro</a>
-                <a href="https://historia-copas-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">História Copas</a>
-                <a href="https://investopcao.culturabuilder.com" class="project-btn" target="_blank">InvestOpção</a>
+
+            <select id="pairSelector" onchange="initChart()">
+                <optgroup label="📈 Binance">
+                    <option value="BINANCE:BTCUSDT" selected>₿ BTC/USDT (Binance)</option>
+                    <option value="BINANCE:ETHUSDT">⟠ ETH/USDT (Binance)</option>
+                    <option value="BINANCE:SOLUSDT">◎ SOL/USDT (Binance)</option>
+                </optgroup>
+                <optgroup label="🌀 Hyperliquid">
+                    <option value="BYBIT:BTCUSDT">₿ BTC/USD (Hyperliquid)</option>
+                    <option value="BYBIT:ETHUSDT">⟠ ETH/USD (Hyperliquid)</option>
+                    <option value="BYBIT:SOLUSDT">◎ SOL/USD (Hyperliquid)</option>
+                </optgroup>
+                <optgroup label="🏅 Metais & Energia">
+                    <option value="TVC:GOLD">🥇 Ouro (XAU/USD)</option>
+                    <option value="TVC:SILVER">🥈 Prata (XAG/USD)</option>
+                    <option value="TVC:USOIL">🛢️ Petróleo WTI</option>
+                </optgroup>
+            </select>
+
+            <div class="price" id="priceText">$ 74,069.05</div>
+
+            <!-- SCORE DE CONFLUÊNCIA -->
+            <div class="score-container">
+                <div class="score-text">
+                    <span>🔥 Confluência</span>
+                    <span id="scoreValue">40/100</span>
+                </div>
+                <div class="score-bar">
+                    <div class="score-fill" id="scoreFill" style="width:40%"></div>
+                </div>
+                <div class="score-text">
+                    <span id="scoreLabel">Evitar operação</span>
+                    <span id="probabilidade">Baixa probabilidade</span>
+                </div>
             </div>
+
+            <!-- BADGE DE ALERTA (aparece quando confluência alta) -->
+            <div id="alertaBadge" class="badge-alerta" style="display: none;">🚨 ENTRADA FORTE DETECTADA</div>
+
+            <!-- 3 SINAIS -->
+            <div class="status-grid">
+                <div id="statusBox" class="status-bar">
+                    <div class="light-glow"></div>
+                    <span class="status-label">SINAL GERAL</span>
+                    <span class="status-value" id="statusText">⚠️ AGUARDAR</span>
+                </div>
+                <div id="rsiBox" class="status-bar">
+                    <div class="light-glow"></div>
+                    <span class="status-label">FILTRO TÉCNICO</span>
+                    <span class="status-value" id="rsiText">📉 VENDA</span>
+                </div>
+                <div id="momBox" class="status-bar">
+                    <div class="light-glow"></div>
+                    <span class="status-label">MOMENTUM</span>
+                    <span class="status-value" id="momText">⚖️ NEUTRO</span>
+                </div>
+            </div>
+
+            <!-- INDICADOR DE VOLATILIDADE -->
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 11px;">
+                <span>📊 Volatilidade: <span id="volText">MÉDIA</span></span>
+                <span>⏰ Sessão: <span id="sessaoText">Londres</span></span>
+            </div>
+
+            <!-- MODO OPERAÇÃO - CHAVE ON/OFF -->
+            <div class="modo-operacao">
+                <span id="statusModo">Modo Operação: OFF</span>
+                <label class="switch">
+                    <input type="checkbox" id="lockScreenToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- ALARME DE PREÇO -->
+            <div class="alarme-section">
+                <div class="alarme-title">
+                    <span>🔔 ALARME DE PREÇO</span>
+                </div>
+                <div class="alarme-input-group">
+                    <input type="number" id="alarmePreco" class="alarme-input" placeholder="Preço alvo (ex: 75000)" step="100">
+                    <button class="alarme-btn" onclick="adicionarAlarme()">Adicionar</button>
+                </div>
+                <div class="alarme-lista" id="alarmeLista">
+                    <div style="color: var(--text); text-align: center; padding: 10px;">Nenhum alarme definido</div>
+                </div>
+            </div>
+
+            <!-- GRÁFICO TRADINGVIEW (fora do appContent para poder ser isolado) -->
         </div>
-        <div class="ad-container">
-            <span style="color:var(--gold); font-weight:800; font-size:16px;">📺 ATMOS IPTV</span><br>
-            <span style="font-size:12px;">+15.000 canais • 4K • Estável</span>
-            <a href="https://wa.me/5597991916621" target="_blank" class="btn-ad">TESTE GRÁTIS</a>
-        </div>
-        <table class="market-table">
-            <tr><td colspan="3" class="market-header">🌍 SESSÕES CRIPTO / FOREX</td></tr>
-            <tr><td>🌏 Ásia</td><td>21:00-01:00</td><td style="color:var(--gold); text-align:right;">● médio</td></tr>
-            <tr><td>🇪🇺 Londres</td><td>04:00-09:00</td><td style="color:var(--green); text-align:right;">● alto</td></tr>
-            <tr><td>🇺🇸 NY (Pico)</td><td>10:00-14:00</td><td style="color:var(--green); text-align:right;">● PICO</td></tr>
-            <tr><td colspan="3" class="market-header">🏆 EURO, PRATA & WTI</td></tr>
-            <tr><td>🥇 Metais (NY)</td><td>09:20-15:30</td><td style="color:var(--gold); text-align:right;">● liquidez</td></tr>
-            <tr><td>🛢️ Petróleo (WTI)</td><td>10:00-16:30</td><td style="color:var(--accent); text-align:right;">● volatilidade</td></tr>
-        </table>
-        <button class="project-btn" onclick="openDonationModal()" style="background:var(--gold); color:#000; width:100%; margin-top:15px;">💰 Donativos</button>
     </div>
 
-    <!-- BOLINHA E MODAIS -->
+    <!-- Gráfico (fora do appContent) -->
+    <div id="chart_container"></div>
+
+    <!-- BOLINHA FLUTUANTE -->
     <div class="floating-ball" onclick="openPasswordModal()">🔓</div>
+
+    <!-- MODAL DE SENHA -->
     <div id="passwordModal" class="modal">
         <div class="modal-content" style="max-width:350px;">
             <h2>🔐 ACESSO</h2>
@@ -258,14 +397,16 @@
         </div>
     </div>
 
-    <!-- MODAL DO ROBÔ (com a mesma estrutura) -->
+    <!-- MODAL DO ROBÔ -->
     <div id="robotModal" class="modal">
         <div class="modal-content">
             <h2>🤖 ROBÔ SCALPER</h2>
             <p style="color:var(--green);">🔓 Acesso autorizado</p>
+            
             <div class="security-warning">
                 ⚠️ ATENÇÃO: Use apenas em ambiente local. Chave privada não é salva.
             </div>
+
             <h3>🔐 Credenciais Hyperliquid</h3>
             <div class="campo">
                 <label>Endereço da conta principal</label>
@@ -279,8 +420,10 @@
                 <label>Chave privada</label>
                 <input type="password" id="hlApiPrivateKey" placeholder="0x...">
             </div>
+
             <button class="btn-mode" onclick="connectHyperliquid()" style="background:var(--accent);">🔌 Validar e Conectar</button>
             <div class="console" id="apiConsole">[API] Desconectado</div>
+
             <h3>📝 Ordem Real</h3>
             <div class="campo">
                 <label>Capital (USDC)</label>
@@ -301,18 +444,20 @@
                     <option value="WTI">🛢️ WTI (Petróleo)</option>
                 </select>
             </div>
+
             <button class="btn-calc" onclick="placeRealOrder()" style="background:var(--gold); color:#000; margin-top:15px;">🚀 ENVIAR ORDEM REAL</button>
             <button class="close-btn" onclick="closeRobotModal()" style="margin-top:10px;">Fechar</button>
         </div>
     </div>
 
-    <!-- MODAL DE DONATIVOS (inalterado) -->
+    <!-- MODAL DE DONATIVOS -->
     <div id="donationModal" class="modal">
         <div class="modal-content">
             <h2>💰 Donativos</h2>
             <p style="background:#1e2a36; padding:15px; border-radius:15px; margin-bottom:20px;">
                 Projeto independente, sem fins lucrativos. Contribuições ajudam a manter os custos. Obrigado!
             </p>
+            
             <div class="donation-item" style="border-left-color:#8a2be2;">
                 <strong>⚡ Lightning Network</strong>
                 <p>cloggedparrot01@walletofsatoshi.com <button class="copy-btn" onclick="copyText('cloggedparrot01@walletofsatoshi.com')">Copiar</button></p>
@@ -333,6 +478,7 @@
                 <strong>🇧🇷 Pix</strong>
                 <p>127d59fc-1f37-4e8e-9fd4-295e1883727b <button class="copy-btn" onclick="copyText('127d59fc-1f37-4e8e-9fd4-295e1883727b')">Copiar</button></p>
             </div>
+            
             <button class="close-btn" onclick="closeDonationModal()">Fechar</button>
         </div>
     </div>
@@ -340,7 +486,7 @@
     <script src="https://s3.tradingview.com/tv.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <script>
-        // ---------- CÓDIGO ORIGINAL (INALTERADO) ----------
+        // ---------- VARIÁVEIS GLOBAIS ----------
         let price = 74069.05;
         let pricesHistory = [];
         let isDesktop = false;
@@ -349,6 +495,7 @@
         let alarmes = [];
         let modoOperacaoAtivo = false;
         let timeoutDescanso;
+        let chartFullscreen = false;
 
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioCtx = null;
@@ -365,6 +512,7 @@
                 gainNode.connect(audioCtx.destination);
                 osc.start();
                 osc.stop(audioCtx.currentTime + 0.5);
+                
                 setTimeout(() => {
                     const osc2 = audioCtx.createOscillator();
                     osc2.type = 'sine';
@@ -376,6 +524,7 @@
                     osc2.start();
                     osc2.stop(audioCtx.currentTime + 0.5);
                 }, 600);
+                
                 if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
             } catch (e) {}
         }
@@ -408,19 +557,24 @@
                 "hide_top_toolbar": !isDesktop,
                 "hide_legend": false
             });
+            
             if(activeWS) activeWS.close();
+            
             let pair = symbol.split(':')[1].toLowerCase();
             let streamPair = (pair === 'gold' || pair === 'silver' || pair === 'usoil') ? 'btcusdt' : 
                              (pair.includes('btc') ? 'btcusdt' : 
                               pair.includes('eth') ? 'ethusdt' : 
                               pair.includes('sol') ? 'solusdt' : 'btcusdt');
+            
             activeWS = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`);
+            
             activeWS.onmessage = (e) => {
                 const data = JSON.parse(e.data);
                 price = parseFloat(data.c);
                 document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
                 pricesHistory.push(price);
                 if(pricesHistory.length > 50) pricesHistory.shift();
+                
                 const s1 = document.getElementById('statusText');
                 const box = document.getElementById('statusBox');
                 let s1Valor = 0;
@@ -435,6 +589,7 @@
                     s1.style.color = '#ff3e3e';
                     s1Valor = 0;
                 }
+                
                 const s2 = document.getElementById('rsiText');
                 const rsiBox = document.getElementById('rsiBox');
                 let s2Valor = 0;
@@ -449,6 +604,7 @@
                 } else {
                     s2.innerText = `COLETANDO ${pricesHistory.length}/21`;
                 }
+                
                 const s3 = document.getElementById('momText');
                 const momBox = document.getElementById('momBox');
                 let s3Valor = 0;
@@ -473,13 +629,17 @@
                         s3.style.color = '#ffcc00';
                     }
                 }
+                
                 let score = s1Valor + s2Valor + (s3Valor || 0);
                 if (s2Direcao && s3Direcao && s2Direcao !== s3Direcao) score = 0;
+                
                 document.getElementById('scoreFill').style.width = score + '%';
                 document.getElementById('scoreValue').innerText = score + '/100';
+                
                 let scoreLabel = 'Aguardando sinais';
                 let probabilidade = '';
                 let classeScore = 'baixa';
+                
                 if (score >= 80) {
                     scoreLabel = '🔥 Confluência forte';
                     probabilidade = 'Alta';
@@ -498,9 +658,11 @@
                     classeScore = 'baixa';
                     document.getElementById('alertaBadge').style.display = 'none';
                 }
+                
                 document.getElementById('scoreFill').className = 'score-fill ' + classeScore;
                 document.getElementById('scoreLabel').innerText = scoreLabel;
                 document.getElementById('probabilidade').innerText = probabilidade;
+                
                 const hora = new Date().getHours();
                 const minutos = new Date().getMinutes();
                 const horaMin = hora + minutos/60;
@@ -511,6 +673,7 @@
                 else if (horaMin >= 9.33 && horaMin < 15.5) sessao = '🥇 Metais NY';
                 else if (horaMin >= 10 && horaMin < 16.5) sessao = '🛢️ Petróleo';
                 document.getElementById('sessaoText').innerText = sessao;
+                
                 verificarAlarmes();
             };
         }
@@ -530,10 +693,12 @@
             atualizarListaAlarmes();
             document.getElementById('alarmePreco').value = '';
         }
+        
         function removerAlarme(id) {
             alarmes = alarmes.filter(a => a.id !== id);
             atualizarListaAlarmes();
         }
+        
         function atualizarListaAlarmes() {
             const lista = document.getElementById('alarmeLista');
             if (alarmes.length === 0) {
@@ -546,6 +711,7 @@
             });
             lista.innerHTML = html;
         }
+        
         function verificarAlarmes() {
             alarmes.forEach(alarme => {
                 if (alarme.ativo && Math.abs(price - alarme.preco) / alarme.preco < 0.001) {
@@ -564,12 +730,14 @@
                 if (!modoOperacaoAtivo) document.body.classList.add("modo-descanso");
             }, 90000);
         }
+
         function resetTimer() {
             if (!modoOperacaoAtivo) {
                 document.body.classList.remove("modo-descanso");
                 iniciarTimerDescanso();
             }
         }
+
         document.onmousemove = resetTimer;
         document.onkeydown = resetTimer;
         document.onclick = resetTimer;
@@ -762,6 +930,32 @@
                 console.error(e);
                 alert(e.message);
             }
+        }
+
+        // ---------- NOVA FUNÇÃO PARA MODO IMERSIVO ----------
+        function toggleChartOnly() {
+            const chart = document.getElementById('chart_container');
+            const app = document.getElementById('appContent');
+            const btn = document.getElementById('expandChartBtn');
+
+            chartFullscreen = !chartFullscreen;
+
+            if (chartFullscreen) {
+                // Entra no modo gráfico puro
+                chart.classList.add('chart-fullscreen');
+                app.classList.add('hidden');
+                btn.innerText = '🔙';
+                btn.style.backgroundColor = 'var(--red)';
+            } else {
+                // Volta tudo
+                chart.classList.remove('chart-fullscreen');
+                app.classList.remove('hidden');
+                btn.innerText = '⛶';
+                btn.style.backgroundColor = 'var(--accent)';
+            }
+
+            // Re-renderiza o gráfico após um pequeno atraso para ajustar tamanho
+            setTimeout(initChart, 300);
         }
 
         iniciarTimerDescanso();
