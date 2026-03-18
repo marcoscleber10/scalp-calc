@@ -16,7 +16,7 @@
             --purple: #9d4edd;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
-        body { background-color: var(--bg); color: white; display: flex; justify-content: center; padding: 20px; }
+        body { background-color: var(--bg); color: white; display: flex; justify-content: center; padding: 20px; transition: filter 0.5s, box-shadow 0.5s; }
         .card { background: var(--card); padding: 24px; border-radius: 24px; width: 100%; max-width: 420px; border: 1px solid #30363d; box-shadow: 0 20px 40px rgba(0,0,0,0.6); transition: all 0.3s; }
         .card.desktop-mode { max-width: 95%; }
         .desktop-mode #chart_container { height: 500px !important; }
@@ -72,6 +72,128 @@
             0% { opacity: 0.8; transform: scale(1); }
             50% { opacity: 1; transform: scale(1.05); }
             100% { opacity: 0.8; transform: scale(1); }
+        }
+        
+        /* MODO OPERAÇÃO - CHAVE ON/OFF */
+        .modo-operacao {
+            background: #1e2a38;
+            padding: 15px;
+            border-radius: 20px;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid var(--accent);
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        .switch input {
+            display: none;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            background-color: #444;
+            border-radius: 24px;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            transition: .4s;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            border-radius: 50%;
+            transition: .4s;
+        }
+        input:checked + .slider {
+            background-color: #00ff88;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        #statusModo {
+            color: var(--text);
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .modo-descanso {
+            filter: brightness(0.3);
+        }
+        .modo-ativo {
+            box-shadow: 0 0 20px #00ff88 inset;
+        }
+        
+        /* ALARME DE PREÇO */
+        .alarme-section {
+            background: #1e2a38;
+            padding: 15px;
+            border-radius: 20px;
+            margin: 15px 0;
+            border: 1px solid var(--gold);
+        }
+        .alarme-title {
+            color: var(--gold);
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .alarme-input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .alarme-input {
+            flex: 1;
+            background: #0d151f;
+            border: 1px solid #3d4d62;
+            color: white;
+            padding: 10px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        .alarme-btn {
+            background: var(--accent);
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .alarme-lista {
+            margin-top: 10px;
+            font-size: 12px;
+        }
+        .alarme-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            background: #0d151f;
+            border-radius: 10px;
+            margin-bottom: 5px;
+        }
+        .alarme-remover {
+            background: var(--red);
+            border: none;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 10px;
         }
         
         #chart_container { width: 100%; height: 220px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #30363d; background: #000; transition: height 0.3s; }
@@ -183,6 +305,30 @@
         <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 11px;">
             <span>📊 Volatilidade: <span id="volText">MÉDIA</span></span>
             <span>⏰ Sessão: <span id="sessaoText">Fora do horário</span></span>
+        </div>
+
+        <!-- MODO OPERAÇÃO - CHAVE ON/OFF -->
+        <div class="modo-operacao">
+            <span id="statusModo">Modo Operação: OFF</span>
+            <label class="switch">
+                <input type="checkbox" id="lockScreenToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <!-- ALARME DE PREÇO -->
+        <div class="alarme-section">
+            <div class="alarme-title">
+                <span>🔔 ALARME DE PREÇO</span>
+            </div>
+            <div class="alarme-input-group">
+                <input type="number" id="alarmePreco" class="alarme-input" placeholder="Preço alvo (ex: 75000)" step="100">
+                <button class="alarme-btn" onclick="adicionarAlarme()">Adicionar</button>
+            </div>
+            <div class="alarme-lista" id="alarmeLista">
+                <!-- Alarmes aparecerão aqui -->
+                <div style="color: var(--text); text-align: center; padding: 10px;">Nenhum alarme definido</div>
+            </div>
         </div>
 
         <!-- GRÁFICO TRADINGVIEW -->
@@ -346,10 +492,72 @@
         let hlConnection = null;
         let alertaJaTocado = false;
         let ultimaConfluencia = 0;
+        
+        // Array de alarmes de preço
+        let alarmes = [];
 
-        // Sons (opcional - descomente se tiver os arquivos)
-        // const alertaCompra = new Audio("buy.mp3");
-        // const alertaVenda = new Audio("sell.mp3");
+        // Variáveis para modo operação
+        let modoOperacaoAtivo = false;
+        let timeoutDescanso;
+
+        // Sons (criados com Web Audio API para compatibilidade)
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function tocarAlarme() {
+            try {
+                if (!audioCtx) {
+                    audioCtx = new AudioContext();
+                }
+                
+                // Criar oscilador para som de alarme
+                const osc = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                
+                osc.type = 'sine';
+                osc.frequency.value = 880; // Nota Lá
+                
+                gainNode.gain.value = 0.3;
+                
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.5); // Toca por 0.5 segundos
+                
+                // Repetir 3 vezes
+                setTimeout(() => {
+                    const osc2 = audioCtx.createOscillator();
+                    osc2.type = 'sine';
+                    osc2.frequency.value = 880;
+                    const gain2 = audioCtx.createGain();
+                    gain2.gain.value = 0.3;
+                    osc2.connect(gain2);
+                    gain2.connect(audioCtx.destination);
+                    osc2.start();
+                    osc2.stop(audioCtx.currentTime + 0.5);
+                }, 600);
+                
+                setTimeout(() => {
+                    const osc3 = audioCtx.createOscillator();
+                    osc3.type = 'sine';
+                    osc3.frequency.value = 880;
+                    const gain3 = audioCtx.createGain();
+                    gain3.gain.value = 0.3;
+                    osc3.connect(gain3);
+                    gain3.connect(audioCtx.destination);
+                    osc3.start();
+                    osc3.stop(audioCtx.currentTime + 0.5);
+                }, 1200);
+                
+                // Vibrar se for mobile
+                if (navigator.vibrate) {
+                    navigator.vibrate([500, 200, 500]);
+                }
+            } catch (e) {
+                console.log("Erro ao tocar alarme:", e);
+            }
+        }
 
         function setTF(tf, btn) {
             currentTF = tf;
@@ -423,7 +631,7 @@
                     s2.innerText = compra ? '🚀 COMPRA' : '📉 VENDA';
                     rsiBox.style.borderBottomColor = compra ? '#00ff88' : '#ff3e3e';
                     s2.style.color = compra ? '#00ff88' : '#ff3e3e';
-                    s2Valor = compra ? 40 : 40;
+                    s2Valor = 40;
                     s2Direcao = compra ? 'compra' : 'venda';
                 } else {
                     s2.innerText = `COLETANDO ${pricesHistory.length}/21`;
@@ -484,12 +692,8 @@
                     
                     if (s2Direcao === 'compra') {
                         document.body.classList.add('alerta-compra');
-                        // if (typeof alertaCompra !== 'undefined') alertaCompra.play();
-                        // if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
                     } else if (s2Direcao === 'venda') {
                         document.body.classList.add('alerta-venda');
-                        // if (typeof alertaVenda !== 'undefined') alertaVenda.play();
-                        // if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
                     }
                     
                 } else if (score >= 60) {
@@ -536,6 +740,9 @@
                     }
                     document.getElementById('volText').innerHTML = `<span class="vol-indicator ${volClass}">${volText}</span>`;
                 }
+                
+                // VERIFICAR ALARMES DE PREÇO
+                verificarAlarmes();
             };
         }
 
@@ -546,6 +753,113 @@
             document.getElementById('resSL').innerText = `$${sl.toFixed(2)}`;
             document.getElementById('results').style.display = 'block';
         }
+
+        // ---------- FUNÇÕES DO ALARME ----------
+        function adicionarAlarme() {
+            const precoInput = document.getElementById('alarmePreco');
+            const preco = parseFloat(precoInput.value);
+            
+            if (isNaN(preco) || preco <= 0) {
+                alert('Digite um preço válido');
+                return;
+            }
+            
+            // Adicionar à lista
+            alarmes.push({
+                preco: preco,
+                ativo: true,
+                id: Date.now()
+            });
+            
+            // Atualizar interface
+            atualizarListaAlarmes();
+            precoInput.value = '';
+        }
+        
+        function removerAlarme(id) {
+            alarmes = alarmes.filter(a => a.id !== id);
+            atualizarListaAlarmes();
+        }
+        
+        function atualizarListaAlarmes() {
+            const lista = document.getElementById('alarmeLista');
+            
+            if (alarmes.length === 0) {
+                lista.innerHTML = '<div style="color: var(--text); text-align: center; padding: 10px;">Nenhum alarme definido</div>';
+                return;
+            }
+            
+            let html = '';
+            alarmes.forEach(alarme => {
+                html += `
+                    <div class="alarme-item">
+                        <span>🔔 $${alarme.preco.toLocaleString('en-US', {minimumFractionDigits:2})}</span>
+                        <button class="alarme-remover" onclick="removerAlarme(${alarme.id})">✕</button>
+                    </div>
+                `;
+            });
+            
+            lista.innerHTML = html;
+        }
+        
+        function verificarAlarmes() {
+            alarmes.forEach(alarme => {
+                if (alarme.ativo) {
+                    // Verificar se o preço atingiu o alvo (com margem de 0.1%)
+                    const diff = Math.abs(price - alarme.preco) / alarme.preco;
+                    if (diff < 0.001) { // 0.1% de margem
+                        alarme.ativo = false; // Desativar após disparar
+                        tocarAlarme();
+                        alert(`🔔 ALARME! Preço atingiu $${alarme.preco.toFixed(2)}`);
+                        atualizarListaAlarmes();
+                    }
+                }
+            });
+        }
+
+        // ---------- FUNÇÕES DO MODO OPERAÇÃO ----------
+        function iniciarTimerDescanso() {
+            if (modoOperacaoAtivo) return;
+
+            clearTimeout(timeoutDescanso);
+            timeoutDescanso = setTimeout(() => {
+                if (!modoOperacaoAtivo) {
+                    document.body.classList.add("modo-descanso");
+                }
+            }, 90000); // 90 segundos
+        }
+
+        function resetTimer() {
+            if (!modoOperacaoAtivo) {
+                document.body.classList.remove("modo-descanso");
+                iniciarTimerDescanso();
+            }
+        }
+
+        // Event listeners para resetar o timer
+        document.onmousemove = resetTimer;
+        document.onkeydown = resetTimer;
+        document.onclick = resetTimer;
+        document.ontouchstart = resetTimer; // para mobile
+
+        // Configurar o toggle do modo operação
+        const toggle = document.getElementById("lockScreenToggle");
+        const statusTexto = document.getElementById("statusModo");
+
+        toggle.addEventListener("change", function() {
+            modoOperacaoAtivo = this.checked;
+
+            if (modoOperacaoAtivo) {
+                statusTexto.innerText = "Modo Operação: ON";
+                clearTimeout(timeoutDescanso);
+                document.body.classList.remove("modo-descanso");
+                document.body.classList.add("modo-ativo");
+            } else {
+                statusTexto.innerText = "Modo Operação: OFF";
+                document.body.classList.remove("modo-ativo");
+                iniciarTimerDescanso();
+            }
+        });
 
         function openPasswordModal() { document.getElementById('passwordModal').style.display = 'flex'; }
         function closePasswordModal() { document.getElementById('passwordModal').style.display = 'none'; }
@@ -602,6 +916,9 @@
             alert('🚀 Função em desenvolvimento - aguarde versão estável');
             document.getElementById('apiConsole').innerHTML = '🔧 Em desenvolvimento';
         }
+
+        // Iniciar timer de descanso
+        iniciarTimerDescanso();
 
         initChart();
     </script>
