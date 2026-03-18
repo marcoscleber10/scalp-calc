@@ -3,192 +3,185 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MESTRE DO SCALPING - RECONSTRUÍDO</title>
+    <title>Mestre do Scalping Pro - v3.0</title>
     <style>
         :root { 
-            --fundo: #0d1117; --painel: #161b22; --verde: #00ff88; 
-            --vermelho: #ff3e3e; --texto: #8b949e; --azul: #2f81f7; --ouro: #ffcc00;
+            --bg: #0d1117; --card: #161b22; --green: #00ff88; --red: #ff3e3e; 
+            --text: #8b949e; --accent: #2f81f7; --gold: #ffcc00; --dark-bg: #090c10;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background: var(--fundo); color: white; display: flex; justify-content: center; padding: 20px; }
-
-        .app { 
-            background: var(--painel); width: 100%; max-width: 400px; 
-            border-radius: 20px; padding: 20px; border: 1px solid #30363d;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.8); position: relative;
-        }
-
-        /* CABEÇALHO COM LED PULSANTE */
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .logo-text { font-size: 10px; font-weight: bold; color: var(--texto); text-transform: uppercase; letter-spacing: 1px; }
-        .status-robo { display: flex; align-items: center; font-size: 9px; color: var(--texto); font-weight: 900; }
-        .led-vivo { 
-            width: 8px; height: 8px; background: var(--verde); border-radius: 50%; 
-            margin-right: 6px; box-shadow: 0 0 10px var(--verde); animation: pulso 1.5s infinite; 
-        }
-        @keyframes pulso { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
-
-        /* BOTÕES DE COMANDO REAL */
-        .btn-principal { width: 100%; padding: 12px; background: var(--azul); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 11px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg); color: white; display: flex; justify-content: center; padding: 15px; }
         
-        .grid-tempos { display: flex; gap: 10px; margin-bottom: 15px; }
-        .btn-tempo { flex: 1; padding: 12px; background: #21262d; border: 1px solid #30363d; color: var(--texto); border-radius: 8px; font-size: 10px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn-tempo.ativo { background: var(--azul); color: white; border-color: var(--azul); }
+        .container { 
+            background: var(--card); padding: 25px; border-radius: 24px; 
+            width: 100%; max-width: 420px; border: 1px solid #30363d; 
+            position: relative; box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        }
 
-        select { width: 100%; padding: 15px; background: #21262d; color: white; border: 1px solid #30363d; border-radius: 10px; margin-bottom: 20px; font-size: 14px; outline: none; }
+        /* STATUS DO ROBÔ */
+        .bot-status { 
+            position: absolute; top: 18px; right: 20px; 
+            display: flex; align-items: center; font-size: 9px; font-weight: bold; color: var(--text);
+        }
+        .led { 
+            width: 9px; height: 9px; background: var(--green); border-radius: 50%; 
+            margin-right: 6px; box-shadow: 0 0 10px var(--green); animation: pulse 1.5s infinite; 
+        }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
 
-        .preco-atual { font-size: 42px; font-weight: 800; color: var(--verde); text-align: center; margin-bottom: 20px; font-family: monospace; }
+        h4 { color: var(--text); font-size: 10px; text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; }
+        
+        /* BOTÕES DE MODO */
+        .btn-blue { width: 100%; background: var(--accent); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; margin-bottom: 12px; font-size: 11px; text-transform: uppercase; }
+        .tf-grid { display: flex; gap: 8px; margin-bottom: 15px; }
+        .tf-btn { flex: 1; background: #21262d; border: 1px solid #30363d; color: var(--text); padding: 12px; border-radius: 10px; font-size: 10px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .tf-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
-        /* OS 3 SINAIS DA IMAGEM */
-        .container-sinais { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px; }
-        .bloco-sinal { background: #090c10; padding: 10px 2px; border-radius: 8px; border: 1px solid #21262d; text-align: center; border-bottom: 3px solid #30363d; }
-        .bloco-sinal span { font-size: 7px; color: var(--texto); display: block; margin-bottom: 5px; }
-        .bloco-sinal b { font-size: 9px; text-transform: uppercase; }
+        select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 15px; border-radius: 12px; margin-bottom: 20px; font-size: 14px; outline: none; }
 
-        /* GRÁFICO */
-        #area-grafico { width: 100%; height: 220px; background: #000; border-radius: 12px; border: 1px solid #30363d; margin-bottom: 20px; overflow: hidden; }
+        .price-display { font-size: 42px; font-weight: 800; color: var(--green); text-align: center; margin-bottom: 25px; font-family: 'Monaco', monospace; }
+
+        /* PAINÉIS DE SINAIS */
+        .signal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+        .signal-card { background: var(--dark-bg); padding: 12px 4px; border-radius: 12px; border: 1px solid #21262d; text-align: center; }
+        .sig-label { font-size: 7px; color: var(--text); display: block; margin-bottom: 6px; text-transform: uppercase; }
+        .sig-val { font-size: 9px; font-weight: bold; }
+
+        #tv_chart { width: 100%; height: 240px; border-radius: 15px; margin-bottom: 25px; border: 1px solid #30363d; overflow: hidden; }
 
         /* CALCULADORA */
-        .grade-calc { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .item-input { background: #090c10; padding: 8px; border-radius: 8px; border: 1px solid #21262d; }
-        .item-input label { font-size: 8px; color: var(--texto); display: block; margin-bottom: 4px; }
-        .item-input input { background: transparent; border: none; color: white; width: 100%; font-size: 14px; font-weight: bold; outline: none; }
+        .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; text-align: left; }
+        .field { background: var(--dark-bg); padding: 10px; border-radius: 10px; border: 1px solid #21262d; }
+        .field label { font-size: 8px; color: var(--text); display: block; margin-bottom: 5px; }
+        .field input { background: transparent; border: none; color: white; width: 100%; font-size: 14px; font-weight: bold; outline: none; }
+        
+        .btn-action { width: 100%; padding: 18px; background: var(--green); color: #0d1117; border: none; border-radius: 15px; font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 14px; margin-bottom: 20px; }
+        
+        .res-box { background: #0d1117; padding: 15px; border-radius: 12px; margin-bottom: 25px; display: none; border: 1px solid #21262d; }
+        .res-line { display: flex; justify-content: space-between; font-size: 12px; margin: 5px 0; }
 
-        .btn-calcular { width: 100%; padding: 18px; background: var(--verde); color: #0d1117; border: none; border-radius: 12px; font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 13px; margin-bottom: 20px; }
+        /* PROJETOS */
+        .links-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 25px; }
+        .link-item { background: #21262d; color: var(--text); border: 1px solid #30363d; padding: 12px; border-radius: 10px; font-size: 10px; text-decoration: none; font-weight: bold; text-align: center; }
 
-        .painel-resultado { background: #0d1117; padding: 15px; border-radius: 10px; border: 1px solid var(--azul); margin-bottom: 20px; display: none; }
+        /* HORÁRIOS */
+        .markets { background: var(--dark-bg); border-radius: 15px; padding: 15px; border: 1px solid #21262d; margin-bottom: 25px; }
+        .m-title { font-size: 9px; color: var(--accent); font-weight: bold; margin-bottom: 12px; display: block; }
+        .m-item { display: flex; justify-content: space-between; font-size: 10px; padding: 7px 0; border-bottom: 1px solid #161b22; }
+        .m-time { color: var(--green); font-weight: bold; }
 
-        /* 6 PROJETOS */
-        .grade-projetos { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; }
-        .link-projeto { background: #21262d; color: var(--texto); padding: 12px; border-radius: 8px; border: 1px solid #30363d; text-align: center; font-size: 10px; text-decoration: none; font-weight: bold; }
-
-        /* DONATIVOS */
-        .btn-nativos { width: 100%; padding: 18px; background: var(--ouro); color: black; border: none; border-radius: 12px; font-weight: 900; cursor: pointer; text-transform: uppercase; }
+        .btn-gold { width: 100%; background: var(--gold); color: #000; border: none; padding: 18px; border-radius: 15px; font-weight: 900; cursor: pointer; font-size: 13px; text-transform: uppercase; }
     </style>
 </head>
 <body>
 
-<div class="app">
-    <div class="header">
-        <div class="logo-text">Mestre do Scalping</div>
-        <div class="status-robo"><div class="led-vivo"></div> ROBÔ ON</div>
+<div class="container">
+    <div class="bot-status"><div class="led"></div> ROBÔ ON</div>
+    <h4>Mestre do Scalping Multi-Par</h4>
+    
+    <button class="btn-blue" onclick="alert('Modo Desktop Ativado')">💻 Alternar Modo Computador</button>
+
+    <div class="tf-grid">
+        <button class="tf-btn active" onclick="setTF('1', this)">⚡ SCALP (1m)</button>
+        <button class="tf-btn" onclick="setTF('15', this)">🔭 DAY TRADE (15m)</button>
     </div>
 
-    <button class="btn-principal" onclick="alert('Modo Desktop solicitado!')">🖥️ Alternar Modo Computador</button>
-
-    <div class="grid-tempos">
-        <button class="btn-tempo ativo" id="t1" onclick="mudarTempo('1', this)">⚡ SCALP (1m)</button>
-        <button class="btn-tempo" id="t15" onclick="mudarTempo('15', this)">🔭 DAY TRADE (15m)</button>
-    </div>
-
-    <select id="selecionarAtivo" onchange="atualizarGrafico()">
-        <optgroup label="Cripto Hyperliquid">
-            <option value="BYBIT:BTCUSDT">BTC/USD (Hyper)</option>
-            <option value="BYBIT:SOLUSDT">SOL/USD (Hyper)</option>
+    <select id="pair" onchange="updateChart()">
+        <optgroup label="Cripto Principais">
+            <option value="BINANCE:BTCUSDT">Binance - BTC/USDT</option>
+            <option value="BINANCE:SOLUSDT">Binance - SOL/USDT</option>
+            <option value="BINANCE:ETHUSDT">Binance - ETH/USDT</option>
         </optgroup>
-        <optgroup label="Metais">
-            <option value="TVC:GOLD">OURO (XAUUSD)</option>
-            <option value="TVC:SILVER">PRATA (XAGUSD)</option>
+        <optgroup label="Altcoins">
+            <option value="BINANCE:BNBUSDT">Binance - BNB/USDT</option>
+            <option value="BINANCE:XRPUSDT">Binance - XRP/USDT</option>
+            <option value="BINANCE:ADAUSDT">Binance - ADA/USDT</option>
+        </optgroup>
+        <optgroup label="Metais & Energia">
+            <option value="TVC:GOLD">Ouro (XAU/USD)</option>
+            <option value="TVC:SILVER">Prata (XAG/USD)</option>
+            <option value="TVC:USOIL">Petróleo WTI</option>
         </optgroup>
     </select>
 
-    <div class="preco-atual" id="monitorPreco">$ 00,000.00</div>
+    <div class="price-display" id="price">$ 73,860.00</div>
 
-    <div class="container-sinais">
-        <div class="bloco-sinal" id="s1" style="border-bottom-color: var(--verde);"><span>SINAL GERAL</span><b style="color:var(--verde)">Compra</b></div>
-        <div class="bloco-sinal" id="s2" style="border-bottom-color: var(--vermelho);"><span>FILTRO TÉCNICO</span><b style="color:var(--vermelho)">Venda</b></div>
-        <div class="bloco-sinal" id="s3" style="border-bottom-color: var(--ouro);"><span>OPÇÃO 3</span><b style="color:var(--ouro)">Neutro</b></div>
+    <div class="signal-grid">
+        <div class="signal-card"><span class="sig-label">SINAL GERAL</span><span class="sig-val" style="color:var(--green)">OPORTUNIDADE</span></div>
+        <div class="signal-card"><span class="sig-label">FILTRO TÉCNICO</span><span class="sig-val" style="color:var(--red)">VENDA</span></div>
+        <div class="signal-card"><span class="sig-label">OPÇÃO 3</span><span class="sig-val">NEUTRO</span></div>
     </div>
 
-    <div id="area-grafico"></div>
+    <div id="tv_chart"></div>
 
-    <div class="grade-calc">
-        <div class="item-input"><label>CAPITAL ($)</label><input type="number" id="v_cap" value="300"></div>
-        <div class="item-input"><label>ALAVANCAGEM</label><input type="number" id="v_lev" value="10"></div>
-        <div class="item-input"><label>GANHO %</label><input type="number" id="v_gain" value="1.0"></div>
-        <div class="item-input"><label>STOP %</label><input type="number" id="v_loss" value="1.0"></div>
+    <div class="calc-grid">
+        <div class="field"><label>CAPITAL ($)</label><input type="number" id="cap" value="300"></div>
+        <div class="field"><label>ALAVANCAGEM</label><input type="number" id="lev" value="10"></div>
+        <div class="field"><label>GANHO ALVO %</label><input type="number" id="gain" value="1.0"></div>
+        <div class="field"><label>STOP LOSS %</label><input type="number" id="stop" value="1.0"></div>
     </div>
 
-    <button class="btn-calcular" onclick="executarCalculo()">🚀 Calcular Alvos Agora</button>
+    <button class="btn-action" onclick="calculate()">🚀 Calcular Alvos</button>
 
-    <div id="exibirResultado" class="painel-resultado">
-        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-            <span style="font-size:12px;">🟢 TAKE PROFIT:</span>
-            <b id="tp_final" style="color:var(--verde)"></b>
-        </div>
-        <div style="display:flex; justify-content:space-between;">
-            <span style="font-size:12px;">🔴 STOP LOSS:</span>
-            <b id="sl_final" style="color:var(--vermelho)"></b>
-        </div>
+    <div id="res" class="res-box">
+        <div class="res-line"><span>🟢 Alvo (TP):</span><b id="tp_val" style="color:var(--green)"></b></div>
+        <div class="res-line"><span>🛑 Stop (SL):</span><b id="sl_val" style="color:var(--red)"></b></div>
     </div>
 
-    <div class="grade-projetos">
-        <a href="https://clube-dca.vercel.app/" target="_blank" class="link-projeto">Dashboard 97</a>
-        <a href="#" class="link-projeto">CombustAI</a>
-        <a href="#" class="link-projeto">Dashboard 75</a>
-        <a href="#" class="link-projeto">Pepinômetro</a>
-        <a href="#" class="link-projeto">História Copas</a>
-        <a href="#" class="link-projeto">InvestOpção</a>
+    <div class="links-grid">
+        <a href="#" class="link-item">Dashboard 97</a>
+        <a href="#" class="link-item">CombustAI</a>
+        <a href="#" class="link-item">Dashboard 75</a>
+        <a href="#" class="link-item">Pepinômetro</a>
+        <a href="#" class="link-item">História Copas</a>
+        <a href="#" class="link-item">InvestOpção</a>
     </div>
 
-    <button class="btn-nativos" onclick="abrirPix()">💰 Aba Nativos (Donativos)</button>
+    <div class="markets">
+        <span class="m-title">🕒 Sessões Operacionais</span>
+        <div class="m-item"><span>🌏 Ásia</span><span class="m-time">21:00 - 01:00</span></div>
+        <div class="m-item"><span>🇪🇺 Londres</span><span class="m-time">04:00 - 09:00</span></div>
+        <div class="m-item"><span>🇺🇸 NY (Pico)</span><span class="m-time">10:00 - 14:00</span></div>
+    </div>
+
+    <button class="btn-gold" onclick="showNativos()">💰 Aba Nativos (Donativos)</button>
 </div>
 
 <script src="https://s3.tradingview.com/tv.js"></script>
 <script>
-    let tempoGlobal = "1";
-    let precoSimulado = 73500.00;
+    let currentTF = "1";
 
-    // 1. FUNÇÃO PARA MUDAR O TEMPO (1m ou 15m)
-    function mudarTempo(t, elemento) {
-        tempoGlobal = t;
-        document.querySelectorAll('.btn-tempo').forEach(b => b.classList.remove('ativo'));
-        elemento.classList.add('ativo');
-        atualizarGrafico();
+    function setTF(tf, btn) {
+        currentTF = tf;
+        document.querySelectorAll('.tf-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        updateChart();
     }
 
-    // 2. FUNÇÃO PARA ATUALIZAR O GRÁFICO (OBEDECE AO SELECT)
-    function atualizarGrafico() {
-        const ativo = document.getElementById('selecionarAtivo').value;
+    function updateChart() {
+        const symbol = document.getElementById('pair').value;
         new TradingView.widget({
-            "autosize": true,
-            "symbol": ativo,
-            "interval": tempoGlobal,
-            "theme": "dark",
-            "style": "1",
-            "container_id": "area-grafico",
-            "hide_side_toolbar": true,
-            "locale": "br"
+            "autosize": true, "symbol": symbol, "interval": currentTF,
+            "theme": "dark", "style": "1", "container_id": "tv_chart",
+            "hide_side_toolbar": true, "locale": "br"
         });
     }
 
-    // 3. FUNÇÃO DA CALCULADORA (NÃO TRAVA)
-    function executarCalculo() {
-        const gain = parseFloat(document.getElementById('v_gain').value) / 100;
-        const loss = parseFloat(document.getElementById('v_loss').value) / 100;
+    function calculate() {
+        const price = 73860.00; // Aqui você pode integrar com o WebSocket real
+        const gain = parseFloat(document.getElementById('gain').value) / 100;
+        const stop = parseFloat(document.getElementById('stop').value) / 100;
         
-        const tp = precoSimulado * (1 + gain);
-        const sl = precoSimulado * (1 - loss);
-
-        document.getElementById('tp_final').innerText = "$ " + tp.toFixed(2);
-        document.getElementById('sl_final').innerText = "$ " + sl.toFixed(2);
-        document.getElementById('exibirResultado').style.display = 'block';
+        document.getElementById('tp_val').innerText = "$ " + (price * (1 + gain)).toFixed(2);
+        document.getElementById('sl_val').innerText = "$ " + (price * (1 - stop)).toFixed(2);
+        document.getElementById('res').style.display = 'block';
     }
 
-    // 4. ABA NATIVOS
-    function abrirPix() {
-        alert("Apoie este projeto:\n\nPIX: 127d59fc-1f37-4e8e-9fd4-295e1883727b\nBTC: bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5\nSOL: EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm");
+    function showNativos() {
+        alert("Carteiras para Apoio:\n\nPIX: 127d59fc-1f37-4e8e-9fd4-295e1883727b\nBTC: bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5\nSOL: EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm");
     }
 
-    // INICIALIZAÇÃO
-    atualizarGrafico();
-    
-    // Simulação de preço variando
-    setInterval(() => {
-        precoSimulado += (Math.random() - 0.5) * 10;
-        document.getElementById('monitorPreco').innerText = "$ " + precoSimulado.toLocaleString('en-US', {minimumFractionDigits: 2});
-    }, 2000);
+    updateChart();
 </script>
-
 </body>
 </html>
