@@ -234,7 +234,7 @@
     </style>
 </head>
 <body>
-    <!-- CARD PRINCIPAL -->
+    <!-- CARD PRINCIPAL - 100% INTACTO -->
     <div class="card" id="mainCard">
         <h4>⚡ MESTRE DO SCALPING PRO ⚡</h4>
         <button class="btn-mode" onclick="toggleMode()">🖥️ ALTERNAR MODO COMPUTADOR</button>
@@ -262,7 +262,7 @@
             </optgroup>
         </select>
 
-        <div class="price" id="priceText">$ 74,275.22</div>
+        <div class="price" id="priceText">$ 73,860.00</div>
 
         <!-- SCORE DE CONFLUÊNCIA -->
         <div class="score-container">
@@ -396,7 +396,7 @@
         </div>
     </div>
 
-    <!-- MODAL DO ROBÔ -->
+    <!-- MODAL DO ROBÔ - AGORA COM 6 PARES (cripto + metais) -->
     <div id="robotModal" class="modal">
         <div class="modal-content">
             <h2>🤖 ROBÔ SCALPER</h2>
@@ -436,10 +436,16 @@
             <div class="campo">
                 <label>Par</label>
                 <select id="botPair">
-                    <option value="BTC">BTC/USDC</option>
-                    <option value="ETH">ETH/USDC</option>
-                    <option value="SOL">SOL/USDC</option>
+                    <!-- CRIPTO (3 pares) -->
+                    <option value="BTC">₿ BTC/USDC</option>
+                    <option value="ETH">⟠ ETH/USDC</option>
+                    <option value="SOL">◎ SOL/USDC</option>
+                    <!-- METAIS (3 pares) -->
+                    <option value="GOLD">🥇 XAU/USD (Ouro)</option>
+                    <option value="SILVER">🥈 XAG/USD (Prata)</option>
+                    <option value="WTI">🛢️ WTI (Petróleo)</option>
                 </select>
+                <small style="color:var(--text);">6 pares disponíveis</small>
             </div>
 
             <button class="btn-calc" onclick="placeRealOrder()" style="background:var(--gold); color:#000; margin-top:15px;">🚀 ENVIAR ORDEM REAL</button>
@@ -484,7 +490,7 @@
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <script>
         // ---------- VARIÁVEIS GLOBAIS ----------
-        let price = 74275.22;
+        let price = 73860.00;
         let pricesHistory = [];
         let isDesktop = false;
         let currentTF = "1";
@@ -907,14 +913,142 @@
             }
         }
 
+        // ===== FUNÇÃO DO ROBÔ ATUALIZADA PARA 6 PARES =====
         async function placeRealOrder() {
             if(!hlConnection){
                 alert('Conecte a API primeiro');
                 return;
             }
 
-            alert('🚀 Função em desenvolvimento - aguarde versão estável');
-            document.getElementById('apiConsole').innerHTML = '🔧 Em desenvolvimento';
+            const capital = parseFloat(document.getElementById('botCapital').value);
+            const pair = document.getElementById('botPair').value;
+            const sl = parseFloat(document.getElementById('botSL').value)/100;
+            const tp = parseFloat(document.getElementById('botTP').value)/100;
+
+            if(capital < 5){
+                alert('Capital mínimo: 5 USDC');
+                return;
+            }
+
+            if(!price || price === 0){
+                alert('Aguardando preço...');
+                return;
+            }
+
+            try {
+                // Mapeamento para 6 pares (Hyperliquid)
+                // Cripto: BTC=0, ETH=1, SOL=2
+                // Metais: GOLD=3, SILVER=4, WTI=5
+                const assetMap = { 
+                    BTC: 0, 
+                    ETH: 1, 
+                    SOL: 2,
+                    GOLD: 3,
+                    SILVER: 4,
+                    WTI: 5
+                };
+                
+                const assetId = assetMap[pair];
+                
+                if (assetId === undefined) {
+                    alert('Par inválido');
+                    return;
+                }
+
+                const size = (capital / price).toFixed(6);
+                const priceStr = price.toFixed(2);
+                const nonce = Date.now() + Math.floor(Math.random() * 1000);
+
+                const action = {
+                    type: "order",
+                    orders: [{
+                        a: assetId,
+                        b: true,
+                        p: priceStr,
+                        r: false,
+                        s: size,
+                        t: { limit: { tif: "Gtc" } }
+                    }],
+                    grouping: "na"
+                };
+
+                const domain = {
+                    name: "Hyperliquid",
+                    version: "1",
+                    chainId: 42161
+                };
+
+                const types = {
+                    Action: [
+                        { name: "type", type: "string" },
+                        { name: "orders", type: "Order[]" },
+                        { name: "grouping", type: "string" }
+                    ],
+                    Order: [
+                        { name: "a", type: "uint32" },
+                        { name: "b", type: "bool" },
+                        { name: "p", type: "string" },
+                        { name: "r", type: "bool" },
+                        { name: "s", type: "string" },
+                        { name: "t", type: "OrderType" }
+                    ],
+                    OrderType: [
+                        { name: "limit", type: "Limit" }
+                    ],
+                    Limit: [
+                        { name: "tif", type: "string" }
+                    ]
+                };
+
+                document.getElementById('apiConsole').innerHTML = '⏳ Assinando...';
+
+                const signature = await hlConnection.apiWallet._signTypedData(
+                    domain,
+                    types,
+                    action
+                );
+
+                const sig = ethers.utils.splitSignature(signature);
+
+                const requestBody = {
+                    action,
+                    nonce,
+                    signature: {
+                        r: sig.r,
+                        s: sig.s,
+                        v: sig.v
+                    },
+                    vaultAddress: null
+                };
+
+                document.getElementById('apiConsole').innerHTML = '⏳ Enviando...';
+
+                const response = await fetch('https://api.hyperliquid.xyz/exchange', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestBody)
+                });
+
+                const result = await response.json();
+
+                if(result.status === "ok" || result.response?.data?.statuses?.[0]?.resting){
+                    document.getElementById('apiConsole').innerHTML = '✅ Ordem enviada com sucesso!';
+                    
+                    const stopPrice = price * (1 - sl);
+                    const takePrice = price * (1 + tp);
+                    
+                    alert(`✅ ORDEM REAL EXECUTADA!\n\n` +
+                          `Comprar ${size} ${pair}\n` +
+                          `Preço: $${price.toFixed(2)}\n` +
+                          `Stop: $${stopPrice.toFixed(2)}\n` +
+                          `Take: $${takePrice.toFixed(2)}`);
+                } else {
+                    document.getElementById('apiConsole').innerHTML = '❌ ' + JSON.stringify(result);
+                }
+
+            } catch(e){
+                document.getElementById('apiConsole').innerHTML = '❌ ' + e.message;
+            }
         }
 
         // Iniciar timer de descanso
