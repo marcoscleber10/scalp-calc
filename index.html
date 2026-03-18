@@ -1,922 +1,123 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mestre do Scalping Pro</title>
-    <style>
-        :root {
-            --bg: #0d1117;
-            --card: #161b22;
-            --green: #00ff88;
-            --red: #ff3e3e;
-            --text: #8b949e;
-            --accent: #2f81f7;
-            --gold: #ffcc00;
-            --purple: #9d4edd;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
-        body { background-color: var(--bg); color: white; display: flex; justify-content: center; padding: 20px; transition: filter 0.5s, box-shadow 0.5s; }
-        .card { background: var(--card); padding: 24px; border-radius: 24px; width: 100%; max-width: 420px; border: 1px solid #30363d; box-shadow: 0 20px 40px rgba(0,0,0,0.6); transition: all 0.3s; }
-        .card.desktop-mode { max-width: 95%; }
-        .desktop-mode #chart_container { height: 500px !important; }
-        h4 { color: var(--text); font-size: 12px; text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px dashed #30363d; }
-        .btn-mode { width: 100%; background: var(--accent); color: white; border: none; padding: 12px; border-radius: 40px; font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 12px; text-transform: uppercase; }
-        .time-selector { display: flex; gap: 8px; margin-bottom: 15px; }
-        .time-btn { flex: 1; background: #21262d; border: 1px solid #30363d; color: var(--text); padding: 12px 5px; border-radius: 40px; font-size: 11px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .time-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
-        .time-btn.active[data-t="15"] { background: var(--gold); color: #000; border-color: var(--gold); }
-        select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 15px; border-radius: 40px; margin-bottom: 20px; font-size: 14px; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239aa4b3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>"); background-repeat: no-repeat; background-position: right 18px center; background-size: 16px; }
-        .price { font-size: 42px; font-weight: 800; color: var(--green); text-align: center; margin-bottom: 15px; font-family: 'Courier New', monospace; text-shadow: 0 0 10px #00ff8840; }
-        .status-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .status-bar { background: #0f141c; padding: 12px 5px; border-radius: 20px; border: 1px solid #2a3340; text-align: center; position: relative; overflow: hidden; }
-        .status-label { font-size: 9px; color: var(--text); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px; }
-        .status-value { font-size: 14px; font-weight: bold; display: block; }
-        .light-glow { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: currentColor; filter: blur(4px); opacity: 0.5; }
-        
-        /* SCORE DE CONFLUÊNCIA */
-        .score-container { margin-bottom: 15px; }
-        .score-bar { background: #1e2a38; height: 20px; border-radius: 10px; overflow: hidden; margin: 5px 0; }
-        .score-fill { height: 100%; width: 0%; transition: width 0.3s; }
-        .score-fill.alta { background: linear-gradient(90deg, #00ff88, #00cc66); }
-        .score-fill.media { background: linear-gradient(90deg, #ffcc00, #ffaa00); }
-        .score-fill.baixa { background: linear-gradient(90deg, #ff3e3e, #cc0000); }
-        .score-text { display: flex; justify-content: space-between; font-size: 11px; color: var(--text); }
-        
-        /* ALERTAS */
-        @keyframes flashGreen {
-            0% { background-color: rgba(0,255,136,0); }
-            50% { background-color: rgba(0,255,136,0.3); }
-            100% { background-color: rgba(0,255,136,0); }
-        }
-        @keyframes flashRed {
-            0% { background-color: rgba(255,62,62,0); }
-            50% { background-color: rgba(255,62,62,0.3); }
-            100% { background-color: rgba(255,62,62,0); }
-        }
-        .alerta-compra { animation: flashGreen 0.5s ease-in-out 3; }
-        .alerta-venda { animation: flashRed 0.5s ease-in-out 3; }
-        
-        .badge-alerta {
-            background: var(--gold);
-            color: #000;
-            padding: 8px 12px;
-            border-radius: 40px;
-            font-weight: bold;
-            font-size: 12px;
-            margin-bottom: 15px;
-            display: inline-block;
-            animation: pulse 1s infinite;
-        }
-        @keyframes pulse {
-            0% { opacity: 0.8; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.05); }
-            100% { opacity: 0.8; transform: scale(1); }
-        }
-        
-        /* MODO OPERAÇÃO - CHAVE ON/OFF */
-        .modo-operacao {
-            background: #1e2a38;
-            padding: 15px;
-            border-radius: 20px;
-            margin: 15px 0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border: 1px solid var(--accent);
-        }
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 24px;
-        }
-        .switch input {
-            display: none;
-        }
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            background-color: #444;
-            border-radius: 24px;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            transition: .4s;
-        }
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            border-radius: 50%;
-            transition: .4s;
-        }
-        input:checked + .slider {
-            background-color: #00ff88;
-        }
-        input:checked + .slider:before {
-            transform: translateX(26px);
-        }
-        #statusModo {
-            color: var(--text);
-            font-size: 12px;
-            font-weight: bold;
-        }
-        .modo-descanso {
-            filter: brightness(0.3);
-        }
-        .modo-ativo {
-            box-shadow: 0 0 20px #00ff88 inset;
-        }
-        
-        /* ALARME DE PREÇO */
-        .alarme-section {
-            background: #1e2a38;
-            padding: 15px;
-            border-radius: 20px;
-            margin: 15px 0;
-            border: 1px solid var(--gold);
-        }
-        .alarme-title {
-            color: var(--gold);
-            font-weight: bold;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .alarme-input-group {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 10px;
-        }
-        .alarme-input {
-            flex: 1;
-            background: #0d151f;
-            border: 1px solid #3d4d62;
-            color: white;
-            padding: 10px;
-            border-radius: 20px;
-            font-size: 14px;
-        }
-        .alarme-btn {
-            background: var(--accent);
-            border: none;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .alarme-lista {
-            margin-top: 10px;
-            font-size: 12px;
-        }
-        .alarme-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px;
-            background: #0d151f;
-            border-radius: 10px;
-            margin-bottom: 5px;
-        }
-        .alarme-remover {
-            background: var(--red);
-            border: none;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 10px;
-        }
-        
-        #chart_container { width: 100%; height: 220px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #30363d; background: #000; transition: height 0.3s; }
-        .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
-        label { font-size: 9px; color: var(--text); text-transform: uppercase; margin-bottom: 4px; display: block; }
-        input { width: 100%; background: #21262d; border: 1px solid #30363d; color: white; padding: 12px; border-radius: 20px; font-size: 14px; }
-        .btn-calc { width: 100%; padding: 16px; background: var(--green); color: #0d1117; border: none; border-radius: 40px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 16px; box-shadow: 0 6px 0 #0b5e3c; transform: translateY(-2px); transition: 0.1s; margin-top: 10px; }
-        .btn-calc:active { transform: translateY(4px); box-shadow: 0 2px 0 #0b5e3c; }
-        .res { margin-top: 20px; padding: 18px; background: #0f151d; border-radius: 24px; display: none; border: 1px solid #2a3440; }
-        .projects-section { margin-top: 30px; border-top: 1px solid #30363d; padding-top: 20px; }
-        .projects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-        .project-btn { background: #1a222c; color: #c9d1d9; border: 1px solid #30363d; padding: 12px 5px; border-radius: 30px; font-size: 11px; font-weight: 600; text-decoration: none; text-align: center; display: block; cursor: pointer; }
-        .project-btn:hover { background: #26323f; }
-        .ad-container { margin-top: 25px; padding: 15px; background: #161e28; border-radius: 30px; border: 1px solid #ffcc0040; text-align: center; }
-        .btn-ad { display: inline-block; background: #ffcc00; color: #000; text-decoration: none; padding: 12px 32px; border-radius: 40px; font-weight: 800; margin-top: 10px; border: 1px solid #ffcc66; box-shadow: 0 4px 0 #8f651f; transform: translateY(-2px); transition: 0.1s; }
-        .btn-ad:active { transform: translateY(2px); box-shadow: 0 1px 0 #8f651f; }
-        .market-table { width: 100%; font-size: 11px; margin-top: 20px; border-collapse: collapse; color: #b6c2d2; }
-        .market-table td { padding: 8px 4px; border-bottom: 1px solid #222b35; }
-        .market-header { color: var(--accent); font-weight: 700; font-size: 10px; letter-spacing: 1.5px; padding-top: 15px; }
-        .floating-ball { position: fixed; bottom: 30px; right: 30px; width: 70px; height: 70px; background: radial-gradient(circle at 30% 30%, var(--green), #0f8f5c); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #0b0f14; font-weight: 900; font-size: 28px; box-shadow: 0 10px 25px #00ff8880; cursor: pointer; z-index: 9999; border: 2px solid white; }
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; z-index: 10000; }
-        .modal-content { background: #161b22; padding: 30px; border-radius: 30px; width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto; border: 2px solid var(--gold); }
-        .modal-content h2 { color: var(--gold); margin-bottom: 20px; }
-        .modal-content h3 { color: var(--gold); margin: 20px 0 10px; }
-        .campo { margin-bottom: 15px; }
-        .campo label { color: var(--text); font-size: 11px; text-transform: uppercase; margin-bottom: 5px; display: block; }
-        .donation-item { background: #1e2a36; padding: 15px; border-radius: 15px; margin: 10px 0; border-left: 5px solid; }
-        .donation-item p { word-break: break-all; background: #0d151f; padding: 10px; border-radius: 10px; margin-top: 8px; font-family: monospace; }
-        .copy-btn { background: var(--accent); border: none; color: white; padding: 5px 15px; border-radius: 20px; float: right; cursor: pointer; }
-        .close-btn { background: var(--accent); border: none; color: white; padding: 12px; border-radius: 30px; width: 100%; margin-top: 20px; cursor: pointer; font-weight: bold; }
-        .console { background: #0d1117; padding: 10px; border-radius: 10px; margin: 10px 0; font-size: 12px; font-family: monospace; height: 50px; overflow-y: auto; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .security-warning { background: #ff3e3e20; border: 1px solid #ff3e3e; color: #ff3e3e; padding: 10px; border-radius: 10px; font-size: 11px; margin-bottom: 15px; text-align: center; }
-        .vol-indicator { display: inline-block; padding: 4px 8px; border-radius: 20px; font-size: 10px; font-weight: bold; margin-left: 8px; }
-        .vol-alta { background: #00ff8820; color: #00ff88; border: 1px solid #00ff88; }
-        .vol-media { background: #ffcc0020; color: #ffcc00; border: 1px solid #ffcc00; }
-        .vol-baixa { background: #ff3e3e20; color: #ff3e3e; border: 1px solid #ff3e3e; }
-    </style>
-</head>
-<body>
-    <!-- CARD PRINCIPAL - 100% INTACTO -->
-    <div class="card" id="mainCard">
-        <h4>⚡ MESTRE DO SCALPING PRO ⚡</h4>
-        <button class="btn-mode" onclick="toggleMode()">🖥️ ALTERNAR MODO COMPUTADOR</button>
+// ===== FUNÇÃO DO ROBÔ CORRIGIDA =====
+async function placeRealOrder() {
+    if(!hlConnection){
+        alert('Conecte a API primeiro');
+        return;
+    }
 
-        <div class="time-selector">
-            <button class="time-btn active" data-t="1" onclick="setTF('1', this)">⚡ SCALP (1m)</button>
-            <button class="time-btn" data-t="15" onclick="setTF('15', this)">🔭 DAY TRADE (15m)</button>
-        </div>
+    const capital = parseFloat(document.getElementById('botCapital').value);
+    const pair = document.getElementById('botPair').value;
+    const sl = parseFloat(document.getElementById('botSL').value)/100;
+    const tp = parseFloat(document.getElementById('botTP').value)/100;
 
-        <select id="pairSelector" onchange="initChart()">
-            <optgroup label="📈 Binance">
-                <option value="BINANCE:BTCUSDT" selected>₿ BTC/USDT (Binance)</option>
-                <option value="BINANCE:ETHUSDT">⟠ ETH/USDT (Binance)</option>
-                <option value="BINANCE:SOLUSDT">◎ SOL/USDT (Binance)</option>
-            </optgroup>
-            <optgroup label="🌀 Hyperliquid">
-                <option value="BYBIT:BTCUSDT">₿ BTC/USD (Hyperliquid)</option>
-                <option value="BYBIT:ETHUSDT">⟠ ETH/USD (Hyperliquid)</option>
-                <option value="BYBIT:SOLUSDT">◎ SOL/USD (Hyperliquid)</option>
-            </optgroup>
-            <optgroup label="🏅 Metais & Energia">
-                <option value="TVC:GOLD">🥇 Ouro (XAU/USD)</option>
-                <option value="TVC:SILVER">🥈 Prata (XAG/USD)</option>
-                <option value="TVC:USOIL">🛢️ Petróleo WTI</option>
-            </optgroup>
-        </select>
+    if(capital < 5){
+        alert('Capital mínimo: 5 USDC');
+        return;
+    }
 
-        <div class="price" id="priceText">$ 74,069.05</div>
+    if(!price || price === 0){
+        alert('Aguardando preço...');
+        return;
+    }
 
-        <!-- SCORE DE CONFLUÊNCIA -->
-        <div class="score-container">
-            <div class="score-text">
-                <span>🔥 Confluência</span>
-                <span id="scoreValue">40/100</span>
-            </div>
-            <div class="score-bar">
-                <div class="score-fill" id="scoreFill" style="width:40%"></div>
-            </div>
-            <div class="score-text">
-                <span id="scoreLabel">Evitar operação</span>
-                <span id="probabilidade">Baixa probabilidade</span>
-            </div>
-        </div>
+    try {
+        const assetMap = { BTC:0, ETH:1, SOL:2, GOLD:3, SILVER:4, WTI:5 };
+        const assetId = assetMap[pair];
 
-        <!-- BADGE DE ALERTA (aparece quando confluência alta) -->
-        <div id="alertaBadge" class="badge-alerta" style="display: none;">🚨 ENTRADA FORTE DETECTADA</div>
-
-        <!-- 3 SINAIS -->
-        <div class="status-grid">
-            <div id="statusBox" class="status-bar">
-                <div class="light-glow"></div>
-                <span class="status-label">SINAL GERAL</span>
-                <span class="status-value" id="statusText">⚠️ AGUARDAR</span>
-            </div>
-            <div id="rsiBox" class="status-bar">
-                <div class="light-glow"></div>
-                <span class="status-label">FILTRO TÉCNICO</span>
-                <span class="status-value" id="rsiText">📉 VENDA</span>
-            </div>
-            <div id="momBox" class="status-bar">
-                <div class="light-glow"></div>
-                <span class="status-label">MOMENTUM</span>
-                <span class="status-value" id="momText">⚖️ NEUTRO</span>
-            </div>
-        </div>
-
-        <!-- INDICADOR DE VOLATILIDADE -->
-        <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 11px;">
-            <span>📊 Volatilidade: <span id="volText">MÉDIA</span></span>
-            <span>⏰ Sessão: <span id="sessaoText">Londres</span></span>
-        </div>
-
-        <!-- MODO OPERAÇÃO - CHAVE ON/OFF -->
-        <div class="modo-operacao">
-            <span id="statusModo">Modo Operação: OFF</span>
-            <label class="switch">
-                <input type="checkbox" id="lockScreenToggle">
-                <span class="slider"></span>
-            </label>
-        </div>
-
-        <!-- ALARME DE PREÇO -->
-        <div class="alarme-section">
-            <div class="alarme-title">
-                <span>🔔 ALARME DE PREÇO</span>
-            </div>
-            <div class="alarme-input-group">
-                <input type="number" id="alarmePreco" class="alarme-input" placeholder="Preço alvo (ex: 75000)" step="100">
-                <button class="alarme-btn" onclick="adicionarAlarme()">Adicionar</button>
-            </div>
-            <div class="alarme-lista" id="alarmeLista">
-                <div style="color: var(--text); text-align: center; padding: 10px;">Nenhum alarme definido</div>
-            </div>
-        </div>
-
-        <!-- GRÁFICO TRADINGVIEW -->
-        <div id="chart_container"></div>
-
-        <!-- INPUTS -->
-        <div class="inputs-grid">
-            <div><label>💰 Capital ($)</label><input type="number" id="capital" value="300"></div>
-            <div><label>⚡ Alavancagem</label><input type="number" id="lev" value="10"></div>
-            <div><label>✅ Gain %</label><input type="number" id="tpP" value="1.0" step="0.1"></div>
-            <div><label>🛑 Stop %</label><input type="number" id="slP" value="1.0" step="0.1"></div>
-        </div>
-
-        <button class="btn-calc" onclick="calc()">📊 CALCULAR ALVOS</button>
-
-        <!-- RESULTADOS -->
-        <div id="results" class="res">
-            <div style="display:flex; justify-content:space-between;"><span>🟢 TP:</span> <span id="resTP" style="color:var(--green);"></span></div>
-            <div style="display:flex; justify-content:space-between; margin-top:10px;"><span>🔴 SL:</span> <span id="resSL" style="color:var(--red);"></span></div>
-        </div>
-
-        <!-- GRADE DE PROJETOS -->
-        <div class="projects-section">
-            <div class="projects-grid">
-                <a href="https://site-557591544835-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Sinais Invest</a>
-                <a href="https://site-combustai-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">CombustAI</a>
-                <a href="https://site-559791916621-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Registro DCA</a>
-                <a href="https://pepinometro-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Pepinômetro</a>
-                <a href="https://historia-copas-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">História Copas</a>
-                <a href="https://investopcao.culturabuilder.com" class="project-btn" target="_blank">InvestOpção</a>
-            </div>
-        </div>
-
-        <!-- PUBLICIDADE ATMOS IPTV -->
-        <div class="ad-container">
-            <span style="color:var(--gold); font-weight:800; font-size:16px;">📺 ATMOS IPTV</span><br>
-            <span style="font-size:12px;">+15.000 canais • 4K • Estável</span>
-            <a href="https://wa.me/5597991916621" target="_blank" class="btn-ad">TESTE GRÁTIS</a>
-        </div>
-
-        <!-- TABELA DE SESSÕES -->
-        <table class="market-table">
-            <tr><td colspan="3" class="market-header">🌍 SESSÕES CRIPTO / FOREX</td></tr>
-            <tr><td>🌏 Ásia</td><td>21:00-01:00</td><td style="color:var(--gold); text-align:right;">● médio</td></tr>
-            <tr><td>🇪🇺 Londres</td><td>04:00-09:00</td><td style="color:var(--green); text-align:right;">● alto</td></tr>
-            <tr><td>🇺🇸 NY (Pico)</td><td>10:00-14:00</td><td style="color:var(--green); text-align:right;">● PICO</td></tr>
-            <tr><td colspan="3" class="market-header">🏆 EURO, PRATA & WTI</td></tr>
-            <tr><td>🥇 Metais (NY)</td><td>09:20-15:30</td><td style="color:var(--gold); text-align:right;">● liquidez</td></tr>
-            <tr><td>🛢️ Petróleo (WTI)</td><td>10:00-16:30</td><td style="color:var(--accent); text-align:right;">● volatilidade</td></tr>
-        </table>
-
-        <!-- BOTÃO DONATIVOS -->
-        <button class="project-btn" onclick="openDonationModal()" style="background:var(--gold); color:#000; width:100%; margin-top:15px;">💰 Donativos</button>
-    </div>
-
-    <!-- BOLINHA FLUTUANTE -->
-    <div class="floating-ball" onclick="openPasswordModal()">🔓</div>
-
-    <!-- MODAL DE SENHA -->
-    <div id="passwordModal" class="modal">
-        <div class="modal-content" style="max-width:350px;">
-            <h2>🔐 ACESSO</h2>
-            <input type="password" id="passInput" maxlength="9" placeholder="*********" style="text-align:center; font-size:24px; letter-spacing:4px;">
-            <button class="close-btn" onclick="checkPassword()" style="margin-top:15px;">VALIDAR</button>
-        </div>
-    </div>
-
-    <!-- MODAL DO ROBÔ - AGORA FUNCIONAL -->
-    <div id="robotModal" class="modal">
-        <div class="modal-content">
-            <h2>🤖 ROBÔ SCALPER</h2>
-            <p style="color:var(--green);">🔓 Acesso autorizado</p>
-            
-            <div class="security-warning">
-                ⚠️ ATENÇÃO: Use apenas em ambiente local. Chave privada não é salva.
-            </div>
-
-            <h3>🔐 Credenciais Hyperliquid</h3>
-            <div class="campo">
-                <label>Endereço da conta principal (MetaMask/SafePal)</label>
-                <input type="text" id="hlMainAddress" value="0x9a761Cc6331Fd28D0b04811135dfA233f6499C9C">
-            </div>
-            <div class="campo">
-                <label>Endereço da API wallet (Robonovo)</label>
-                <input type="text" id="hlApiAddress" value="0xa9adb7057b5531c077962289a69bbadc4973e381">
-            </div>
-            <div class="campo">
-                <label>Chave privada da API wallet</label>
-                <input type="password" id="hlApiPrivateKey" placeholder="0x...">
-            </div>
-
-            <button class="btn-mode" onclick="connectHyperliquid()" style="background:var(--accent);">🔌 Validar e Conectar</button>
-            <div class="console" id="apiConsole">[API] Desconectado</div>
-
-            <h3>📝 Ordem Real</h3>
-            <div class="campo">
-                <label>Capital (USDC)</label>
-                <input type="number" id="botCapital" value="10" step="1" min="5">
-            </div>
-            <div class="grid-2">
-                <div><label>Stop Loss %</label><input type="number" id="botSL" value="1.5" step="0.1"></div>
-                <div><label>Take Profit %</label><input type="number" id="botTP" value="1.0" step="0.1"></div>
-            </div>
-            <div class="campo">
-                <label>Par</label>
-                <select id="botPair">
-                    <option value="BTC">₿ BTC/USDC</option>
-                    <option value="ETH">⟠ ETH/USDC</option>
-                    <option value="SOL">◎ SOL/USDC</option>
-                    <option value="GOLD">🥇 XAU/USD (Ouro)</option>
-                    <option value="SILVER">🥈 XAG/USD (Prata)</option>
-                    <option value="WTI">🛢️ WTI (Petróleo)</option>
-                </select>
-            </div>
-
-            <button class="btn-calc" onclick="placeRealOrder()" style="background:var(--gold); color:#000; margin-top:15px;">🚀 ENVIAR ORDEM REAL</button>
-            <button class="close-btn" onclick="closeRobotModal()" style="margin-top:10px;">Fechar</button>
-        </div>
-    </div>
-
-    <!-- MODAL DE DONATIVOS -->
-    <div id="donationModal" class="modal">
-        <div class="modal-content">
-            <h2>💰 Donativos</h2>
-            <p style="background:#1e2a36; padding:15px; border-radius:15px; margin-bottom:20px;">
-                Projeto independente, sem fins lucrativos. Contribuições ajudam a manter os custos. Obrigado!
-            </p>
-            
-            <div class="donation-item" style="border-left-color:#8a2be2;">
-                <strong>⚡ Lightning Network</strong>
-                <p>cloggedparrot01@walletofsatoshi.com <button class="copy-btn" onclick="copyText('cloggedparrot01@walletofsatoshi.com')">Copiar</button></p>
-            </div>
-            <div class="donation-item" style="border-left-color:#f7931a;">
-                <strong>₿ Bitcoin</strong>
-                <p>bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5 <button class="copy-btn" onclick="copyText('bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5')">Copiar</button></p>
-            </div>
-            <div class="donation-item" style="border-left-color:#627eea;">
-                <strong>🔷 EVM</strong>
-                <p>0xAd944bA180610F1Fe43151eD81c0084C918c68e1 <button class="copy-btn" onclick="copyText('0xAd944bA180610F1Fe43151eD81c0084C918c68e1')">Copiar</button></p>
-            </div>
-            <div class="donation-item" style="border-left-color:#14f195;">
-                <strong>◎ Solana</strong>
-                <p>EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm <button class="copy-btn" onclick="copyText('EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm')">Copiar</button></p>
-            </div>
-            <div class="donation-item" style="border-left-color:#32bcad;">
-                <strong>🇧🇷 Pix</strong>
-                <p>127d59fc-1f37-4e8e-9fd4-295e1883727b <button class="copy-btn" onclick="copyText('127d59fc-1f37-4e8e-9fd4-295e1883727b')">Copiar</button></p>
-            </div>
-            
-            <button class="close-btn" onclick="closeDonationModal()">Fechar</button>
-        </div>
-    </div>
-
-    <script src="https://s3.tradingview.com/tv.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-    <script>
-        // ---------- VARIÁVEIS GLOBAIS ----------
-        let price = 74069.05;
-        let pricesHistory = [];
-        let isDesktop = false;
-        let currentTF = "1";
-        let activeWS = null;
-        let hlConnection = null;
-        let alarmes = [];
-        let modoOperacaoAtivo = false;
-        let timeoutDescanso;
-
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        let audioCtx = null;
-
-        function tocarAlarme() {
-            try {
-                if (!audioCtx) audioCtx = new AudioContext();
-                const osc = audioCtx.createOscillator();
-                const gainNode = audioCtx.createGain();
-                osc.type = 'sine';
-                osc.frequency.value = 880;
-                gainNode.gain.value = 0.3;
-                osc.connect(gainNode);
-                gainNode.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.5);
-                
-                setTimeout(() => {
-                    const osc2 = audioCtx.createOscillator();
-                    osc2.type = 'sine';
-                    osc2.frequency.value = 880;
-                    const gain2 = audioCtx.createGain();
-                    gain2.gain.value = 0.3;
-                    osc2.connect(gain2);
-                    gain2.connect(audioCtx.destination);
-                    osc2.start();
-                    osc2.stop(audioCtx.currentTime + 0.5);
-                }, 600);
-                
-                if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
-            } catch (e) {}
+        if (assetId === undefined) {
+            alert('Par inválido');
+            return;
         }
 
-        function setTF(tf, btn) {
-            currentTF = tf;
-            document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            initChart();
-        }
+        // 🔥 Direção baseada no sinal do filtro técnico
+        const signal = document.getElementById('rsiText').innerText;
+        const isBuy = signal.includes('COMPRA');
 
-        function toggleMode() {
-            isDesktop = !isDesktop;
-            document.getElementById('mainCard').classList.toggle('desktop-mode', isDesktop);
-            initChart();
-        }
+        const size = (capital / price).toFixed(6);
+        const priceStr = price.toFixed(2);
+        const nonce = Date.now();
 
-        function initChart() {
-            const symbol = document.getElementById('pairSelector').value;
-            const container = document.getElementById('chart_container');
-            container.innerHTML = '';
-            new TradingView.widget({
-                "autosize": true,
-                "symbol": symbol,
-                "interval": currentTF,
-                "theme": "dark",
-                "style": "1",
-                "locale": "br",
-                "container_id": "chart_container",
-                "hide_top_toolbar": !isDesktop,
-                "hide_legend": false
-            });
-            
-            if(activeWS) activeWS.close();
-            
-            let pair = symbol.split(':')[1].toLowerCase();
-            let streamPair = (pair === 'gold' || pair === 'silver' || pair === 'usoil') ? 'btcusdt' : 
-                             (pair.includes('btc') ? 'btcusdt' : 
-                              pair.includes('eth') ? 'ethusdt' : 
-                              pair.includes('sol') ? 'solusdt' : 'btcusdt');
-            
-            activeWS = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`);
-            
-            activeWS.onmessage = (e) => {
-                const data = JSON.parse(e.data);
-                price = parseFloat(data.c);
-                document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
-                pricesHistory.push(price);
-                if(pricesHistory.length > 50) pricesHistory.shift();
-                
-                const s1 = document.getElementById('statusText');
-                const box = document.getElementById('statusBox');
-                let s1Valor = 0;
-                if(Math.floor(price * 100) % 2 === 0) {
-                    s1.innerText = '🔥 OPORTUNIDADE';
-                    box.style.borderBottomColor = '#00ff88';
-                    s1.style.color = '#00ff88';
-                    s1Valor = 30;
-                } else {
-                    s1.innerText = '⚠️ AGUARDAR';
-                    box.style.borderBottomColor = '#ff3e3e';
-                    s1.style.color = '#ff3e3e';
-                    s1Valor = 0;
-                }
-                
-                const s2 = document.getElementById('rsiText');
-                const rsiBox = document.getElementById('rsiBox');
-                let s2Valor = 0;
-                let s2Direcao = null;
-                if(pricesHistory.length >= 21) {
-                    const compra = price > pricesHistory[pricesHistory.length - 21];
-                    s2.innerText = compra ? '🚀 COMPRA' : '📉 VENDA';
-                    rsiBox.style.borderBottomColor = compra ? '#00ff88' : '#ff3e3e';
-                    s2.style.color = compra ? '#00ff88' : '#ff3e3e';
-                    s2Valor = 40;
-                    s2Direcao = compra ? 'compra' : 'venda';
-                } else {
-                    s2.innerText = `COLETANDO ${pricesHistory.length}/21`;
-                }
-                
-                const s3 = document.getElementById('momText');
-                const momBox = document.getElementById('momBox');
-                let s3Valor = 0;
-                let s3Direcao = null;
-                if(pricesHistory.length >= 3) {
-                    const avg = (pricesHistory.slice(-3).reduce((a,b)=>a+b,0))/3;
-                    if(price > avg * 1.001) {
-                        s3.innerText = '📈 ALTA';
-                        momBox.style.borderBottomColor = '#00ff88';
-                        s3.style.color = '#00ff88';
-                        s3Valor = 30;
-                        s3Direcao = 'compra';
-                    } else if(price < avg * 0.999) {
-                        s3.innerText = '📉 BAIXA';
-                        momBox.style.borderBottomColor = '#ff3e3e';
-                        s3.style.color = '#ff3e3e';
-                        s3Valor = 30;
-                        s3Direcao = 'venda';
-                    } else {
-                        s3.innerText = '⚖️ NEUTRO';
-                        momBox.style.borderBottomColor = '#ffcc00';
-                        s3.style.color = '#ffcc00';
-                    }
-                }
-                
-                let score = s1Valor + s2Valor + (s3Valor || 0);
-                if (s2Direcao && s3Direcao && s2Direcao !== s3Direcao) score = 0;
-                
-                document.getElementById('scoreFill').style.width = score + '%';
-                document.getElementById('scoreValue').innerText = score + '/100';
-                
-                let scoreLabel = 'Aguardando sinais';
-                let probabilidade = '';
-                let classeScore = 'baixa';
-                
-                if (score >= 80) {
-                    scoreLabel = '🔥 Confluência forte';
-                    probabilidade = 'Alta';
-                    classeScore = 'alta';
-                    document.getElementById('alertaBadge').style.display = 'inline-block';
-                    if (s2Direcao === 'compra') document.body.classList.add('alerta-compra');
-                    else if (s2Direcao === 'venda') document.body.classList.add('alerta-venda');
-                } else if (score >= 60) {
-                    scoreLabel = '⚡ Confluência moderada';
-                    probabilidade = 'Média';
-                    classeScore = 'media';
-                    document.getElementById('alertaBadge').style.display = 'none';
-                } else {
-                    scoreLabel = '⚠️ Evitar operação';
-                    probabilidade = 'Baixa';
-                    classeScore = 'baixa';
-                    document.getElementById('alertaBadge').style.display = 'none';
-                }
-                
-                document.getElementById('scoreFill').className = 'score-fill ' + classeScore;
-                document.getElementById('scoreLabel').innerText = scoreLabel;
-                document.getElementById('probabilidade').innerText = probabilidade;
-                
-                const hora = new Date().getHours();
-                const minutos = new Date().getMinutes();
-                const horaMin = hora + minutos/60;
-                let sessao = 'Fora do horário';
-                if (horaMin >= 21 || horaMin < 1) sessao = '🌏 Ásia';
-                else if (horaMin >= 4 && horaMin < 9) sessao = '🇪🇺 Londres';
-                else if (horaMin >= 10 && horaMin < 14) sessao = '🇺🇸 NY (Pico)';
-                else if (horaMin >= 9.33 && horaMin < 15.5) sessao = '🥇 Metais NY';
-                else if (horaMin >= 10 && horaMin < 16.5) sessao = '🛢️ Petróleo';
-                document.getElementById('sessaoText').innerText = sessao;
-                
-                verificarAlarmes();
-            };
-        }
+        const action = {
+            type: "order",
+            orders: [{
+                a: assetId,
+                b: isBuy,
+                p: priceStr,
+                s: size,
+                r: false,
+                t: { limit: { tif: "Gtc" } }
+            }],
+            grouping: "na"
+        };
 
-        function calc() {
-            const tp = price * (1 + parseFloat(document.getElementById('tpP').value)/100);
-            const sl = price * (1 - parseFloat(document.getElementById('slP').value)/100);
-            document.getElementById('resTP').innerText = `$${tp.toFixed(2)}`;
-            document.getElementById('resSL').innerText = `$${sl.toFixed(2)}`;
-            document.getElementById('results').style.display = 'block';
-        }
+        const domain = {
+            name: "Exchange",
+            version: "1",
+            chainId: 42161
+        };
 
-        function adicionarAlarme() {
-            const preco = parseFloat(document.getElementById('alarmePreco').value);
-            if (isNaN(preco) || preco <= 0) { alert('Preço inválido'); return; }
-            alarmes.push({ preco, ativo: true, id: Date.now() });
-            atualizarListaAlarmes();
-            document.getElementById('alarmePreco').value = '';
-        }
-        
-        function removerAlarme(id) {
-            alarmes = alarmes.filter(a => a.id !== id);
-            atualizarListaAlarmes();
-        }
-        
-        function atualizarListaAlarmes() {
-            const lista = document.getElementById('alarmeLista');
-            if (alarmes.length === 0) {
-                lista.innerHTML = '<div style="color: var(--text); text-align: center; padding: 10px;">Nenhum alarme definido</div>';
-                return;
-            }
-            let html = '';
-            alarmes.forEach(alarme => {
-                html += `<div class="alarme-item"><span>🔔 $${alarme.preco.toLocaleString('en-US', {minimumFractionDigits:2})}</span><button class="alarme-remover" onclick="removerAlarme(${alarme.id})">✕</button></div>`;
-            });
-            lista.innerHTML = html;
-        }
-        
-        function verificarAlarmes() {
-            alarmes.forEach(alarme => {
-                if (alarme.ativo && Math.abs(price - alarme.preco) / alarme.preco < 0.001) {
-                    alarme.ativo = false;
-                    tocarAlarme();
-                    alert(`🔔 ALARME! Preço atingiu $${alarme.preco.toFixed(2)}`);
-                    atualizarListaAlarmes();
-                }
-            });
-        }
+        const types = {
+            Order: [
+                { name: "a", type: "uint32" },
+                { name: "b", type: "bool" },
+                { name: "p", type: "string" },
+                { name: "s", type: "string" },
+                { name: "r", type: "bool" },
+                { name: "t", type: "OrderType" }
+            ],
+            OrderType: [
+                { name: "limit", type: "Limit" }
+            ],
+            Limit: [
+                { name: "tif", type: "string" }
+            ],
+            Action: [
+                { name: "type", type: "string" },
+                { name: "orders", type: "Order[]" },
+                { name: "grouping", type: "string" }
+            ]
+        };
 
-        function iniciarTimerDescanso() {
-            if (modoOperacaoAtivo) return;
-            clearTimeout(timeoutDescanso);
-            timeoutDescanso = setTimeout(() => {
-                if (!modoOperacaoAtivo) document.body.classList.add("modo-descanso");
-            }, 90000);
-        }
+        document.getElementById('apiConsole').innerHTML = '⏳ Assinando...';
 
-        function resetTimer() {
-            if (!modoOperacaoAtivo) {
-                document.body.classList.remove("modo-descanso");
-                iniciarTimerDescanso();
-            }
-        }
+        const signature = await hlConnection.apiWallet._signTypedData(domain, types, action);
+        const sig = ethers.utils.splitSignature(signature);
 
-        document.onmousemove = resetTimer;
-        document.onkeydown = resetTimer;
-        document.onclick = resetTimer;
-        document.ontouchstart = resetTimer;
+        const requestBody = {
+            action,
+            nonce,
+            signature: { r: sig.r, s: sig.s, v: sig.v },
+            vaultAddress: null
+        };
 
-        const toggle = document.getElementById("lockScreenToggle");
-        const statusTexto = document.getElementById("statusModo");
-        toggle.addEventListener("change", function() {
-            modoOperacaoAtivo = this.checked;
-            if (modoOperacaoAtivo) {
-                statusTexto.innerText = "Modo Operação: ON";
-                clearTimeout(timeoutDescanso);
-                document.body.classList.remove("modo-descanso");
-                document.body.classList.add("modo-ativo");
-            } else {
-                statusTexto.innerText = "Modo Operação: OFF";
-                document.body.classList.remove("modo-ativo");
-                iniciarTimerDescanso();
-            }
+        document.getElementById('apiConsole').innerHTML = '⏳ Enviando...';
+
+        const response = await fetch('https://api.hyperliquid.xyz/exchange', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestBody)
         });
 
-        function openPasswordModal() { document.getElementById('passwordModal').style.display = 'flex'; }
-        function closePasswordModal() { document.getElementById('passwordModal').style.display = 'none'; }
-        function openDonationModal() { document.getElementById('donationModal').style.display = 'flex'; }
-        function closeDonationModal() { document.getElementById('donationModal').style.display = 'none'; }
-        function closeRobotModal() { document.getElementById('robotModal').style.display = 'none'; }
+        const result = await response.json();
 
-        function checkPassword() {
-            if(document.getElementById('passInput').value === 'Maria1301') {
-                closePasswordModal();
-                document.getElementById('robotModal').style.display = 'flex';
-            } else {
-                alert('Senha incorreta');
-            }
+        if(result.status === "ok" || result.response?.data?.statuses?.[0]?.resting){
+            const stopPrice = isBuy ? price * (1 - sl) : price * (1 + sl);
+            const takePrice = isBuy ? price * (1 + tp) : price * (1 - tp);
+
+            document.getElementById('apiConsole').innerHTML = '✅ Ordem enviada!';
+
+            alert(`🚀 ORDEM EXECUTADA
+Tipo: ${isBuy ? 'COMPRA' : 'VENDA'}
+Ativo: ${pair}
+Quantidade: ${size}
+Preço: $${price.toFixed(2)}
+TP: $${takePrice.toFixed(2)}
+SL: $${stopPrice.toFixed(2)}`);
+        } else {
+            document.getElementById('apiConsole').innerHTML = '❌ Erro: ' + JSON.stringify(result);
         }
 
-        function copyText(text) {
-            navigator.clipboard.writeText(text);
-            alert('Copiado!');
-        }
-
-        async function connectHyperliquid() {
-            const mainAddr = document.getElementById('hlMainAddress').value.trim();
-            const apiAddr = document.getElementById('hlApiAddress').value.trim();
-            const privKey = document.getElementById('hlApiPrivateKey').value.trim();
-            
-            if(!mainAddr || !apiAddr || !privKey) {
-                alert('Preencha todos os campos');
-                return;
-            }
-            
-            try {
-                const provider = new ethers.providers.JsonRpcProvider('https://arb1.arbitrum.io/rpc');
-                const wallet = new ethers.Wallet(privKey, provider);
-                
-                console.log('Endereço derivado:', wallet.address);
-                console.log('Endereço informado:', apiAddr);
-                
-                if(wallet.address.toLowerCase() !== apiAddr.toLowerCase()) {
-                    throw new Error(`Chave não corresponde.\nChave gera: ${wallet.address}\nInformado: ${apiAddr}`);
-                }
-                
-                hlConnection = { mainAddress: mainAddr, apiWallet: wallet, apiAddress: apiAddr };
-                document.getElementById('apiConsole').innerHTML = `✅ Conectado como ${apiAddr.slice(0,6)}...${apiAddr.slice(-4)}`;
-                
-            } catch(e) {
-                document.getElementById('apiConsole').innerHTML = `❌ Erro: ${e.message}`;
-                alert(e.message);
-            }
-        }
-
-        // ===== FUNÇÃO DO ROBÔ - AGORA FUNCIONAL =====
-        async function placeRealOrder() {
-            if(!hlConnection){
-                alert('Conecte a API primeiro');
-                return;
-            }
-
-            const capital = parseFloat(document.getElementById('botCapital').value);
-            const pair = document.getElementById('botPair').value;
-            const sl = parseFloat(document.getElementById('botSL').value)/100;
-            const tp = parseFloat(document.getElementById('botTP').value)/100;
-
-            if(capital < 5){
-                alert('Capital mínimo: 5 USDC');
-                return;
-            }
-
-            if(!price || price === 0){
-                alert('Aguardando preço...');
-                return;
-            }
-
-            try {
-                const assetMap = { BTC:0, ETH:1, SOL:2, GOLD:3, SILVER:4, WTI:5 };
-                const assetId = assetMap[pair];
-                if (assetId === undefined) { alert('Par inválido'); return; }
-
-                const size = (capital / price).toFixed(6);
-                const priceStr = price.toFixed(2);
-                const nonce = Date.now() + Math.floor(Math.random() * 1000);
-
-                const action = {
-                    type: "order",
-                    orders: [{
-                        a: assetId,
-                        b: true,
-                        p: priceStr,
-                        r: false,
-                        s: size,
-                        t: { limit: { tif: "Gtc" } }
-                    }],
-                    grouping: "na"
-                };
-
-                const domain = {
-                    name: "Hyperliquid",
-                    version: "1",
-                    chainId: 42161
-                };
-
-                const types = {
-                    Action: [
-                        { name: "type", type: "string" },
-                        { name: "orders", type: "Order[]" },
-                        { name: "grouping", type: "string" }
-                    ],
-                    Order: [
-                        { name: "a", type: "uint32" },
-                        { name: "b", type: "bool" },
-                        { name: "p", type: "string" },
-                        { name: "r", type: "bool" },
-                        { name: "s", type: "string" },
-                        { name: "t", type: "OrderType" }
-                    ],
-                    OrderType: [
-                        { name: "limit", type: "Limit" }
-                    ],
-                    Limit: [
-                        { name: "tif", type: "string" }
-                    ]
-                };
-
-                document.getElementById('apiConsole').innerHTML = '⏳ Assinando ordem...';
-
-                const signature = await hlConnection.apiWallet._signTypedData(domain, types, action);
-                const sig = ethers.utils.splitSignature(signature);
-
-                const requestBody = {
-                    action,
-                    nonce,
-                    signature: { r: sig.r, s: sig.s, v: sig.v },
-                    vaultAddress: null
-                };
-
-                document.getElementById('apiConsole').innerHTML = '⏳ Enviando ordem...';
-
-                const response = await fetch('https://api.hyperliquid.xyz/exchange', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(requestBody)
-                });
-
-                const result = await response.json();
-
-                if(result.status === "ok" || result.response?.data?.statuses?.[0]?.resting){
-                    document.getElementById('apiConsole').innerHTML = '✅ Ordem enviada!';
-                    const stopPrice = price * (1 - sl);
-                    const takePrice = price * (1 + tp);
-                    alert(`✅ ORDEM REAL!\nComprar ${size} ${pair}\nPreço: $${price.toFixed(2)}\nStop: $${stopPrice.toFixed(2)}\nTake: $${takePrice.toFixed(2)}`);
-                } else {
-                    document.getElementById('apiConsole').innerHTML = '❌ ' + JSON.stringify(result);
-                }
-
-            } catch(e){
-                document.getElementById('apiConsole').innerHTML = '❌ ' + e.message;
-            }
-        }
-
-        iniciarTimerDescanso();
-        initChart();
-    </script>
-</body>
-</html>
+    } catch(e){
+        document.getElementById('apiConsole').innerHTML = '❌ ' + e.message;
+    }
+}
