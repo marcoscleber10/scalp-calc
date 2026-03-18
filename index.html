@@ -3,63 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mestre do Scalping Pro - v.Premium</title>
+    <title>Mestre do Scalping Pro - v.Final</title>
     <style>
         :root {
             --bg: #0d1117; --card: #161b22; --green: #00ff88; --red: #ff3e3e;
             --text: #8b949e; --accent: #2f81f7; --gold: #ffcc00;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
         body { background-color: var(--bg); color: white; display: flex; justify-content: center; padding: 20px; }
         
         .card { 
             background: var(--card); padding: 25px; border-radius: 28px; 
             width: 100%; max-width: 420px; border: 1px solid #30363d; 
-            position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+            position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.8);
         }
 
         /* 1. BOLINHA DO ROBÔ */
         .robot-indicator { 
             position: absolute; top: 18px; right: 20px; 
-            display: flex; align-items: center; font-size: 9px; 
-            font-weight: 900; color: #fff; letter-spacing: 0.5px;
+            display: flex; align-items: center; font-size: 10px; 
+            font-weight: 800; color: #fff; text-shadow: 0 0 5px rgba(0,0,0,0.5);
         }
         .led { 
-            width: 9px; height: 9px; background: var(--green); 
-            border-radius: 50%; margin-right: 6px; 
-            box-shadow: 0 0 10px var(--green); animation: pulse 1.5s infinite; 
+            width: 10px; height: 10px; background: var(--green); 
+            border-radius: 50%; margin-right: 7px; 
+            box-shadow: 0 0 12px var(--green); animation: pulse 2s infinite; 
         }
-        @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.1); } 100% { opacity: 1; transform: scale(1); } }
+        @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.15); } 100% { opacity: 1; transform: scale(1); } }
 
-        h4 { color: #fff; font-size: 10px; text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; opacity: 0.8; }
+        h4 { color: #fff; font-size: 10px; text-align: center; text-transform: uppercase; letter-spacing: 2.5px; margin-bottom: 25px; opacity: 0.9; }
         
-        /* SELETOR REFORMULADO */
+        /* SELETOR DE PARES */
         select { 
             width: 100%; background: #0d1117; color: white; border: 1px solid #30363d; 
-            padding: 14px; border-radius: 15px; margin-bottom: 15px; font-weight: bold;
+            padding: 15px; border-radius: 16px; margin-bottom: 20px; font-weight: bold; font-size: 14px;
         }
 
-        .price { font-size: 42px; font-weight: 800; color: var(--green); text-align: center; margin-bottom: 20px; font-family: monospace; }
+        .price { font-size: 44px; font-weight: 900; color: var(--green); text-align: center; margin-bottom: 25px; font-family: 'Courier New', monospace; }
 
-        /* SINAIS EM BLOCOS */
-        .status-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
-        .status-box { background: #0d1117; padding: 12px 5px; border-radius: 12px; border: 1px solid #21262d; text-align: center; }
-        .status-label { font-size: 7px; color: var(--text); text-transform: uppercase; margin-bottom: 5px; display: block; }
+        /* PAINÉIS DE SINAIS */
+        .status-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 25px; }
+        .status-box { background: #0d1117; padding: 12px 5px; border-radius: 14px; border: 1px solid #21262d; text-align: center; }
+        .status-label { font-size: 7px; color: var(--text); text-transform: uppercase; margin-bottom: 6px; display: block; letter-spacing: 0.5px; }
         .status-val { font-size: 10px; font-weight: bold; }
 
-        #chart_container { width: 100%; height: 260px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #30363d; overflow: hidden; }
+        #chart_container { width: 100%; height: 260px; border-radius: 18px; margin-bottom: 25px; border: 1px solid #30363d; overflow: hidden; }
 
         /* CALCULADORA */
-        .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .input-group { background: #0d1117; padding: 8px; border-radius: 12px; border: 1px solid #21262d; }
-        .input-group label { font-size: 7px; color: var(--text); display: block; margin-bottom: 2px; }
-        .input-group input { background: transparent; border: none; color: white; width: 100%; font-size: 12px; font-weight: bold; }
+        .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
+        .input-group { background: #0d1117; padding: 10px; border-radius: 14px; border: 1px solid #21262d; }
+        .input-group label { font-size: 8px; color: var(--text); display: block; margin-bottom: 4px; }
+        .input-group input { background: transparent; border: none; color: white; width: 100%; font-size: 13px; font-weight: bold; outline: none; }
         
         .btn-calc { 
             width: 100%; background: var(--green); color: #000; border: none; 
-            padding: 16px; border-radius: 15px; font-weight: 900; 
-            cursor: pointer; margin-bottom: 20px; font-size: 13px;
+            padding: 18px; border-radius: 18px; font-weight: 900; 
+            cursor: pointer; margin-bottom: 25px; font-size: 14px; text-transform: uppercase;
         }
 
         /* HORÁRIOS OPERACIONAIS */
-        .market-list { background: #0d1117; border-radius: 15px; padding: 15px; margin-bottom: 20px; border: 1
+        .market-list { background: #0d1117; border-radius: 18px; padding: 18px; margin-bottom: 25px; border: 1px solid #21262d; }
+        .market-list h5 { color: var(--accent); font-size: 10px; text-align: center; margin-bottom: 12px; text-transform: uppercase; }
+        .m-row { display: flex; justify-content: space-between; font-size: 11px; padding: 8px 0; border-bottom: 1px solid #161b22; }
+        .m-row:last-child { border-bottom: none; }
+        .time-val { color: var(--green); font-weight: bold; }
+
+        /* GRADE DE PROJETOS */
+        .proj-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 25px; }
+        .proj-btn { background: #1c2128; color: #8b949e; border: 1px solid #30363d; padding: 14px 4px; border-radius: 14px; font-size: 10px; text-decoration: none; text-align: center; transition: 0.2s; }
+        .proj-btn:hover { border-color: var(--accent); color: white; }
+
+        /* BOTÃO NATIVOS */
+        .btn-nativos { 
+            width: 100%; background: var(--gold); color: #000; border: none; 
+            padding: 18px; border-radius: 18px; font-weight: 900; 
+            cursor: pointer; font-size: 14px; text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="robot-indicator"><div class="led"></div> ROBÔ ON</div>
+    <h4>⚡ MESTRE DO SCALPING PRO ⚡</h4>
+
+    <select id="pairSelect" onchange="loadTradingView()">
+        <optgroup label="Cripto Ativos">
+            <option value="BINANCE:BTCUSDT">₿ BTC/USDT (Scalp)</option>
+            <option value="BINANCE:SOLUSDT">◎ SOL/USDT (Scalp)</option>
+            <option value="BINANCE:ETHUSDT">Ξ ETH/USDT (Scalp)</option>
+        </optgroup>
+        <optgroup label="Altcoins">
+            <option value="BINANCE:BNBUSDT">🔶 BNB/USDT</option>
+            <option value="BINANCE:XRPUSDT">💧 XRP/USDT</option>
+            <option value="BINANCE:ADAUSDT">₳ ADA/USDT</option>
+        </optgroup>
+        <optgroup label="Metais & Energia">
+            <option value="TVC:GOLD">🥇 OURO (XAU)</option>
+            <option value="TVC:SILVER">🥈 PRATA (XAG)</option>
+            <option value="TVC:USOIL">🛢️ PETRÓLEO WTI</option>
+        </optgroup>
+    </select>
+
+    <div class="price" id="priceVal">$ 73.588,03</div>
+
+    <div class="status-grid">
+        <div class="status-box"><span class="status-label">SINAL GERAL</span><span class="status-val" style="color:var(--green)">OPORTUNIDADE</span></div>
+        <div class="status-box"><span class="status-label">FILTRO TÉCNICO</span><span class="status-val" style="color:var(--red)">VENDA</span></div>
+        <div class="status-box"><span class="status-label">OPÇÃO 3</span><span class="status-val" style="color:var(--gold)">NEUTRO</span></div>
+    </div>
+
+    <div id="chart_container"></div>
+
+    <div class="calc-grid">
+        <div class="input-group"><label>CAPITAL $</label><input type="number" value="100
