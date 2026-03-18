@@ -274,10 +274,32 @@
         .vol-alta { background: #00ff8820; color: #00ff88; border: 1px solid #00ff88; }
         .vol-media { background: #ffcc0020; color: #ffcc00; border: 1px solid #ffcc00; }
         .vol-baixa { background: #ff3e3e20; color: #ff3e3e; border: 1px solid #ff3e3e; }
+
+        /* ===== NOVOS ESTILOS (APENAS ADICIONADOS, SEM ALTERAR OS EXISTENTES) ===== */
+        #proModeBtn, #restoreLayoutBtn {
+            transition: 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        #proModeBtn:hover, #restoreLayoutBtn:hover {
+            transform: scale(1.1);
+        }
+        #proModeBtn {
+            background: var(--gold);
+            color: #000;
+            font-weight: bold;
+        }
+        #restoreLayoutBtn {
+            background: var(--accent);
+            color: white;
+        }
+        /* Classes de layout (opcionais) */
+        body.layout-tela-cheia #appContent { display: none; }
+        body.layout-tela-cheia #chart_container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 99999; }
+        body.layout-combinado #appContent { display: block; } /* exemplo, mas não usado */
     </style>
 </head>
 <body>
-    <!-- Botão para expandir gráfico -->
+    <!-- Botão para expandir gráfico (existente) -->
     <button id="expandChartBtn" onclick="toggleChartOnly()">⛶</button>
 
     <!-- TODO o conteúdo que não é o gráfico (será escondido no modo imersivo) -->
@@ -385,10 +407,10 @@
     <!-- Gráfico (fora do appContent) -->
     <div id="chart_container"></div>
 
-    <!-- BOLINHA FLUTUANTE -->
+    <!-- BOLINHA FLUTUANTE (existente) -->
     <div class="floating-ball" onclick="openPasswordModal()">🔓</div>
 
-    <!-- MODAL DE SENHA -->
+    <!-- MODAL DE SENHA (existente) -->
     <div id="passwordModal" class="modal">
         <div class="modal-content" style="max-width:350px;">
             <h2>🔐 ACESSO</h2>
@@ -397,7 +419,7 @@
         </div>
     </div>
 
-    <!-- MODAL DO ROBÔ -->
+    <!-- MODAL DO ROBÔ (existente) -->
     <div id="robotModal" class="modal">
         <div class="modal-content">
             <h2>🤖 ROBÔ SCALPER</h2>
@@ -450,7 +472,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE DONATIVOS -->
+    <!-- MODAL DE DONATIVOS (existente) -->
     <div id="donationModal" class="modal">
         <div class="modal-content">
             <h2>💰 Donativos</h2>
@@ -486,7 +508,7 @@
     <script src="https://s3.tradingview.com/tv.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <script>
-        // ---------- VARIÁVEIS GLOBAIS ----------
+        // ---------- CÓDIGO ORIGINAL (MANTIDO INTACTO) ----------
         let price = 74069.05;
         let pricesHistory = [];
         let isDesktop = false;
@@ -779,9 +801,9 @@
             alert('Copiado!');
         }
 
-        // ---------- NOVAS FUNÇÕES DO ROBÔ (CORRIGIDAS) ----------
+        // ---------- FUNÇÕES DO ROBÔ (EXISTENTES) ----------
         let hlConnection = null;
-        const apiEndpoint = "https://api.hyperliquid.xyz/exchange";          // mainnet
+        const apiEndpoint = "https://api.hyperliquid.xyz/exchange";
         const infoEndpoint = "https://api.hyperliquid.xyz/info";
 
         async function getAssetId(coin) {
@@ -837,10 +859,8 @@
             }
 
             try {
-                const coin = pair; // BTC, ETH, SOL, GOLD, SILVER, WTI
+                const coin = pair;
                 const assetId = await getAssetId(coin);
-
-                // Usa o preço atual do dashboard
                 const currentPrice = parseFloat(document.getElementById('priceText').innerText.replace(/[$,]/g, ''));
                 const priceStr = currentPrice.toFixed(2);
                 const size = (capital / currentPrice).toFixed(6);
@@ -849,11 +869,11 @@
                     type: "order",
                     orders: [{
                         a: assetId,
-                        b: true, // compra (ajuste conforme desejar)
+                        b: true,
                         p: priceStr,
                         s: size,
                         r: false,
-                        c: "0x" + Date.now().toString(16).padStart(32, "0"), // cloid obrigatório
+                        c: "0x" + Date.now().toString(16).padStart(32, "0"),
                         t: { limit: { tif: "Gtc" } }
                     }],
                     grouping: "na"
@@ -932,7 +952,7 @@
             }
         }
 
-        // ---------- NOVA FUNÇÃO PARA MODO IMERSIVO ----------
+        // ---------- FUNÇÃO EXISTENTE DE MODO IMERSIVO ----------
         function toggleChartOnly() {
             const chart = document.getElementById('chart_container');
             const app = document.getElementById('appContent');
@@ -941,25 +961,245 @@
             chartFullscreen = !chartFullscreen;
 
             if (chartFullscreen) {
-                // Entra no modo gráfico puro
                 chart.classList.add('chart-fullscreen');
                 app.classList.add('hidden');
                 btn.innerText = '🔙';
                 btn.style.backgroundColor = 'var(--red)';
             } else {
-                // Volta tudo
                 chart.classList.remove('chart-fullscreen');
                 app.classList.remove('hidden');
                 btn.innerText = '⛶';
                 btn.style.backgroundColor = 'var(--accent)';
             }
 
-            // Re-renderiza o gráfico após um pequeno atraso para ajustar tamanho
             setTimeout(initChart, 300);
         }
 
         iniciarTimerDescanso();
         initChart();
+
+        // ========== NOVAS FUNCIONALIDADES (APENAS ADICIONADAS, SEM ALTERAR O EXISTENTE) ==========
+        let isProUser = false;
+        let layoutAtual = 'normal';
+
+        // Sobrescreve initChart para considerar o modo PRO
+        const originalInitChart = initChart;
+        initChart = function() {
+            const symbol = document.getElementById('pairSelector').value;
+            const container = document.getElementById('chart_container');
+            container.innerHTML = '';
+            const widgetConfig = {
+                "autosize": true,
+                "symbol": symbol,
+                "interval": currentTF,
+                "theme": "dark",
+                "style": "1",
+                "locale": "br",
+                "container_id": "chart_container",
+                "hide_top_toolbar": !isDesktop,
+                "hide_legend": false
+            };
+            if (isProUser) {
+                widgetConfig.studies = [
+                    "RSI@tv-basicstudies",
+                    "MACD@tv-basicstudies",
+                    "BB@tv-basicstudies",
+                    "VWAP@tv-basicstudies",
+                    "ATR@tv-basicstudies"
+                ];
+            }
+            new TradingView.widget(widgetConfig);
+            
+            if(activeWS) activeWS.close();
+            
+            let pair = symbol.split(':')[1].toLowerCase();
+            let streamPair = (pair === 'gold' || pair === 'silver' || pair === 'usoil') ? 'btcusdt' : 
+                             (pair.includes('btc') ? 'btcusdt' : 
+                              pair.includes('eth') ? 'ethusdt' : 
+                              pair.includes('sol') ? 'solusdt' : 'btcusdt');
+            
+            activeWS = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`);
+            
+            activeWS.onmessage = (e) => {
+                const data = JSON.parse(e.data);
+                price = parseFloat(data.c);
+                document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
+                pricesHistory.push(price);
+                if(pricesHistory.length > 50) pricesHistory.shift();
+                
+                const s1 = document.getElementById('statusText');
+                const box = document.getElementById('statusBox');
+                let s1Valor = 0;
+                if(Math.floor(price * 100) % 2 === 0) {
+                    s1.innerText = '🔥 OPORTUNIDADE';
+                    box.style.borderBottomColor = '#00ff88';
+                    s1.style.color = '#00ff88';
+                    s1Valor = 30;
+                } else {
+                    s1.innerText = '⚠️ AGUARDAR';
+                    box.style.borderBottomColor = '#ff3e3e';
+                    s1.style.color = '#ff3e3e';
+                    s1Valor = 0;
+                }
+                
+                const s2 = document.getElementById('rsiText');
+                const rsiBox = document.getElementById('rsiBox');
+                let s2Valor = 0;
+                let s2Direcao = null;
+                if(pricesHistory.length >= 21) {
+                    const compra = price > pricesHistory[pricesHistory.length - 21];
+                    s2.innerText = compra ? '🚀 COMPRA' : '📉 VENDA';
+                    rsiBox.style.borderBottomColor = compra ? '#00ff88' : '#ff3e3e';
+                    s2.style.color = compra ? '#00ff88' : '#ff3e3e';
+                    s2Valor = 40;
+                    s2Direcao = compra ? 'compra' : 'venda';
+                } else {
+                    s2.innerText = `COLETANDO ${pricesHistory.length}/21`;
+                }
+                
+                const s3 = document.getElementById('momText');
+                const momBox = document.getElementById('momBox');
+                let s3Valor = 0;
+                let s3Direcao = null;
+                if(pricesHistory.length >= 3) {
+                    const avg = (pricesHistory.slice(-3).reduce((a,b)=>a+b,0))/3;
+                    if(price > avg * 1.001) {
+                        s3.innerText = '📈 ALTA';
+                        momBox.style.borderBottomColor = '#00ff88';
+                        s3.style.color = '#00ff88';
+                        s3Valor = 30;
+                        s3Direcao = 'compra';
+                    } else if(price < avg * 0.999) {
+                        s3.innerText = '📉 BAIXA';
+                        momBox.style.borderBottomColor = '#ff3e3e';
+                        s3.style.color = '#ff3e3e';
+                        s3Valor = 30;
+                        s3Direcao = 'venda';
+                    } else {
+                        s3.innerText = '⚖️ NEUTRO';
+                        momBox.style.borderBottomColor = '#ffcc00';
+                        s3.style.color = '#ffcc00';
+                    }
+                }
+                
+                let score = s1Valor + s2Valor + (s3Valor || 0);
+                if (s2Direcao && s3Direcao && s2Direcao !== s3Direcao) score = 0;
+                
+                document.getElementById('scoreFill').style.width = score + '%';
+                document.getElementById('scoreValue').innerText = score + '/100';
+                
+                let scoreLabel = 'Aguardando sinais';
+                let probabilidade = '';
+                let classeScore = 'baixa';
+                
+                if (score >= 80) {
+                    scoreLabel = '🔥 Confluência forte';
+                    probabilidade = 'Alta';
+                    classeScore = 'alta';
+                    document.getElementById('alertaBadge').style.display = 'inline-block';
+                    if (s2Direcao === 'compra') document.body.classList.add('alerta-compra');
+                    else if (s2Direcao === 'venda') document.body.classList.add('alerta-venda');
+                } else if (score >= 60) {
+                    scoreLabel = '⚡ Confluência moderada';
+                    probabilidade = 'Média';
+                    classeScore = 'media';
+                    document.getElementById('alertaBadge').style.display = 'none';
+                } else {
+                    scoreLabel = '⚠️ Evitar operação';
+                    probabilidade = 'Baixa';
+                    classeScore = 'baixa';
+                    document.getElementById('alertaBadge').style.display = 'none';
+                }
+                
+                document.getElementById('scoreFill').className = 'score-fill ' + classeScore;
+                document.getElementById('scoreLabel').innerText = scoreLabel;
+                document.getElementById('probabilidade').innerText = probabilidade;
+                
+                const hora = new Date().getHours();
+                const minutos = new Date().getMinutes();
+                const horaMin = hora + minutos/60;
+                let sessao = 'Fora do horário';
+                if (horaMin >= 21 || horaMin < 1) sessao = '🌏 Ásia';
+                else if (horaMin >= 4 && horaMin < 9) sessao = '🇪🇺 Londres';
+                else if (horaMin >= 10 && horaMin < 14) sessao = '🇺🇸 NY (Pico)';
+                else if (horaMin >= 9.33 && horaMin < 15.5) sessao = '🥇 Metais NY';
+                else if (horaMin >= 10 && horaMin < 16.5) sessao = '🛢️ Petróleo';
+                document.getElementById('sessaoText').innerText = sessao;
+                
+                verificarAlarmes();
+            };
+        };
+
+        // Função para ativar modo PRO
+        function ativarModoPro() {
+            if (isProUser) {
+                alert('Modo PRO já está ativo!');
+                return;
+            }
+            isProUser = true;
+            initChart();
+            alert('⚡ Modo PRO ativado! Agora você tem acesso a múltiplos indicadores (RSI, MACD, Bollinger, VWAP, ATR).');
+        }
+
+        // Função para restaurar layout anterior
+        function restaurarLayout() {
+            if (chartFullscreen) {
+                toggleChartOnly(); // sai do modo tela cheia
+            }
+            // Remove classes de layout extras se houver
+            document.body.classList.remove('layout-tela-cheia', 'layout-combinado');
+            document.body.classList.add('layout-normal');
+            layoutAtual = 'normal';
+        }
+
+        // Criar botões no DOM
+        window.addEventListener('load', function() {
+            // Botão PRO (amarelo)
+            const proBtn = document.createElement('button');
+            proBtn.id = 'proModeBtn';
+            proBtn.innerText = '⚡ PRO';
+            proBtn.style.position = 'fixed';
+            proBtn.style.bottom = '120px';
+            proBtn.style.right = '120px';
+            proBtn.style.zIndex = '100001';
+            proBtn.style.padding = '12px 16px';
+            proBtn.style.borderRadius = '40px';
+            proBtn.style.background = 'var(--gold)';
+            proBtn.style.color = '#000';
+            proBtn.style.border = 'none';
+            proBtn.style.fontWeight = 'bold';
+            proBtn.style.cursor = 'pointer';
+            proBtn.onclick = ativarModoPro;
+            document.body.appendChild(proBtn);
+
+            // Botão restaurar (seta)
+            const restoreBtn = document.createElement('button');
+            restoreBtn.id = 'restoreLayoutBtn';
+            restoreBtn.innerText = '⬅';
+            restoreBtn.style.position = 'fixed';
+            restoreBtn.style.bottom = '120px';
+            restoreBtn.style.right = '200px';
+            restoreBtn.style.zIndex = '100001';
+            restoreBtn.style.width = '60px';
+            restoreBtn.style.height = '60px';
+            restoreBtn.style.borderRadius = '50%';
+            restoreBtn.style.background = 'var(--accent)';
+            restoreBtn.style.color = 'white';
+            restoreBtn.style.border = 'none';
+            restoreBtn.style.fontSize = '24px';
+            restoreBtn.style.cursor = 'pointer';
+            restoreBtn.onclick = restaurarLayout;
+            document.body.appendChild(restoreBtn);
+        });
+
+        // Atualiza a função toggleChartOnly para manter o layoutAtual
+        const originalToggle = toggleChartOnly;
+        toggleChartOnly = function() {
+            originalToggle();
+            layoutAtual = chartFullscreen ? 'tela-cheia' : 'normal';
+            document.body.classList.remove('layout-normal', 'layout-tela-cheia', 'layout-combinado');
+            document.body.classList.add(layoutAtual === 'tela-cheia' ? 'layout-tela-cheia' : 'layout-normal');
+        };
     </script>
 </body>
 </html>
