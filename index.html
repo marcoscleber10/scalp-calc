@@ -1,13 +1,6 @@
 // =========================
-// 🔥 MOTOR PROFISSIONAL + AUTO TRADE
+// 🔥 MOTOR PROFISSIONAL
 // =========================
-
-// ---------- HISTÓRICO ----------
-pricesHistory.push(price);
-
-if (pricesHistory.length > 100) {
-    pricesHistory.shift();
-}
 
 // ---------- EMA ----------
 function calcularEMA(periodo, dados) {
@@ -45,6 +38,7 @@ if (ema9 && ema21) {
 // ---------- MOMENTUM ----------
 let momentum = null;
 let scoreMomentum = 0;
+
 let variacao = 0;
 
 if (pricesHistory.length >= 5) {
@@ -109,7 +103,7 @@ if (variacao < 0.001) {
 // ---------- FILTRO DE SESSÃO ----------
 const hora = new Date().getHours();
 const minutos = new Date().getMinutes();
-const horaMin = hora + minutos / 60;
+const horaMin = hora + minutos/60;
 
 let sessao = 'Fora';
 
@@ -120,7 +114,7 @@ if (sessao !== 'Londres' && sessao !== 'NY') {
     score = 0;
 }
 
-// ---------- UI ----------
+// ---------- UI SCORE ----------
 document.getElementById('scoreFill').style.width = score + '%';
 document.getElementById('scoreValue').innerText = score + '/100';
 
@@ -132,6 +126,7 @@ if (score >= 80) {
     label = '🔥 ENTRADA FORTE';
     document.getElementById('alertaBadge').style.display = 'inline-block';
 
+    // 🔊 alerta
     if (!alertaJaTocado) {
         tocarAlarme();
         alertaJaTocado = true;
@@ -150,22 +145,3 @@ if (score >= 80) {
 
 document.getElementById('scoreFill').className = 'score-fill ' + classe;
 document.getElementById('scoreLabel').innerText = label;
-
-// =========================
-// 🤖 AUTO TRADE (JÁ INTEGRADO)
-// =========================
-if (score >= 80 && modoOperacaoAtivo) {
-    console.log("🚀 EXECUTANDO ORDEM AUTOMÁTICA");
-
-    // evita spam de ordem
-    if (!window.ordemExecutada) {
-        window.ordemExecutada = true;
-
-        placeRealOrder(tendencia);
-
-        // reset após 10s
-        setTimeout(() => {
-            window.ordemExecutada = false;
-        }, 10000);
-    }
-}
