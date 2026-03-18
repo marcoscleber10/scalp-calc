@@ -232,7 +232,35 @@
         .vol-media { background: #ffcc0020; color: #ffcc00; border: 1px solid #ffcc00; }
         .vol-baixa { background: #ff3e3e20; color: #ff3e3e; border: 1px solid #ff3e3e; }
 
-        /* ===== NOVOS ESTILOS PARA O MODAL DE POOLS ===== */
+        /* ===== NOVOS ESTILOS PARA AS ABAS E MODAL ===== */
+        .tabs-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--accent);
+            padding-bottom: 10px;
+        }
+        .tab-btn {
+            background: #1e2a38;
+            border: 1px solid #3d4d62;
+            color: var(--text);
+            padding: 8px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .tab-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
         .pools-table {
             width: 100%;
             border-collapse: collapse;
@@ -252,13 +280,6 @@
         }
         .pools-table tr:hover {
             background: #1e2a38;
-        }
-        .pool-badge {
-            background: var(--accent);
-            color: white;
-            padding: 2px 6px;
-            border-radius: 12px;
-            font-size: 10px;
         }
         .ratio-bar {
             background: #0d151f;
@@ -281,6 +302,73 @@
         .pool-modal-content {
             max-width: 1200px !important;
             width: 95% !important;
+        }
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .news-card {
+            background: #1e2a38;
+            border-radius: 16px;
+            padding: 15px;
+            border-left: 4px solid var(--accent);
+            transition: 0.2s;
+        }
+        .news-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--green);
+        }
+        .news-card h4 {
+            color: white;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .news-card a {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 12px;
+            word-break: break-all;
+        }
+        .news-card a:hover {
+            text-decoration: underline;
+        }
+        .news-card p {
+            color: var(--text);
+            font-size: 11px;
+            margin-top: 8px;
+        }
+        .calendar-link {
+            background: #1e2a38;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid var(--gold);
+        }
+        .calendar-link a {
+            color: var(--gold);
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .calendar-link a:hover {
+            text-decoration: underline;
+        }
+        .btn-atualizar {
+            background: var(--accent);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 15px;
+            float: right;
+        }
+        .btn-atualizar:hover {
+            background: var(--green);
+            color: #000;
         }
     </style>
 </head>
@@ -400,7 +488,7 @@
             <div style="display:flex; justify-content:space-between; margin-top:10px;"><span>🔴 SL:</span> <span id="resSL" style="color:var(--red);"></span></div>
         </div>
 
-        <!-- GRADE DE PROJETOS (com novo botão para pools) -->
+        <!-- GRADE DE PROJETOS (com novo botão para o modal) -->
         <div class="projects-section">
             <div class="projects-grid">
                 <a href="https://site-557591544835-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Sinais Invest</a>
@@ -409,8 +497,8 @@
                 <a href="https://pepinometro-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Pepinômetro</a>
                 <a href="https://historia-copas-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">História Copas</a>
                 <a href="https://investopcao.culturabuilder.com" class="project-btn" target="_blank">InvestOpção</a>
-                <!-- NOVO BOTÃO PARA POOLS DE LIQUIDEZ -->
-                <button class="project-btn" onclick="openPoolsModal()" style="background: var(--purple); color: white;">🌊 Pools de Liquidez</button>
+                <!-- NOVO BOTÃO PARA POOLS E NOTÍCIAS -->
+                <button class="project-btn" onclick="openPoolsModal()" style="background: var(--purple); color: white;">🌊 Dados de Mercado</button>
             </div>
         </div>
 
@@ -534,37 +622,88 @@
         </div>
     </div>
 
-    <!-- NOVO MODAL: POOLS DE LIQUIDEZ -->
+    <!-- NOVO MODAL COM ABAS (POOLS + NOTÍCIAS) -->
     <div id="poolsModal" class="modal">
         <div class="modal-content pool-modal-content">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2 style="color: var(--gold); margin: 0;">🌊 Pools de Liquidez</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h2 style="color: var(--gold); margin: 0;">📊 Dados de Mercado</h2>
                 <button onclick="closePoolsModal()" style="background: none; border: none; color: var(--text); font-size: 24px; cursor: pointer;">✕</button>
             </div>
-            <p style="color: var(--text); margin-bottom: 20px;">Track DeFi pools across Ethereum, Arbitrum, Base, and Solana.</p>
             
-            <div style="overflow-x: auto;">
-                <table class="pools-table" id="poolsTable">
-                    <thead>
-                        <tr>
-                            <th>Pool</th>
-                            <th>Network</th>
-                            <th>DEX</th>
-                            <th>TVL</th>
-                            <th>Ratio</th>
-                            <th>Volume 24h</th>
-                            <th>APR</th>
-                            <th>Fee</th>
-                            <th>Age</th>
-                        </tr>
-                    </thead>
-                    <tbody id="poolsTableBody">
-                        <!-- Preenchido via JavaScript -->
-                    </tbody>
-                </table>
+            <!-- Abas -->
+            <div class="tabs-container">
+                <button class="tab-btn active" onclick="switchTab('pools')">🌊 Top Pools</button>
+                <button class="tab-btn" onclick="switchTab('news')">📰 Notícias e Calendário</button>
             </div>
-            <p style="color: var(--text); margin-top: 15px;">Mostrando 1–20 de 575 pools</p>
-            <button class="close-btn" onclick="closePoolsModal()" style="margin-top: 20px;">Fechar</button>
+
+            <!-- Conteúdo da aba Top Pools -->
+            <div id="poolsTab" class="tab-content active">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <p style="color: var(--text);">Track DeFi pools across Ethereum, Arbitrum, Base, and Solana.</p>
+                    <button class="btn-atualizar" onclick="atualizarPools()">🔄 Atualizar</button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="pools-table" id="poolsTable">
+                        <thead>
+                            <tr>
+                                <th>Pool</th>
+                                <th>Network</th>
+                                <th>DEX</th>
+                                <th>TVL</th>
+                                <th>Ratio</th>
+                                <th>Volume 24h</th>
+                                <th>APR</th>
+                                <th>Fee</th>
+                                <th>Age</th>
+                            </tr>
+                        </thead>
+                        <tbody id="poolsTableBody">
+                            <!-- Preenchido via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                <p style="color: var(--text); margin-top: 15px;">Mostrando 1–20 de 580 pools</p>
+                <div style="margin-top: 15px; text-align: center;">
+                    <a href="https://www.yldlab.xyz/" target="_blank" style="color: var(--green); font-weight: bold;">🔗 Ver mais em yldlab.xyz</a>
+                </div>
+            </div>
+
+            <!-- Conteúdo da aba Notícias e Calendário -->
+            <div id="newsTab" class="tab-content">
+                <h3 style="color: var(--gold); margin-bottom: 15px;">📅 Calendário Econômico</h3>
+                <div class="calendar-link">
+                    <a href="https://www.tradingview.com/economic-calendar/" target="_blank">📈 TradingView Economic Calendar</a>
+                </div>
+                
+                <h3 style="color: var(--gold); margin: 20px 0 15px;">📰 Principais Notícias Cripto</h3>
+                <div class="news-grid">
+                    <div class="news-card">
+                        <h4>🇧🇷 Livecoins</h4>
+                        <a href="https://livecoins.com.br/" target="_blank">livecoins.com.br</a>
+                        <p>Maior portal brasileiro de notícias sobre Bitcoin e criptomoedas.</p>
+                    </div>
+                    <div class="news-card">
+                        <h4>📡 Cointelegraph Brasil</h4>
+                        <a href="https://cointelegraph.com.br/" target="_blank">cointelegraph.com.br</a>
+                        <p>Notícias atualizadas sobre o mercado cripto em português.</p>
+                    </div>
+                    <div class="news-card">
+                        <h4>🌎 CoinDesk</h4>
+                        <a href="https://www.coindesk.com/" target="_blank">coindesk.com</a>
+                        <p>Principal fonte internacional de notícias sobre criptomoedas.</p>
+                    </div>
+                    <div class="news-card">
+                        <h4>⚡ Cointelegraph</h4>
+                        <a href="https://cointelegraph.com/" target="_blank">cointelegraph.com</a>
+                        <p>Notícias globais sobre Bitcoin, Ethereum e blockchain.</p>
+                    </div>
+                    <div class="news-card">
+                        <h4>📊 Crypto Breaking</h4>
+                        <a href="https://www.cryptobreaking.com/" target="_blank">cryptobreaking.com</a>
+                        <p>Últimas notícias e análises do mercado cripto.</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1001,7 +1140,7 @@
             }
         }
 
-        // ---------- NOVAS FUNÇÕES PARA O MODAL DE POOLS ----------
+        // ---------- NOVAS FUNÇÕES PARA O MODAL ----------
         function openPoolsModal() {
             document.getElementById('poolsModal').style.display = 'flex';
         }
@@ -1010,28 +1149,41 @@
             document.getElementById('poolsModal').style.display = 'none';
         }
 
-        // Dados das pools (baseados na imagem fornecida)
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            if (tab === 'pools') {
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+                document.getElementById('poolsTab').classList.add('active');
+            } else {
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                document.getElementById('newsTab').classList.add('active');
+            }
+        }
+
+        // Dados das pools (atualizados com os valores mais recentes do site)
         const poolsData = [
-            { pool: "AMZNx / SOL", network: "Solana", dex: "Raydium Concentrated", tvl: "24.8K", ratio: "56/44", volume: "214.0K", apr: "900.5%", fee: "0.25%", age: "8mo" },
-            { pool: "COINx / SOL", network: "Solana", dex: "Raydium Concentrated", tvl: "135.9K", ratio: "83/17", volume: "260.7K", apr: "574.7%", fee: "0.80%", age: "2mo" },
-            { pool: "PAXG / EURC", network: "Solana", dex: "Raydium Concentrated", tvl: "7.0K", ratio: "83/17", volume: "20.2K", apr: "420.2%", fee: "0.40%", age: "11mo" },
-            { pool: "USD1 / WBNB", network: "Bsc", dex: "PancakeSwap V3", tvl: "20.9K", ratio: "18/82", volume: "1.95M", apr: "338.0%", fee: "0.01%", age: "11mo" },
-            { pool: "USDC / WHYPE", network: "Hyperliquid", dex: "Project X", tvl: "473.0K", ratio: "63/37", volume: "1.32M", apr: "296.0%", fee: "0.30%", age: "6mo" },
-            { pool: "WETH / USDC", network: "Solana", dex: "Orca Whirlpool", tvl: "31.7K", ratio: "86/14", volume: "82.8K", apr: "293.5%", fee: "0.30%", age: "2y 2mo" },
+            { pool: "AMZNx / SOL", network: "Solana", dex: "Raydium Concentrated", tvl: "27.7K", ratio: "60/40", volume: "196.0K", apr: "682.6%", fee: "0.25%", age: "8mo" },
+            { pool: "COINx / SOL", network: "Solana", dex: "Raydium Concentrated", tvl: "134.7K", ratio: "83/17", volume: "259.6K", apr: "563.4%", fee: "0.80%", age: "2mo" },
+            { pool: "PAXG / EURC", network: "Solana", dex: "Raydium Concentrated", tvl: "7.0K", ratio: "83/17", volume: "19.9K", apr: "418.4%", fee: "0.40%", age: "11mo" },
+            { pool: "USD1 / WBNB", network: "Bsc", dex: "PancakeSwap V3", tvl: "21.0K", ratio: "28/72", volume: "2.01M", apr: "346.1%", fee: "0.01%", age: "11mo" },
+            { pool: "SLVon / WETH", network: "Ethereum", dex: "Uniswap V3", tvl: "1.4K", ratio: "87/13", volume: "3.9K", apr: "309.6%", fee: "0.30%", age: "1mo" },
+            { pool: "HYPE / USDC", network: "Solana", dex: "Orca Whirlpool", tvl: "82.2K", ratio: "21/79", volume: "108.4K", apr: "309.1%", fee: "0.65%", age: "3mo" },
+            { pool: "USDC / WHYPE", network: "Hyperliquid", dex: "Project X", tvl: "476.2K", ratio: "65/35", volume: "1.35M", apr: "308.1%", fee: "0.30%", age: "6mo" },
             { pool: "SOL / WBTC", network: "Arbitrum", dex: "Uniswap V3", tvl: "10.2K", ratio: "78/22", volume: "8.2K", apr: "292.6%", fee: "1.00%", age: "1y 4mo" },
-            { pool: "HYPE / USDC", network: "Solana", dex: "Orca Whirlpool", tvl: "81.3K", ratio: "28/72", volume: "105.2K", apr: "291.8%", fee: "0.65%", age: "3mo" },
-            { pool: "SLVon / WETH", network: "Ethereum", dex: "Uniswap V3", tvl: "1.4K", ratio: "85/15", volume: "4.0K", apr: "278.5%", fee: "0.30%", age: "1mo" },
-            { pool: "HYPE / SOL", network: "Solana", dex: "Meteora DLMM", tvl: "33.2K", ratio: "8/92", volume: "196.8K", apr: "239.0%", fee: "0.10%", age: "5mo" },
-            { pool: "SOL / WETH", network: "Arbitrum", dex: "Uniswap V3", tvl: "124.0K", ratio: "70/30", volume: "257.2K", apr: "227.3%", fee: "0.30%", age: "2y 6mo" },
-            { pool: "SOL / USDC", network: "Base", dex: "Aerodrome Slipstream", tvl: "252.4K", ratio: "64/36", volume: "4.16M", apr: "224.3%", fee: "0.03%", age: "2h" },
-            { pool: "HOODx / SOL", network: "Solana", dex: "Raydium Concentrated", tvl: "448.9K", ratio: "20/80", volume: "269.8K", apr: "214.1%", fee: "1.00%", age: "8mo" },
-            { pool: "USDC / WHYPE", network: "Hyperliquid", dex: "Project X", tvl: "11.44M", ratio: "71/29", volume: "119.03M", apr: "187.4%", fee: "0.05%", age: "6mo" },
-            { pool: "GOOGLx / SOL", network: "Solana", dex: "Raydium Concentrated", tvl: "44.6K", ratio: "53/47", volume: "21.2K", apr: "173.1%", fee: "1.00%", age: "19d" },
-            { pool: "SOL / USDC", network: "Arbitrum", dex: "Uniswap V3", tvl: "135.5K", ratio: "72/28", volume: "62.7K", apr: "169.0%", fee: "1.00%", age: "2y 3mo" },
-            { pool: "HYPE / USDC", network: "Solana", dex: "Meteora DLMM", tvl: "1.27M", ratio: "20/80", volume: "2.75M", apr: "154.5%", fee: "0.20%", age: "4mo" },
-            { pool: "AAPLx / SOL", network: "Solana", dex: "Raydium Concentrated", tvl: "7.9K", ratio: "41/59", volume: "3.8K", apr: "149.0%", fee: "0.80%", age: "17d" },
-            { pool: "cbBTC / SOL", network: "Solana", dex: "Meteora DLMM", tvl: "43.9K", ratio: "83/17", volume: "570.1K", apr: "142.9%", fee: "0.03%", age: "1mo" },
-            { pool: "XAUt / USDT", network: "Ethereum", dex: "Uniswap V4", tvl: "7.6K", ratio: "32/68", volume: "57.8K", apr: "137.2%", fee: "0.05%", age: "5mo" }
+            { pool: "WETH / USDC", network: "Solana", dex: "Orca Whirlpool", tvl: "31.8K", ratio: "85/15", volume: "80.3K", apr: "279.8%", fee: "0.30%", age: "2y 2mo" },
+            { pool: "HOODx / SOL", network: "Solana", dex: "Raydium Concentrated", tvl: "451.4K", ratio: "31/69", volume: "321.1K", apr: "252.4%", fee: "1.00%", age: "8mo" },
+            { pool: "SOL / WETH", network: "Arbitrum", dex: "Uniswap V3", tvl: "123.0K", ratio: "66/34", volume: "261.7K", apr: "233.2%", fee: "0.30%", age: "2y 6mo" },
+            { pool: "SOL / USDC", network: "Base", dex: "Aerodrome Slipstream", tvl: "248.0K", ratio: "54/46", volume: "4.26M", apr: "222.1%", fee: "0.03%", age: "40m" },
+            { pool: "USDC / WHYPE", network: "Hyperliquid", dex: "Project X", tvl: "11.76M", ratio: "70/30", volume: "121.48M", apr: "190.3%", fee: "0.05%", age: "6mo" },
+            { pool: "HYPE / SOL", network: "Solana", dex: "Meteora DLMM", tvl: "37.1K", ratio: "23/77", volume: "192.8K", apr: "190.0%", fee: "0.10%", age: "5mo" },
+            { pool: "GOOGLx / SOL", network: "Solana", dex: "Raydium Concentrated", tvl: "44.7K", ratio: "56/44", volume: "22.2K", apr: "176.7%", fee: "1.00%", age: "19d" },
+            { pool: "USDY / USDC", network: "Solana", dex: "Raydium Concentrated", tvl: "1.3K", ratio: "59/41", volume: "2.4K", apr: "174.0%", fee: "0.25%", age: "6mo" },
+            { pool: "SOL / USDC", network: "Arbitrum", dex: "Uniswap V3", tvl: "135.3K", ratio: "72/28", volume: "63.0K", apr: "170.0%", fee: "1.00%", age: "2y 3mo" },
+            { pool: "HYPE / USDC", network: "Solana", dex: "Meteora DLMM", tvl: "1.26M", ratio: "20/80", volume: "2.74M", apr: "159.0%", fee: "0.20%", age: "4mo" },
+            { pool: "XAUt / USDT", network: "Ethereum", dex: "Uniswap V4", tvl: "7.6K", ratio: "32/68", volume: "60.9K", apr: "146.4%", fee: "0.05%", age: "5mo" },
+            { pool: "AAPLx / SOL", network: "Solana", dex: "Raydium Concentrated", tvl: "7.9K", ratio: "43/57", volume: "3.8K", apr: "138.4%", fee: "0.80%", age: "17d" }
         ];
 
         function renderPoolsTable() {
@@ -1055,6 +1207,11 @@
                 `;
                 tbody.appendChild(tr);
             });
+        }
+
+        function atualizarPools() {
+            alert('🔄 Dados atualizados com sucesso! (simulação)');
+            renderPoolsTable();
         }
 
         renderPoolsTable();
