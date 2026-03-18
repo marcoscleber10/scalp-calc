@@ -232,10 +232,10 @@
         .vol-media { background: #ffcc0020; color: #ffcc00; border: 1px solid #ffcc00; }
         .vol-baixa { background: #ff3e3e20; color: #ff3e3e; border: 1px solid #ff3e3e; }
 
-        /* ===== NOVO BOTÃO DE EXPANDIR GRÁFICO (apenas adicionado) ===== */
+        /* ===== BOTÃO DE EXPANDIR GRÁFICO (FUNCIONAL) ===== */
         #expandChartBtn {
             position: fixed;
-            bottom: 120px; /* acima da bolinha */
+            bottom: 120px;
             right: 30px;
             width: 70px;
             height: 70px;
@@ -255,32 +255,41 @@
         #expandChartBtn:hover {
             transform: scale(1.1);
         }
+        .fullscreen-mode .card,
+        .fullscreen-mode .floating-ball,
+        .fullscreen-mode .projects-section,
+        .fullscreen-mode .ad-container,
+        .fullscreen-mode .market-table,
+        .fullscreen-mode .btn-mode,
+        .fullscreen-mode .time-selector,
+        .fullscreen-mode select,
+        .fullscreen-mode .score-container,
+        .fullscreen-mode .status-grid,
+        .fullscreen-mode .modo-operacao,
+        .fullscreen-mode .alarme-section,
+        .fullscreen-mode .inputs-grid,
+        .fullscreen-mode .btn-calc,
+        .fullscreen-mode .res,
+        .fullscreen-mode .project-btn:not(#expandChartBtn) {
+            display: none !important;
+        }
         .fullscreen-mode #chart_container {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
+            width: 100vw !important;
             height: 100vh !important;
             z-index: 9999;
             border-radius: 0;
-        }
-        .fullscreen-mode .card,
-        .fullscreen-mode .floating-ball,
-        .fullscreen-mode #expandChartBtn {
-            display: none;
+            margin: 0;
         }
         .fullscreen-mode #expandChartBtn {
-            display: flex;
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 10001;
-            background: var(--red);
+            background: var(--red) !important;
         }
     </style>
 </head>
 <body>
-    <!-- CARD PRINCIPAL - 100% INTACTO -->
+    <!-- CARD PRINCIPAL - INTACTO -->
     <div class="card" id="mainCard">
         <h4>⚡ MESTRE DO SCALPING PRO ⚡</h4>
         <button class="btn-mode" onclick="toggleMode()">🖥️ ALTERNAR MODO COMPUTADOR</button>
@@ -308,16 +317,16 @@
             </optgroup>
         </select>
 
-        <div class="price" id="priceText">$ 74,069.05</div>
+        <div class="price" id="priceText">$ 72,227.81</div>
 
         <!-- SCORE DE CONFLUÊNCIA -->
         <div class="score-container">
             <div class="score-text">
                 <span>🔥 Confluência</span>
-                <span id="scoreValue">40/100</span>
+                <span id="scoreValue">0/100</span>
             </div>
             <div class="score-bar">
-                <div class="score-fill" id="scoreFill" style="width:40%"></div>
+                <div class="score-fill" id="scoreFill" style="width:0%"></div>
             </div>
             <div class="score-text">
                 <span id="scoreLabel">Evitar operação</span>
@@ -338,7 +347,7 @@
             <div id="rsiBox" class="status-bar">
                 <div class="light-glow"></div>
                 <span class="status-label">FILTRO TÉCNICO</span>
-                <span class="status-value" id="rsiText">📉 VENDA</span>
+                <span class="status-value" id="rsiText">COLETANDO 12/21</span>
             </div>
             <div id="momBox" class="status-bar">
                 <div class="light-glow"></div>
@@ -350,7 +359,7 @@
         <!-- INDICADOR DE VOLATILIDADE -->
         <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 11px;">
             <span>📊 Volatilidade: <span id="volText">MÉDIA</span></span>
-            <span>⏰ Sessão: <span id="sessaoText">Londres</span></span>
+            <span>⏰ Sessão: <span id="sessaoText">NY (Pico)</span></span>
         </div>
 
         <!-- MODO OPERAÇÃO - CHAVE ON/OFF -->
@@ -429,10 +438,10 @@
         <button class="project-btn" onclick="openDonationModal()" style="background:var(--gold); color:#000; width:100%; margin-top:15px;">💰 Donativos</button>
     </div>
 
-    <!-- BOLINHA FLUTUANTE (existente) -->
+    <!-- BOLINHA FLUTUANTE -->
     <div class="floating-ball" onclick="openPasswordModal()">🔓</div>
 
-    <!-- NOVO BOTÃO DE EXPANDIR GRÁFICO -->
+    <!-- BOTÃO DE EXPANDIR GRÁFICO -->
     <button id="expandChartBtn" onclick="toggleFullscreen()">⛶</button>
 
     <!-- MODAL DE SENHA -->
@@ -534,7 +543,7 @@
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <script>
         // ---------- CÓDIGO ORIGINAL (MANTIDO INTACTO) ----------
-        let price = 74069.05;
+        let price = 72227.81;
         let pricesHistory = [];
         let isDesktop = false;
         let currentTF = "1";
@@ -963,10 +972,7 @@
             }
         }
 
-        iniciarTimerDescanso();
-        initChart();
-
-        // ===== NOVA FUNÇÃO PARA TELA CHEIA (APENAS ADICIONADA) =====
+        // ===== FUNÇÃO PARA TELA CHEIA (CORRIGIDA) =====
         function toggleFullscreen() {
             const body = document.body;
             const btn = document.getElementById('expandChartBtn');
@@ -974,16 +980,23 @@
             if (body.classList.contains('fullscreen-mode')) {
                 body.classList.remove('fullscreen-mode');
                 btn.innerText = '⛶';
-                btn.style.background = 'var(--accent)';
+                btn.style.background = '';
             } else {
                 body.classList.add('fullscreen-mode');
                 btn.innerText = '✕';
                 btn.style.background = 'var(--red)';
             }
             
-            // Re-renderiza o gráfico para ajustar ao novo tamanho
-            setTimeout(initChart, 300);
+            // Força o redimensionamento do gráfico
+            setTimeout(() => {
+                window.dispatchEvent(new Event('resize'));
+                // Recria o gráfico para garantir que se ajuste
+                initChart();
+            }, 100);
         }
+
+        iniciarTimerDescanso();
+        initChart();
     </script>
 </body>
 </html>
