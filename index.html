@@ -3,127 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mestre do Scalping Pro - Final</title>
+    <title>Mestre do Scalping Pro - Hyperliquid v1</title>
     <style>
         :root {
             --bg: #0d1117; --card: #161b22; --green: #00ff88; --red: #ff3e3e;
             --text: #8b949e; --accent: #2f81f7; --gold: #ffcc00;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
         body { background-color: var(--bg); color: white; display: flex; justify-content: center; padding: 20px; }
-        .card { background: var(--card); padding: 24px; border-radius: 24px; width: 100%; max-width: 420px; border: 1px solid #30363d; position: relative; }
         
-        /* STATUS DO ROBÔ (A BOLINHA) */
-        .robot-status { position: absolute; top: 20px; right: 20px; display: flex; align-items: center; font-size: 10px; color: var(--text); }
-        .led { width: 8px; height: 8px; background: var(--red); border-radius: 50%; margin-right: 5px; box-shadow: 0 0 5px var(--red); animation: blink 2s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        /* CARD PRINCIPAL */
+        .card { 
+            background: var(--card); padding: 24px; border-radius: 24px; 
+            width: 100%; max-width: 420px; border: 1px solid #30363d; 
+            position: relative; box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        }
 
-        h4 { color: var(--text); font-size: 11px; text-align: center; letter-spacing: 2px; margin-bottom: 20px; }
-        .btn-mode { width: 100%; background: var(--accent); color: white; border: none; padding: 12px; border-radius: 40px; font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 11px; }
+        /* 1. STATUS DO ROBÔ (A BOLINHA) */
+        .robot-status { 
+            position: absolute; top: 18px; right: 20px; 
+            display: flex; align-items: center; font-size: 10px; 
+            font-weight: bold; color: var(--text); 
+        }
+        .led { 
+            width: 10px; height: 10px; background: var(--green); 
+            border-radius: 50%; margin-right: 6px; 
+            box-shadow: 0 0 8px var(--green); animation: pulse 2s infinite; 
+        }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+
+        h4 { color: var(--text); font-size: 11px; text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; }
         
-        .price { font-size: 38px; font-weight: 800; color: var(--green); text-align: center; margin-bottom: 15px; }
-        
-        .status-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px; }
-        .status-bar { background: #0f141c; padding: 10px 5px; border-radius: 12px; border: 1px solid #2a3340; text-align: center; }
-        .status-label { font-size: 8px; color: var(--text); display: block; }
+        /* 2. SELETOR DE 9 PARES (HYPERLIQUID + METAIS) */
+        select { 
+            width: 100%; background: #21262d; color: white; border: 1px solid #30363d; 
+            padding: 14px; border-radius: 40px; margin-bottom: 15px; cursor: pointer;
+        }
+
+        .price { font-size: 36px; font-weight: 800; color: var(--green); text-align: center; margin-bottom: 15px; }
+
+        /* SINAIS */
+        .status-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+        .status-bar { background: #0f141c; padding: 10px; border-radius: 12px; border: 1px solid #2a3340; text-align: center; }
+        .status-label { font-size: 8px; color: var(--text); display: block; margin-bottom: 4px; }
         .status-value { font-size: 10px; font-weight: bold; }
 
-        #chart_container { width: 100%; height: 250px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #30363d; }
-        
-        select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 12px; border-radius: 40px; margin-bottom: 20px; }
+        /* 3. TABELA DE HORÁRIOS EXPANDIDA */
+        .schedule { 
+            width: 100%; font-size: 11px; margin-bottom: 20px; 
+            background: #0d1117; border-radius: 15px; padding: 10px; border: 1px solid #222;
+        }
+        .schedule-title { color: var(--accent); font-weight: bold; text-align: center; margin-bottom: 8px; font-size: 10px; }
+        .row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #1c2128; }
+        .row:last-child { border: none; }
+        .active-time { color: var(--green); font-weight: bold; }
 
-        /* TABELA DE HORÁRIOS */
-        .market-table { width: 100%; font-size: 10px; margin: 15px 0; border-collapse: collapse; background: #0d1117; border-radius: 10px; overflow: hidden; }
-        .market-table td { padding: 8px; border-bottom: 1px solid #222; }
-        .market-header { background: #1c2128; color: var(--accent); font-weight: bold; text-align: center; }
+        /* GRUPO DE BOTÕES (PROJETOS) */
+        .btn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .btn-link { 
+            background: #1c2128; color: #8b949e; border: 1px solid #30363d; 
+            padding: 10px 2px; border-radius: 15px; font-size: 9px; 
+            text-decoration: none; text-align: center; transition: 0.3s;
+        }
+        .btn-link:hover { border-color: var(--accent); color: white; }
 
-        .projects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-        .project-btn { background: #1a222c; color: #c9d1d9; border: 1px solid #30363d; padding: 10px; border-radius: 15px; font-size: 9px; text-decoration: none; text-align: center; }
-        
-        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); display:none; align-items:center; justify-content:center; padding: 20px; }
-        .modal-content { background:#161b22; padding:20px; border-radius:20px; border: 1px solid var(--gold); width: 100%; }
+        /* 4. ABA DONATIVOS */
+        .btn-donations { 
+            width: 100%; background: var(--gold); color: #000; border: none; 
+            padding: 14px; border-radius: 40px; font-weight: 800; 
+            margin-top: 15px; cursor: pointer; text-transform: uppercase;
+        }
+
+        #chart_container { width: 100%; height: 230px; border-radius: 20px; margin-bottom: 15px; border: 1px solid #30363d; }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <div class="robot-status"><div class="led"></div> ROBÔ OFF</div>
-        <h4>⚡ MESTRE DO SCALPING PRO ⚡</h4>
-        
-        <button class="btn-mode">🖥️ ALTERNAR MODO COMPUTADOR</button>
+<div class="card">
+    <div class="robot-status"><div class="led"></div> ROBÔ ON</div>
+    
+    <h4>⚡ MESTRE DO SCALPING PRO ⚡</h4>
 
-        <select id="pairSelector" onchange="updateChart()">
-            <optgroup label="Cripto Principais">
-                <option value="BINANCE:BTCUSDT">₿ BTC/USDT</option>
-                <option value="BINANCE:SOLUSDT">◎ SOL/USDT</option>
-                <option value="BINANCE:ETHUSDT">Ξ ETH/USDT</option>
-            </optgroup>
-            <optgroup label="Altcoins">
-                <option value="BINANCE:BNBUSDT">🔶 BNB/USDT</option>
-                <option value="BINANCE:XRPUSDT">💧 XRP/USDT</option>
-                <option value="BINANCE:ADAUSDT">₳ ADA/USDT</option>
-            </optgroup>
-            <optgroup label="Metais & Energia">
-                <option value="TVC:GOLD">🥇 OURO (XAU)</option>
-                <option value="TVC:SILVER">🥈 PRATA (XAG)</option>
-                <option value="TVC:USOIL">🛢️ PETRÓLEO WTI</option>
-            </optgroup>
-        </select>
+    <select id="pairSelector" onchange="changeSymbol()">
+        <optgroup label="Hyperliquid (Perp)">
+            <option value="HYPERLIQUID:BTC">₿ BTC-P (H.Liquid)</option>
+            <option value="HYPERLIQUID:SOL">◎ SOL-P (H.Liquid)</option>
+            <option value="HYPERLIQUID:HYPE">🚀 HYPE-P (H.Liquid)</option>
+        </optgroup>
+        <optgroup label="Cripto Spot">
+            <option value="BINANCE:ETHUSDT">Ξ ETH/USDT</option>
+            <option value="BINANCE:BNBUSDT">🔶 BNB/USDT</option>
+            <option value="BINANCE:XRPUSDT">💧 XRP/USDT</option>
+        </optgroup>
+        <optgroup label="Metais & Energia">
+            <option value="TVC:GOLD">🥇 OURO (XAU)</option>
+            <option value="TVC:SILVER">🥈 PRATA (XAG)</option>
+            <option value="TVC:USOIL">🛢️ PETRÓLEO WTI</option>
+        </optgroup>
+    </select>
 
-        <div class="price" id="priceText">$ 0.00</div>
+    <div class="price" id="priceDisplay">$ 0.00</div>
 
-        <div class="status-grid">
-            <div class="status-bar"><span class="status-label">SINAL GERAL</span><span class="status-value" style="color:var(--green)">OPORTUNIDADE</span></div>
-            <div class="status-bar"><span class="status-label">FILTRO</span><span class="status-value" style="color:var(--red)">VENDA</span></div>
-            <div class="status-bar"><span class="status-label">OPÇÃO 3</span><span class="status-value">NEUTRO</span></div>
-        </div>
-
-        <div id="chart_container"></div>
-
-        <table class="market-table">
-            <tr><td colspan="3" class="market-header">MELHORES HORÁRIOS OPERACIONAIS</td></tr>
-            <tr><td>Londres</td><td>04:00 - 13:00</td><td style="color:var(--green)">ATIVO</td></tr>
-            <tr><td>N. York</td><td>09:00 - 18:00</td><td style="color:var(--green)">PICO</td></tr>
-            <tr><td>Metais/WTI</td><td>10:00 - 14:00</td><td style="color:var(--gold)">VOLUME</td></tr>
-        </table>
-
-        <div class="projects-grid">
-            <a href="#" class="project-btn">Sinais</a>
-            <a href="#" class="project-btn">CombustAI</a>
-            <a href="#" class="project-btn">DCA</a>
-            <a href="#" class="project-btn">Pepinômetro</a>
-            <a href="#" class="project-btn">Copas</a>
-            <a href="#" class="project-btn">Opção</a>
-        </div>
-
-        <button onclick="document.getElementById('donModal').style.display='flex'" style="width:100%; background:var(--gold); border:none; padding:12px; border-radius:40px; font-weight:bold; margin-top:15px; cursor:pointer;">💰 DONATIVOS (NATIVOS)</button>
+    <div class="status-grid">
+        <div class="status-bar"><span class="status-label">SINAL GERAL</span><span class="status-value" style="color:var(--green)">COMPRA</span></div>
+        <div class="status-bar"><span class="status-label">FILTRO</span><span class="status-value" style="color:var(--red)">VENDA</span></div>
+        <div class="status-bar"><span class="status-label">OPÇÃO 3</span><span class="status-value">NEUTRO</span></div>
     </div>
 
-    <div id="donModal" class="modal">
-        <div class="modal-content">
-            <h3 style="color:var(--gold); text-align:center; margin-bottom:15px;">CARTEIRAS</h3>
-            <p style="font-size:10px; margin-bottom:10px;">PIX: 127d59fc-1f37-4e8e-9fd4-295e1883727b</p>
-            <p style="font-size:10px; margin-bottom:10px;">SOL: EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm</p>
-            <button onclick="this.parentElement.parentElement.style.display='none'" class="btn-mode" style="background:var(--red)">Fechar</button>
-        </div>
+    <div id="chart_container"></div>
+
+    <div class="schedule">
+        <div class="schedule-title">📍 SESSÕES E VOLATILIDADE (BRT)</div>
+        <div class="row"><span>Frankfurt + Londres</span><span class="active-time">04:00 - 09:00</span></div>
+        <div class="row"><span>NY + Ouro (Pico)</span><span class="active-time">10:00 - 14:00</span></div>
+        <div class="row"><span>Abertura Ásia</span><span>21:00 - 01:00</span></div>
     </div>
 
-    <script src="https://s3.tradingview.com/tv.js"></script>
-    <script>
-        function updateChart() {
-            new TradingView.widget({
-                "autosize": true,
-                "symbol": document.getElementById('pairSelector').value,
-                "interval": "5",
-                "timezone": "Etc/UTC",
-                "theme": "dark",
-                "style": "1",
-                "container_id": "chart_container",
-                "hide_side_toolbar": true,
-                "allow_symbol_change": false
-            });
-        }
-        updateChart();
-    </script>
+    <div class="btn-grid">
+        <a href="#" class="btn-link">Sinais</a>
+        <a href="#" class="btn-link">CombustAI</a>
+        <a href="#" class="btn-link">DCA</a>
+        <a href="#" class="btn-link">Pepinômetro</a>
+        <a href="#" class="btn-link">Copas</a>
+        <a href="#" class="btn-link">Opção</a>
+    </div>
+
+    <button class="btn-donations" onclick="alert('PIX: 127d59fc-1f37-4e8e-9fd4-295e1883727b\nSOL: EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm')">💰 ABA NATIVOS (DONATIVOS)</button>
+</div>
+
+<script src="https://s3.tradingview.com/tv.js"></script>
+<script>
+    function changeSymbol() {
+        const symbol = document.getElementById('pairSelector').value;
+        new TradingView.widget({
+            "autosize": true,
+            "symbol": symbol,
+            "interval": "5",
+            "timezone": "America/Sao_Paulo",
+            "theme": "dark",
+            "style": "1",
+            "container_id": "chart_container",
+            "hide_side_toolbar": true,
+            "enable_publishing": false,
+            "allow_symbol_change": false,
+            "save_image": false
+        });
+    }
+    changeSymbol();
+</script>
 </body>
 </html>
