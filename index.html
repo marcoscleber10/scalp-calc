@@ -221,8 +221,9 @@
         .campo { margin-bottom: 15px; }
         .campo label { color: var(--text); font-size: 11px; text-transform: uppercase; margin-bottom: 5px; display: block; }
         .donation-item { background: #1e2a36; padding: 15px; border-radius: 15px; margin: 10px 0; border-left: 5px solid; }
-        .donation-item p { word-break: break-all; background: #0d151f; padding: 10px; border-radius: 10px; margin-top: 8px; font-family: monospace; }
-        .copy-btn { background: var(--accent); border: none; color: white; padding: 5px 15px; border-radius: 20px; float: right; cursor: pointer; }
+        .donation-item p { word-break: break-all; background: #0d151f; padding: 10px; border-radius: 10px; margin-top: 8px; font-family: monospace; display: flex; justify-content: space-between; align-items: center; }
+        .copy-btn { background: var(--accent); border: none; color: white; padding: 5px 15px; border-radius: 20px; cursor: pointer; font-size: 11px; font-weight: bold; margin-left: 10px; }
+        .copy-btn:hover { background: var(--green); color: #000; }
         .close-btn { background: var(--accent); border: none; color: white; padding: 12px; border-radius: 30px; width: 100%; margin-top: 20px; cursor: pointer; font-weight: bold; }
         .console { background: #0d1117; padding: 10px; border-radius: 10px; margin: 10px 0; font-size: 12px; font-family: monospace; height: 50px; overflow-y: auto; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -300,7 +301,7 @@
             font-weight: bold;
         }
 
-        /* NOVO BLOCO DE TEXTO EXPLICATIVO */
+        /* BLOCO DE TEXTO EXPLICATIVO */
         .guide-box {
             background: #0d1a24;
             border-left: 4px solid var(--accent);
@@ -582,7 +583,7 @@
     </style>
 </head>
 <body>
-    <!-- CARD PRINCIPAL (100% intacto) -->
+    <!-- CARD PRINCIPAL -->
     <div class="card" id="mainCard">
         <h4>⚡ MESTRE DO SCALPING PRO ⚡</h4>
         <button class="btn-mode" onclick="toggleMode()">🖥️ ALTERNAR MODO COMPUTADOR</button>
@@ -754,7 +755,7 @@
             </div>
         </div>
 
-        <!-- BOTÃO DONATIVOS (com botões copiar) -->
+        <!-- BOTÃO DONATIVOS (abre a modal com os botões copiar) -->
         <button class="project-btn" onclick="openDonationModal()" style="background:var(--gold); color:#000; width:100%; margin-top:15px;">💰 Donativos</button>
     </div>
 
@@ -816,11 +817,12 @@
         </div>
     </div>
 
-    <!-- MODAL DE DONATIVOS (com botões copiar) -->
+    <!-- MODAL DE DONATIVOS (COM BOTÕES COPIAR FUNCIONANDO) -->
     <div id="donationModal" class="modal">
         <div class="modal-content">
             <h2>💰 Donativos</h2>
             <p style="background:#1e2a36; padding:15px; border-radius:15px; margin-bottom:20px;">Projeto independente, sem fins lucrativos. Contribuições ajudam a manter os custos. Obrigado!</p>
+            
             <div class="donation-item" style="border-left-color:#8a2be2;">
                 <strong>⚡ Lightning Network</strong>
                 <p>cloggedparrot01@walletofsatoshi.com <button class="copy-btn" onclick="copyText('cloggedparrot01@walletofsatoshi.com')">Copiar</button></p>
@@ -830,7 +832,7 @@
                 <p>bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5 <button class="copy-btn" onclick="copyText('bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5')">Copiar</button></p>
             </div>
             <div class="donation-item" style="border-left-color:#627eea;">
-                <strong>🔷 EVM</strong>
+                <strong>🔷 EVM (Ethereum, BSC, Arbitrum)</strong>
                 <p>0xAd944bA180610F1Fe43151eD81c0084C918c68e1 <button class="copy-btn" onclick="copyText('0xAd944bA180610F1Fe43151eD81c0084C918c68e1')">Copiar</button></p>
             </div>
             <div class="donation-item" style="border-left-color:#14f195;">
@@ -838,14 +840,15 @@
                 <p>EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm <button class="copy-btn" onclick="copyText('EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm')">Copiar</button></p>
             </div>
             <div class="donation-item" style="border-left-color:#32bcad;">
-                <strong>🇧🇷 Pix</strong>
+                <strong>🇧🇷 Pix (chave aleatória)</strong>
                 <p>127d59fc-1f37-4e8e-9fd4-295e1883727b <button class="copy-btn" onclick="copyText('127d59fc-1f37-4e8e-9fd4-295e1883727b')">Copiar</button></p>
             </div>
+            
             <button class="close-btn" onclick="closeDonationModal()">Fechar</button>
         </div>
     </div>
 
-    <!-- MODAL DE POOLS (com guia explicativo) -->
+    <!-- MODAL DE POOLS (com todas as melhorias) -->
     <div id="poolsModal" class="modal">
         <div class="modal-content pool-modal-content">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -866,9 +869,9 @@
                     <button class="btn-atualizar" onclick="atualizarPools()">🔄 Atualizar</button>
                 </div>
 
-                <!-- NOVO BLOCO EXPLICATIVO -->
-                <details class="guide-box">
-                    <summary>📘 Como usar os modos de seleção de pools (clique para abrir)</summary>
+                <!-- BLOCO EXPLICATIVO (agora visível) -->
+                <details class="guide-box" open>
+                    <summary>📘 Como usar os modos de seleção de pools (clique para abrir/fechar)</summary>
                     <p><strong>🤖 Modo Automático (Score):</strong> O sistema calcula um <strong>score composto</strong> para cada pool, baseado em:</p>
                     <ul>
                         <li><strong>APR (40%)</strong> – quanto maior, melhor.</li>
@@ -1282,9 +1285,13 @@
             }
         }
 
+        // FUNÇÃO COPIAR (agora presente)
         function copyText(text) {
-            navigator.clipboard.writeText(text);
-            alert('Copiado!');
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✅ Copiado para a área de transferência!');
+            }).catch(() => {
+                alert('❌ Erro ao copiar. Tente novamente.');
+            });
         }
 
         async function connectHyperliquid() {
