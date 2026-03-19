@@ -232,7 +232,7 @@
         .vol-media { background: #ffcc0020; color: #ffcc00; border: 1px solid #ffcc00; }
         .vol-baixa { background: #ff3e3e20; color: #ff3e3e; border: 1px solid #ff3e3e; }
 
-        /* ===== ESTILOS PARA O MODAL DE POOLS (já existente) ===== */
+        /* ===== ESTILOS PARA O MODAL DE POOLS ===== */
         .tabs-container {
             display: flex;
             gap: 10px;
@@ -261,6 +261,8 @@
         .tab-content.active {
             display: block;
         }
+
+        /* CARDS DE CATEGORIAS */
         .categories-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -297,6 +299,42 @@
             color: var(--green);
             font-weight: bold;
         }
+
+        /* NOVO BLOCO DE TEXTO EXPLICATIVO */
+        .guide-box {
+            background: #0d1a24;
+            border-left: 4px solid var(--accent);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            font-size: 12px;
+            color: #b0c4d9;
+            line-height: 1.5;
+        }
+        .guide-box summary {
+            cursor: pointer;
+            color: var(--accent);
+            font-weight: bold;
+            outline: none;
+        }
+        .guide-box p {
+            margin-top: 8px;
+        }
+        .guide-box ul {
+            margin-left: 20px;
+            list-style-type: disc;
+        }
+        .guide-box li {
+            margin: 4px 0;
+        }
+        .guide-box code {
+            background: #1e2a3a;
+            padding: 2px 6px;
+            border-radius: 6px;
+            color: var(--gold);
+        }
+
+        /* TABELA DE POOLS */
         .table-wrapper {
             overflow-x: auto;
             margin-top: 20px;
@@ -691,7 +729,7 @@
             <tr><td>🛢️ Petróleo (WTI)</td><td>10:00-16:30</td><td style="color:var(--accent); text-align:right;">● volatilidade</td></tr>
         </table>
 
-        <!-- NOVA SEÇÃO: NOTÍCIAS E CALENDÁRIO (conforme print) -->
+        <!-- NOVA SEÇÃO: NOTÍCIAS E CALENDÁRIO -->
         <div class="news-section">
             <h4>📰 Notícias e Calendário</h4>
             <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: space-between;">
@@ -716,7 +754,7 @@
             </div>
         </div>
 
-        <!-- BOTÃO DONATIVOS -->
+        <!-- BOTÃO DONATIVOS (com botões copiar) -->
         <button class="project-btn" onclick="openDonationModal()" style="background:var(--gold); color:#000; width:100%; margin-top:15px;">💰 Donativos</button>
     </div>
 
@@ -807,7 +845,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE POOLS (com todas as melhorias) -->
+    <!-- MODAL DE POOLS (com guia explicativo) -->
     <div id="poolsModal" class="modal">
         <div class="modal-content pool-modal-content">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -827,6 +865,35 @@
                     <p style="color: var(--text);">Track DeFi pools across Ethereum, Arbitrum, Base, and Solana.</p>
                     <button class="btn-atualizar" onclick="atualizarPools()">🔄 Atualizar</button>
                 </div>
+
+                <!-- NOVO BLOCO EXPLICATIVO -->
+                <details class="guide-box">
+                    <summary>📘 Como usar os modos de seleção de pools (clique para abrir)</summary>
+                    <p><strong>🤖 Modo Automático (Score):</strong> O sistema calcula um <strong>score composto</strong> para cada pool, baseado em:</p>
+                    <ul>
+                        <li><strong>APR (40%)</strong> – quanto maior, melhor.</li>
+                        <li><strong>Volume 24h (30%)</strong> – indica liquidez e atividade.</li>
+                        <li><strong>TVL (20%)</strong> – pools com mais liquidez são mais seguras.</li>
+                        <li><strong>Idade (10%)</strong> – bônus para pools antigas, penalidade para muito novas.</li>
+                    </ul>
+                    <p>O resultado é uma lista ordenada pelo <strong>melhor equilíbrio</strong> entre rentabilidade, segurança e liquidez – não apenas o maior APR (que pode ser uma armadilha).</p>
+
+                    <p><strong>👆 Modo Manual:</strong> Você pode clicar nos cabeçalhos da tabela para ordenar por qualquer coluna (APR, Volume, TVL, etc.) ou usar os <strong>filtros</strong> acima:</p>
+                    <ul>
+                        <li><code>TVL mínimo</code> – Ex: <strong>50.000</strong> (exclui pools pequenas e arriscadas).</li>
+                        <li><code>Volume mínimo</code> – Ex: <strong>100.000</strong> (garante que a pool tenha atividade).</li>
+                        <li><code>APR mínimo</code> – Ex: <strong>100</strong> (foca em pools com rentabilidade significativa).</li>
+                    </ul>
+
+                    <p><strong>📈 Colunas de variação (1h, 6h, 24h, 7d, 30d):</strong> Mostram a tendência do APR. ▲ (verde) = aumento, ▼ (vermelho) = queda. Use para identificar se o APR está em alta ou em declínio.</p>
+
+                    <p><strong>🎯 Estratégia sugerida:</strong></p>
+                    <ul>
+                        <li><strong>Conservador:</strong> Prefira pools com TVL > $1M, Volume > $1M, APR entre 100% e 300%, e variações estáveis ou positivas.</li>
+                        <li><strong>Agressivo:</strong> Busque APR > 300%, mas aceite TVL e volume menores (risco maior). Acompanhe as variações para não entrar no topo de uma bolha.</li>
+                    </ul>
+                    <p style="margin-top:8px;">Lembre-se: no DeFi, <strong>APR passado não garante futuro</strong>. Use os filtros e as variações para identificar tendências.</p>
+                </details>
 
                 <!-- CATEGORIAS -->
                 <div class="categories-grid" id="categoriesContainer"></div>
