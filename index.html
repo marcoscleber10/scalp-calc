@@ -369,6 +369,44 @@
             background: var(--green);
             color: #000;
         }
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .news-card {
+            background: #1e2a38;
+            border-radius: 16px;
+            padding: 15px;
+            border-left: 4px solid var(--accent);
+        }
+        .news-card a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .news-card a:hover {
+            color: var(--green);
+        }
+        .calendar-highlight {
+            background: var(--gold);
+            color: #000;
+            padding: 15px;
+            border-radius: 16px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: bold;
+            border: 2px solid var(--accent);
+        }
+        .calendar-highlight a {
+            color: #000;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        .calendar-highlight a:hover {
+            text-decoration: underline;
+        }
 
         /* BOTÃO DE CÓPIA */
         .copy-code-btn {
@@ -668,50 +706,34 @@
                     <span class="legend-item"><span class="risk-dot risk-high"></span> Alto risco</span>
                 </div>
 
-                <!-- Quatro seções de Best Pools -->
-                <div class="best-categories">
+                <!-- Quatro seções de Best Pools (serão preenchidas dinamicamente) -->
+                <div class="best-categories" id="bestCategories">
                     <!-- Blue-chip -->
                     <div class="best-card">
                         <h3>🔵 Best Blue-chip</h3>
-                        <div class="best-item"><a href="https://raydium.io" target="_blank"><span class="risk-dot risk-low"></span> PAXG/EURC</a> <span class="best-apr apr-low">0.40%</span></div>
-                        <div class="best-item"><a href="https://orca.so" target="_blank"><span class="risk-dot risk-med"></span> HYPE/USDC</a> <span class="best-apr apr-med">0.55%</span></div>
-                        <div class="best-item"><a href="https://pancakeswap.finance" target="_blank"><span class="risk-dot risk-low"></span> USDT/WBNB</a> <span class="best-apr apr-low">0.23%</span></div>
-                        <div class="best-item"><a href="https://hyperliquid.xyz" target="_blank"><span class="risk-dot risk-high"></span> USDC/WHYPE</a> <span class="best-apr apr-high">3.38%</span></div>
-                        <div class="best-item"><a href="https://uniswap.org" target="_blank"><span class="risk-dot risk-med"></span> SOL/WBTC</a> <span class="best-apr apr-med">1.00%</span></div>
+                        <div id="bluechip-list"></div>
                     </div>
                     <!-- Stable Coin (Dólar) -->
                     <div class="best-card">
                         <h3>💵 Best Stable Coin</h3>
-                        <div class="best-item"><a href="https://curve.fi" target="_blank"><span class="risk-dot risk-low"></span> USDC/USDT</a> <span class="best-apr apr-low">2.49%</span></div>
-                        <div class="best-item"><a href="https://aerodrome.finance" target="_blank"><span class="risk-dot risk-low"></span> DAI/USDC</a> <span class="best-apr apr-low">1.82%</span></div>
-                        <div class="best-item"><a href="https://balancer.fi" target="_blank"><span class="risk-dot risk-med"></span> USDT/DAI</a> <span class="best-apr apr-med">1.34%</span></div>
-                        <div class="best-item"><a href="https://mim.finance" target="_blank"><span class="risk-dot risk-high"></span> MIM/USDC</a> <span class="best-apr apr-high">0.97%</span></div>
-                        <div class="best-item"><a href="https://frax.finance" target="_blank"><span class="risk-dot risk-med"></span> FRAX/USDC</a> <span class="best-apr apr-med">0.76%</span></div>
+                        <div id="stable-list"></div>
                     </div>
                     <!-- RWA -->
                     <div class="best-card">
                         <h3>🏛️ Best RWA</h3>
-                        <div class="best-item"><a href="https://raydium.io" target="_blank"><span class="risk-dot risk-high"></span> COIN/SOL</a> <span class="best-apr apr-high">0.10%</span></div>
-                        <div class="best-item"><a href="https://raydium.io" target="_blank"><span class="risk-dot risk-high"></span> AMZN/SOL</a> <span class="best-apr apr-high">2.25%</span></div>
-                        <div class="best-item"><a href="https://raydium.io" target="_blank"><span class="risk-dot risk-low"></span> PAXG/EURC</a> <span class="best-apr apr-low">0.40%</span></div>
-                        <div class="best-item"><a href="https://meteora.ag" target="_blank"><span class="risk-dot risk-med"></span> SLV/NFT</a> <span class="best-apr apr-med">1.30%</span></div>
-                        <div class="best-item"><a href="https://raydium.io" target="_blank"><span class="risk-dot risk-med"></span> HOODX/SOL</a> <span class="best-apr apr-med">1.80%</span></div>
+                        <div id="rwa-list"></div>
                     </div>
                     <!-- Best Real (Brasil) -->
                     <div class="best-card">
                         <h3>🇧🇷 Best Real</h3>
-                        <div class="best-item"><a href="https://app.uniswap.org" target="_blank"><span class="risk-dot risk-low"></span> BRZ/USDC</a> <span class="best-apr apr-low">8.2%</span></div>
-                        <div class="best-item"><a href="https://app.uniswap.org" target="_blank"><span class="risk-dot risk-med"></span> BRLA/USDT</a> <span class="best-apr apr-med">12.5%</span></div>
-                        <div class="best-item"><a href="https://raydium.io" target="_blank"><span class="risk-dot risk-high"></span> BRL1/USDC</a> <span class="best-apr apr-high">18.9%</span></div>
-                        <div class="best-item"><a href="https://app.uniswap.org" target="_blank"><span class="risk-dot risk-low"></span> BRZ/USDT</a> <span class="best-apr apr-low">9.1%</span></div>
-                        <div class="best-item"><a href="https://raydium.io" target="_blank"><span class="risk-dot risk-med"></span> BRL1/USDT</a> <span class="best-apr apr-med">14.3%</span></div>
+                        <div id="real-list"></div>
                     </div>
                 </div>
 
                 <!-- Botão Atualizar e Tabela -->
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <p style="color: var(--text);">Track DeFi pools across Ethereum, Arbitrum, Base, and Solana.</p>
-                    <button class="btn-atualizar" onclick="atualizarPools()">🔄 Atualizar</button>
+                    <button class="btn-atualizar" onclick="atualizarTudo()">🔄 Atualizar</button>
                 </div>
                 <div style="overflow-x: auto;">
                     <table class="pools-table" id="poolsTable">
@@ -737,29 +759,29 @@
                 </div>
             </div>
 
-            <!-- Conteúdo da aba Notícias (mantida do código anterior) -->
+            <!-- Conteúdo da aba Notícias -->
             <div id="newsTab" class="tab-content">
-                <h3 style="color: var(--gold); margin-bottom: 15px;">📰 Principais Notícias Cripto</h3>
+                <h3 style="color: var(--gold); margin-bottom: 15px;">📅 Calendário Econômico</h3>
+                <div class="calendar-highlight">
+                    <a href="https://www.tradingview.com/economic-calendar/" target="_blank">📈 TradingView Economic Calendar</a>
+                </div>
+                
+                <h3 style="color: var(--gold); margin: 20px 0 15px;">📰 Principais Notícias Cripto</h3>
                 <div class="news-grid">
                     <div class="news-card">
-                        <h4>🇧🇷 Livecoins</h4>
-                        <a href="https://livecoins.com.br/" target="_blank">livecoins.com.br</a>
+                        <a href="https://livecoins.com.br/" target="_blank">🇧🇷 Livecoins</a>
                     </div>
                     <div class="news-card">
-                        <h4>📡 Cointelegraph Brasil</h4>
-                        <a href="https://cointelegraph.com.br/" target="_blank">cointelegraph.com.br</a>
+                        <a href="https://cointelegraph.com.br/" target="_blank">📡 Cointelegraph Brasil</a>
                     </div>
                     <div class="news-card">
-                        <h4>🌎 CoinDesk</h4>
-                        <a href="https://www.coindesk.com/" target="_blank">coindesk.com</a>
+                        <a href="https://www.coindesk.com/" target="_blank">🌎 CoinDesk</a>
                     </div>
                     <div class="news-card">
-                        <h4>⚡ Cointelegraph</h4>
-                        <a href="https://cointelegraph.com/" target="_blank">cointelegraph.com</a>
+                        <a href="https://cointelegraph.com/" target="_blank">⚡ Cointelegraph</a>
                     </div>
                     <div class="news-card">
-                        <h4>📊 Crypto Breaking</h4>
-                        <a href="https://www.cryptobreaking.com/" target="_blank">cryptobreaking.com</a>
+                        <a href="https://www.cryptobreaking.com/" target="_blank">📊 Crypto Breaking</a>
                     </div>
                 </div>
             </div>
@@ -1201,7 +1223,7 @@
             }
         }
 
-        // ---------- NOVAS FUNÇÕES PARA AS ABAS E TABELA ----------
+        // ---------- FUNÇÕES PARA AS CATEGORIAS E ATUALIZAÇÃO ----------
         function switchTab(tab) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
@@ -1215,7 +1237,59 @@
             }
         }
 
-        // Dados das pools (atualizados com base no segundo print)
+        // Dados das categorias (iniciais)
+        let bluechipData = [
+            { pair: "PAXG/EURC", apr: 0.40, risk: "low", link: "https://raydium.io" },
+            { pair: "HYPE/USDC", apr: 0.55, risk: "med", link: "https://orca.so" },
+            { pair: "USDT/WBNB", apr: 0.23, risk: "low", link: "https://pancakeswap.finance" },
+            { pair: "USDC/WHYPE", apr: 3.38, risk: "high", link: "https://hyperliquid.xyz" },
+            { pair: "SOL/WBTC", apr: 1.00, risk: "med", link: "https://uniswap.org" }
+        ];
+        let stableData = [
+            { pair: "USDC/USDT", apr: 2.49, risk: "low", link: "https://curve.fi" },
+            { pair: "DAI/USDC", apr: 1.82, risk: "low", link: "https://aerodrome.finance" },
+            { pair: "USDT/DAI", apr: 1.34, risk: "med", link: "https://balancer.fi" },
+            { pair: "MIM/USDC", apr: 0.97, risk: "high", link: "https://mim.finance" },
+            { pair: "FRAX/USDC", apr: 0.76, risk: "med", link: "https://frax.finance" }
+        ];
+        let rwaData = [
+            { pair: "COIN/SOL", apr: 0.10, risk: "high", link: "https://raydium.io" },
+            { pair: "AMZN/SOL", apr: 2.25, risk: "high", link: "https://raydium.io" },
+            { pair: "PAXG/EURC", apr: 0.40, risk: "low", link: "https://raydium.io" },
+            { pair: "SLV/NFT", apr: 1.30, risk: "med", link: "https://meteora.ag" },
+            { pair: "HOODX/SOL", apr: 1.80, risk: "med", link: "https://raydium.io" }
+        ];
+        let realData = [
+            { pair: "BRZ/USDC", apr: 8.2, risk: "low", link: "https://app.uniswap.org" },
+            { pair: "BRLA/USDT", apr: 12.5, risk: "med", link: "https://app.uniswap.org" },
+            { pair: "BRL1/USDC", apr: 18.9, risk: "high", link: "https://raydium.io" },
+            { pair: "BRZ/USDT", apr: 9.1, risk: "low", link: "https://app.uniswap.org" },
+            { pair: "BRL1/USDT", apr: 14.3, risk: "med", link: "https://raydium.io" }
+        ];
+
+        function renderCategories() {
+            function renderList(data, elementId) {
+                const container = document.getElementById(elementId);
+                container.innerHTML = '';
+                data.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'best-item';
+                    div.innerHTML = `
+                        <a href="${item.link}" target="_blank">
+                            <span class="risk-dot risk-${item.risk}"></span> ${item.pair}
+                        </a>
+                        <span class="best-apr apr-${item.risk}">${item.apr}%</span>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+            renderList(bluechipData, 'bluechip-list');
+            renderList(stableData, 'stable-list');
+            renderList(rwaData, 'rwa-list');
+            renderList(realData, 'real-list');
+        }
+
+        // Dados das pools
         const poolsData = [
             { dex: "<a href='https://raydium.io' target='_blank'>Raydium Concentrated</a>", tvl: "$139.7K", ratio: "82%", volume: "$211.6K", apr: "457.6%", fee: "0.80%", age: "2mo" },
             { dex: "<a href='https://raydium.io' target='_blank'>Raydium Concentrated</a>", tvl: "$29.3K", ratio: "58%", volume: "$132.9K", apr: "441.4%", fee: "0.25%", age: "8mo" },
@@ -1260,9 +1334,29 @@
             });
         }
 
-        function atualizarPools() {
+        // Função para atualizar toda a página (simulação)
+        function atualizarTudo() {
+            // Pequenas variações nos APRs para simular atualização
+            bluechipData = bluechipData.map(item => ({
+                ...item,
+                apr: (item.apr * (0.95 + Math.random() * 0.1)).toFixed(2)
+            }));
+            stableData = stableData.map(item => ({
+                ...item,
+                apr: (item.apr * (0.95 + Math.random() * 0.1)).toFixed(2)
+            }));
+            rwaData = rwaData.map(item => ({
+                ...item,
+                apr: (item.apr * (0.95 + Math.random() * 0.1)).toFixed(2)
+            }));
+            realData = realData.map(item => ({
+                ...item,
+                apr: (item.apr * (0.95 + Math.random() * 0.1)).toFixed(2)
+            }));
+
+            renderCategories();
+            renderPoolsTable(); // já recarrega a tabela com os mesmos dados
             alert('🔄 Dados atualizados com sucesso! (simulação)');
-            renderPoolsTable();
         }
 
         // Função para copiar todo o código
@@ -1275,6 +1369,7 @@
             });
         }
 
+        renderCategories();
         renderPoolsTable();
 
         iniciarTimerDescanso();
