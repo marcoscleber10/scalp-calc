@@ -14,6 +14,9 @@
             --accent: #2f81f7;
             --gold: #ffcc00;
             --purple: #9d4edd;
+            --risk-low: #00ff88;
+            --risk-med: #ffcc00;
+            --risk-high: #ff3e3e;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
         body { background-color: var(--bg); color: white; display: flex; justify-content: center; padding: 20px; transition: filter 0.5s, box-shadow 0.5s; }
@@ -235,7 +238,7 @@
         /* ===== NOVOS ESTILOS PARA AS SEÇÕES E TABELA ===== */
         .best-categories {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 15px;
             margin: 20px 0;
         }
@@ -249,6 +252,9 @@
             color: var(--gold);
             font-size: 14px;
             margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
         .best-item {
             display: flex;
@@ -261,15 +267,42 @@
             color: white;
             text-decoration: none;
             font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
         .best-item a:hover {
             color: var(--green);
             text-decoration: underline;
         }
+        .risk-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+        .risk-low { background-color: var(--risk-low); box-shadow: 0 0 8px var(--risk-low); }
+        .risk-med { background-color: var(--risk-med); box-shadow: 0 0 8px var(--risk-med); }
+        .risk-high { background-color: var(--risk-high); box-shadow: 0 0 8px var(--risk-high); }
         .best-apr {
-            color: var(--green);
             font-weight: bold;
             font-size: 12px;
+        }
+        .apr-high { color: var(--risk-high); }
+        .apr-med { color: var(--risk-med); }
+        .apr-low { color: var(--risk-low); }
+        .legend {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 11px;
+            color: var(--text);
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
         .pools-table {
             width: 100%;
@@ -628,43 +661,50 @@
 
             <!-- Conteúdo da aba Top Pools -->
             <div id="poolsTab" class="tab-content active">
+                <!-- Legenda de risco -->
+                <div class="legend">
+                    <span class="legend-item"><span class="risk-dot risk-low"></span> Baixo risco</span>
+                    <span class="legend-item"><span class="risk-dot risk-med"></span> Médio risco</span>
+                    <span class="legend-item"><span class="risk-dot risk-high"></span> Alto risco</span>
+                </div>
+
                 <!-- Quatro seções de Best Pools -->
                 <div class="best-categories">
                     <!-- Blue-chip -->
                     <div class="best-card">
                         <h3>🔵 Best Blue-chip</h3>
-                        <div class="best-item"><a href="https://raydium.io" target="_blank">PAXG/EURC</a> <span class="best-apr">0.40%</span></div>
-                        <div class="best-item"><a href="https://orca.so" target="_blank">HYPE/USDC</a> <span class="best-apr">0.55%</span></div>
-                        <div class="best-item"><a href="https://pancakeswap.finance" target="_blank">USDT/WBNB</a> <span class="best-apr">0.23%</span></div>
-                        <div class="best-item"><a href="https://hyperliquid.xyz" target="_blank">USDC/WHYPE</a> <span class="best-apr">3.38%</span></div>
-                        <div class="best-item"><a href="https://uniswap.org" target="_blank">SOL/WBTC</a> <span class="best-apr">1.00%</span></div>
+                        <div class="best-item"><a href="https://raydium.io" target="_blank"><span class="risk-dot risk-low"></span> PAXG/EURC</a> <span class="best-apr apr-low">0.40%</span></div>
+                        <div class="best-item"><a href="https://orca.so" target="_blank"><span class="risk-dot risk-med"></span> HYPE/USDC</a> <span class="best-apr apr-med">0.55%</span></div>
+                        <div class="best-item"><a href="https://pancakeswap.finance" target="_blank"><span class="risk-dot risk-low"></span> USDT/WBNB</a> <span class="best-apr apr-low">0.23%</span></div>
+                        <div class="best-item"><a href="https://hyperliquid.xyz" target="_blank"><span class="risk-dot risk-high"></span> USDC/WHYPE</a> <span class="best-apr apr-high">3.38%</span></div>
+                        <div class="best-item"><a href="https://uniswap.org" target="_blank"><span class="risk-dot risk-med"></span> SOL/WBTC</a> <span class="best-apr apr-med">1.00%</span></div>
                     </div>
-                    <!-- Stable Coin -->
+                    <!-- Stable Coin (Dólar) -->
                     <div class="best-card">
                         <h3>💵 Best Stable Coin</h3>
-                        <div class="best-item"><a href="https://curve.fi" target="_blank">USDC/USDT</a> <span class="best-apr">2.49%</span></div>
-                        <div class="best-item"><a href="https://aerodrome.finance" target="_blank">DAI/USDC</a> <span class="best-apr">1.82%</span></div>
-                        <div class="best-item"><a href="https://balancer.fi" target="_blank">USDT/DAI</a> <span class="best-apr">1.34%</span></div>
-                        <div class="best-item"><a href="https://mim.finance" target="_blank">MIM/USDC</a> <span class="best-apr">0.97%</span></div>
-                        <div class="best-item"><a href="https://frax.finance" target="_blank">FRAX/USDC</a> <span class="best-apr">0.76%</span></div>
+                        <div class="best-item"><a href="https://curve.fi" target="_blank"><span class="risk-dot risk-low"></span> USDC/USDT</a> <span class="best-apr apr-low">2.49%</span></div>
+                        <div class="best-item"><a href="https://aerodrome.finance" target="_blank"><span class="risk-dot risk-low"></span> DAI/USDC</a> <span class="best-apr apr-low">1.82%</span></div>
+                        <div class="best-item"><a href="https://balancer.fi" target="_blank"><span class="risk-dot risk-med"></span> USDT/DAI</a> <span class="best-apr apr-med">1.34%</span></div>
+                        <div class="best-item"><a href="https://mim.finance" target="_blank"><span class="risk-dot risk-high"></span> MIM/USDC</a> <span class="best-apr apr-high">0.97%</span></div>
+                        <div class="best-item"><a href="https://frax.finance" target="_blank"><span class="risk-dot risk-med"></span> FRAX/USDC</a> <span class="best-apr apr-med">0.76%</span></div>
                     </div>
                     <!-- RWA -->
                     <div class="best-card">
                         <h3>🏛️ Best RWA</h3>
-                        <div class="best-item"><a href="https://raydium.io" target="_blank">COIN/SOL</a> <span class="best-apr">0.10%</span></div>
-                        <div class="best-item"><a href="https://raydium.io" target="_blank">AMZN/SOL</a> <span class="best-apr">2.25%</span></div>
-                        <div class="best-item"><a href="https://raydium.io" target="_blank">PAXG/EURC</a> <span class="best-apr">0.40%</span></div>
-                        <div class="best-item"><a href="https://meteora.ag" target="_blank">SLV/NFT</a> <span class="best-apr">1.30%</span></div>
-                        <div class="best-item"><a href="https://raydium.io" target="_blank">HOODX/SOL</a> <span class="best-apr">1.80%</span></div>
+                        <div class="best-item"><a href="https://raydium.io" target="_blank"><span class="risk-dot risk-high"></span> COIN/SOL</a> <span class="best-apr apr-high">0.10%</span></div>
+                        <div class="best-item"><a href="https://raydium.io" target="_blank"><span class="risk-dot risk-high"></span> AMZN/SOL</a> <span class="best-apr apr-high">2.25%</span></div>
+                        <div class="best-item"><a href="https://raydium.io" target="_blank"><span class="risk-dot risk-low"></span> PAXG/EURC</a> <span class="best-apr apr-low">0.40%</span></div>
+                        <div class="best-item"><a href="https://meteora.ag" target="_blank"><span class="risk-dot risk-med"></span> SLV/NFT</a> <span class="best-apr apr-med">1.30%</span></div>
+                        <div class="best-item"><a href="https://raydium.io" target="_blank"><span class="risk-dot risk-med"></span> HOODX/SOL</a> <span class="best-apr apr-med">1.80%</span></div>
                     </div>
                     <!-- Best Real (Brasil) -->
                     <div class="best-card">
                         <h3>🇧🇷 Best Real</h3>
-                        <div class="best-item"><a href="https://app.uniswap.org" target="_blank">BRZ/USDC</a> <span class="best-apr">5.2%</span></div>
-                        <div class="best-item"><a href="https://app.uniswap.org" target="_blank">BRLA/USDT</a> <span class="best-apr">4.8%</span></div>
-                        <div class="best-item"><a href="https://raydium.io" target="_blank">BRL1/USDC</a> <span class="best-apr">3.9%</span></div>
-                        <div class="best-item"><a href="https://app.uniswap.org" target="_blank">BRZ/USDT</a> <span class="best-apr">3.5%</span></div>
-                        <div class="best-item"><a href="https://raydium.io" target="_blank">BRL1/USDT</a> <span class="best-apr">3.1%</span></div>
+                        <div class="best-item"><a href="https://app.uniswap.org" target="_blank"><span class="risk-dot risk-low"></span> BRZ/USDC</a> <span class="best-apr apr-low">8.2%</span></div>
+                        <div class="best-item"><a href="https://app.uniswap.org" target="_blank"><span class="risk-dot risk-med"></span> BRLA/USDT</a> <span class="best-apr apr-med">12.5%</span></div>
+                        <div class="best-item"><a href="https://raydium.io" target="_blank"><span class="risk-dot risk-high"></span> BRL1/USDC</a> <span class="best-apr apr-high">18.9%</span></div>
+                        <div class="best-item"><a href="https://app.uniswap.org" target="_blank"><span class="risk-dot risk-low"></span> BRZ/USDT</a> <span class="best-apr apr-low">9.1%</span></div>
+                        <div class="best-item"><a href="https://raydium.io" target="_blank"><span class="risk-dot risk-med"></span> BRL1/USDT</a> <span class="best-apr apr-med">14.3%</span></div>
                     </div>
                 </div>
 
