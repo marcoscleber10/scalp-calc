@@ -232,40 +232,51 @@
         .vol-media { background: #ffcc0020; color: #ffcc00; border: 1px solid #ffcc00; }
         .vol-baixa { background: #ff3e3e20; color: #ff3e3e; border: 1px solid #ff3e3e; }
 
-        /* ===== NOVOS ESTILOS PARA AS ABAS E MODAL ===== */
-        .tabs-container {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--accent);
-            padding-bottom: 10px;
+        /* ===== NOVOS ESTILOS PARA AS SEÇÕES E TABELA ===== */
+        .best-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
         }
-        .tab-btn {
+        .best-card {
             background: #1e2a38;
-            border: 1px solid #3d4d62;
-            color: var(--text);
-            padding: 8px 16px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.2s;
+            border-radius: 16px;
+            padding: 15px;
+            border-left: 4px solid var(--green);
         }
-        .tab-btn.active {
-            background: var(--accent);
+        .best-card h3 {
+            color: var(--gold);
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .best-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px solid #2a3440;
+        }
+        .best-item a {
             color: white;
-            border-color: var(--accent);
+            text-decoration: none;
+            font-size: 12px;
         }
-        .tab-content {
-            display: none;
+        .best-item a:hover {
+            color: var(--green);
+            text-decoration: underline;
         }
-        .tab-content.active {
-            display: block;
+        .best-apr {
+            color: var(--green);
+            font-weight: bold;
+            font-size: 12px;
         }
         .pools-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 12px;
             color: var(--text);
+            margin-top: 20px;
         }
         .pools-table th {
             text-align: left;
@@ -280,6 +291,13 @@
         }
         .pools-table tr:hover {
             background: #1e2a38;
+        }
+        .pools-table a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        .pools-table a:hover {
+            text-decoration: underline;
         }
         .ratio-bar {
             background: #0d151f;
@@ -303,58 +321,6 @@
             max-width: 1200px !important;
             width: 95% !important;
         }
-        .news-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-        .news-card {
-            background: #1e2a38;
-            border-radius: 16px;
-            padding: 15px;
-            border-left: 4px solid var(--accent);
-            transition: 0.2s;
-        }
-        .news-card:hover {
-            transform: translateY(-2px);
-            border-color: var(--green);
-        }
-        .news-card h4 {
-            color: white;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-        .news-card a {
-            color: var(--accent);
-            text-decoration: none;
-            font-size: 12px;
-            word-break: break-all;
-        }
-        .news-card a:hover {
-            text-decoration: underline;
-        }
-        .news-card p {
-            color: var(--text);
-            font-size: 11px;
-            margin-top: 8px;
-        }
-        .calendar-link {
-            background: #1e2a38;
-            border-radius: 16px;
-            padding: 20px;
-            margin: 20px 0;
-            border: 1px solid var(--gold);
-        }
-        .calendar-link a {
-            color: var(--gold);
-            font-size: 16px;
-            font-weight: bold;
-            text-decoration: none;
-        }
-        .calendar-link a:hover {
-            text-decoration: underline;
-        }
         .btn-atualizar {
             background: var(--accent);
             border: none;
@@ -370,9 +336,33 @@
             background: var(--green);
             color: #000;
         }
+
+        /* BOTÃO DE CÓPIA */
+        .copy-code-btn {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 1000000;
+            font-size: 14px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        .copy-code-btn:hover {
+            background: var(--green);
+            color: #000;
+        }
     </style>
 </head>
 <body>
+    <!-- BOTÃO DE CÓPIA (FLUTUANTE) -->
+    <button class="copy-code-btn" onclick="copiarCodigo()">📋 Copiar código</button>
+
     <!-- CARD PRINCIPAL - 100% INTACTO -->
     <div class="card" id="mainCard">
         <h4>⚡ MESTRE DO SCALPING PRO ⚡</h4>
@@ -488,7 +478,7 @@
             <div style="display:flex; justify-content:space-between; margin-top:10px;"><span>🔴 SL:</span> <span id="resSL" style="color:var(--red);"></span></div>
         </div>
 
-        <!-- GRADE DE PROJETOS (com novo botão para o modal) -->
+        <!-- GRADE DE PROJETOS -->
         <div class="projects-section">
             <div class="projects-grid">
                 <a href="https://site-557591544835-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Sinais Invest</a>
@@ -497,7 +487,7 @@
                 <a href="https://pepinometro-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Pepinômetro</a>
                 <a href="https://historia-copas-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">História Copas</a>
                 <a href="https://investopcao.culturabuilder.com" class="project-btn" target="_blank">InvestOpção</a>
-                <!-- NOVO BOTÃO PARA POOLS E NOTÍCIAS -->
+                <!-- NOVO BOTÃO PARA POOLS -->
                 <button class="project-btn" onclick="openPoolsModal()" style="background: var(--purple); color: white;">🌊 Dados de Mercado</button>
             </div>
         </div>
@@ -622,22 +612,63 @@
         </div>
     </div>
 
-    <!-- NOVO MODAL COM ABAS (POOLS + NOTÍCIAS) -->
+    <!-- NOVO MODAL: POOLS DE LIQUIDEZ -->
     <div id="poolsModal" class="modal">
         <div class="modal-content pool-modal-content">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <h2 style="color: var(--gold); margin: 0;">📊 Dados de Mercado</h2>
+                <h2 style="color: var(--gold); margin: 0;">🌊 Dados de Mercado</h2>
                 <button onclick="closePoolsModal()" style="background: none; border: none; color: var(--text); font-size: 24px; cursor: pointer;">✕</button>
             </div>
             
             <!-- Abas -->
-            <div class="tabs-container">
+            <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--accent); padding-bottom: 10px;">
                 <button class="tab-btn active" onclick="switchTab('pools')">🌊 Top Pools</button>
-                <button class="tab-btn" onclick="switchTab('news')">📰 Notícias e Calendário</button>
+                <button class="tab-btn" onclick="switchTab('news')">📰 Notícias</button>
             </div>
 
             <!-- Conteúdo da aba Top Pools -->
             <div id="poolsTab" class="tab-content active">
+                <!-- Quatro seções de Best Pools -->
+                <div class="best-categories">
+                    <!-- Blue-chip -->
+                    <div class="best-card">
+                        <h3>🔵 Best Blue-chip</h3>
+                        <div class="best-item"><a href="https://raydium.io" target="_blank">PAXG/EURC</a> <span class="best-apr">0.40%</span></div>
+                        <div class="best-item"><a href="https://orca.so" target="_blank">HYPE/USDC</a> <span class="best-apr">0.55%</span></div>
+                        <div class="best-item"><a href="https://pancakeswap.finance" target="_blank">USDT/WBNB</a> <span class="best-apr">0.23%</span></div>
+                        <div class="best-item"><a href="https://hyperliquid.xyz" target="_blank">USDC/WHYPE</a> <span class="best-apr">3.38%</span></div>
+                        <div class="best-item"><a href="https://uniswap.org" target="_blank">SOL/WBTC</a> <span class="best-apr">1.00%</span></div>
+                    </div>
+                    <!-- Stable Coin -->
+                    <div class="best-card">
+                        <h3>💵 Best Stable Coin</h3>
+                        <div class="best-item"><a href="https://curve.fi" target="_blank">USDC/USDT</a> <span class="best-apr">2.49%</span></div>
+                        <div class="best-item"><a href="https://aerodrome.finance" target="_blank">DAI/USDC</a> <span class="best-apr">1.82%</span></div>
+                        <div class="best-item"><a href="https://balancer.fi" target="_blank">USDT/DAI</a> <span class="best-apr">1.34%</span></div>
+                        <div class="best-item"><a href="https://mim.finance" target="_blank">MIM/USDC</a> <span class="best-apr">0.97%</span></div>
+                        <div class="best-item"><a href="https://frax.finance" target="_blank">FRAX/USDC</a> <span class="best-apr">0.76%</span></div>
+                    </div>
+                    <!-- RWA -->
+                    <div class="best-card">
+                        <h3>🏛️ Best RWA</h3>
+                        <div class="best-item"><a href="https://raydium.io" target="_blank">COIN/SOL</a> <span class="best-apr">0.10%</span></div>
+                        <div class="best-item"><a href="https://raydium.io" target="_blank">AMZN/SOL</a> <span class="best-apr">2.25%</span></div>
+                        <div class="best-item"><a href="https://raydium.io" target="_blank">PAXG/EURC</a> <span class="best-apr">0.40%</span></div>
+                        <div class="best-item"><a href="https://meteora.ag" target="_blank">SLV/NFT</a> <span class="best-apr">1.30%</span></div>
+                        <div class="best-item"><a href="https://raydium.io" target="_blank">HOODX/SOL</a> <span class="best-apr">1.80%</span></div>
+                    </div>
+                    <!-- Best Real (Brasil) -->
+                    <div class="best-card">
+                        <h3>🇧🇷 Best Real</h3>
+                        <div class="best-item"><a href="https://app.uniswap.org" target="_blank">BRZ/USDC</a> <span class="best-apr">5.2%</span></div>
+                        <div class="best-item"><a href="https://app.uniswap.org" target="_blank">BRLA/USDT</a> <span class="best-apr">4.8%</span></div>
+                        <div class="best-item"><a href="https://raydium.io" target="_blank">BRL1/USDC</a> <span class="best-apr">3.9%</span></div>
+                        <div class="best-item"><a href="https://app.uniswap.org" target="_blank">BRZ/USDT</a> <span class="best-apr">3.5%</span></div>
+                        <div class="best-item"><a href="https://raydium.io" target="_blank">BRL1/USDT</a> <span class="best-apr">3.1%</span></div>
+                    </div>
+                </div>
+
+                <!-- Botão Atualizar e Tabela -->
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <p style="color: var(--text);">Track DeFi pools across Ethereum, Arbitrum, Base, and Solana.</p>
                     <button class="btn-atualizar" onclick="atualizarPools()">🔄 Atualizar</button>
@@ -646,8 +677,6 @@
                     <table class="pools-table" id="poolsTable">
                         <thead>
                             <tr>
-                                <th>Pool</th>
-                                <th>Network</th>
                                 <th>DEX</th>
                                 <th>TVL</th>
                                 <th>Ratio</th>
@@ -662,45 +691,35 @@
                         </tbody>
                     </table>
                 </div>
-                <p style="color: var(--text); margin-top: 15px;">Mostrando 1–20 de 580 pools</p>
+                <p style="color: var(--text); margin-top: 15px;">Mostrando 1–20 de 583 pools</p>
                 <div style="margin-top: 15px; text-align: center;">
                     <a href="https://www.yldlab.xyz/" target="_blank" style="color: var(--green); font-weight: bold;">🔗 Ver mais em yldlab.xyz</a>
                 </div>
             </div>
 
-            <!-- Conteúdo da aba Notícias e Calendário -->
+            <!-- Conteúdo da aba Notícias (mantida do código anterior) -->
             <div id="newsTab" class="tab-content">
-                <h3 style="color: var(--gold); margin-bottom: 15px;">📅 Calendário Econômico</h3>
-                <div class="calendar-link">
-                    <a href="https://www.tradingview.com/economic-calendar/" target="_blank">📈 TradingView Economic Calendar</a>
-                </div>
-                
-                <h3 style="color: var(--gold); margin: 20px 0 15px;">📰 Principais Notícias Cripto</h3>
+                <h3 style="color: var(--gold); margin-bottom: 15px;">📰 Principais Notícias Cripto</h3>
                 <div class="news-grid">
                     <div class="news-card">
                         <h4>🇧🇷 Livecoins</h4>
                         <a href="https://livecoins.com.br/" target="_blank">livecoins.com.br</a>
-                        <p>Maior portal brasileiro de notícias sobre Bitcoin e criptomoedas.</p>
                     </div>
                     <div class="news-card">
                         <h4>📡 Cointelegraph Brasil</h4>
                         <a href="https://cointelegraph.com.br/" target="_blank">cointelegraph.com.br</a>
-                        <p>Notícias atualizadas sobre o mercado cripto em português.</p>
                     </div>
                     <div class="news-card">
                         <h4>🌎 CoinDesk</h4>
                         <a href="https://www.coindesk.com/" target="_blank">coindesk.com</a>
-                        <p>Principal fonte internacional de notícias sobre criptomoedas.</p>
                     </div>
                     <div class="news-card">
                         <h4>⚡ Cointelegraph</h4>
                         <a href="https://cointelegraph.com/" target="_blank">cointelegraph.com</a>
-                        <p>Notícias globais sobre Bitcoin, Ethereum e blockchain.</p>
                     </div>
                     <div class="news-card">
                         <h4>📊 Crypto Breaking</h4>
                         <a href="https://www.cryptobreaking.com/" target="_blank">cryptobreaking.com</a>
-                        <p>Últimas notícias e análises do mercado cripto.</p>
                     </div>
                 </div>
             </div>
@@ -988,6 +1007,8 @@
         function openDonationModal() { document.getElementById('donationModal').style.display = 'flex'; }
         function closeDonationModal() { document.getElementById('donationModal').style.display = 'none'; }
         function closeRobotModal() { document.getElementById('robotModal').style.display = 'none'; }
+        function closePoolsModal() { document.getElementById('poolsModal').style.display = 'none'; }
+        function openPoolsModal() { document.getElementById('poolsModal').style.display = 'flex'; }
 
         function checkPassword() {
             if(document.getElementById('passInput').value === 'Maria1301') {
@@ -1140,15 +1161,7 @@
             }
         }
 
-        // ---------- NOVAS FUNÇÕES PARA O MODAL ----------
-        function openPoolsModal() {
-            document.getElementById('poolsModal').style.display = 'flex';
-        }
-
-        function closePoolsModal() {
-            document.getElementById('poolsModal').style.display = 'none';
-        }
-
+        // ---------- NOVAS FUNÇÕES PARA AS ABAS E TABELA ----------
         function switchTab(tab) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
@@ -1162,28 +1175,28 @@
             }
         }
 
-        // Dados das pools (atualizados com os valores mais recentes do site)
+        // Dados das pools (atualizados com base no segundo print)
         const poolsData = [
-            { pool: "AMZNx / SOL", network: "Solana", dex: "Raydium Concentrated", tvl: "27.7K", ratio: "60/40", volume: "196.0K", apr: "682.6%", fee: "0.25%", age: "8mo" },
-            { pool: "COINx / SOL", network: "Solana", dex: "Raydium Concentrated", tvl: "134.7K", ratio: "83/17", volume: "259.6K", apr: "563.4%", fee: "0.80%", age: "2mo" },
-            { pool: "PAXG / EURC", network: "Solana", dex: "Raydium Concentrated", tvl: "7.0K", ratio: "83/17", volume: "19.9K", apr: "418.4%", fee: "0.40%", age: "11mo" },
-            { pool: "USD1 / WBNB", network: "Bsc", dex: "PancakeSwap V3", tvl: "21.0K", ratio: "28/72", volume: "2.01M", apr: "346.1%", fee: "0.01%", age: "11mo" },
-            { pool: "SLVon / WETH", network: "Ethereum", dex: "Uniswap V3", tvl: "1.4K", ratio: "87/13", volume: "3.9K", apr: "309.6%", fee: "0.30%", age: "1mo" },
-            { pool: "HYPE / USDC", network: "Solana", dex: "Orca Whirlpool", tvl: "82.2K", ratio: "21/79", volume: "108.4K", apr: "309.1%", fee: "0.65%", age: "3mo" },
-            { pool: "USDC / WHYPE", network: "Hyperliquid", dex: "Project X", tvl: "476.2K", ratio: "65/35", volume: "1.35M", apr: "308.1%", fee: "0.30%", age: "6mo" },
-            { pool: "SOL / WBTC", network: "Arbitrum", dex: "Uniswap V3", tvl: "10.2K", ratio: "78/22", volume: "8.2K", apr: "292.6%", fee: "1.00%", age: "1y 4mo" },
-            { pool: "WETH / USDC", network: "Solana", dex: "Orca Whirlpool", tvl: "31.8K", ratio: "85/15", volume: "80.3K", apr: "279.8%", fee: "0.30%", age: "2y 2mo" },
-            { pool: "HOODx / SOL", network: "Solana", dex: "Raydium Concentrated", tvl: "451.4K", ratio: "31/69", volume: "321.1K", apr: "252.4%", fee: "1.00%", age: "8mo" },
-            { pool: "SOL / WETH", network: "Arbitrum", dex: "Uniswap V3", tvl: "123.0K", ratio: "66/34", volume: "261.7K", apr: "233.2%", fee: "0.30%", age: "2y 6mo" },
-            { pool: "SOL / USDC", network: "Base", dex: "Aerodrome Slipstream", tvl: "248.0K", ratio: "54/46", volume: "4.26M", apr: "222.1%", fee: "0.03%", age: "40m" },
-            { pool: "USDC / WHYPE", network: "Hyperliquid", dex: "Project X", tvl: "11.76M", ratio: "70/30", volume: "121.48M", apr: "190.3%", fee: "0.05%", age: "6mo" },
-            { pool: "HYPE / SOL", network: "Solana", dex: "Meteora DLMM", tvl: "37.1K", ratio: "23/77", volume: "192.8K", apr: "190.0%", fee: "0.10%", age: "5mo" },
-            { pool: "GOOGLx / SOL", network: "Solana", dex: "Raydium Concentrated", tvl: "44.7K", ratio: "56/44", volume: "22.2K", apr: "176.7%", fee: "1.00%", age: "19d" },
-            { pool: "USDY / USDC", network: "Solana", dex: "Raydium Concentrated", tvl: "1.3K", ratio: "59/41", volume: "2.4K", apr: "174.0%", fee: "0.25%", age: "6mo" },
-            { pool: "SOL / USDC", network: "Arbitrum", dex: "Uniswap V3", tvl: "135.3K", ratio: "72/28", volume: "63.0K", apr: "170.0%", fee: "1.00%", age: "2y 3mo" },
-            { pool: "HYPE / USDC", network: "Solana", dex: "Meteora DLMM", tvl: "1.26M", ratio: "20/80", volume: "2.74M", apr: "159.0%", fee: "0.20%", age: "4mo" },
-            { pool: "XAUt / USDT", network: "Ethereum", dex: "Uniswap V4", tvl: "7.6K", ratio: "32/68", volume: "60.9K", apr: "146.4%", fee: "0.05%", age: "5mo" },
-            { pool: "AAPLx / SOL", network: "Solana", dex: "Raydium Concentrated", tvl: "7.9K", ratio: "43/57", volume: "3.8K", apr: "138.4%", fee: "0.80%", age: "17d" }
+            { dex: "<a href='https://raydium.io' target='_blank'>Raydium Concentrated</a>", tvl: "$139.7K", ratio: "82%", volume: "$211.6K", apr: "457.6%", fee: "0.80%", age: "2mo" },
+            { dex: "<a href='https://raydium.io' target='_blank'>Raydium Concentrated</a>", tvl: "$29.3K", ratio: "58%", volume: "$132.9K", apr: "441.4%", fee: "0.25%", age: "8mo" },
+            { dex: "<a href='https://raydium.io' target='_blank'>Raydium Concentrated</a>", tvl: "$7.0K", ratio: "85%", volume: "$20.0K", apr: "419.8%", fee: "0.40%", age: "11mo" },
+            { dex: "<a href='https://orca.so' target='_blank'>Orca Whirlpool</a>", tvl: "$76.9K", ratio: "29%", volume: "$116.2K", apr: "361.5%", fee: "0.65%", age: "3mo" },
+            { dex: "<a href='https://pancakeswap.finance' target='_blank'>PancakeSwap V3</a>", tvl: "$21.0K", ratio: "27%", volume: "$12.0K", apr: "350.4%", fee: "0.01%", age: "11mo" },
+            { dex: "<a href='https://hyperliquid.xyz' target='_blank'>Project X</a>", tvl: "$479.8K", ratio: "67%", volume: "$11.39M", apr: "317.7%", fee: "0.30%", age: "6mo" },
+            { dex: "<a href='https://uniswap.org' target='_blank'>Uniswap V3</a>", tvl: "$1.4K", ratio: "87%", volume: "$3.8K", apr: "296.0%", fee: "0.30%", age: "1mo" },
+            { dex: "<a href='https://uniswap.org' target='_blank'>Uniswap V3</a>", tvl: "$10.2K", ratio: "78%", volume: "$32.8K", apr: "293.3%", fee: "1.00%", age: "1m" },
+            { dex: "<a href='https://raydium.io' target='_blank'>Raydium Concentrated</a>", tvl: "$425.0K", ratio: "54%", volume: "$319.2K", apr: "276.0%", fee: "1.00%", age: "8mo" },
+            { dex: "<a href='https://orca.so' target='_blank'>Orca Whirlpool</a>", tvl: "$71.6K", ratio: "84%", volume: "$77.2K", apr: "208.6%", fee: "0.30%", age: "2y" },
+            { dex: "<a href='https://uniswap.org' target='_blank'>Uniswap V3</a>", tvl: "$125.5K", ratio: "68%", volume: "$265.3K", apr: "230.1%", fee: "0.30%", age: "2y" },
+            { dex: "<a href='https://aerodrome.finance' target='_blank'>Aerodrome Slipstream</a>", tvl: "$237.4K", ratio: "60%", volume: "$4.29M", apr: "224.3%", fee: "0.03%", age: "1m" },
+            { dex: "<a href='https://meteora.ag' target='_blank'>Meteora DLMM</a>", tvl: "$35.0K", ratio: "24%", volume: "$192.1K", apr: "197.4%", fee: "0.10%", age: "5mo" },
+            { dex: "<a href='https://hyperliquid.xyz' target='_blank'>Project X</a>", tvl: "$11.6M", ratio: "66%", volume: "$124.48M", apr: "194.1%", fee: "0.05%", age: "6mo" },
+            { dex: "<a href='https://raydium.io' target='_blank'>Raydium Concentrated</a>", tvl: "$44.7K", ratio: "56%", volume: "$22.2K", apr: "181.4%", fee: "1.00%", age: "19d" },
+            { dex: "<a href='https://raydium.io' target='_blank'>Raydium Concentrated</a>", tvl: "$1.3K", ratio: "63%", volume: "$2.5K", apr: "176.8%", fee: "0.25%", age: "6mo" },
+            { dex: "<a href='https://uniswap.org' target='_blank'>Uniswap V3</a>", tvl: "$135.3K", ratio: "72%", volume: "$63.0K", apr: "170.0%", fee: "1.00%", age: "2y" },
+            { dex: "<a href='https://meteora.ag' target='_blank'>Meteora DLMM</a>", tvl: "$1.2M", ratio: "28%", volume: "$2.97M", apr: "169.8%", fee: "0.20%", age: "4mo" },
+            { dex: "<a href='https://uniswap.org' target='_blank'>Uniswap V3</a>", tvl: "$470.2K", ratio: "77%", volume: "$218.2K", apr: "163.2%", fee: "1.00%", age: "5mo" },
+            { dex: "<a href='https://uniswap.org' target='_blank'>Uniswap V4</a>", tvl: "$7.0K", ratio: "52%", volume: "$64.6K", apr: "154.5%", fee: "0.05%", age: "5mo" }
         ];
 
         function renderPoolsTable() {
@@ -1192,15 +1205,13 @@
             poolsData.forEach(p => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td><strong>${p.pool}</strong></td>
-                    <td>${p.network}</td>
                     <td>${p.dex}</td>
-                    <td>$${p.tvl}</td>
+                    <td>${p.tvl}</td>
                     <td>
-                        <div class="ratio-bar"><span style="width: ${p.ratio.split('/')[0]}%;"></span></div>
+                        <div class="ratio-bar"><span style="width: ${parseInt(p.ratio)}%;"></span></div>
                         ${p.ratio}
                     </td>
-                    <td>$${p.volume}</td>
+                    <td>${p.volume}</td>
                     <td class="apr-high">${p.apr}</td>
                     <td>${p.fee}</td>
                     <td>${p.age}</td>
@@ -1212,6 +1223,16 @@
         function atualizarPools() {
             alert('🔄 Dados atualizados com sucesso! (simulação)');
             renderPoolsTable();
+        }
+
+        // Função para copiar todo o código
+        function copiarCodigo() {
+            const codigo = document.documentElement.outerHTML;
+            navigator.clipboard.writeText(codigo).then(() => {
+                alert('✅ Código copiado para a área de transferência!');
+            }).catch(() => {
+                alert('❌ Erro ao copiar. Selecione manualmente.');
+            });
         }
 
         renderPoolsTable();
