@@ -577,14 +577,14 @@
 
         <!-- TABELA DE SESSÕES -->
         <table class="market-table">
-                 <tr><td colspan="3" class="market-header">🌍 SESSÕES CRIPTO / FOREX</td></tr>
-                 <tr><td>🌏 Ásia</td><td>21:00-01:00</td><td style="color:var(--gold); text-align:right;">● médio</td></tr>
-                 <tr><td>🇪🇺 Londres</td><td>04:00-09:00</td><td style="color:var(--green); text-align:right;">● alto</td></tr>
-                 <tr><td>🇺🇸 NY (Pico)</td><td>10:00-14:00</td><td style="color:var(--green); text-align:right;">● PICO</td></tr>
-                 <tr><td colspan="3" class="market-header">🏆 EURO, PRATA & WTI</td></tr>
-                 <tr><td>🥇 Metais (NY)</td><td>09:20-15:30</td><td style="color:var(--gold); text-align:right;">● liquidez</td></tr>
-                 <tr><td>🛢️ Petróleo (WTI)</td><td>10:00-16:30</td><td style="color:var(--accent); text-align:right;">● volatilidade</td></tr>
-             </table>
+                   <tr><td colspan="3" class="market-header">🌍 SESSÕES CRIPTO / FOREX</td></tr>
+                   <tr><td>🌏 Ásia</td><td>21:00-01:00</td><td style="color:var(--gold); text-align:right;">● médio</td></tr>
+                   <tr><td>🇪🇺 Londres</td><td>04:00-09:00</td><td style="color:var(--green); text-align:right;">● alto</td></tr>
+                   <tr><td>🇺🇸 NY (Pico)</td><td>10:00-14:00</td><td style="color:var(--green); text-align:right;">● PICO</td></tr>
+                   <tr><td colspan="3" class="market-header">🏆 EURO, PRATA & WTI</td></tr>
+                   <tr><td>🥇 Metais (NY)</td><td>09:20-15:30</td><td style="color:var(--gold); text-align:right;">● liquidez</td></tr>
+                   <tr><td>🛢️ Petróleo (WTI)</td><td>10:00-16:30</td><td style="color:var(--accent); text-align:right;">● volatilidade</td></tr>
+                </table>
 
         <!-- NOVA SEÇÃO: NOTÍCIAS E CALENDÁRIO -->
         <div class="news-section">
@@ -702,7 +702,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE POOLS (com cards dinâmicos) -->
+    <!-- MODAL DE POOLS (com cards dinâmicos e dados atualizados) -->
     <div id="poolsModal" class="modal">
         <div class="modal-content pool-modal-content">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -744,7 +744,7 @@
                 <div class="table-wrapper">
                     <table class="pools-table" id="poolsTable">
                         <thead>
-                            <tr>
+                             <tr>
                                 <th onclick="ordenarPor('pool')">Pool</th>
                                 <th onclick="ordenarPor('network')">Network</th>
                                 <th onclick="ordenarPor('dex')">DEX</th>
@@ -760,7 +760,7 @@
                                 <th onclick="ordenarPor('fee')">Fee</th>
                                 <th onclick="ordenarPor('age')">Age</th>
                                 <th>Score</th>
-                            </tr>
+                             </tr>
                         </thead>
                         <tbody id="poolsTableBody"></tbody>
                     </table>
@@ -796,7 +796,7 @@
         let alarmes = [];
         let modoOperacaoAtivo = false;
         let timeoutDescanso;
-        let metalInterval = null;      // Interval para buscar preços da Hyperliquid
+        let metalInterval = null;
 
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioCtx = null;
@@ -841,6 +841,16 @@
                 else if (symbol === "TVC:SILVER") asset = "SILVER";
                 else if (symbol === "TVC:USOIL") asset = "WTI";
                 if (asset) {
+                    // Define um preço inicial realista
+                    if (asset === "GOLD") price = 2050;
+                    else if (asset === "SILVER") price = 26.5;
+                    else price = 78.5;
+                    document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
+                    pricesHistory.push(price);
+                    if(pricesHistory.length > 50) pricesHistory.shift();
+                    updateSignals();
+                    
+                    // Tenta buscar da API e atualiza a cada 2s
                     fetchHyperliquidPrice(asset);
                     metalInterval = setInterval(() => fetchHyperliquidPrice(asset), 2000);
                 }
@@ -1143,8 +1153,9 @@
             } catch(e){ document.getElementById('apiConsole').innerHTML = '❌ ' + e.message; }
         }
 
-        // ========== NOVA LÓGICA PARA CARDS DINÂMICOS ==========
+        // ========== DADOS DAS POOLS (incluindo stablecoins e reais) ==========
         let poolsData = [
+            // Blue-chip / RWA / gerais
             { pool: "USDY/USDC", network: "Solana", dex: "Raydium Concentrated", tvl: "1.3K", ratio: "55/45", volume: "7.8K", apr: "487.3%", fee: "0.25%", age: "2m0s" },
             { pool: "USD1/WBNB", network: "Bsc", dex: "PancakeSwap V3", tvl: "20.6K", ratio: "16/84", volume: "2.21M", apr: "390.6%", fee: "0.05%", age: "1m0s" },
             { pool: "COINX/USDC", network: "Solana", dex: "Raydium Concentrated", tvl: "286.8K", ratio: "87/13", volume: "270.7K", apr: "344.5%", fee: "1.00%", age: "2mo" },
@@ -1156,7 +1167,6 @@
             { pool: "HYPE/cbBTC", network: "Solana", dex: "Meteora DLMM", tvl: "21.5K", ratio: "80/20", volume: "63.7K", apr: "216.6%", fee: "0.20%", age: "5mo" },
             { pool: "SOL/WETH", network: "Arbitrum", dex: "Uniswap V3", tvl: "121.8K", ratio: "63/37", volume: "213.1K", apr: "191.7%", fee: "0.30%", age: "2y" },
             { pool: "HYPE/SOL", network: "Solana", dex: "Meteora DLMM", tvl: "41.0K", ratio: "39/61", volume: "199.3K", apr: "177.3%", fee: "0.10%", age: "5mo" },
-            { pool: "USDC/WHYPE", network: "Hyperliquid", dex: "Project X", tvl: "10.67M", ratio: "48/52", volume: "102.71M", apr: "175.7%", fee: "0.05%", age: "6mo" },
             { pool: "WETH/USDC", network: "Base", dex: "Aerodrome Slipstream", tvl: "387.2K", ratio: "75/27", volume: "3.12M", apr: "173.6%", fee: "0.06%", age: "1m" },
             { pool: "SLVON/USDC", network: "Ethereum", dex: "Uniswap V3", tvl: "161.3K", ratio: "79/21", volume: "247.6K", apr: "168.1%", fee: "0.30%", age: "2y" },
             { pool: "HOODX/SOL", network: "Solana", dex: "Raydium Concentrated", tvl: "437.2K", ratio: "35/65", volume: "190.3K", apr: "158.8%", fee: "1.00%", age: "8mo" },
@@ -1164,41 +1174,47 @@
             { pool: "SLVON/USDC", network: "Bsc", dex: "PancakeSwap V3", tvl: "29.1K", ratio: "90/10", volume: "12.5K", apr: "156.5%", fee: "1.00%", age: "11mo" },
             { pool: "cbBTC/SOL", network: "Solana", dex: "Meteora DLMM", tvl: "51.3K", ratio: "42/58", volume: "730.0K", apr: "155.8%", fee: "0.03%", age: "4mo" },
             { pool: "NVDAX/SOL", network: "Solana", dex: "Raydium Concentrated", tvl: "39.9K", ratio: "53/47", volume: "64.2K", apr: "146.9%", fee: "0.25%", age: "19d" },
-            { pool: "HYPE/USDC", network: "Solana", dex: "Meteora DLMM", tvl: "1.14M", ratio: "49/51", volume: "2.24M", apr: "143.3%", fee: "0.20%", age: "4mo" }
+            // Stablecoins
+            { pool: "EURC/USDC", network: "Solana", dex: "Raydium Concentrated", tvl: "50K", ratio: "50/50", volume: "100K", apr: "29.9%", fee: "0.05%", age: "3mo" },
+            { pool: "USDC/USDT", network: "Ethereum", dex: "Uniswap V3", tvl: "100K", ratio: "50/50", volume: "500K", apr: "21.1%", fee: "0.01%", age: "1y" },
+            { pool: "DAI/USDC", network: "Arbitrum", dex: "Uniswap V3", tvl: "30K", ratio: "50/50", volume: "80K", apr: "4.3%", fee: "0.01%", age: "6mo" },
+            { pool: "USDe/USDC", network: "Ethereum", dex: "Curve", tvl: "20K", ratio: "50/50", volume: "40K", apr: "1.5%", fee: "0.01%", age: "2mo" },
+            { pool: "USDT/USDT", network: "Bsc", dex: "PancakeSwap V3", tvl: "15K", ratio: "50/50", volume: "30K", apr: "0.9%", fee: "0.01%", age: "1y" },
+            // Real (BRL/BRZ)
+            { pool: "BRZ/USDC", network: "Polygon", dex: "QuickSwap", tvl: "25K", ratio: "60/40", volume: "50K", apr: "8.10%", fee: "0.25%", age: "1y" },
+            { pool: "BRL/AUSD", network: "Arbitrum", dex: "Camelot", tvl: "10K", ratio: "70/30", volume: "20K", apr: "12.25%", fee: "0.30%", age: "8mo" },
+            { pool: "BRL/USDC", network: "Polygon", dex: "QuickSwap", tvl: "40K", ratio: "55/45", volume: "100K", apr: "17.46%", fee: "0.20%", age: "1y" },
+            { pool: "BRL/USDT", network: "Bsc", dex: "PancakeSwap V3", tvl: "15K", ratio: "65/35", volume: "30K", apr: "8.44%", fee: "0.25%", age: "10mo" },
+            { pool: "BRL/USDT", network: "Ethereum", dex: "Uniswap V3", tvl: "12K", ratio: "60/40", volume: "25K", apr: "13.56%", fee: "0.30%", age: "7mo" }
         ];
 
-        // Função para obter os N maiores APRs de uma lista de pools
+        // Funções de categorias dinâmicas
         function getTopAPRs(pools, n, filterFn = null) {
             let filtered = filterFn ? pools.filter(filterFn) : pools;
             filtered.sort((a,b) => parseFloat(b.apr) - parseFloat(a.apr));
             return filtered.slice(0,n).map(p => ({ pair: p.pool, apr: p.apr }));
         }
 
-        // Função que atualiza os cards com os maiores APRs de cada categoria
         function refreshCategories() {
-            // Blue-chip: top 5 APRs gerais (qualquer pool)
+            // Blue-chip: top 5 APRs gerais
             const bluechip = getTopAPRs(poolsData, 5);
-            
-            // Stable: pools cujo nome contenha USDC, USDT, DAI, EURC
+            // Stable: pools que contenham USDC, USDT, DAI, EURC
             const stable = getTopAPRs(poolsData, 5, p => {
                 const name = p.pool.toUpperCase();
                 return name.includes('USDC') || name.includes('USDT') || name.includes('DAI') || name.includes('EURC');
             });
-            
-            // RWA: pools que contenham palavras-chave de ativos reais
+            // RWA: pools com palavras-chave
             const rwaKeywords = ['COIN', 'TQQQ', 'SLV', 'AMZN', 'HOOD', 'NVDA', 'AAPL', 'GOOGL'];
             const rwa = getTopAPRs(poolsData, 5, p => {
                 const name = p.pool.toUpperCase();
                 return rwaKeywords.some(kw => name.includes(kw));
             });
-            
             // Real: pools com BRL ou BRZ
             const real = getTopAPRs(poolsData, 5, p => {
                 const name = p.pool.toUpperCase();
                 return name.includes('BRL') || name.includes('BRZ');
             });
-            
-            // Montar HTML dos cards
+
             const categories = [
                 { title: "BEST BLUE-CHIP", items: bluechip },
                 { title: "BEST STABLE COIN", items: stable },
@@ -1221,7 +1237,6 @@
             document.getElementById('categoriesContainer').innerHTML = html;
         }
 
-        // Função para gerar novos dados aleatórios (simula atualização)
         function atualizarDadosPools() {
             poolsData = poolsData.map(p => {
                 let novoApr = (Math.random() * 300 + 100).toFixed(1) + '%';
@@ -1229,8 +1244,8 @@
                 let novoTvl = (Math.random() * 500).toFixed(1) + 'K';
                 return { ...p, apr: novoApr, volume: novoVolume.includes('M') ? novoVolume : (parseFloat(novoVolume)*1000).toFixed(0)+'K', tvl: novoTvl };
             });
-            refreshCategories();           // atualiza os cards com os novos dados
-            aplicarFiltrosEOrdenar();      // reaplica ordenação na tabela
+            refreshCategories();
+            aplicarFiltrosEOrdenar();
         }
 
         // ========== CÓDIGO DO MODAL DE POOLS (FILTROS E TABELA) ==========
