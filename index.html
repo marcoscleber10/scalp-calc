@@ -14,6 +14,7 @@
             --accent: #2f81f7;
             --gold: #ffcc00;
             --purple: #9d4edd;
+            --orange: #ff9900;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
         body { background-color: var(--bg); color: white; display: flex; justify-content: center; padding: 20px; transition: filter 0.5s, box-shadow 0.5s; }
@@ -335,6 +336,18 @@
             color: var(--gold);
         }
 
+        /* NOVO: ADVERTÊNCIA PARA APR ALTOS */
+        .warning-high-apr {
+            background: rgba(255, 153, 0, 0.15);
+            border: 1px solid var(--orange);
+            color: var(--orange);
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
         /* TABELA DE POOLS */
         .table-wrapper {
             overflow-x: auto;
@@ -526,9 +539,11 @@
             display: flex;
             gap: 10px;
             margin-bottom: 15px;
+            flex-wrap: wrap;
         }
         .mode-btn {
             flex: 1;
+            min-width: 100px;
             background: #21262d;
             border: 1px solid #30363d;
             color: var(--text);
@@ -542,6 +557,17 @@
             background: var(--accent);
             color: white;
             border-color: var(--accent);
+        }
+        .mode-btn.apr-high {
+            background: var(--orange);
+            color: #000;
+            border-color: var(--orange);
+        }
+        .mode-btn.apr-high.active {
+            background: var(--orange);
+            color: #000;
+            border-color: var(--orange);
+            box-shadow: 0 0 10px var(--orange);
         }
 
         /* NOVA SEÇÃO DE NOTÍCIAS NO CARD PRINCIPAL */
@@ -755,7 +781,7 @@
             </div>
         </div>
 
-        <!-- BOTÃO DONATIVOS (abre a modal com os botões copiar) -->
+        <!-- BOTÃO DONATIVOS -->
         <button class="project-btn" onclick="openDonationModal()" style="background:var(--gold); color:#000; width:100%; margin-top:15px;">💰 Donativos</button>
     </div>
 
@@ -817,7 +843,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE DONATIVOS (COM BOTÕES COPIAR FUNCIONANDO) -->
+    <!-- MODAL DE DONATIVOS (COM BOTÕES COPIAR) -->
     <div id="donationModal" class="modal">
         <div class="modal-content">
             <h2>💰 Donativos</h2>
@@ -832,7 +858,7 @@
                 <p>bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5 <button class="copy-btn" onclick="copyText('bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5')">Copiar</button></p>
             </div>
             <div class="donation-item" style="border-left-color:#627eea;">
-                <strong>🔷 EVM (Ethereum, BSC, Arbitrum)</strong>
+                <strong>🔷 EVM</strong>
                 <p>0xAd944bA180610F1Fe43151eD81c0084C918c68e1 <button class="copy-btn" onclick="copyText('0xAd944bA180610F1Fe43151eD81c0084C918c68e1')">Copiar</button></p>
             </div>
             <div class="donation-item" style="border-left-color:#14f195;">
@@ -840,7 +866,7 @@
                 <p>EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm <button class="copy-btn" onclick="copyText('EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm')">Copiar</button></p>
             </div>
             <div class="donation-item" style="border-left-color:#32bcad;">
-                <strong>🇧🇷 Pix (chave aleatória)</strong>
+                <strong>🇧🇷 Pix</strong>
                 <p>127d59fc-1f37-4e8e-9fd4-295e1883727b <button class="copy-btn" onclick="copyText('127d59fc-1f37-4e8e-9fd4-295e1883727b')">Copiar</button></p>
             </div>
             
@@ -848,7 +874,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE POOLS (com todas as melhorias) -->
+    <!-- MODAL DE POOLS (com terceiro modo APR altos) -->
     <div id="poolsModal" class="modal">
         <div class="modal-content pool-modal-content">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -869,7 +895,7 @@
                     <button class="btn-atualizar" onclick="atualizarPools()">🔄 Atualizar</button>
                 </div>
 
-                <!-- BLOCO EXPLICATIVO (agora visível) -->
+                <!-- BLOCO EXPLICATIVO (agora com advertência) -->
                 <details class="guide-box" open>
                     <summary>📘 Como usar os modos de seleção de pools (clique para abrir/fechar)</summary>
                     <p><strong>🤖 Modo Automático (Score):</strong> O sistema calcula um <strong>score composto</strong> para cada pool, baseado em:</p>
@@ -879,34 +905,33 @@
                         <li><strong>TVL (20%)</strong> – pools com mais liquidez são mais seguras.</li>
                         <li><strong>Idade (10%)</strong> – bônus para pools antigas, penalidade para muito novas.</li>
                     </ul>
-                    <p>O resultado é uma lista ordenada pelo <strong>melhor equilíbrio</strong> entre rentabilidade, segurança e liquidez – não apenas o maior APR (que pode ser uma armadilha).</p>
+                    <p>O resultado é uma lista ordenada pelo <strong>melhor equilíbrio</strong> entre rentabilidade, segurança e liquidez.</p>
 
-                    <p><strong>👆 Modo Manual:</strong> Você pode clicar nos cabeçalhos da tabela para ordenar por qualquer coluna (APR, Volume, TVL, etc.) ou usar os <strong>filtros</strong> acima:</p>
-                    <ul>
-                        <li><code>TVL mínimo</code> – Ex: <strong>50.000</strong> (exclui pools pequenas e arriscadas).</li>
-                        <li><code>Volume mínimo</code> – Ex: <strong>100.000</strong> (garante que a pool tenha atividade).</li>
-                        <li><code>APR mínimo</code> – Ex: <strong>100</strong> (foca em pools com rentabilidade significativa).</li>
-                    </ul>
+                    <p><strong>👆 Modo Manual:</strong> Você pode clicar nos cabeçalhos da tabela para ordenar por qualquer coluna (APR, Volume, TVL, etc.) ou usar os <strong>filtros</strong> acima.</p>
 
-                    <p><strong>📈 Colunas de variação (1h, 6h, 24h, 7d, 30d):</strong> Mostram a tendência do APR. ▲ (verde) = aumento, ▼ (vermelho) = queda. Use para identificar se o APR está em alta ou em declínio.</p>
+                    <p><strong>🔥 Modo APR altos:</strong> Ordena as pools apenas pelo maior APR, ignorando outros fatores. <span style="color: var(--orange);">Atenção: APRs muito altos podem indicar risco elevado (baixa liquidez, pools novas, etc.).</span></p>
 
-                    <p><strong>🎯 Estratégia sugerida:</strong></p>
-                    <ul>
-                        <li><strong>Conservador:</strong> Prefira pools com TVL > $1M, Volume > $1M, APR entre 100% e 300%, e variações estáveis ou positivas.</li>
-                        <li><strong>Agressivo:</strong> Busque APR > 300%, mas aceite TVL e volume menores (risco maior). Acompanhe as variações para não entrar no topo de uma bolha.</li>
-                    </ul>
-                    <p style="margin-top:8px;">Lembre-se: no DeFi, <strong>APR passado não garante futuro</strong>. Use os filtros e as variações para identificar tendências.</p>
+                    <p><strong>📈 Colunas de variação (1h, 6h, 24h, 7d, 30d):</strong> Mostram a tendência do APR. ▲ (verde) = aumento, ▼ (vermelho) = queda.</p>
+
+                    <p><strong>🎯 Estratégia sugerida:</strong> Use o modo <strong>APR altos</strong> para identificar oportunidades de alta rentabilidade, mas sempre verifique o volume e a liquidez antes de entrar.</p>
                 </details>
 
-                <!-- CATEGORIAS -->
+                <!-- CATEGORIAS COM APRs ALTOS (ATUALIZADAS) -->
                 <div class="categories-grid" id="categoriesContainer"></div>
 
-                <!-- Modos e Filtros -->
-                <div class="mode-toggle">
-                    <button id="modoAutoBtn" class="mode-btn active" onclick="setModo(true)">🤖 Automático (Score)</button>
-                    <button id="modoManualBtn" class="mode-btn" onclick="setModo(false)">👆 Manual</button>
+                <!-- AVISO DE APR ALTOS (adicional) -->
+                <div class="warning-high-apr">
+                    ⚠️ Os valores de APR nos cards são ilustrativos e podem representar riscos maiores. Sempre analise volume e liquidez.
                 </div>
 
+                <!-- TRÊS MODOS DE ORDENAÇÃO -->
+                <div class="mode-toggle">
+                    <button id="modoAutoBtn" class="mode-btn" onclick="setModo('auto')">🤖 Automático (Score)</button>
+                    <button id="modoManualBtn" class="mode-btn" onclick="setModo('manual')">👆 Manual</button>
+                    <button id="modoAPRBtn" class="mode-btn apr-high active" onclick="setModo('apr')">🔥 APR altos</button>
+                </div>
+
+                <!-- FILTROS (mesmos) -->
                 <div class="filter-row">
                     <div class="filter-item">
                         <label>TVL mínimo ($)</label>
@@ -1285,7 +1310,7 @@
             }
         }
 
-        // FUNÇÃO COPIAR (agora presente)
+        // FUNÇÃO COPIAR
         function copyText(text) {
             navigator.clipboard.writeText(text).then(() => {
                 alert('✅ Copiado para a área de transferência!');
@@ -1432,17 +1457,18 @@
         }
 
         // ---------- NOVAS FUNÇÕES PARA CATEGORIAS, FILTROS E TABELA EXPANDIDA ----------
-        let modoAutomatico = true;
+        let modoAtual = 'apr'; // 'auto', 'manual', 'apr' – padrão é 'apr' (APR altos)
         let filtros = { tvlMin: 0, volMin: 0, aprMin: 0 };
-        let ordenacaoAtual = { coluna: 'score', direcao: 'desc' };
+        let ordenacaoAtual = { coluna: 'apr', direcao: 'desc' }; // para modo manual
 
+        // CATEGORIAS ATUALIZADAS COM APRs ALTOS
         const categorias = {
             bluechip: [
-                { pair: "PAXG/EURC", apr: "0.42%" },
-                { pair: "HYRE/USDC", apr: "0.54%" },
-                { pair: "USDT/WBNB", apr: "0.22%" },
-                { pair: "USDC/WHYPE", apr: "3.64%" },
-                { pair: "SOL/WBTC", apr: "0.96%" }
+                { pair: "USD1/WBNB", apr: "328.6%" },
+                { pair: "USDY/USDC", apr: "300.2%" },
+                { pair: "SOL/USDC", apr: "267.0%" },
+                { pair: "HYPE/cbBTC", apr: "221.0%" },
+                { pair: "USDC/WHYPE", apr: "216.4%" }
             ],
             stable: [
                 { pair: "USDC/USDT", apr: "2.59%" },
@@ -1452,11 +1478,11 @@
                 { pair: "FRAX/USDC", apr: "0.75%" }
             ],
             rwa: [
-                { pair: "CON/SOL", apr: "0.10%" },
-                { pair: "AMZN/SOL", apr: "2.34%" },
-                { pair: "PAXG/EURC", apr: "0.40%" },
-                { pair: "SLV/NFT", apr: "1.31%" },
-                { pair: "HOODX/SOL", apr: "1.66%" }
+                { pair: "COINx/USDC", apr: "578.6%" },
+                { pair: "USDY/USDC", apr: "300.2%" },
+                { pair: "TQQQx/USDC", apr: "297.8%" },
+                { pair: "SLVon/WETH", apr: "265.4%" },
+                { pair: "SLVon/BUSD", apr: "210.0%" }
             ],
             real: [
                 { pair: "BRZ/USDC", apr: "8.10%" },
@@ -1473,10 +1499,10 @@
             let html = '';
             for (let [cat, items] of Object.entries(categorias)) {
                 let titulo = '';
-                if (cat === 'bluechip') titulo = 'Best Blue-chip';
-                else if (cat === 'stable') titulo = 'Best Stable Coin';
-                else if (cat === 'rwa') titulo = 'Best RWA';
-                else if (cat === 'real') titulo = 'Best Real';
+                if (cat === 'bluechip') titulo = 'BEST BLUE-CHIP';
+                else if (cat === 'stable') titulo = 'BEST STABLE COIN';
+                else if (cat === 'rwa') titulo = 'BEST RWA';
+                else if (cat === 'real') titulo = 'BEST REAL';
                 
                 html += `<div class="category-card"><div class="category-title">${titulo}</div>`;
                 items.forEach(item => {
@@ -1487,6 +1513,7 @@
             container.innerHTML = html;
         }
 
+        // Dados das pools (mantidos os mesmos, mas a ordenação por APR altos vai destacar os maiores)
         const poolsData = [
             { pool: "USDY/USDC", network: "Solana", dex: "Raydium Concentrated", tvl: "1.3K", ratio: "55/45", volume: "7.8K", apr: "487.3%", fee: "0.25%", age: "2m0s" },
             { pool: "USD1/WBNB", network: "Bsc", dex: "PancakeSwap V3", tvl: "20.6K", ratio: "16/84", volume: "2.21M", apr: "390.6%", fee: "0.05%", age: "1m0s" },
@@ -1519,13 +1546,19 @@
             return variacoes;
         }
 
-        function setModo(auto) {
-            modoAutomatico = auto;
-            const autoBtn = document.getElementById('modoAutoBtn');
-            const manualBtn = document.getElementById('modoManualBtn');
-            if (autoBtn && manualBtn) {
-                autoBtn.classList.toggle('active', auto);
-                manualBtn.classList.toggle('active', !auto);
+        function setModo(modo) {
+            modoAtual = modo;
+            // Atualizar classes dos botões
+            document.getElementById('modoAutoBtn').classList.remove('active');
+            document.getElementById('modoManualBtn').classList.remove('active');
+            document.getElementById('modoAPRBtn').classList.remove('active');
+            
+            if (modo === 'auto') {
+                document.getElementById('modoAutoBtn').classList.add('active');
+            } else if (modo === 'manual') {
+                document.getElementById('modoManualBtn').classList.add('active');
+            } else {
+                document.getElementById('modoAPRBtn').classList.add('active');
             }
             aplicarFiltrosEOrdenar();
         }
@@ -1579,7 +1612,7 @@
                 return tvlNum >= filtros.tvlMin && volNum >= filtros.volMin && aprNum >= filtros.aprMin;
             });
 
-            if (modoAutomatico) {
+            if (modoAtual === 'auto') {
                 const tvls = poolsFiltradas.map(p => extrairNumeros(p).tvlNum);
                 const vols = poolsFiltradas.map(p => extrairNumeros(p).volNum);
                 const aprs = poolsFiltradas.map(p => extrairNumeros(p).aprNum);
@@ -1590,7 +1623,12 @@
                 });
 
                 poolsFiltradas.sort((a, b) => b.score - a.score);
-            } else {
+            } else if (modoAtual === 'apr') {
+                // Ordenar por APR decrescente
+                poolsFiltradas.sort((a, b) => extrairNumeros(b).aprNum - extrairNumeros(a).aprNum);
+                // Remover score para não exibir
+                poolsFiltradas.forEach(p => delete p.score);
+            } else { // manual
                 ordenarLista(poolsFiltradas, ordenacaoAtual.coluna, ordenacaoAtual.direcao);
             }
 
@@ -1598,7 +1636,7 @@
         }
 
         function ordenarPor(coluna) {
-            if (!modoAutomatico) {
+            if (modoAtual === 'manual') {
                 if (ordenacaoAtual.coluna === coluna) {
                     ordenacaoAtual.direcao = ordenacaoAtual.direcao === 'asc' ? 'desc' : 'asc';
                 } else {
@@ -1693,7 +1731,7 @@
         function openPoolsModal() {
             document.getElementById('poolsModal').style.display = 'flex';
             renderCategorias();
-            aplicarFiltrosEOrdenar();
+            setModo('apr'); // padrão é APR altos
         }
 
         function closePoolsModal() {
@@ -1717,7 +1755,7 @@
 
         // Inicializar
         renderCategorias();
-        setModo(true);
+        setModo('apr');
         iniciarTimerDescanso();
         initChart();
     </script>
