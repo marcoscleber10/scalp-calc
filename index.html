@@ -336,7 +336,7 @@
             color: var(--gold);
         }
 
-        /* NOVO: ADVERTÊNCIA PARA APR ALTOS */
+        /* ADVERTÊNCIA PARA APR ALTOS */
         .warning-high-apr {
             background: rgba(255, 153, 0, 0.15);
             border: 1px solid var(--orange);
@@ -781,7 +781,7 @@
             </div>
         </div>
 
-        <!-- BOTÃO DONATIVOS -->
+        <!-- BOTÃO DONATIVOS (com botões copiar) -->
         <button class="project-btn" onclick="openDonationModal()" style="background:var(--gold); color:#000; width:100%; margin-top:15px;">💰 Donativos</button>
     </div>
 
@@ -874,7 +874,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE POOLS (com terceiro modo APR altos) -->
+    <!-- MODAL DE POOLS (com terceiro modo APR altos e botão atualizar funcional) -->
     <div id="poolsModal" class="modal">
         <div class="modal-content pool-modal-content">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -895,7 +895,7 @@
                     <button class="btn-atualizar" onclick="atualizarPools()">🔄 Atualizar</button>
                 </div>
 
-                <!-- BLOCO EXPLICATIVO (agora com advertência) -->
+                <!-- BLOCO EXPLICATIVO -->
                 <details class="guide-box" open>
                     <summary>📘 Como usar os modos de seleção de pools (clique para abrir/fechar)</summary>
                     <p><strong>🤖 Modo Automático (Score):</strong> O sistema calcula um <strong>score composto</strong> para cada pool, baseado em:</p>
@@ -916,10 +916,10 @@
                     <p><strong>🎯 Estratégia sugerida:</strong> Use o modo <strong>APR altos</strong> para identificar oportunidades de alta rentabilidade, mas sempre verifique o volume e a liquidez antes de entrar.</p>
                 </details>
 
-                <!-- CATEGORIAS COM APRs ALTOS (ATUALIZADAS) -->
+                <!-- CATEGORIAS COM APRs ALTOS -->
                 <div class="categories-grid" id="categoriesContainer"></div>
 
-                <!-- AVISO DE APR ALTOS (adicional) -->
+                <!-- AVISO DE APR ALTOS -->
                 <div class="warning-high-apr">
                     ⚠️ Os valores de APR nos cards são ilustrativos e podem representar riscos maiores. Sempre analise volume e liquidez.
                 </div>
@@ -931,7 +931,7 @@
                     <button id="modoAPRBtn" class="mode-btn apr-high active" onclick="setModo('apr')">🔥 APR altos</button>
                 </div>
 
-                <!-- FILTROS (mesmos) -->
+                <!-- FILTROS -->
                 <div class="filter-row">
                     <div class="filter-item">
                         <label>TVL mínimo ($)</label>
@@ -1457,9 +1457,9 @@
         }
 
         // ---------- NOVAS FUNÇÕES PARA CATEGORIAS, FILTROS E TABELA EXPANDIDA ----------
-        let modoAtual = 'apr'; // 'auto', 'manual', 'apr' – padrão é 'apr' (APR altos)
+        let modoAtual = 'apr'; // padrão é APR altos
         let filtros = { tvlMin: 0, volMin: 0, aprMin: 0 };
-        let ordenacaoAtual = { coluna: 'apr', direcao: 'desc' }; // para modo manual
+        let ordenacaoAtual = { coluna: 'apr', direcao: 'desc' };
 
         // CATEGORIAS ATUALIZADAS COM APRs ALTOS
         const categorias = {
@@ -1471,11 +1471,11 @@
                 { pair: "USDC/WHYPE", apr: "216.4%" }
             ],
             stable: [
-                { pair: "USDC/USDT", apr: "2.59%" },
-                { pair: "DAU/USDC", apr: "1.77%" },
-                { pair: "USDT/DAI", apr: "1.43%" },
-                { pair: "MIM/USDC", apr: "1.02%" },
-                { pair: "FRAX/USDC", apr: "0.75%" }
+                { pair: "EURC/USDC", apr: "29.9%" },
+                { pair: "USDC/USDT", apr: "21.1%" },
+                { pair: "DAI/USDC", apr: "4.3%" },
+                { pair: "USDe/USDC", apr: "1.5%" },
+                { pair: "USD1/USDT", apr: "0.9%" }
             ],
             rwa: [
                 { pair: "COINx/USDC", apr: "578.6%" },
@@ -1513,8 +1513,8 @@
             container.innerHTML = html;
         }
 
-        // Dados das pools (mantidos os mesmos, mas a ordenação por APR altos vai destacar os maiores)
-        const poolsData = [
+        // Dados das pools (iniciais)
+        let poolsData = [
             { pool: "USDY/USDC", network: "Solana", dex: "Raydium Concentrated", tvl: "1.3K", ratio: "55/45", volume: "7.8K", apr: "487.3%", fee: "0.25%", age: "2m0s" },
             { pool: "USD1/WBNB", network: "Bsc", dex: "PancakeSwap V3", tvl: "20.6K", ratio: "16/84", volume: "2.21M", apr: "390.6%", fee: "0.05%", age: "1m0s" },
             { pool: "COINX/USDC", network: "Solana", dex: "Raydium Concentrated", tvl: "286.8K", ratio: "87/13", volume: "270.7K", apr: "344.5%", fee: "1.00%", age: "2mo" },
@@ -1546,9 +1546,24 @@
             return variacoes;
         }
 
+        // Função para atualizar dados da tabela (simulação)
+        function atualizarDadosPools() {
+            poolsData = poolsData.map(p => {
+                // Gera novos valores de APR, TVL e volume dentro de faixas realistas
+                let novoApr = (Math.random() * 300 + 100).toFixed(1) + '%'; // entre 100% e 400%
+                let novoVolume = (Math.random() * 5).toFixed(2) + 'M'; // entre 0 e 5M
+                let novoTvl = (Math.random() * 500).toFixed(1) + 'K'; // entre 0 e 500K
+                return {
+                    ...p,
+                    apr: novoApr,
+                    volume: novoVolume.includes('M') ? novoVolume : (parseFloat(novoVolume) * 1000).toFixed(0) + 'K',
+                    tvl: novoTvl
+                };
+            });
+        }
+
         function setModo(modo) {
             modoAtual = modo;
-            // Atualizar classes dos botões
             document.getElementById('modoAutoBtn').classList.remove('active');
             document.getElementById('modoManualBtn').classList.remove('active');
             document.getElementById('modoAPRBtn').classList.remove('active');
@@ -1624,9 +1639,7 @@
 
                 poolsFiltradas.sort((a, b) => b.score - a.score);
             } else if (modoAtual === 'apr') {
-                // Ordenar por APR decrescente
                 poolsFiltradas.sort((a, b) => extrairNumeros(b).aprNum - extrairNumeros(a).aprNum);
-                // Remover score para não exibir
                 poolsFiltradas.forEach(p => delete p.score);
             } else { // manual
                 ordenarLista(poolsFiltradas, ordenacaoAtual.coluna, ordenacaoAtual.direcao);
@@ -1724,8 +1737,9 @@
         }
 
         function atualizarPools() {
-            alert('🔄 Dados atualizados com sucesso! (simulação)');
-            aplicarFiltrosEOrdenar();
+            atualizarDadosPools(); // gera novos dados
+            aplicarFiltrosEOrdenar(); // reaplica a ordenação atual
+            renderCategorias(); // se quiser atualizar os cards também, mas são fixos
         }
 
         function openPoolsModal() {
