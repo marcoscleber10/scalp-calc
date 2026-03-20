@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mestre do Scalping Pro</title>
     <style>
-        /* ========== ESTILOS (idênticos aos anteriores) ========== */
+        /* ========== ESTILOS (idênticos aos anteriores, mantidos) ========== */
         :root {
             --bg: #0d1117;
             --card: #161b22;
@@ -197,7 +197,7 @@
         .vol-media { background: #ffcc0020; color: #ffcc00; border: 1px solid #ffcc00; }
         .vol-baixa { background: #ff3e3e20; color: #ff3e3e; border: 1px solid #ff3e3e; }
 
-        /* ===== ESTILOS PARA O MODAL DE POOLS (já existentes) ===== */
+        /* ===== ESTILOS PARA O MODAL DE POOLS ===== */
         .tabs-container {
             display: flex;
             gap: 10px;
@@ -364,7 +364,7 @@
             cursor: pointer;
             font-weight: bold;
             margin-bottom: 15px;
-            float: right;
+            margin-left: 10px;
         }
         .btn-atualizar:hover { background: var(--green); color: #000; }
         .filter-row {
@@ -439,7 +439,7 @@
     </style>
 </head>
 <body>
-    <!-- CARD PRINCIPAL (100% intacto) -->
+    <!-- CARD PRINCIPAL (intacto) -->
     <div class="card" id="mainCard">
         <h4>⚡ MESTRE DO SCALPING PRO ⚡</h4>
         <button class="btn-mode" onclick="toggleMode()">🖥️ ALTERNAR MODO COMPUTADOR</button>
@@ -577,13 +577,13 @@
 
         <!-- TABELA DE SESSÕES -->
         <table class="market-table">
-             <tr><td colspan="3" class="market-header">🌍 SESSÕES CRIPTO / FOREX</td></tr>
-             <tr><td>🌏 Ásia</td><td>21:00-01:00</td><td style="color:var(--gold); text-align:right;">● médio</td></tr>
-             <tr><td>🇪🇺 Londres</td><td>04:00-09:00</td><td style="color:var(--green); text-align:right;">● alto</td></tr>
-             <tr><td>🇺🇸 NY (Pico)</td><td>10:00-14:00</td><td style="color:var(--green); text-align:right;">● PICO</td></tr>
-             <tr><td colspan="3" class="market-header">🏆 EURO, PRATA & WTI</td></tr>
-             <tr><td>🥇 Metais (NY)</td><td>09:20-15:30</td><td style="color:var(--gold); text-align:right;">● liquidez</td></tr>
-             <tr><td>🛢️ Petróleo (WTI)</td><td>10:00-16:30</td><td style="color:var(--accent); text-align:right;">● volatilidade</td></tr>
+               <tr><td colspan="3" class="market-header">🌍 SESSÕES CRIPTO / FOREX</td></tr>
+               <tr><td>🌏 Ásia</td><td>21:00-01:00</td><td style="color:var(--gold); text-align:right;">● médio</td></tr>
+               <tr><td>🇪🇺 Londres</td><td>04:00-09:00</td><td style="color:var(--green); text-align:right;">● alto</td></tr>
+               <tr><td>🇺🇸 NY (Pico)</td><td>10:00-14:00</td><td style="color:var(--green); text-align:right;">● PICO</td></tr>
+               <tr><td colspan="3" class="market-header">🏆 EURO, PRATA & WTI</td></tr>
+               <tr><td>🥇 Metais (NY)</td><td>09:20-15:30</td><td style="color:var(--gold); text-align:right;">● liquidez</td></tr>
+               <tr><td>🛢️ Petróleo (WTI)</td><td>10:00-16:30</td><td style="color:var(--accent); text-align:right;">● volatilidade</td></tr>
         </table>
 
         <!-- NOVA SEÇÃO: NOTÍCIAS E CALENDÁRIO -->
@@ -702,7 +702,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE POOLS (já existente, incluído por brevidade mas mantido idêntico) -->
+    <!-- MODAL DE POOLS (com os novos botões) -->
     <div id="poolsModal" class="modal">
         <div class="modal-content pool-modal-content">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -716,7 +716,10 @@
             <div id="poolsTab" class="tab-content active">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <p style="color: var(--text);">Track DeFi pools across Ethereum, Arbitrum, Base, and Solana.</p>
-                    <button class="btn-atualizar" onclick="atualizarPools()">🔄 Atualizar</button>
+                    <div>
+                        <button class="btn-atualizar" onclick="atualizarPools()">🔄 Atualizar</button>
+                        <button class="btn-atualizar" onclick="refreshTopPools()">🔄 Atualizar Top</button>
+                    </div>
                 </div>
                 <details class="guide-box" open>
                     <summary>📘 Como usar os modos de seleção de pools (clique para abrir/fechar)</summary>
@@ -740,7 +743,7 @@
                 </div>
                 <div class="table-wrapper">
                     <table class="pools-table" id="poolsTable">
-                        <thead><tr><th onclick="ordenarPor('pool')">Pool</th><th onclick="ordenarPor('network')">Network</th><th onclick="ordenarPor('dex')">DEX</th><th onclick="ordenarPor('tvl')">TVL</th><th>Ratio</th><th onclick="ordenarPor('volume')">Volume 24h</th><th onclick="ordenarPor('apr')">APR</th><th>1h</th><th>6h</th><th>24h</th><th>7d</th><th>30d</th><th onclick="ordenarPor('fee')">Fee</th><th onclick="ordenarPor('age')">Age</th><th>Score</th></tr></thead>
+                        <thead> <tr><th onclick="ordenarPor('pool')">Pool</th><th onclick="ordenarPor('network')">Network</th><th onclick="ordenarPor('dex')">DEX</th><th onclick="ordenarPor('tvl')">TVL</th><th>Ratio</th><th onclick="ordenarPor('volume')">Volume 24h</th><th onclick="ordenarPor('apr')">APR</th><th>1h</th><th>6h</th><th>24h</th><th>7d</th><th>30d</th><th onclick="ordenarPor('fee')">Fee</th><th onclick="ordenarPor('age')">Age</th><th>Score</th> </tr> </thead>
                         <tbody id="poolsTableBody"></tbody>
                     </table>
                 </div>
@@ -765,7 +768,7 @@
     <script src="https://s3.tradingview.com/tv.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <script>
-        // ---------- CÓDIGO ORIGINAL (MANTIDO INTACTO) COM CORREÇÃO PARA METAIS ----------
+        // ---------- CÓDIGO ORIGINAL (MANTIDO) COM CORREÇÃO PARA METAIS USANDO HYPERLIQUID API ----------
         let price = 74069.05;
         let pricesHistory = [];
         let isDesktop = false;
@@ -775,13 +778,12 @@
         let alarmes = [];
         let modoOperacaoAtivo = false;
         let timeoutDescanso;
-        let commodityInterval = null;      // Interval para simular preços de metais
-        let currentSymbol = "BINANCE:BTCUSDT";
+        let metalInterval = null;      // Interval para buscar preços da Hyperliquid
 
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioCtx = null;
 
-        function tocarAlarme() { /* mesmo código */ try { if (!audioCtx) audioCtx = new AudioContext(); const osc = audioCtx.createOscillator(); const gainNode = audioCtx.createGain(); osc.type = 'sine'; osc.frequency.value = 880; gainNode.gain.value = 0.3; osc.connect(gainNode); gainNode.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + 0.5); setTimeout(() => { const osc2 = audioCtx.createOscillator(); osc2.type = 'sine'; osc2.frequency.value = 880; const gain2 = audioCtx.createGain(); gain2.gain.value = 0.3; osc2.connect(gain2); gain2.connect(audioCtx.destination); osc2.start(); osc2.stop(audioCtx.currentTime + 0.5); }, 600); if (navigator.vibrate) navigator.vibrate([500, 200, 500]); } catch (e) {} }
+        function tocarAlarme() { try { if (!audioCtx) audioCtx = new AudioContext(); const osc = audioCtx.createOscillator(); const gainNode = audioCtx.createGain(); osc.type = 'sine'; osc.frequency.value = 880; gainNode.gain.value = 0.3; osc.connect(gainNode); gainNode.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + 0.5); setTimeout(() => { const osc2 = audioCtx.createOscillator(); osc2.type = 'sine'; osc2.frequency.value = 880; const gain2 = audioCtx.createGain(); gain2.gain.value = 0.3; osc2.connect(gain2); gain2.connect(audioCtx.destination); osc2.start(); osc2.stop(audioCtx.currentTime + 0.5); }, 600); if (navigator.vibrate) navigator.vibrate([500, 200, 500]); } catch (e) {} }
 
         function setTF(tf, btn) {
             currentTF = tf;
@@ -812,19 +814,19 @@
                 "hide_legend": false
             });
             
-            // Se já houver um intervalo de commodities, limpar
-            if (commodityInterval) {
-                clearInterval(commodityInterval);
-                commodityInterval = null;
-            }
+            if (metalInterval) { clearInterval(metalInterval); metalInterval = null; }
+            if (activeWS) { activeWS.close(); activeWS = null; }
 
-            // Se o símbolo é de metais (TVC), ativar simulador de preço
             if (symbol.startsWith("TVC:")) {
-                if (activeWS) { activeWS.close(); activeWS = null; }
-                startCommoditySimulation(symbol);
+                let asset = "";
+                if (symbol === "TVC:GOLD") asset = "GOLD";
+                else if (symbol === "TVC:SILVER") asset = "SILVER";
+                else if (symbol === "TVC:USOIL") asset = "WTI";
+                if (asset) {
+                    fetchHyperliquidPrice(asset);
+                    metalInterval = setInterval(() => fetchHyperliquidPrice(asset), 2000);
+                }
             } else {
-                // Símbolo de cripto (Binance ou Bybit) – usar WebSocket
-                if (activeWS) activeWS.close();
                 let pair = symbol.split(':')[1].toLowerCase();
                 let streamPair = (pair.includes('btc') ? 'btcusdt' : pair.includes('eth') ? 'ethusdt' : pair.includes('sol') ? 'solusdt' : 'btcusdt');
                 activeWS = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`);
@@ -835,36 +837,41 @@
                     pricesHistory.push(price);
                     if(pricesHistory.length > 50) pricesHistory.shift();
                     updateSignals();
+                    verificarAlarmes();
                 };
             }
         }
 
-        // Simulação de preços para metais
-        function startCommoditySimulation(symbol) {
-            let basePrice, volatility;
-            if (symbol === "TVC:GOLD") { basePrice = 2050; volatility = 5; }      // Ouro ~$2050
-            else if (symbol === "TVC:SILVER") { basePrice = 26.5; volatility = 0.3; } // Prata ~$26.5
-            else { basePrice = 78.5; volatility = 0.8; } // Petróleo ~$78.5
-            let currentPrice = basePrice;
-            price = currentPrice;
-            document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
-            pricesHistory.push(price);
-            if(pricesHistory.length > 50) pricesHistory.shift();
-            updateSignals();
-
-            commodityInterval = setInterval(() => {
-                const change = (Math.random() - 0.5) * volatility;
-                currentPrice = Math.max(0.01, currentPrice + change);
-                price = currentPrice;
-                document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
-                pricesHistory.push(price);
-                if(pricesHistory.length > 50) pricesHistory.shift();
-                updateSignals();
-                verificarAlarmes();
-            }, 2000);
+        async function fetchHyperliquidPrice(asset) {
+            try {
+                const response = await fetch('https://api.hyperliquid.xyz/info', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type: "allMids" })
+                });
+                const data = await response.json();
+                if (data && data[asset] !== undefined) {
+                    const midPrice = parseFloat(data[asset]);
+                    if (!isNaN(midPrice)) {
+                        price = midPrice;
+                        document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
+                        pricesHistory.push(price);
+                        if(pricesHistory.length > 50) pricesHistory.shift();
+                        updateSignals();
+                        verificarAlarmes();
+                    }
+                } else {
+                    console.warn(`Preço não encontrado para ${asset}`);
+                }
+            } catch (err) {
+                console.error("Erro ao buscar preço da Hyperliquid:", err);
+            }
         }
 
-        // Atualiza os sinais e o score (extraído da lógica original)
+        function onSymbolChange() {
+            initChart();
+        }
+
         function updateSignals() {
             const s1 = document.getElementById('statusText');
             const box = document.getElementById('statusBox');
@@ -964,11 +971,6 @@
             else if (horaMin >= 9.33 && horaMin < 15.5) sessao = '🥇 Metais NY';
             else if (horaMin >= 10 && horaMin < 16.5) sessao = '🛢️ Petróleo';
             document.getElementById('sessaoText').innerText = sessao;
-        }
-
-        function onSymbolChange() {
-            currentSymbol = document.getElementById('pairSelector').value;
-            initChart();
         }
 
         function calc() {
@@ -1075,7 +1077,7 @@
             });
         }
 
-        async function connectHyperliquid() { /* mesmo código original */ 
+        async function connectHyperliquid() { 
             const mainAddr = document.getElementById('hlMainAddress').value.trim();
             const apiAddr = document.getElementById('hlApiAddress').value.trim();
             const privKey = document.getElementById('hlApiPrivateKey').value.trim();
@@ -1089,7 +1091,7 @@
             } catch(e) { document.getElementById('apiConsole').innerHTML = `❌ Erro: ${e.message}`; alert(e.message); }
         }
 
-        async function placeRealOrder() { /* mesmo código original */ 
+        async function placeRealOrder() { 
             if(!hlConnection){ alert('Conecte a API primeiro'); return; }
             const capital = parseFloat(document.getElementById('botCapital').value);
             const pair = document.getElementById('botPair').value;
@@ -1123,29 +1125,73 @@
             } catch(e){ document.getElementById('apiConsole').innerHTML = '❌ ' + e.message; }
         }
 
-        // ========== CÓDIGO DO MODAL DE POOLS (já existente, mantido) ==========
+        // ========== CÓDIGO DO MODAL DE POOLS (com novo botão de atualizar top) ==========
         let modoAtual = 'apr';
         let filtros = { tvlMin: 0, volMin: 0, aprMin: 0 };
         let ordenacaoAtual = { coluna: 'apr', direcao: 'desc' };
 
-        const categorias = {
-            bluechip: [ { pair: "USD1/WBNB", apr: "328.6%" }, { pair: "USDY/USDC", apr: "300.2%" }, { pair: "SOL/USDC", apr: "267.0%" }, { pair: "HYPE/cbBTC", apr: "221.0%" }, { pair: "USDC/WHYPE", apr: "216.4%" } ],
-            stable: [ { pair: "EURC/USDC", apr: "29.9%" }, { pair: "USDC/USDT", apr: "21.1%" }, { pair: "DAI/USDC", apr: "4.3%" }, { pair: "USDe/USDC", apr: "1.5%" }, { pair: "USD1/USDT", apr: "0.9%" } ],
-            rwa: [ { pair: "COINx/USDC", apr: "578.6%" }, { pair: "USDY/USDC", apr: "300.2%" }, { pair: "TQQQx/USDC", apr: "297.8%" }, { pair: "SLVon/WETH", apr: "265.4%" }, { pair: "SLVon/BUSD", apr: "210.0%" } ],
-            real: [ { pair: "BRZ/USDC", apr: "8.10%" }, { pair: "BRL/AUSD", apr: "12.25%" }, { pair: "BRL/USDC", apr: "17.46%" }, { pair: "BRL/USDT", apr: "8.44%" }, { pair: "BRL/USDT", apr: "13.56%" } ]
+        // Base de pares que serão exibidos nos cards (nomes exatos como aparecem em poolsData)
+        const categoriaPares = {
+            bluechip: ["USD1/WBNB", "USDY/USDC", "SOL/USDC", "HYPE/cbBTC", "USDC/WHYPE"],
+            stable: ["EURC/USDC", "USDC/USDT", "DAI/USDC", "USDe/USDC", "USDT/USDT"],
+            rwa: ["COINX/USDC", "USDY/USDC", "TQQQx/USDC", "SLVON/WETH", "SLVON/BUSD"],
+            real: ["BRZ/USDC", "BRL/AUSD", "BRL/USDC", "BRL/USDT", "BRL/USDT"]
         };
 
-        function renderCategorias() {
+        function getAPRFromPool(poolName) {
+            // procura em poolsData
+            const pool = poolsData.find(p => p.pool === poolName);
+            return pool ? pool.apr : null;
+        }
+
+        function refreshTopPools() {
+            const categories = {
+                bluechip: [],
+                stable: [],
+                rwa: [],
+                real: []
+            };
+            for (let [cat, pairs] of Object.entries(categoriaPares)) {
+                for (let pair of pairs) {
+                    const apr = getAPRFromPool(pair);
+                    if (apr) {
+                        categories[cat].push({ pair: pair, apr: apr });
+                    } else {
+                        // fallback para não deixar vazio
+                        if (cat === 'bluechip') categories[cat].push({ pair: pair, apr: "0%" });
+                        else if (cat === 'stable') categories[cat].push({ pair: pair, apr: "0%" });
+                        else if (cat === 'rwa') categories[cat].push({ pair: pair, apr: "0%" });
+                        else categories[cat].push({ pair: pair, apr: "0%" });
+                    }
+                }
+            }
+            renderCategoriasCustom(categories);
+        }
+
+        function renderCategoriasCustom(catData) {
             const container = document.getElementById('categoriesContainer');
             if (!container) return;
             let html = '';
-            for (let [cat, items] of Object.entries(categorias)) {
+            for (let [cat, items] of Object.entries(catData)) {
                 let titulo = cat === 'bluechip' ? 'BEST BLUE-CHIP' : cat === 'stable' ? 'BEST STABLE COIN' : cat === 'rwa' ? 'BEST RWA' : 'BEST REAL';
                 html += `<div class="category-card"><div class="category-title">${titulo}</div>`;
-                items.forEach(item => { html += `<div class="category-item"><span class="pair">${item.pair}</span><span class="apr">${item.apr}</span></div>`; });
+                items.forEach(item => {
+                    html += `<div class="category-item"><span class="pair">${item.pair}</span><span class="apr">${item.apr}</span></div>`;
+                });
                 html += `</div>`;
             }
             container.innerHTML = html;
+        }
+
+        // Chamada inicial para renderizar os cards com dados estáticos (fallback)
+        function renderCategoriasStatic() {
+            const catStatic = {
+                bluechip: [ { pair: "USD1/WBNB", apr: "328.6%" }, { pair: "USDY/USDC", apr: "300.2%" }, { pair: "SOL/USDC", apr: "267.0%" }, { pair: "HYPE/cbBTC", apr: "221.0%" }, { pair: "USDC/WHYPE", apr: "216.4%" } ],
+                stable: [ { pair: "EURC/USDC", apr: "29.9%" }, { pair: "USDC/USDT", apr: "21.1%" }, { pair: "DAI/USDC", apr: "4.3%" }, { pair: "USDe/USDC", apr: "1.5%" }, { pair: "USDT/USDT", apr: "0.9%" } ],
+                rwa: [ { pair: "COINX/USDC", apr: "578.6%" }, { pair: "USDY/USDC", apr: "300.2%" }, { pair: "TQQQx/USDC", apr: "297.8%" }, { pair: "SLVON/WETH", apr: "265.4%" }, { pair: "SLVON/BUSD", apr: "210.0%" } ],
+                real: [ { pair: "BRZ/USDC", apr: "8.10%" }, { pair: "BRL/AUSD", apr: "12.25%" }, { pair: "BRL/USDC", apr: "17.46%" }, { pair: "BRL/USDT", apr: "8.44%" }, { pair: "BRL/USDT", apr: "13.56%" } ]
+            };
+            renderCategoriasCustom(catStatic);
         }
 
         let poolsData = [
@@ -1179,6 +1225,8 @@
                 let novoTvl = (Math.random() * 500).toFixed(1) + 'K';
                 return { ...p, apr: novoApr, volume: novoVolume.includes('M') ? novoVolume : (parseFloat(novoVolume)*1000).toFixed(0)+'K', tvl: novoTvl };
             });
+            refreshTopPools(); // atualiza os cards após gerar novos dados
+            aplicarFiltrosEOrdenar(); // reaplica ordenação na tabela
         }
         function setModo(modo) { modoAtual = modo; document.getElementById('modoAutoBtn').classList.remove('active'); document.getElementById('modoManualBtn').classList.remove('active'); document.getElementById('modoAPRBtn').classList.remove('active'); if(modo==='auto') document.getElementById('modoAutoBtn').classList.add('active'); else if(modo==='manual') document.getElementById('modoManualBtn').classList.add('active'); else document.getElementById('modoAPRBtn').classList.add('active'); aplicarFiltrosEOrdenar(); }
         function aplicarFiltros() { filtros.tvlMin = parseFloat(document.getElementById('filtroTVL').value) || 0; filtros.volMin = parseFloat(document.getElementById('filtroVolume').value) || 0; filtros.aprMin = parseFloat(document.getElementById('filtroAPR').value) || 0; aplicarFiltrosEOrdenar(); }
@@ -1198,11 +1246,14 @@
             const tbody=document.getElementById('poolsTableBody'); if(!tbody) return; tbody.innerHTML='';
             pools.forEach(p=>{ const variacoes=gerarVariacao(); let scoreHtml=''; if(p.score!==undefined){ const scorePercent=(p.score*100).toFixed(0); let scoreColor=p.score<0.3?'var(--red)':p.score<0.6?'var(--gold)':'var(--green)'; scoreHtml=`<div style="display:flex;align-items:center;"><div class="score-bar-small"><div class="score-fill-small" style="width:${scorePercent}%;background:${scoreColor};"></div></div><span>${scorePercent}%</span></div>`; } else scoreHtml='-'; const formatVariacao=(val)=>{ const num=parseFloat(val); const sinal=num>=0?'▲':'▼'; const cor=num>=0?'positive':'negative'; return `<span class="${cor}">${sinal} ${Math.abs(num)}%</span>`; }; const tr=document.createElement('tr'); tr.innerHTML=`<td><strong>${p.pool}</strong></td><td>${p.network}</td><td>${p.dex}</td><td>$${p.tvl}</td><td><div class="ratio-bar"><span style="width:${p.ratio.split('/')[0]}%;"></span></div>${p.ratio}</td><td>$${p.volume}</td><td class="apr-high">${p.apr}</td><td>${formatVariacao(variacoes[0])}</td><td>${formatVariacao(variacoes[1])}</td><td>${formatVariacao(variacoes[2])}</td><td>${formatVariacao(variacoes[3])}</td><td>${formatVariacao(variacoes[4])}</td><td>${p.fee}</td><td>${p.age}</td><td class="score-cell">${scoreHtml}</td>`; tbody.appendChild(tr); });
         }
-        function atualizarPools() { atualizarDadosPools(); aplicarFiltrosEOrdenar(); }
-        function openPoolsModal() { document.getElementById('poolsModal').style.display='flex'; renderCategorias(); setModo('apr'); }
+        function atualizarPools() { atualizarDadosPools(); }
+        function openPoolsModal() { document.getElementById('poolsModal').style.display='flex'; refreshTopPools(); setModo('apr'); }
         function closePoolsModal() { document.getElementById('poolsModal').style.display='none'; }
-        function switchTab(tab) { document.querySelectorAll('.tab-btn').forEach(btn=>btn.classList.remove('active')); document.querySelectorAll('.tab-content').forEach(content=>content.classList.remove('active')); if(tab==='pools'){ document.querySelectorAll('.tab-btn')[0].classList.add('active'); document.getElementById('poolsTab').classList.add('active'); renderCategorias(); aplicarFiltrosEOrdenar(); } else { document.querySelectorAll('.tab-btn')[1].classList.add('active'); document.getElementById('newsTab').classList.add('active'); } }
-        renderCategorias(); setModo('apr'); iniciarTimerDescanso(); initChart();
+        function switchTab(tab) { document.querySelectorAll('.tab-btn').forEach(btn=>btn.classList.remove('active')); document.querySelectorAll('.tab-content').forEach(content=>content.classList.remove('active')); if(tab==='pools'){ document.querySelectorAll('.tab-btn')[0].classList.add('active'); document.getElementById('poolsTab').classList.add('active'); refreshTopPools(); aplicarFiltrosEOrdenar(); } else { document.querySelectorAll('.tab-btn')[1].classList.add('active'); document.getElementById('newsTab').classList.add('active'); } }
+        renderCategoriasStatic(); // inicial com valores estáticos
+        setModo('apr');
+        iniciarTimerDescanso();
+        initChart();
     </script>
 </body>
 </html>
