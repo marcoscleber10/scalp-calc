@@ -1,69 +1,73 @@
-if(ordenacaoAtual.coluna===coluna) ordenacaoAtual.direcao=ordenacaoAtual.direcao==='asc'?'desc':'asc'; 
-                else { ordenacaoAtual.coluna=coluna; ordenacaoAtual.direcao='asc'; } 
-                aplicarFiltrosEOrdenar(); 
-            } 
+// ========== CÓDIGO DO MODAL DE POOLS (FILTROS E TABELA) ==========
+        let modoAtual = 'apr';
+        let filtros = { tvlMin: 0, volMin: 0, aprMin: 0 };
+        let ordenacaoAtual = { coluna: 'apr', direcao: 'desc' };
+
+        function setModo(modo) { 
+            modoAtual = modo; 
+            document.getElementById('modoAutoBtn').classList.remove('active');
+            document.getElementById('modoManualBtn').classList.remove('active');
+            document.getElementById('modoAPRBtn').classList.remove('active');
+            if(modo==='auto') document.getElementById('modoAutoBtn').classList.add('active');
+            else if(modo==='manual') document.getElementById('modoManualBtn').classList.add('active');
+            else document.getElementById('modoAPRBtn').classList.add('active');
+            aplicarFiltrosEOrdenar(); 
         }
         
-        function ordenarLista(lista, coluna, direcao) { 
-            lista.sort((a,b)=>{ 
-                let valA,valB; 
-                if(coluna==='tvl'coluna==='volume'coluna==='apr'||coluna==='fee'){ 
-                    valA=extrairNumeros(a)[coluna+'Num']!==undefined?extrairNumeros(a)[coluna+'Num']:parseFloat(a[coluna]); 
-                    valB=extrairNumeros(b)[coluna+'Num']!==undefined?extrairNumeros(b)[coluna+'Num']:parseFloat(b[coluna]); 
-                } else { 
-                    valA=a[coluna]; 
-                    valB=b[coluna]; 
-                } 
-                return direcao==='asc'?(valA>valB?1:-1):(valA<valB?1:-1); 
-            }); 
+        function aplicarFiltros() { 
+            filtros.tvlMin = parseFloat(document.getElementById('filtroTVL').value) || 0; 
+            filtros.volMin = parseFloat(document.getElementById('filtroVolume').value) || 0; 
+            filtros.aprMin = parseFloat(document.getElementById('filtroAPR').value) || 0; 
+            aplicarFiltrosEOrdenar(); 
         }
         
-        function gerarVariacao() { let v = []; for (let i=0;i<5;i++) v.push((Math.random()*4-2).toFixed(2)); return v; }
+        function extrairNumeros(pool) { 
+            const parseNum = (str) => { 
+                if(!str) return 0; 
+                let n = parseFloat(str.replace(/[KMB%$]/g,'')); 
+                if(str.includes('K')) n*=1e3; 
+                if(str.includes('M')) n*=1e6; 
+                if(str.includes('B')) n*=1e9; 
+                return n; 
+            }; 
+            return { tvlNum: parseNum(pool.tvl), volNum: parseNum(pool.volume), aprNum: parseNum(pool.apr) }; 
+        }
         
-        function renderPoolsTable(pools) {
-            const tbody=document.getElementById('poolsTableBody'); if(!tbody) return; tbody.innerHTML='';
-            pools.forEach(p=>{ 
-                const variacoes=gerarVariacao(); 
-                let scoreHtml=''; 
-                if(p.score!==undefined){ 
-                    const scorePercent=(p.score*100).toFixed(0); 
-                    let scoreColor=p.score<0.3?'var(--red)':p.score<0.6?'var(--gold)':'var(--green)'; 
-                    scoreHtml=<div style="display:flex;align-items:center;"><div class="score-bar-small"><div class="score-fill-small" style="width:${scorePercent}%;background:${scoreColor};"></div></div><span>${scorePercent}%</span></div>; 
-                } else scoreHtml='-'; 
-                const formatVariacao=(val)=>{ 
-                    const num=parseFloat(val); 
-                    const sinal=num>=0?'▲':'▼'; 
-                    const cor=num>=0?'positive':'negative'; 
-                    return <span class="${cor}">${sinal} ${Math.abs(num)}%</span>; 
-                }; 
-                const tr=document.createElement('tr'); 
-                tr.innerHTML=<td><strong>${p.pool}</strong></td><td>${p.network}</td><td>${p.dex}</td><td>$${p.tvl}</td><td><div class="ratio-bar"><span style="width:${p.ratio.split('/')[0]}%;"></span></div>${p.ratio}</td><td>$${p.volume}</td><td class="apr-high">${p.apr}</td><td>${formatVariacao(variacoes[0])}</td><td>${formatVariacao(variacoes[1])}</td><td>${formatVariacao(variacoes[2])}</td><td>${formatVariacao(variacoes[3])}</td><td>${formatVariacao(variacoes[4])}</td><td>${p.fee}</td><td>${p.age}</td><td class="score-cell">${scoreHtml}</td>; 
-                tbody.appendChild(tr); 
+        function calcularIdadeBonus(age) { 
+            if(age.includes('y')age.includes('mo')(age.includes('d')&&parseInt(age)>7)) return 0.1; 
+            else if(age.includes('d')&&parseInt(age)<=7) return 0.05; 
+            else if(age.includes('m')&&!age.includes('mo')) return -0.1; 
+            return 0; 
+        }
+        
+        function calcularScore(pool, tvls, vols, aprs) { 
+            const {tvlNum,volNum,aprNum}=extrairNumeros(pool); 
+            const tvlPerc=tvls.length?tvls.filter(v=>v<tvlNum).length/tvls.length:0; 
+            const volPerc=vols.length?vols.filter(v=>v<volNum).length/vols.length:0; 
+            const aprPerc=aprs.length?aprs.filter(v=>v<aprNum).length/aprs.length:0; 
+            const idadeBonus=calcularIdadeBonus(pool.age); 
+            return (aprPerc*0.4)+(volPerc*0.3)+(tvlPerc*0.2)+idadeBonus; 
+        }
+        
+        function aplicarFiltrosEOrdenar() {
+            let poolsFiltradas = poolsData.filter(p=>{ 
+                const{tvlNum,volNum,aprNum}=extrairNumeros(p); 
+                return tvlNum>=filtros.tvlMin && volNum>=filtros.volMin && aprNum>=filtros.aprMin; 
             });
-        }
-        
-        function atualizarPools() { atualizarDadosPools(); }
-        function openPoolsModal() { document.getElementById('poolsModal').style.display='flex'; refreshCategories(); setModo('apr'); }
-        function closePoolsModal() { document.getElementById('poolsModal').style.display='none'; }
-        function switchTab(tab) { 
-            document.querySelectorAll('.tab-btn').forEach(btn=>btn.classList.remove('active')); 
-            document.querySelectorAll('.tab-content').forEach(content=>content.classList.remove('active')); 
-            if(tab==='pools'){ 
-                document.querySelectorAll('.tab-btn')[0].classList.add('active'); 
-                document.getElementById('poolsTab').classList.add('active'); 
-                refreshCategories(); 
-                aplicarFiltrosEOrdenar(); 
+            if(modoAtual==='auto'){ 
+                const tvls=poolsFiltradas.map(p=>extrairNumeros(p).tvlNum); 
+                const vols=poolsFiltradas.map(p=>extrairNumeros(p).volNum); 
+                const aprs=poolsFiltradas.map(p=>extrairNumeros(p).aprNum); 
+                poolsFiltradas=poolsFiltradas.map(p=>{p.score=calcularScore(p,tvls,vols,aprs); return p;}); 
+                poolsFiltradas.sort((a,b)=>b.score-a.score); 
+            } else if(modoAtual==='apr'){ 
+                poolsFiltradas.sort((a,b)=>extrairNumeros(b).aprNum-extrairNumeros(a).aprNum); 
+                poolsFiltradas.forEach(p=>delete p.score); 
             } else { 
-                document.querySelectorAll('.tab-btn')[1].classList.add('active'); 
-                document.getElementById('newsTab').classList.add('active'); 
-            } 
+                ordenarLista(poolsFiltradas, ordenacaoAtual.coluna, ordenacaoAtual.direcao); 
+            }
+            renderPoolsTable(poolsFiltradas);
         }
         
-        // Inicialização
-        refreshCategories();
-        setModo('apr');
-        iniciarTimerDescanso();
-        initChart();
-    </script>
-</body>
-</html>
+        function ordenarPor(coluna) { 
+            if(modoAtual==='manual'){
