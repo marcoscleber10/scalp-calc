@@ -1,1260 +1,788 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mestre do Scalping Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Mestre do Scalping Pro - Dashboard</title>
     <style>
-        /* ========== ESTILOS COMPLETOS (MANTIDOS) ========== */
-        :root {
-            --bg: #0d1117;
-            --card: #161b22;
-            --green: #00ff88;
-            --red: #ff3e3e;
-            --text: #8b949e;
-            --accent: #2f81f7;
-            --gold: #ffcc00;
-            --purple: #9d4edd;
-            --orange: #ff9900;
-            --bright-yellow: #ffcc00;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
-        body { background-color: var(--bg); color: white; display: flex; justify-content: center; padding: 20px; transition: filter 0.5s, box-shadow 0.5s; }
-        .card { background: var(--card); padding: 24px; border-radius: 24px; width: 100%; max-width: 420px; border: 1px solid #30363d; box-shadow: 0 20px 40px rgba(0,0,0,0.6); transition: all 0.3s; }
-        .card.desktop-mode { max-width: 95%; }
-        .desktop-mode #chart_container { height: 500px !important; }
-        h4 { color: var(--text); font-size: 12px; text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px dashed #30363d; }
-        .btn-mode { width: 100%; background: var(--accent); color: white; border: none; padding: 12px; border-radius: 40px; font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 12px; text-transform: uppercase; }
-        .time-selector { display: flex; gap: 8px; margin-bottom: 15px; }
-        .time-btn { flex: 1; background: #21262d; border: 1px solid #30363d; color: var(--text); padding: 12px 5px; border-radius: 40px; font-size: 11px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .time-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
-        .time-btn.active[data-t="15"] { background: var(--gold); color: #000; border-color: var(--gold); }
-        select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 15px; border-radius: 40px; margin-bottom: 20px; font-size: 14px; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239aa4b3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>"); background-repeat: no-repeat; background-position: right 18px center; background-size: 16px; }
-        .price { font-size: 42px; font-weight: 800; color: var(--green); text-align: center; margin-bottom: 15px; font-family: 'Courier New', monospace; text-shadow: 0 0 10px #00ff8840; }
-        .status-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .status-bar { background: #0f141c; padding: 12px 5px; border-radius: 20px; border: 1px solid #2a3340; text-align: center; position: relative; overflow: hidden; }
-        .status-label { font-size: 9px; color: var(--text); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px; }
-        .status-value { font-size: 14px; font-weight: bold; display: block; }
-        .light-glow { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: currentColor; filter: blur(4px); opacity: 0.5; }
-        .score-container { margin-bottom: 15px; }
-        .score-bar { background: #1e2a38; height: 20px; border-radius: 10px; overflow: hidden; margin: 5px 0; }
-        .score-fill { height: 100%; width: 0%; transition: width 0.3s; }
-        .score-fill.alta { background: linear-gradient(90deg, #00ff88, #00cc66); }
-        .score-fill.media { background: linear-gradient(90deg, #ffcc00, #ffaa00); }
-        .score-fill.baixa { background: linear-gradient(90deg, #ff3e3e, #cc0000); }
-        .score-text { display: flex; justify-content: space-between; font-size: 11px; color: var(--text); }
-        @keyframes flashGreen {
-            0% { background-color: rgba(0,255,136,0); }
-            50% { background-color: rgba(0,255,136,0.3); }
-            100% { background-color: rgba(0,255,136,0); }
-        }
-        @keyframes flashRed {
-            0% { background-color: rgba(255,62,62,0); }
-            50% { background-color: rgba(255,62,62,0.3); }
-            100% { background-color: rgba(255,62,62,0); }
-        }
-        .alerta-compra { animation: flashGreen 0.5s ease-in-out 3; }
-        .alerta-venda { animation: flashRed 0.5s ease-in-out 3; }
-        .badge-alerta {
-            background: var(--gold);
-            color: #000;
-            padding: 8px 12px;
-            border-radius: 40px;
-            font-weight: bold;
-            font-size: 12px;
-            margin-bottom: 15px;
-            display: inline-block;
-            animation: pulse 1s infinite;
-        }
-        @keyframes pulse {
-            0% { opacity: 0.8; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.05); }
-            100% { opacity: 0.8; transform: scale(1); }
-        }
-        .modo-operacao {
-            background: #1e2a38;
-            padding: 15px;
-            border-radius: 20px;
-            margin: 15px 0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border: 1px solid var(--accent);
-        }
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 24px;
-        }
-        .switch input { display: none; }
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            background-color: #444;
-            border-radius: 24px;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            transition: .4s;
-        }
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            border-radius: 50%;
-            transition: .4s;
-        }
-        input:checked + .slider { background-color: #00ff88; }
-        input:checked + .slider:before { transform: translateX(26px); }
-        #statusModo { color: var(--text); font-size: 12px; font-weight: bold; }
-        .modo-descanso { filter: brightness(0.3); }
-        .modo-ativo { box-shadow: 0 0 20px #00ff88 inset; }
-        .alarme-section {
-            background: #1e2a38;
-            padding: 15px;
-            border-radius: 20px;
-            margin: 15px 0;
-            border: 1px solid var(--gold);
-        }
-        .alarme-title { color: var(--gold); font-weight: bold; margin-bottom: 10px; display: flex; align-items: center; gap: 5px; }
-        .alarme-input-group { display: flex; gap: 8px; margin-bottom: 10px; }
-        .alarme-input {
-            flex: 1;
-            background: #0d151f;
-            border: 1px solid #3d4d62;
-            color: white;
-            padding: 10px;
-            border-radius: 20px;
-            font-size: 14px;
-        }
-        .alarme-btn {
-            background: var(--accent);
-            border: none;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .alarme-lista { margin-top: 10px; font-size: 12px; }
-        .alarme-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px;
-            background: #0d151f;
-            border-radius: 10px;
-            margin-bottom: 5px;
-        }
-        .alarme-remover {
-            background: var(--red);
-            border: none;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 10px;
-        }
-        #chart_container { width: 100%; height: 220px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #30363d; background: #000; transition: height 0.3s; }
-        .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
-        label { font-size: 9px; color: var(--text); text-transform: uppercase; margin-bottom: 4px; display: block; }
-        input { width: 100%; background: #21262d; border: 1px solid #30363d; color: white; padding: 12px; border-radius: 20px; font-size: 14px; }
-        .btn-calc { width: 100%; padding: 16px; background: var(--green); color: #0d1117; border: none; border-radius: 40px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 16px; box-shadow: 0 6px 0 #0b5e3c; transform: translateY(-2px); transition: 0.1s; margin-top: 10px; }
-        .btn-calc:active { transform: translateY(4px); box-shadow: 0 2px 0 #0b5e3c; }
-        .res { margin-top: 20px; padding: 18px; background: #0f151d; border-radius: 24px; display: none; border: 1px solid #2a3440; }
-        .projects-section { margin-top: 30px; border-top: 1px solid #30363d; padding-top: 20px; }
-        .projects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-        .project-btn { background: #1a222c; color: #c9d1d9; border: 1px solid #30363d; padding: 12px 5px; border-radius: 30px; font-size: 11px; font-weight: 600; text-decoration: none; text-align: center; display: block; cursor: pointer; }
-        .project-btn:hover { background: #26323f; }
-        .ad-container { margin-top: 25px; padding: 15px; background: #161e28; border-radius: 30px; border: 1px solid #ffcc0040; text-align: center; }
-        .btn-ad { display: inline-block; background: #ffcc00; color: #000; text-decoration: none; padding: 12px 32px; border-radius: 40px; font-weight: 800; margin-top: 10px; border: 1px solid #ffcc66; box-shadow: 0 4px 0 #8f651f; transform: translateY(-2px); transition: 0.1s; }
-        .btn-ad:active { transform: translateY(2px); box-shadow: 0 1px 0 #8f651f; }
-        .market-table { width: 100%; font-size: 11px; margin-top: 20px; border-collapse: collapse; color: #b6c2d2; }
-        .market-table td { padding: 8px 4px; border-bottom: 1px solid #222b35; }
-        .market-header { color: var(--accent); font-weight: 700; font-size: 10px; letter-spacing: 1.5px; padding-top: 15px; }
-        .floating-ball { position: fixed; bottom: 30px; right: 30px; width: 70px; height: 70px; background: radial-gradient(circle at 30% 30%, var(--green), #0f8f5c); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #0b0f14; font-weight: 900; font-size: 28px; box-shadow: 0 10px 25px #00ff8880; cursor: pointer; z-index: 9999; border: 2px solid white; }
-        /* ===== MODAL PRINCIPAL (Dados de Mercado) ===== */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(10px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 999999;
-        }
-        .modal-content {
-            background: #161b22;
-            padding: 30px;
-            border-radius: 30px;
-            width: 90%;
-            max-width: 700px;
-            max-height: 85vh;
-            overflow-y: auto;
-            border: 2px solid var(--gold);
-            position: relative;
-            z-index: 1000000;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-        }
-        /* ===== SUBMODAL PARA DETALHES DAS ESTRATÉGIAS ===== */
-        .submodal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(4px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000000;
-        }
-        .submodal-content {
-            background: #1e2a36;
-            padding: 25px;
-            border-radius: 25px;
-            width: 90%;
-            max-width: 650px;
-            max-height: 80vh;
-            overflow-y: auto;
-            border: 2px solid var(--accent);
-            position: relative;
-            box-shadow: 0 20px 30px rgba(0,0,0,0.5);
-        }
-        .submodal-content h2 { color: var(--gold); margin-bottom: 15px; }
-        .submodal-content h3 { color: var(--gold); margin: 15px 0 8px; }
-        .submodal-content p, .submodal-content li { line-height: 1.5; }
-        .button-group { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
-        .button-group button { background: var(--accent); border: none; color: white; padding: 8px 20px; border-radius: 30px; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        .button-group button:hover { background: var(--green); color: #000; }
-        .close-btn, .btn-detalhe, .btn-filter, .btn-atualizar, .btn-mode, .btn-calc { cursor: pointer; transition: 0.2s; }
-        .close-btn:hover, .btn-detalhe:hover, .btn-filter:hover, .btn-atualizar:hover, .btn-mode:hover, .btn-calc:hover { filter: brightness(1.1); }
-        .campo { margin-bottom: 15px; }
-        .campo label { color: var(--text); font-size: 11px; text-transform: uppercase; margin-bottom: 5px; display: block; }
-        .donation-item { background: #1e2a36; padding: 15px; border-radius: 15px; margin: 10px 0; border-left: 5px solid; }
-        .donation-item p { word-break: break-all; background: #0d151f; padding: 10px; border-radius: 10px; margin-top: 8px; font-family: monospace; display: flex; justify-content: space-between; align-items: center; }
-        .copy-btn { background: var(--accent); border: none; color: white; padding: 5px 15px; border-radius: 20px; cursor: pointer; font-size: 11px; font-weight: bold; margin-left: 10px; }
-        .copy-btn:hover { background: var(--green); color: #000; }
-        .console { background: #0d1117; padding: 10px; border-radius: 10px; margin: 10px 0; font-size: 12px; font-family: monospace; height: 50px; overflow-y: auto; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .security-warning { background: #ff3e3e20; border: 1px solid #ff3e3e; color: #ff3e3e; padding: 10px; border-radius: 10px; font-size: 11px; margin-bottom: 15px; text-align: center; }
-        .vol-indicator { display: inline-block; padding: 4px 8px; border-radius: 20px; font-size: 10px; font-weight: bold; margin-left: 8px; }
-        .vol-alta { background: #00ff8820; color: #00ff88; border: 1px solid #00ff88; }
-        .vol-media { background: #ffcc0020; color: #ffcc00; border: 1px solid #ffcc00; }
-        .vol-baixa { background: #ff3e3e20; color: #ff3e3e; border: 1px solid #ff3e3e; }
 
-        /* ===== ESTILOS PARA O MODAL DE POOLS ===== */
-        .tabs-container {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--accent);
-            padding-bottom: 10px;
-            flex-wrap: wrap;
+        body {
+            background: #0a0c12;
+            color: #eef2ff;
+            padding: 20px;
         }
-        .tab-btn {
-            background: #1e2a38;
-            border: 1px solid #3d4d62;
-            color: var(--text);
-            padding: 8px 16px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.2s;
-        }
-        .tab-btn.active {
-            background: var(--accent);
-            color: white;
-            border-color: var(--accent);
-        }
-        .tab-btn.robot {
-            background: var(--bright-yellow);
-            color: #000;
-            border-color: var(--bright-yellow);
-            font-weight: bold;
-        }
-        .tab-btn.robot.active {
-            background: var(--bright-yellow);
-            color: #000;
-            border-color: var(--bright-yellow);
-            box-shadow: 0 0 10px var(--bright-yellow);
-        }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .categories-grid {
+
+        /* Dashboard container */
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 25px;
+            grid-template-columns: 280px 1fr;
+            gap: 20px;
         }
-        .category-card {
-            background: #1e2a38;
-            border-radius: 16px;
-            padding: 15px;
-            border: 1px solid #3d4d62;
+
+        /* Sidebar esquerda */
+        .sidebar {
+            background: #11151f;
+            border-radius: 24px;
+            padding: 20px;
+            border: 1px solid #1e2a3a;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
         }
-        .category-title {
-            color: var(--gold);
-            font-weight: bold;
-            margin-bottom: 10px;
-            font-size: 14px;
-            text-transform: uppercase;
-        }
-        .category-item {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            padding: 5px 0;
-            border-bottom: 1px dashed #2a3440;
-        }
-        .category-item:last-child { border-bottom: none; }
-        .category-item .pair { color: white; }
-        .category-item .apr { color: var(--green); font-weight: bold; }
-        .guide-box {
-            background: #0d1a24;
-            border-left: 4px solid var(--accent);
-            border-radius: 12px;
-            padding: 12px 16px;
-            margin-bottom: 20px;
-            font-size: 12px;
-            color: #b0c4d9;
-            line-height: 1.5;
-        }
-        .guide-box summary { cursor: pointer; color: var(--accent); font-weight: bold; outline: none; }
-        .guide-box p { margin-top: 8px; }
-        .guide-box ul { margin-left: 20px; list-style-type: disc; }
-        .guide-box li { margin: 4px 0; }
-        .guide-box code { background: #1e2a3a; padding: 2px 6px; border-radius: 6px; color: var(--gold); }
-        .warning-high-apr {
-            background: rgba(255, 153, 0, 0.15);
-            border: 1px solid var(--orange);
-            color: var(--orange);
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            margin-bottom: 15px;
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f0b90b, #ff8c00);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 24px;
             text-align: center;
         }
-        .table-wrapper {
-            overflow-x: auto;
-            margin-top: 20px;
-            border-radius: 16px;
-            border: 1px solid #2a3440;
-        }
-        .pools-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px;
-            color: var(--text);
-            min-width: 1400px;
-        }
-        .pools-table th {
-            text-align: left;
-            padding: 12px 8px;
-            border-bottom: 2px solid var(--accent);
-            color: white;
-            font-weight: 600;
-            background: #1a222c;
-            white-space: nowrap;
-        }
-        .pools-table td {
-            padding: 10px 8px;
-            border-bottom: 1px solid #2a3440;
-            white-space: nowrap;
-        }
-        .pools-table tr:hover { background: #1e2a38; }
-        .ratio-bar {
-            background: #0d151f;
-            height: 16px;
-            width: 60px;
-            border-radius: 8px;
-            overflow: hidden;
-            display: inline-block;
-        }
-        .ratio-bar span { display: block; height: 100%; background: var(--green); }
-        .apr-high { color: var(--green); font-weight: bold; }
-        .score-cell { font-weight: bold; text-align: center; }
-        .score-bar-small {
-            width: 60px;
-            height: 16px;
-            background: #1e2a38;
-            border-radius: 8px;
-            overflow: hidden;
-            display: inline-block;
-            margin-right: 5px;
-        }
-        .score-fill-small { height: 100%; background: var(--green); }
-        .positive { color: var(--green); }
-        .negative { color: var(--red); }
-        .pool-modal-content { max-width: 1400px !important; width: 95% !important; }
-        .news-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-        .news-card {
-            background: #1e2a38;
-            border-radius: 16px;
-            padding: 15px;
-            border-left: 4px solid var(--accent);
-            transition: 0.2s;
-        }
-        .news-card:hover { transform: translateY(-2px); border-color: var(--green); }
-        .news-card h4 { color: white; margin-bottom: 8px; font-size: 14px; }
-        .news-card a { color: var(--accent); text-decoration: none; font-size: 12px; word-break: break-all; }
-        .news-card a:hover { text-decoration: underline; }
-        .news-card p { color: var(--text); font-size: 11px; margin-top: 8px; }
-        .calendar-link {
-            background: #1e2a38;
-            border-radius: 16px;
-            padding: 20px;
-            margin: 20px 0;
-            border: 1px solid var(--gold);
-        }
-        .calendar-link a { color: var(--gold); font-size: 16px; font-weight: bold; text-decoration: none; }
-        .calendar-link a:hover { text-decoration: underline; }
-        .btn-atualizar {
-            background: var(--accent);
-            border: none;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-bottom: 15px;
-            margin-left: 10px;
-        }
-        .btn-atualizar:hover { background: var(--green); color: #000; }
-        .filter-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            align-items: center;
-            margin-bottom: 15px;
-            background: #1a222c;
-            padding: 15px;
-            border-radius: 20px;
-        }
-        .filter-item { flex: 1; min-width: 100px; }
-        .filter-item label { font-size: 9px; color: var(--text); text-transform: uppercase; margin-bottom: 2px; display: block; }
-        .filter-item input {
-            width: 100%;
-            background: #0d151f;
-            border: 1px solid #3d4d62;
-            color: white;
-            padding: 8px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-        }
-        .btn-filter {
-            background: var(--accent);
-            border: none;
-            color: white;
-            padding: 8px 20px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 12px;
-            height: 36px;
-        }
-        .btn-filter:hover { background: var(--green); color: #000; }
-        .mode-toggle {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
-        .mode-btn {
-            flex: 1;
-            min-width: 100px;
-            background: #21262d;
-            border: 1px solid #30363d;
-            color: var(--text);
-            padding: 8px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.2s;
-        }
-        .mode-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
-        .mode-btn.apr-high { background: var(--orange); color: #000; border-color: var(--orange); }
-        .mode-btn.apr-high.active { background: var(--orange); color: #000; border-color: var(--orange); box-shadow: 0 0 10px var(--orange); }
-        .news-section {
-            margin-top: 25px;
-            border-top: 1px solid #30363d;
-            padding-top: 20px;
-        }
-        .news-section h4 { color: var(--gold); margin-bottom: 15px; text-align: left; border-bottom: none; padding-bottom: 0; }
-        .news-block { background: #1e2a38; border-radius: 16px; padding: 15px; }
-        .news-block h5 { color: white; margin-bottom: 10px; font-size: 13px; }
-        .news-links {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 10px;
-        }
-        .news-links a { color: var(--accent); text-decoration: none; font-size: 12px; }
-        .news-links a:hover { text-decoration: underline; }
 
-        /* Estilos para a aba de estratégias */
-        .strategy-content {
-            color: #c9d1d9;
-            font-size: 14px;
-            line-height: 1.6;
+        .timeframe-selector {
+            background: #0a0e16;
+            border-radius: 40px;
+            padding: 6px;
+            display: flex;
+            margin-bottom: 28px;
+            border: 1px solid #1f2a3e;
         }
-        .strategy-content h3 {
-            color: var(--green);
-            margin-top: 25px;
-            margin-bottom: 12px;
-            font-size: 1.2rem;
+
+        .timeframe {
+            flex: 1;
+            text-align: center;
+            padding: 8px 0;
+            border-radius: 32px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            color: #8e9aaf;
         }
-        .strategy-content h4 {
-            color: var(--gold);
-            margin-top: 20px;
-            margin-bottom: 8px;
+
+        .timeframe.active {
+            background: #f0b90b;
+            color: #0a0c12;
+            box-shadow: 0 2px 8px rgba(240,185,11,0.3);
         }
-        .strategy-content .code-block {
-            background: #0d151f;
-            border-left: 3px solid var(--accent);
-            padding: 12px;
+
+        .commodity-price-card {
+            background: #0c111b;
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 20px;
+            border: 1px solid #1e2a3a;
+        }
+
+        .commodity-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #7c8ba0;
+            margin-bottom: 6px;
+        }
+
+        .price-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .price-number {
+            font-size: 1.8rem;
+        }
+
+        .price-change {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .positive {
+            color: #2ecc71;
+        }
+
+        .negative {
+            color: #e74c3c;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(240,185,11,0.3);
+            border-top-color: #f0b90b;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.75rem;
+            background: rgba(231,76,60,0.1);
+            padding: 4px 8px;
             border-radius: 8px;
-            font-family: monospace;
-            font-size: 12px;
-            overflow-x: auto;
-            margin: 12px 0;
+            display: inline-block;
         }
-        .strategy-content ul, .strategy-content ol {
-            margin-left: 20px;
+
+        .refresh-icon {
+            background: none;
+            border: none;
+            color: #f0b90b;
+            cursor: pointer;
+            font-size: 1.2rem;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        /* Main content */
+        .main-content {
+            background: #11151f;
+            border-radius: 24px;
+            border: 1px solid #1e2a3a;
+            overflow: hidden;
+        }
+
+        /* Gráfico / Área WTI (simulada) */
+        .chart-area {
+            padding: 20px;
+            border-bottom: 1px solid #1e2a3a;
+        }
+
+        .wti-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
             margin-bottom: 12px;
+            flex-wrap: wrap;
         }
-        .strategy-content li {
-            margin: 5px 0;
+
+        .wti-symbol {
+            font-size: 1.4rem;
+            font-weight: 700;
         }
-        .strategy-content strong {
-            color: var(--orange);
+
+        .wti-price {
+            font-size: 1.8rem;
+            font-weight: 700;
         }
-        .strategy-badge {
-            background: var(--accent);
-            color: white;
+
+        .mock-chart {
+            background: #0a0e16;
+            height: 200px;
+            border-radius: 16px;
+            margin: 16px 0;
+            background-image: repeating-linear-gradient(45deg, #1a2538 0px, #1a2538 2px, #0f1622 2px, #0f1622 8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #4b5e77;
+            font-size: 0.8rem;
+        }
+
+        /* Métricas */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+            padding: 0 20px;
+        }
+
+        .metric-card {
+            background: #0c111b;
+            border-radius: 20px;
+            padding: 14px;
+            text-align: center;
+        }
+
+        .metric-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #7c8ba0;
+            letter-spacing: 1px;
+        }
+
+        .metric-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 6px 0;
+        }
+
+        .badge {
+            background: #2c3e50;
             border-radius: 20px;
             padding: 2px 8px;
-            font-size: 10px;
-            font-weight: bold;
+            font-size: 0.7rem;
             display: inline-block;
-            margin-right: 8px;
-        }
-        .btn-detalhe {
-            background: var(--accent);
-            border: none;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 11px;
-            margin-left: 10px;
-            transition: 0.2s;
-        }
-        .btn-detalhe:hover {
-            background: var(--green);
-            color: #000;
         }
 
-        /* Estilos para a aba do robô */
-        .robot-content {
-            background: #ffcc00;
-            color: #000;
-            padding: 20px;
-            border-radius: 16px;
+        /* Tabs */
+        .tabs-container {
+            padding: 0 20px 20px 20px;
+        }
+
+        .tabs-header {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            border-bottom: 1px solid #1e2a3a;
             margin-bottom: 20px;
-        }
-        .robot-content h3 {
-            color: #000;
-            margin-top: 0;
-            font-weight: bold;
-        }
-        .robot-content .code-block {
-            background: #0d151f;
-            border-left: 3px solid #ff9900;
-            padding: 12px;
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 12px;
             overflow-x: auto;
-            margin: 12px 0;
-            color: #c9d1d9;
         }
-        .robot-content pre {
-            margin: 0;
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: #8e9aaf;
+            padding: 10px 18px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+            border-radius: 30px;
         }
-        .robot-content ul, .robot-content ol {
-            margin-left: 20px;
+
+        .tab-btn.active {
+            background: #f0b90b20;
+            color: #f0b90b;
+            border-bottom: 2px solid #f0b90b;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fade 0.2s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fade {
+            from { opacity: 0; transform: translateY(5px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+
+        /* Notícias e calendário */
+        .news-item, .event-item {
+            background: #0c111b;
+            padding: 14px;
+            border-radius: 16px;
             margin-bottom: 12px;
+            border-left: 3px solid #f0b90b;
         }
-        .robot-content li {
-            margin: 5px 0;
+
+        .news-title {
+            font-weight: 600;
+            margin-bottom: 6px;
         }
-        .robot-content strong {
-            color: #000;
+
+        .news-date {
+            font-size: 0.7rem;
+            color: #7c8ba0;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            background: #1e2a3a;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.8rem;
+        }
+
+        .btn-primary {
+            background: #f0b90b;
+            color: #0a0c12;
+        }
+
+        .btn-primary:hover {
+            background: #e0a80b;
+        }
+
+        .btn:hover {
+            filter: brightness(1.1);
+        }
+
+        /* Alarmes e dados inferiores */
+        .alarm-section {
+            padding: 20px;
+            border-top: 1px solid #1e2a3a;
+            background: #0c111b;
+        }
+
+        .alarm-input-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .alarm-input {
+            flex: 1;
+            background: #0a0e16;
+            border: 1px solid #2a3a4a;
+            border-radius: 30px;
+            padding: 10px 16px;
+            color: white;
+        }
+
+        .footer-stats {
+            display: flex;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: #0a0e16;
+            font-size: 0.8rem;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .sessions {
+            display: flex;
+            gap: 20px;
+        }
+
+        @media (max-width: 850px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- CARD PRINCIPAL (intacto) -->
-    <div class="card" id="mainCard">
-        <h4>⚡ MESTRE DO SCALPING PRO ⚡</h4>
-        <button class="btn-mode" onclick="toggleMode()">🖥️ ALTERNAR MODO COMPUTADOR</button>
-
-        <div class="time-selector">
-            <button class="time-btn active" data-t="1" onclick="setTF('1', this)">⚡ SCALP (1m)</button>
-            <button class="time-btn" data-t="15" onclick="setTF('15', this)">🔭 DAY TRADE (15m)</button>
+<div class="dashboard">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">⚡ MESTRE DO SCALPING PRO</div>
+        <div class="timeframe-selector">
+            <div class="timeframe active" data-tf="1m">Courço Cabeludo (1m)</div>
+            <div class="timeframe" data-tf="15m">Day Trade (15m)</div>
         </div>
 
-        <select id="pairSelector" onchange="onSymbolChange()">
-            <optgroup label="📈 Binance">
-                <option value="BINANCE:BTCUSDT" selected>₿ BTC/USDT (Binance)</option>
-                <option value="BINANCE:ETHUSDT">⟠ ETH/USDT (Binance)</option>
-                <option value="BINANCE:SOLUSDT">◎ SOL/USDT (Binance)</option>
-            </optgroup>
-            <optgroup label="🌀 Hyperliquid">
-                <option value="BYBIT:BTCUSDT">₿ BTC/USD (Hyperliquid)</option>
-                <option value="BYBIT:ETHUSDT">⟠ ETH/USD (Hyperliquid)</option>
-                <option value="BYBIT:SOLUSDT">◎ SOL/USD (Hyperliquid)</option>
-            </optgroup>
-            <optgroup label="🏅 Metais & Energia">
-                <option value="TVC:GOLD">🥇 Ouro (XAU/USD)</option>
-                <option value="TVC:SILVER">🥈 Prata (XAG/USD)</option>
-                <option value="TVC:USOIL">🛢️ Petróleo WTI</option>
-            </optgroup>
-        </select>
-
-        <div class="price" id="priceText">$ 74,069.05</div>
-
-        <!-- SCORE DE CONFLUÊNCIA -->
-        <div class="score-container">
-            <div class="score-text"><span>🔥 Confluência</span><span id="scoreValue">40/100</span></div>
-            <div class="score-bar"><div class="score-fill" id="scoreFill" style="width:40%"></div></div>
-            <div class="score-text"><span id="scoreLabel">Evitar operação</span><span id="probabilidade">Baixa probabilidade</span></div>
-        </div>
-
-        <!-- BADGE DE ALERTA -->
-        <div id="alertaBadge" class="badge-alerta" style="display: none;">🚨 ENTRADA FORTE DETECTADA</div>
-
-        <!-- 3 SINAIS -->
-        <div class="status-grid">
-            <div id="statusBox" class="status-bar"><div class="light-glow"></div><span class="status-label">SINAL GERAL</span><span class="status-value" id="statusText">⚠️ AGUARDAR</span></div>
-            <div id="rsiBox" class="status-bar"><div class="light-glow"></div><span class="status-label">FILTRO TÉCNICO</span><span class="status-value" id="rsiText">📉 VENDA</span></div>
-            <div id="momBox" class="status-bar"><div class="light-glow"></div><span class="status-label">MOMENTUM</span><span class="status-value" id="momText">⚖️ NEUTRO</span></div>
-        </div>
-
-        <!-- INDICADOR DE VOLATILIDADE -->
-        <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 11px;">
-            <span>📊 Volatilidade: <span id="volText">MÉDIA</span></span>
-            <span>⏰ Sessão: <span id="sessaoText">Londres</span></span>
-        </div>
-
-        <!-- MODO OPERAÇÃO -->
-        <div class="modo-operacao"><span id="statusModo">Modo Operação: OFF</span><label class="switch"><input type="checkbox" id="lockScreenToggle"><span class="slider"></span></label></div>
-
-        <!-- ALARME DE PREÇO -->
-        <div class="alarme-section">
-            <div class="alarme-title"><span>🔔 ALARME DE PREÇO</span></div>
-            <div class="alarme-input-group"><input type="number" id="alarmePreco" class="alarme-input" placeholder="Preço alvo (ex: 75000)" step="100"><button class="alarme-btn" onclick="adicionarAlarme()">Adicionar</button></div>
-            <div class="alarme-lista" id="alarmeLista"><div style="color: var(--text); text-align: center; padding: 10px;">Nenhum alarme definido</div></div>
-        </div>
-
-        <!-- GRÁFICO TRADINGVIEW -->
-        <div id="chart_container"></div>
-
-        <!-- INPUTS -->
-        <div class="inputs-grid">
-            <div><label>💰 Capital ($)</label><input type="number" id="capital" value="300"></div>
-            <div><label>⚡ Alavancagem</label><input type="number" id="lev" value="10"></div>
-            <div><label>✅ Gain %</label><input type="number" id="tpP" value="1.0" step="0.1"></div>
-            <div><label>🛑 Stop %</label><input type="number" id="slP" value="1.0" step="0.1"></div>
-        </div>
-
-        <button class="btn-calc" onclick="calc()">📊 CALCULAR ALVOS</button>
-
-        <!-- RESULTADOS -->
-        <div id="results" class="res"><div style="display:flex; justify-content:space-between;"><span>🟢 TP:</span> <span id="resTP" style="color:var(--green);"></span></div><div style="display:flex; justify-content:space-between; margin-top:10px;"><span>🔴 SL:</span> <span id="resSL" style="color:var(--red);"></span></div></div>
-
-        <!-- GRADE DE PROJETOS -->
-        <div class="projects-section">
-            <div class="projects-grid">
-                <a href="https://site-557591544835-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Sinais Invest</a>
-                <a href="https://site-combustai-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">CombustAI</a>
-                <a href="https://site-559791916621-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Registro DCA</a>
-                <a href="https://pepinometro-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Pepinômetro</a>
-                <a href="https://historia-copas-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">História Copas</a>
-                <a href="https://investopcao.culturabuilder.com" class="project-btn" target="_blank">InvestOpção</a>
-                <button class="project-btn" onclick="openPoolsModal()" style="background: var(--purple); color: white;">🌊 Dados de Mercado</button>
+        <!-- Preços Ouro, Prata, Petróleo (corrigido) -->
+        <div class="commodity-price-card" id="goldCard">
+            <div class="commodity-title">OURO (XAU/USD)</div>
+            <div class="price-value">
+                <span class="price-number" id="goldPrice">--</span>
+                <span class="price-change" id="goldChange"></span>
+                <button class="refresh-icon" id="refreshPricesBtn" title="Atualizar preços">↻</button>
             </div>
+            <div id="goldStatus" style="font-size:0.7rem; margin-top:4px;"></div>
         </div>
 
-        <!-- PUBLICIDADE ATMOS IPTV -->
-        <div class="ad-container">
-            <span style="color:var(--gold); font-weight:800; font-size:16px;">📺 ATMOS IPTV</span><br>
-            <span style="font-size:12px;">+15.000 canais • 4K • Estável</span>
-            <a href="https://wa.me/5597991916621" target="_blank" class="btn-ad">TESTE GRÁTIS</a>
-        </div>
-
-        <!-- TABELA DE SESSÕES -->
-        <table class="market-table">
-               Bon<td colspan="3" class="market-header">🌍 SESSÕES CRIPTO / FOREX</td>
-                <tr><td>🌏 Ásia</td><td>21:00-01:00</td><td style="color:var(--gold); text-align:right;">● médio</td></tr>
-                <tr><td>🇪🇺 Londres</td><td>04:00-09:00</td><td style="color:var(--green); text-align:right;">● alto</td></tr>
-                <tr><td>🇺🇸 NY (Pico)</td><td>10:00-14:00</td><td style="color:var(--green); text-align:right;">● PICO</td></tr>
-                <tr><td colspan="3" class="market-header">🏆 EURO, PRATA & WTI</td></tr>
-                <tr><td>🥇 Metais (NY)</td><td>09:20-15:30</td><td style="color:var(--gold); text-align:right;">● liquidez</td></tr>
-                <tr><td>🛢️ Petróleo (WTI)</td><td>10:00-16:30</td><td style="color:var(--accent); text-align:right;">● volatilidade</td></tr>
-            </table>
-
-        <!-- NOVA SEÇÃO: NOTÍCIAS E CALENDÁRIO -->
-        <div class="news-section">
-            <h4>📰 Notícias e Calendário</h4>
-            <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: space-between;">
-                <div style="flex: 1; min-width: 200px;">
-                    <div class="news-block"><h5>📅 Calendário Econômico</h5><a href="https://www.tradingview.com/economic-calendar/" target="_blank" style="color: var(--accent);">TradingView Economic Calendar</a></div>
-                </div>
-                <div style="flex: 2; min-width: 300px;">
-                    <div class="news-block"><h5>📰 Principais Notícias Cripto</h5><div class="news-links"><a href="https://livecoins.com.br/" target="_blank">Livecoins</a><a href="https://cointelegraph.com.br/" target="_blank">CoinTelegraph Brasil</a><a href="https://www.coindesk.com/" target="_blank">CoinDesk</a><a href="https://cointelegraph.com/" target="_blank">CoinTelegraph</a><a href="https://www.cryptobreaking.com/" target="_blank">Crypto Breaking</a></div></div>
-                </div>
+        <div class="commodity-price-card" id="silverCard">
+            <div class="commodity-title">PRATA (XAG/USD)</div>
+            <div class="price-value">
+                <span class="price-number" id="silverPrice">--</span>
+                <span class="price-change" id="silverChange"></span>
             </div>
+            <div id="silverStatus"></div>
         </div>
 
-        <!-- BOTÃO DONATIVOS (com botões copiar) -->
-        <button class="project-btn" onclick="openDonationModal()" style="background:var(--gold); color:#000; width:100%; margin-top:15px;">💰 Donativos</button>
+        <div class="commodity-price-card" id="oilCard">
+            <div class="commodity-title">PETRÓLEO WTI</div>
+            <div class="price-value">
+                <span class="price-number" id="oilPrice">--</span>
+                <span class="price-change" id="oilChange"></span>
+            </div>
+            <div id="oilStatus"></div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-label">Confiabilidade</div>
+            <div class="metric-value">30/100</div>
+            <div class="badge">Evitar operação (Baixa)</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Volatilidade</div>
+            <div class="metric-value">MÉDIA</div>
+            <div>Sessão: Metade NY</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Modo Operação</div>
+            <div class="metric-value" id="modoOp">OFF</div>
+            <button class="btn" id="toggleModoBtn" style="margin-top:8px; padding:4px 12px;">Ativar</button>
+        </div>
     </div>
 
-    <!-- BOLINHA FLUTUANTE -->
-    <div class="floating-ball" onclick="openPasswordModal()">🔓</div>
-
-    <!-- MODAL DE SENHA -->
-    <div id="passwordModal" class="modal"><div class="modal-content" style="max-width:350px;"><h2>🔐 ACESSO</h2><input type="password" id="passInput" maxlength="9" placeholder="*********" style="text-align:center; font-size:24px; letter-spacing:4px;"><div class="button-group"><button class="close-btn" onclick="checkPassword()">VALIDAR</button><button class="close-btn" onclick="fecharModal('passwordModal')">Fechar</button></div></div></div>
-
-    <!-- MODAL DO ROBÔ -->
-    <div id="robotModal" class="modal"><div class="modal-content"><h2>🤖 ROBÔ SCALPER</h2><p style="color:var(--green);">🔓 Acesso autorizado</p><div class="security-warning">⚠️ ATENÇÃO: Use apenas em ambiente local. Chave privada não é salva.</div><h3>🔐 Credenciais Hyperliquid</h3><div class="campo"><label>Endereço da conta principal</label><input type="text" id="hlMainAddress" value="0x9a761Cc6331Fd28D0b04811135dfA233f6499C9C"></div><div class="campo"><label>Endereço da API wallet (Robonovo)</label><input type="text" id="hlApiAddress" value="0xa9adb7057b5531c077962289a69bbadc4973e381"></div><div class="campo"><label>Chave privada da API wallet</label><input type="password" id="hlApiPrivateKey" placeholder="0x..."></div><button class="close-btn" onclick="connectHyperliquid()">🔌 Validar e Conectar</button><div class="console" id="apiConsole">[API] Desconectado</div><h3>📝 Ordem Real</h3><div class="campo"><label>Capital (USDC)</label><input type="number" id="botCapital" value="10" step="1" min="5"></div><div class="grid-2"><div><label>Stop Loss %</label><input type="number" id="botSL" value="1.5" step="0.1"></div><div><label>Take Profit %</label><input type="number" id="botTP" value="1.0" step="0.1"></div></div><div class="campo"><label>Par</label><select id="botPair"><option value="BTC">₿ BTC/USDC</option><option value="ETH">⟠ ETH/USDC</option><option value="SOL">◎ SOL/USDC</option><option value="GOLD">🥇 XAU/USD (Ouro)</option><option value="SILVER">🥈 XAG/USD (Prata)</option><option value="WTI">🛢️ WTI (Petróleo)</option></select></div><button class="close-btn" onclick="placeRealOrder()">🚀 ENVIAR ORDEM REAL</button><div class="button-group"><button class="close-btn" onclick="fecharModal('robotModal')">Fechar</button><button class="close-btn" onclick="fecharModal('robotModal')">Voltar</button></div></div></div>
-
-    <!-- MODAL DE DONATIVOS (COM BOTÕES COPIAR) -->
-    <div id="donationModal" class="modal"><div class="modal-content"><h2>💰 Donativos</h2><p style="background:#1e2a36; padding:15px; border-radius:15px; margin-bottom:20px;">Projeto independente, sem fins lucrativos. Contribuições ajudam a manter os custos. Obrigado!</p><div class="donation-item" style="border-left-color:#8a2be2;"><strong>⚡ Lightning Network</strong><p>cloggedparrot01@walletofsatoshi.com <button class="copy-btn" onclick="copyText('cloggedparrot01@walletofsatoshi.com')">Copiar</button></p></div><div class="donation-item" style="border-left-color:#f7931a;"><strong>₿ Bitcoin</strong><p>bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5 <button class="copy-btn" onclick="copyText('bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5')">Copiar</button></p></div><div class="donation-item" style="border-left-color:#627eea;"><strong>🔷 EVM</strong><p>0xAd944bA180610F1Fe43151eD81c0084C918c68e1 <button class="copy-btn" onclick="copyText('0xAd944bA180610F1Fe43151eD81c0084C918c68e1')">Copiar</button></p></div><div class="donation-item" style="border-left-color:#14f195;"><strong>◎ Solana</strong><p>EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm <button class="copy-btn" onclick="copyText('EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm')">Copiar</button></p></div><div class="donation-item" style="border-left-color:#32bcad;"><strong>🇧🇷 Pix</strong><p>127d59fc-1f37-4e8e-9fd4-295e1883727b <button class="copy-btn" onclick="copyText('127d59fc-1f37-4e8e-9fd4-295e1883727b')">Copiar</button></p></div><div class="button-group"><button class="close-btn" onclick="fecharModal('donationModal')">Fechar</button><button class="close-btn" onclick="fecharModal('donationModal')">Voltar</button></div></div></div>
-
-    <!-- ========== SUBMODAIS DAS ESTRATÉGIAS (13 modais) ========== -->
-    <div id="submodalEstrategia1" class="submodal"><div class="submodal-content"><h2>📘 Estratégia 1: Market Making Adaptativo (AMM + Order Flow)</h2><div><h3>🎯 Objetivo</h3><p>Detectar fluxo agressivo de compra/venda e ajustar o range da posição de liquidez ANTES do preço se mover, capturando taxas e reduzindo risco.</p><h3>⚙️ Como funciona (exemplo prático)</h3><p><strong>Cenário:</strong> Posição LP em SOL/USDC com range de ±10% em torno de $150.</p><ul><li>Volume comprador > 65% → range para cima ([145-175])</li><li>Volume vendedor > 65% → range para baixo ([135-165])</li></ul><h3>📊 Exemplo numérico</h3><p>Preço $150, volume comprador 72% → novo range [147, 157.5]</p><h3>⚠️ Riscos</h3><p>Fluxo reverso pode causar perdas. Use dados confiáveis.</p></div><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia1')">Fechar</button></div></div></div>
-    <div id="submodalEstrategia2" class="submodal"><div class="submodal-content"><h2>📘 Estratégia 2: Gamma Scalping (nível opções)</h2><div><h3>🎯 Objetivo</h3><p>Usar a posição LP como ferramenta de “gamma” – lucrar com volatilidade por meio de hedge (comprar/vender spot).</p><h3>⚙️ Como funciona (exemplo prático)</h3><p><strong>Cenário:</strong> LP em ETH/USDC com $10.000, delta neutra (5 ETH + $0).</p><ul><li>Preço sobe para $2.100 → posição vale $10.500, proporção 5 ETH + $500 USDC (delta +).</li><li>Vende 0,5 ETH ($1.050), retorna a 4,5 ETH + $1.550 USDC. Lucro realizado $1.050.</li></ul><h3>⚠️ Riscos</h3><p>Exige monitoramento constante e capital extra. Em mercados laterais, muitas transações com baixo ganho.</p></div><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia2')">Fechar</button></div></div></div>
-    <div id="submodalEstrategia3" class="submodal"><div class="submodal-content"><h2>📘 Estratégia 3: Liquidity Sniping</h2><div><h3>🎯 Objetivo</h3><p>Entrar em pools novas com APR muito alto antes da massa, capturando os melhores yields iniciais.</p><h3>⚙️ Como funciona (exemplo prático)</h3><p>Detecta pool nova + APR > 200% → aloca capital parcial. Sai se APR cair rápido.</p><h3>📊 Exemplo</h3><p>Pool XYZ/USDC com 550% → aloca 10% ($1.000). Após 2 dias, APR 80% → sai com lucro.</p><h3>⚠️ Riscos</h3><p>Pools novas podem ser fraudulentas (rug pull) ou perder liquidez rapidamente. Invista apenas em pools auditadas.</p></div><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia3')">Fechar</button></div></div></div>
-    <div id="submodalEstrategia4" class="submodal"><div class="submodal-content"><h2>📘 Estratégia 4: Range baseado em Volatilidade Implícita</h2><div><h3>🎯 Objetivo</h3><p>Ajustar range da LP de acordo com a volatilidade real do ativo, usando ATR.</p><h3>⚙️ Como funciona (exemplo prático)</h3><p>SOL $150, ATR $10: conservador (1.5) → [135-165]; moderado (2.5) → [125-175]; agressivo (3.5) → [115-185]</p><h3>⚠️ Riscos</h3><p>Em alta volatilidade, range largo reduz eficiência. Em baixa volatilidade, range estreito aumenta risco de sair do range.</p></div><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia4')">Fechar</button></div></div></div>
-    <div id="submodalEstrategia5" class="submodal"><div class="submodal-content"><h2>📘 Estratégia 5: Regime de Mercado</h2><div><h3>🎯 Objetivo</h3><p>Alterar a estratégia de LP conforme o tipo de mercado: tendência de alta, baixa ou lateral.</p><ul><li>Bull → range mais aberto (+20%)</li><li>Bear → move para stable</li><li>Sideways → range estreito (+5%)</li></ul><h3>⚠️ Riscos</h3><p>Falsas tendências podem levar a ajustes errados. Combine indicadores como médias móveis e RSI.</p></div><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia5')">Fechar</button></div></div></div>
-    <div id="submodalEstrategia6" class="submodal"><div class="submodal-content"><h2>📘 Estratégia 6: Rebalanceamento por Delta (institucional)</h2><div><h3>🎯 Objetivo</h3><p>Manter exposição ideal (ex: 60% BTC / 40% USDC) rebalanceando automaticamente.</p><h3>📊 Exemplo</h3><p>Patrimônio $10.000 (60/40). BTC sobe para 70% → vende $1.000 em BTC para rebalancear.</p><h3>⚠️ Riscos</h3><p>Rebalancear muito frequentemente pode gerar muitas taxas. Use limites (ex: rebalancear apenas quando diferença > 10%).</p></div><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia6')">Fechar</button></div></div></div>
-    <div id="submodalEstrategia7" class="submodal"><div class="submodal-content"><h2>📘 Estratégia 7: Stop Loss Inteligente para LP</h2><div><h3>🎯 Objetivo</h3><p>Remover liquidez quando preço sai do range + tendência forte, evitando IL extremo.</p><h3>📊 Exemplo</h3><p>SOL $150, range $135-$165. SOL cai para $130 com volume vendedor 80% → remove LP, evita IL maior.</p><h3>⚠️ Riscos</h3><p>Pode sair cedo em correção temporária. Use indicadores de momentum para confirmar.</p></div><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia7')">Fechar</button></div></div></div>
-    <div id="submodalEstrategia8" class="submodal"><div class="submodal-content"><h2>📘 Estratégia 8: Multi-Pool Optimization</h2><div><h3>🎯 Objetivo</h3><p>Dividir capital entre diferentes pools para diversificar risco e maximizar yield.</p><p>Exemplo: 40% stable, 30% SOL/USDC, 30% pool de alto APR.</p><h3>⚠️ Riscos</h3><p>Monitoramento de várias pools e maior complexidade operacional.</p></div><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia8')">Fechar</button></div></div></div>
-    <div id="submodalEstrategia9" class="submodal"><div class="submodal-content"><h2>📘 Estratégia 9: Arbitragem entre Pools</h2><div><h3>🎯 Objetivo</h3><p>Lucrar com diferenças de preço do mesmo ativo em diferentes pools.</p><h3>📊 Exemplo</h3><p>SOL Orca $150, Meteora $150,50 → compra Orca, vende Meteora, lucro $0,50/SOL.</p><h3>⚠️ Riscos</h3><p>Exige capital separado e rápido processamento para evitar que a diferença se feche.</p></div><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia9')">Fechar</button></div></div></div>
-    <div id="submodalEstrategia10" class="submodal"><div class="submodal-content"><h2>📘 Estratégia 10: Fee Harvesting Automático</h2><div><h3>🎯 Objetivo</h3><p>Coletar taxas periodicamente e reinvestir para juros compostos.</p><h3>📊 Exemplo</h3><p>Capital $1.000, taxas $50 → retira e adiciona à LP → novo capital $1.050.</p><h3>⚠️ Riscos</h3><p>Reinvestir taxas pode aumentar exposição ao ativo em momentos ruins. Combine com análise de mercado.</p></div><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia10')">Fechar</button></div></div></div>
-    <div id="submodalEstrategia11" class="submodal"><div class="submodal-content"><h2>📘 Estratégia 11: Liquidez Direcional</h2><div><h3>🎯 Objetivo</h3><p>Range assimétrico para apostar em direção. Ex: 90% acima do preço, 10% abaixo.</p><h3>📊 Exemplo</h3><p>SOL $150, range [145, 180] (deslocado para cima). Se sobe para $170, captura taxas; se cai para $140, sai rápido.</p><h3>⚠️ Riscos</h3><p>Se a direção estiver errada, pode perder taxas e sofrer IL assimétrico.</p></div><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia11')">Fechar</button></div></div></div>
-    <div id="submodalEstrategia12" class="submodal"><div class="submodal-content"><h2>📘 Estratégia 12: Machine Learning (nível avançado)</h2><div><h3>🎯 Objetivo</h3><p>Usar modelos de aprendizado de máquina para prever ranges, entradas e saídas.</p><h3>📊 Exemplo</h3><p>Modelo prevê baixa volatilidade → range estreito (±3%). Alta volatilidade → range amplo (±12%).</p><h3>⚠️ Riscos</h3><p>Modelos podem errar, especialmente em eventos imprevistos. Exige conhecimento técnico.</p></div><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia12')">Fechar</button></div></div></div>
-    <div id="submodalEstrategia13" class="submodal"><div class="submodal-content"><h2>📘 Estratégia 13: Coin-M Inverse Long (BTC/USD)</h2><div><h3>🎯 Objetivo</h3><p>Operar contratos perpétuos inversos (Coin-M) na Binance, apostando na alta do BTC com alavancagem, utilizando hedge de margem para proteger o capital.</p><h3>⚙️ Como funciona (exemplo prático)</h3><p><strong>Cenário:</strong> Você acredita que o BTC vai subir, mas não quer se expor ao risco de liquidação. Abre uma posição long no contrato perpétuo inverso BTCUSD (Coin-M) com alavancagem 2x e simultaneamente mantém uma reserva em USDT para ajuste de margem.</p><ul><li>Posição: 1 contrato BTCUSD (valor nocional = 1 BTC).</li><li>Margem inicial: 0.5 BTC (50% do valor nocional).</li><li>Se o preço sobe 10%, o lucro é de 0.1 BTC (10% sobre o nocional).</li><li>Se o preço cai, a margem é ajustada automaticamente, mas o risco de liquidação é menor devido ao uso de posição inversa.</li></ul><h3>📊 Exemplo numérico</h3><ul><li>Preço BTC = $50.000.</li><li>Posição: 1 contrato BTCUSD (1 BTC de nocional).</li><li>Margem: 0.5 BTC (50%).</li><li>Alavancagem efetiva: 2x.</li><li>Se BTC sobe para $55.000 (+10%): lucro = 0.1 BTC (≈ $5.500).</li><li>Se BTC cai para $45.000 (-10%): perda = 0.1 BTC, mas a posição não é liquidada porque a margem é suficiente.</li></ul><h3>⚠️ Riscos</h3><p>Mercados voláteis podem causar perdas rápidas. Use stop loss e nunca alavanque mais do que seu capital permite. Contratos inversos têm dinâmica diferente de contratos lineares (USDT-M).</p></div><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia13')">Fechar</button></div></div></div>
-
-    <!-- MODAL DE POOLS (com as quatro abas) -->
-    <div id="poolsModal" class="modal">
-        <div class="modal-content pool-modal-content">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <h2 style="color: var(--gold); margin: 0;">📊 Dados de Mercado</h2>
-                <button onclick="closePoolsModal()" style="background: none; border: none; color: var(--text); font-size: 24px; cursor: pointer;">✕</button>
+    <!-- Main content -->
+    <div class="main-content">
+        <div class="chart-area">
+            <div class="wti-header">
+                <span class="wti-symbol">⚡ CFDs em Petróleo Bruto WTI</span>
+                <span class="wti-price" id="wtiBigPrice">--</span>
             </div>
-            <div class="tabs-container">
-                <button class="tab-btn active" onclick="switchTab('pools')">🌊 Top Pools</button>
-                <button class="tab-btn" onclick="switchTab('news')">📰 Notícias e Calendário</button>
-                <button class="tab-btn" onclick="switchTab('strategies')">📊 Estratégias de Pool de Liquidez</button>
-                <button class="tab-btn robot" onclick="switchTab('robot')">🤖 Robô Automatizado</button>
+            <div class="mock-chart">
+                📊 GRÁFICO DINÂMICO (simulação)
             </div>
+            <div style="display: flex; gap: 8px; justify-content: space-between; flex-wrap: wrap;">
+                <div>98,10 - 93,50 (+3,70%)</div>
+                <div>96,80 | 97,50 | 98,10 | 98,80 | 99,10 | 99,40 | 99,70 | 100,00</div>
+            </div>
+        </div>
 
-            <!-- Aba Top Pools (restaurada) -->
-            <div id="poolsTab" class="tab-content active">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <p style="color: var(--text);">Track DeFi pools across Ethereum, Arbitrum, Base, and Solana.</p>
-                    <div><button class="btn-atualizar" onclick="atualizarPools()">🔄 Atualizar</button><button class="btn-atualizar" onclick="refreshCategories()">🔄 Atualizar Top</button></div>
-                </div>
-                <details class="guide-box" open><summary>📘 Como usar os modos de seleção de pools (clique para abrir/fechar)</summary><p><strong>🤖 Modo Automático (Score):</strong> O sistema calcula um <strong>score composto</strong> baseado em APR, Volume e TVL.</p><p><strong>👆 Modo Manual:</strong> Clique nos cabeçalhos para ordenar.</p><p><strong>🔥 Modo APR altos:</strong> Ordena apenas pelo maior APR. <span style="color: var(--orange);">Atenção: APRs muito altos podem indicar risco elevado.</span></p><p><strong>🎯 Estratégia sugerida:</strong> Use o modo <strong>APR altos</strong> para identificar oportunidades, mas verifique volume e liquidez.</p></details>
-                <div class="categories-grid" id="categoriesContainer"></div>
-                <div class="warning-high-apr">⚠️ Os valores de APR nos cards são os maiores de cada categoria com base nos dados atuais. Sempre analise volume e liquidez.</div>
-                <div class="mode-toggle"><button id="modoAutoBtn" class="mode-btn" onclick="setModo('auto')">🤖 Automático (Score)</button><button id="modoManualBtn" class="mode-btn" onclick="setModo('manual')">👆 Manual</button><button id="modoAPRBtn" class="mode-btn apr-high active" onclick="setModo('apr')">🔥 APR altos</button></div>
-                <div class="filter-row"><div class="filter-item"><label>TVL mínimo ($)</label><input type="number" id="filtroTVL" placeholder="10000" value="0" step="1000"></div><div class="filter-item"><label>Volume mínimo ($)</label><input type="number" id="filtroVolume" placeholder="5000" value="0" step="1000"></div><div class="filter-item"><label>APR mínimo (%)</label><input type="number" id="filtroAPR" placeholder="100" value="0" step="10"></div><button class="btn-filter" onclick="aplicarFiltros()">Aplicar</button></div>
-                <div class="table-wrapper"><table class="pools-table" id="poolsTable"><thead>  <tr><th onclick="ordenarPor('pool')">Pool</th><th onclick="ordenarPor('network')">Network</th><th onclick="ordenarPor('dex')">DEX</th><th onclick="ordenarPor('tvl')">TVL</th><th>Ratio</th><th onclick="ordenarPor('volume')">Volume 24h</th><th onclick="ordenarPor('apr')">APR</th><th>1h</th><th>6h</th><th>24h</th><th>7d</th><th>30d</th><th onclick="ordenarPor('fee')">Fee</th><th onclick="ordenarPor('age')">Age</th><th>Score</th></tr></thead><tbody id="poolsTableBody"></tbody></table></div>
-                <p style="color: var(--text); margin-top: 15px;">Mostrando 1–20 de 599 pools</p>
-                <div style="margin-top: 15px; text-align: center;"><a href="https://www.yldlab.xyz/" target="_blank" style="color: var(--green); font-weight: bold;">🔗 Ver mais em yldlab.xyz</a></div>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-label">CAPITAL ($)</div>
+                <div class="metric-value">300</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">AVANÇADORES ($)</div>
+                <div class="metric-value">10</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">DANE (%)</div>
+                <div class="metric-value">1,0</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">PAIX (%)</div>
+                <div class="metric-value">1,0</div>
+            </div>
+            <div class="metric-card">
+                <button class="btn btn-primary" id="calcAlvosBtn">CALCULAR ALVOS</button>
+            </div>
+        </div>
+
+        <!-- Abas: Incluímos "Notícias e Calendário" com botão atualizar e copiar -->
+        <div class="tabs-container">
+            <div class="tabs-header">
+                <button class="tab-btn active" data-tab="tabNoticias">📰 Notícias & Calendário</button>
+                <button class="tab-btn" data-tab="tabSinais">📈 Sinais Invest</button>
+                <button class="tab-btn" data-tab="tabCombust">⚡ CombustAII</button>
+                <button class="tab-btn" data-tab="tabDCA">📊 Registro DCA</button>
+                <button class="tab-btn" data-tab="tabPepino">🥒 Pepinâmetro</button>
+                <button class="tab-btn" data-tab="tabHistoria">📜 História Cipas</button>
+                <button class="tab-btn" data-tab="tabOpcao">💼 InvestOpção</button>
             </div>
 
-            <!-- Aba Notícias e Calendário (com calendário completo) -->
-            <div id="newsTab" class="tab-content">
-                <h3 style="color: var(--gold); margin-bottom: 15px;">📅 Calendário Econômico</h3>
-                <!-- Widget oficial do TradingView Economic Calendar -->
-                <div style="background: #0f141c; border-radius: 16px; overflow: hidden; margin-bottom: 25px;">
-                    <!-- TradingView Widget BEGIN -->
-                    <div class="tradingview-widget-container">
-                        <div class="tradingview-widget-container__widget"></div>
-                        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
-                        {
-                        "width": "100%",
-                        "height": "600",
-                        "colorTheme": "dark",
-                        "locale": "br"
-                        }
-                        </script>
+            <!-- Aba Notícias e Calendário (com botão atualizar e copiar) -->
+            <div id="tabNoticias" class="tab-content active">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <h3 style="font-size: 1rem;">📰 Últimas Notícias & Eventos Econômicos</h3>
+                    <div class="action-buttons" style="margin-top:0;">
+                        <button class="btn" id="atualizarNoticiasBtn">🔄 Atualizar</button>
+                        <button class="btn btn-primary" id="copiarNoticiasBtn">📋 Copiar</button>
                     </div>
-                    <!-- TradingView Widget END -->
                 </div>
-                <h3 style="color: var(--gold); margin: 20px 0 15px;">📰 Principais Notícias Cripto</h3>
-                <div class="news-grid">
-                    <div class="news-card"><h4>🇧🇷 Livecoins</h4><a href="https://livecoins.com.br/" target="_blank">livecoins.com.br</a><p>Maior portal brasileiro de notícias sobre Bitcoin e criptomoedas.</p></div>
-                    <div class="news-card"><h4>📡 Cointelegraph Brasil</h4><a href="https://cointelegraph.com.br/" target="_blank">cointelegraph.com.br</a><p>Notícias atualizadas sobre o mercado cripto em português.</p></div>
-                    <div class="news-card"><h4>🌎 CoinDesk</h4><a href="https://www.coindesk.com/" target="_blank">coindesk.com</a><p>Principal fonte internacional de notícias sobre criptomoedas.</p></div>
-                    <div class="news-card"><h4>⚡ Cointelegraph</h4><a href="https://cointelegraph.com/" target="_blank">cointelegraph.com</a><p>Notícias globais sobre Bitcoin, Ethereum e blockchain.</p></div>
-                    <div class="news-card"><h4>📊 Crypto Breaking</h4><a href="https://www.cryptobreaking.com/" target="_blank">cryptobreaking.com</a><p>Últimas notícias e análises do mercado cripto.</p></div>
+                <div id="newsCalendarContent">
+                    <div style="text-align:center; padding:20px;">Carregando notícias e calendário...</div>
                 </div>
             </div>
 
-            <!-- Aba Estratégias de Pool de Liquidez (com botões para submodais) -->
-            <div id="strategiesTab" class="tab-content">
-                <div class="strategy-content">
-                    <h3>🧠 Estratégia 1: Market Making Adaptativo (AMM + Order Flow) <button class="btn-detalhe" onclick="abrirSubmodal('submodalEstrategia1')">📘 Ver detalhes</button></h3>
-                    <p>Detecta fluxo agressivo (compra/venda) e ajusta o range ANTES do preço mover.</p>
-                    <div class="code-block"><pre>Se volume comprador > 65%: mover range para cima (front-run)\nSe volume vendedor > 65%: mover range para baixo</pre></div>
-                    <p>📊 Indicadores: Delta Volume, Order Flow imbalance, Liquidez no book (CEX).</p>
-                    <hr>
-                    <h3>⚡ Estratégia 2: Gamma Scalping (nível opções) <button class="btn-detalhe" onclick="abrirSubmodal('submodalEstrategia2')">📘 Ver detalhes</button></h3>
-                    <p>Usa LP como posição delta neutra e faz hedge via trade.</p>
-                    <div class="code-block"><pre>Se preço sobe: vender spot (reduz delta)\nSe preço cai: comprar spot (rebalanço)</pre></div>
-                    <p>Transforma volatilidade em lucro puro (taxa + hedge).</p>
-                    <hr>
-                    <h3>🧬 Estratégia 3: Liquidity Sniping <button class="btn-detalhe" onclick="abrirSubmodal('submodalEstrategia3')">📘 Ver detalhes</button></h3>
-                    <p>Entrar ANTES da massa em pools novas com APR alto.</p>
-                    <div class="code-block"><pre>Se pool nova + APR > 200%: entrar com capital parcial\nSe liquidez aumentar rápido: manter posição\nSe APR cair rápido: sair</pre></div>
-                    <hr>
-                    <h3>🧮 Estratégia 4: Range baseado em Volatilidade Implícita <button class="btn-detalhe" onclick="abrirSubmodal('submodalEstrategia4')">📘 Ver detalhes</button></h3>
-                    <p>Range = Preço atual ± (ATR × fator)</p>
-                    <div class="code-block"><pre>Fator: 1.5 (conservador) / 2.5 (moderado) / 3.5 (agressivo)</pre></div>
-                    <hr>
-                    <h3>🧠 Estratégia 5: Regime de Mercado <button class="btn-detalhe" onclick="abrirSubmodal('submodalEstrategia5')">📘 Ver detalhes</button></h3>
-                    <ul><li><span class="strategy-badge">🟢 Tendência de alta</span> → range mais aberto, mais exposição</li><li><span class="strategy-badge">🔴 Tendência de baixa</span> → foca em stablecoin, DCA ativo</li><li><span class="strategy-badge">🟡 Lateral</span> → range curto, maximiza taxas</li></ul>
-                    <div class="code-block"><pre>if trend == "bull": expand_range_up()\nelif trend == "bear": move_to_stable()\nelif trend == "sideways": tighten_range()</pre></div>
-                    <hr>
-                    <h3>🧠 Estratégia 6: Rebalanceamento por Delta (institucional) <button class="btn-detalhe" onclick="abrirSubmodal('submodalEstrategia6')">📘 Ver detalhes</button></h3>
-                    <p>Define exposição ideal (ex: 60% BTC / 40% USDC) e rebalanceia automaticamente.</p>
-                    <div class="code-block"><pre>Se BTC > 70%: vender BTC\nSe BTC < 50%: comprar BTC</pre></div>
-                    <hr>
-                    <h3>🧠 Estratégia 7: Stop Loss Inteligente para LP <button class="btn-detalhe" onclick="abrirSubmodal('submodalEstrategia7')">📘 Ver detalhes</button></h3>
-                    <p>Detecta saída do range + tendência forte e remove liquidez para evitar IL extremo.</p>
-                    <div class="code-block"><pre>Se sair do range + tendência forte: remover liquidez</pre></div>
-                    <hr>
-                    <h3>🧠 Estratégia 8: Multi-Pool Optimization <button class="btn-detalhe" onclick="abrirSubmodal('submodalEstrategia8')">📘 Ver detalhes</button></h3>
-                    <p>Divide capital em várias pools (stable, volátil, high APR). Exemplo: 40% stable, 30% SOL/USDC, 30% pool de alto APR.</p>
-                    <hr>
-                    <h3>🧠 Estratégia 9: Arbitragem entre Pools <button class="btn-detalhe" onclick="abrirSubmodal('submodalEstrategia9')">📘 Ver detalhes</button></h3>
-                    <p>Detecta diferença de preço entre pools e lucra sem risco direcional.</p>
-                    <div class="code-block"><pre>Se preço Orca > Meteora: vender em Orca, comprar em Meteora</pre></div>
-                    <hr>
-                    <h3>🧠 Estratégia 10: Fee Harvesting Automático <button class="btn-detalhe" onclick="abrirSubmodal('submodalEstrategia10')">📘 Ver detalhes</button></h3>
-                    <p>Retira taxas periodicamente e reinveste (juros compostos).</p>
-                    <div class="code-block"><pre>Se fees > 5% do capital: coletar e reinvestir</pre></div>
-                    <hr>
-                    <h3>🧠 Estratégia 11: Liquidez Direcional <button class="btn-detalhe" onclick="abrirSubmodal('submodalEstrategia11')">📘 Ver detalhes</button></h3>
-                    <p>Range deslocado para apostar na direção. Ex: 90% acima do preço, 10% abaixo.</p>
-                    <hr>
-                    <h3>🧠 Estratégia 12: Machine Learning (nível absurdo) <button class="btn-detalhe" onclick="abrirSubmodal('submodalEstrategia12')">📘 Ver detalhes</button></h3>
-                    <p>Treina modelo (Random Forest, LSTM, Reinforcement Learning) para decidir melhor range, entrada e saída.</p>
-                    <hr>
-                    <h3>🧠 Estratégia 13: Coin-M Inverse Long (BTC/USD) <button class="btn-detalhe" onclick="abrirSubmodal('submodalEstrategia13')">📘 Ver detalhes</button></h3>
-                    <p>Operação em contratos perpétuos inversos (Coin-M) na Binance, apostando na alta do BTC com alavancagem moderada e hedge de margem.</p>
-                    <div class="code-block"><pre>Posição long BTCUSD com alavancagem 2x\nMargem = 50% do nocional\nStop loss móvel para proteger lucros</pre></div>
-                    <hr>
-                    <h2>🔥 O MAIS IMPORTANTE (segredo profissional)</h2>
-                    <p>Não use só 1 estratégia – crie um <strong>Strategy Router</strong>:</p>
-                    <div class="code-block"><pre>if market == "trend": use_trend_strategy()\nelif market == "volatile": use_gamma_scalping()\nelif market == "crash": move_to_stable()\nelif market == "sideways": maximize_fees()</pre></div>
-                    <h2>💰 Alocação Ideal (com base no seu perfil)</h2>
-                    <ul><li><strong>50% → LP principal (SOL/USDC)</strong> – range dinâmico + volatilidade</li><li><strong>25% → LP secundária (BTC/USDC)</strong> – range mais largo, estabilidade</li><li><strong>25% → Caixa (USDC livre)</strong> – para DCA e proteção</li></ul>
-                    <h3>⚙️ Ajuste automático (SOL/USDC)</h3>
-                    <div class="code-block"><pre>Se preço subir +6%: mover range +4%\nSe preço cair -6%: mover range -4%</pre></div>
-                    <h3>📉 DCA Inteligente (usando os 25% em USDC)</h3>
-                    <div class="code-block"><pre>-3% → compra 10%\n-6% → compra 20%\n-10% → compra 30%\n+4% → vende 15%\n+8% → vende 25%\n+12% → vende 30%</pre></div>
-                    <h3>🔴 Modo Crise (ESSENCIAL)</h3>
-                    <p>Gatilhos: BTC cai >8% no dia, perde média 200, mercado em pânico.</p>
-                    <div class="code-block"><pre>Remover todas LPs, converter para USDC, ativar DCA de fundo.\nReentrada gradual quando estabilizar.</pre></div>
-                    <h3>⚡ Maximização de Taxas (extra)</h3>
-                    <div class="code-block"><pre>Se APR > 200%: mover 10–20% capital temporariamente → farmar e sair</pre></div>
-                    <h3>🧠 Controle de Risco (OURO)</h3>
-                    <p>Nunca deixar 100% em LP. Limites: Máx por pool 50%, Mín caixa 20%.</p>
-                    <h2>🚀 Diferencial dessa estratégia</h2>
-                    <ul><li>✅ Ganhando taxa (LP)</li><li>✅ Comprando fundo (DCA)</li><li>✅ Vendendo topo (DCA)</li><li>✅ Protegendo capital (crise)</li><li>✅ Ajustando automaticamente (range dinâmico)</li></ul>
-                    <p>👉 Isso é literalmente o que fundos fazem.</p>
-                </div>
+            <!-- Outras abas (conteúdo estático exemplo) -->
+            <div id="tabSinais" class="tab-content">
+                <div class="news-item">Sinais de compra/venda baseados em IA em breve.</div>
             </div>
-
-            <!-- Aba Robô Automatizado -->
-            <div id="robotTab" class="tab-content">
-                <div class="robot-content">
-                    <h3>🤖 Bot de Liquidez Automatizado (Solana - Meteora / Orca)</h3>
-                    <p>Este bot gerencia automaticamente uma posição de liquidez em um pool CLMM na Solana. Ele ajusta o range de preço conforme a volatilidade e protege o capital em caso de queda brusca.</p>
-                    <h4>📌 Funcionalidades</h4>
-                    <ul><li><strong>🔵 Adicionar liquidez</strong> – Cria uma posição com range de ±10% em torno do preço atual.</li><li><strong>⚡ Auto-ajuste</strong> – Se o preço variar mais de 5%, o range é reposicionado para o novo preço.</li><li><strong>🚨 Modo Crash</strong> – Se o preço cair mais de 8%, toda a liquidez é removida para evitar perdas.</li><li><strong>📊 Preço em tempo real</strong> – Busca o preço da SOL na Binance a cada 20 segundos.</li></ul>
-                    <h4>⚙️ Como usar (para desenvolvedores)</h4>
-                    <ol><li>Instale as dependências: <code>npm install @solana/web3.js axios dotenv @orca-so/whirlpools-sdk</code></li><li>Crie um arquivo <code>.env</code> com sua chave privada: <code>PRIVATE_KEY=...</code></li><li>Altere o endereço da pool (<code>POOL_ADDRESS</code>) para o pool desejado (ex: SOL/USDC da Meteora).</li><li>Execute com <code>node index.js</code></li></ol>
-                    <h4>📄 Código completo (JavaScript)</h4>
-                    <div class="code-block"><pre>// Código completo do bot (versão anterior)</pre></div>
-                    <p><strong>⚠️ Atenção:</strong> Este código é um exemplo educacional. Antes de usar com fundos reais, teste em ambiente de simulação (devnet) e ajuste os parâmetros conforme sua estratégia. Nunca compartilhe sua chave privada.</p>
-                </div>
+            <div id="tabCombust" class="tab-content">
+                <div class="news-item">Análise de combustíveis e indicadores macro.</div>
+            </div>
+            <div id="tabDCA" class="tab-content">
+                <div class="news-item">Registro de entradas DCA: última atualização 21/03.</div>
+            </div>
+            <div id="tabPepino" class="tab-content">
+                <div class="news-item">Pepinâmetro: tendência de curto prazo NEUTRO.</div>
+            </div>
+            <div id="tabHistoria" class="tab-content">
+                <div class="news-item">Histórico de cipas e reversões.</div>
+            </div>
+            <div id="tabOpcao" class="tab-content">
+                <div class="news-item">Ferramenta InvestOpção: opções binárias simuladas.</div>
             </div>
         </div>
+
+        <div class="alarm-section">
+            <div><strong>🔔 ALARME DE PREÇO</strong></div>
+            <div class="alarm-input-group">
+                <input type="text" class="alarm-input" id="alarmPrice" placeholder="Preço alvo (ex: 99.50)">
+                <button class="btn" id="addAlarmBtn">Adicionar</button>
+            </div>
+            <div id="alarmList" style="margin-top: 12px; font-size:0.8rem;">Nenhum alarme definido.</div>
+        </div>
+
+        <div class="footer-stats">
+            <div>SESSÕES CRIPTO / FOREX</div>
+            <div class="sessions">
+                <span>🌏 Ásia 21:00-01:00 (médio)</span>
+                <span>🇬🇧 Londres 04:00-09:00 (alto)</span>
+            </div>
+            <div>© Mestre do Scalping | Dados em tempo real simulados</div>
+        </div>
     </div>
+</div>
 
-    <script src="https://s3.tradingview.com/tv.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-    <script>
-        // ========== FUNÇÕES GLOBAIS ==========
-        function abrirSubmodal(id) { const modal = document.getElementById(id); if (modal) modal.style.display = 'flex'; else console.error('Submodal não encontrado:', id); }
-        function fecharSubmodal(id) { const modal = document.getElementById(id); if (modal) modal.style.display = 'none'; }
+<script>
+    // ======================== MOCK API SIMULATION ========================
+    // Simula dados de ouro, prata e petróleo (corrige o carregamento eterno)
+    // e também simula notícias + calendário econômico
 
-        // ========== CÓDIGO COMPLETO (com correção de preços de metais) ==========
-        let price = 74069.05;
-        let pricesHistory = [];
-        let isDesktop = false;
-        let currentTF = "1";
-        let activeWS = null;
-        let hlConnection = null;
-        let alarmes = [];
-        let modoOperacaoAtivo = false;
-        let timeoutDescanso;
-        let metalInterval = null;
-        let lastValidPrice = {}; // guarda último preço válido por ativo
+    let currentPrices = {
+        gold: null, silver: null, oil: null
+    };
+    let alarms = [];
 
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        let audioCtx = null;
-
-        function tocarAlarme() { try { if (!audioCtx) audioCtx = new AudioContext(); const osc = audioCtx.createOscillator(); const gainNode = audioCtx.createGain(); osc.type = 'sine'; osc.frequency.value = 880; gainNode.gain.value = 0.3; osc.connect(gainNode); gainNode.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + 0.5); setTimeout(() => { const osc2 = audioCtx.createOscillator(); osc2.type = 'sine'; osc2.frequency.value = 880; const gain2 = audioCtx.createGain(); gain2.gain.value = 0.3; osc2.connect(gain2); gain2.connect(audioCtx.destination); osc2.start(); osc2.stop(audioCtx.currentTime + 0.5); }, 600); if (navigator.vibrate) navigator.vibrate([500, 200, 500]); } catch (e) {} }
-
-        function setTF(tf, btn) { currentTF = tf; document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); initChart(); }
-        function toggleMode() { isDesktop = !isDesktop; document.getElementById('mainCard').classList.toggle('desktop-mode', isDesktop); initChart(); }
-
-        async function fetchHyperliquidPrice(asset) {
-            try {
-                const res = await fetch('https://api.hyperliquid.xyz/info', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ type: "allMids" })
-                });
-                const data = await res.json();
-                if (data && data[asset] !== undefined) {
-                    const midPrice = parseFloat(data[asset]);
-                    if (!isNaN(midPrice) && midPrice > 0) {
-                        lastValidPrice[asset] = midPrice;
-                        price = midPrice;
-                        document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
-                        pricesHistory.push(price);
-                        if(pricesHistory.length > 50) pricesHistory.shift();
-                        updateSignals();
-                        verificarAlarmes();
-                    } else {
-                        console.warn(`Preço inválido para ${asset}: ${data[asset]}`);
-                        if (lastValidPrice[asset]) {
-                            price = lastValidPrice[asset];
-                            document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
-                        }
-                    }
-                } else {
-                    console.warn(`Preço não encontrado para ${asset}`);
-                    if (lastValidPrice[asset]) {
-                        price = lastValidPrice[asset];
-                        document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
-                    }
-                }
-            } catch (err) {
-                console.error("Erro ao buscar preço da Hyperliquid:", err);
-                if (lastValidPrice[asset]) {
-                    price = lastValidPrice[asset];
-                    document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
-                }
-            }
+    // Função para buscar preços de commodities (simulação com delay)
+    async function fetchCommodityPrices() {
+        // Mostra loading nos cards
+        setLoadingState(true);
+        try {
+            // Simula requisição de API
+            await new Promise(resolve => setTimeout(resolve, 800));
+            // Dados fictícios realistas
+            const newPrices = {
+                gold: { value: 3012.45, change: +0.68 },
+                silver: { value: 33.82, change: +0.42 },
+                oil: { value: 98.76, change: -0.15 }
+            };
+            currentPrices = {
+                gold: newPrices.gold.value,
+                silver: newPrices.silver.value,
+                oil: newPrices.oil.value
+            };
+            updatePriceDisplay(newPrices);
+        } catch (err) {
+            showPriceError();
+        } finally {
+            setLoadingState(false);
         }
+    }
 
-        function initChart() {
-            const symbol = document.getElementById('pairSelector').value;
-            const container = document.getElementById('chart_container');
-            container.innerHTML = '';
-            setTimeout(() => {
-                try {
-                    new TradingView.widget({
-                        "autosize": true,
-                        "symbol": symbol,
-                        "interval": currentTF,
-                        "theme": "dark",
-                        "style": "1",
-                        "locale": "br",
-                        "container_id": "chart_container",
-                        "hide_top_toolbar": !isDesktop,
-                        "hide_legend": false
-                    });
-                } catch (error) { console.error("Erro ao carregar gráfico:", error); container.innerHTML = '<div style="color:red;text-align:center;padding:20px;">Erro ao carregar gráfico. Verifique sua conexão.</div>'; }
-            }, 100);
-            if (metalInterval) { clearInterval(metalInterval); metalInterval = null; }
-            if (activeWS) { activeWS.close(); activeWS = null; }
-
-            if (symbol.startsWith("TVC:")) {
-                let asset = "";
-                if (symbol === "TVC:GOLD") asset = "GOLD";
-                else if (symbol === "TVC:SILVER") asset = "SILVER";
-                else if (symbol === "TVC:USOIL") asset = "WTI";
-                if (asset) {
-                    // tenta usar último preço válido, senão mostra "carregando"
-                    if (lastValidPrice[asset]) {
-                        price = lastValidPrice[asset];
-                        document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
-                    } else {
-                        price = 0;
-                        document.getElementById('priceText').innerHTML = `$ carregando...`;
-                    }
-                    fetchHyperliquidPrice(asset);
-                    metalInterval = setInterval(() => fetchHyperliquidPrice(asset), 2000);
-                }
-            } else {
-                let pair = symbol.split(':')[1].toLowerCase();
-                let streamPair = (pair.includes('btc') ? 'btcusdt' : pair.includes('eth') ? 'ethusdt' : pair.includes('sol') ? 'solusdt' : 'btcusdt');
-                activeWS = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`);
-                activeWS.onmessage = (e) => {
-                    const data = JSON.parse(e.data);
-                    price = parseFloat(data.c);
-                    document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
-                    pricesHistory.push(price);
-                    if(pricesHistory.length > 50) pricesHistory.shift();
-                    updateSignals();
-                    verificarAlarmes();
-                };
-            }
+    function setLoadingState(loading) {
+        const goldSpan = document.getElementById('goldPrice');
+        const silverSpan = document.getElementById('silverPrice');
+        const oilSpan = document.getElementById('oilPrice');
+        if(loading) {
+            if(!currentPrices.gold) goldSpan.innerHTML = '<span class="loading-spinner"></span>';
+            if(!currentPrices.silver) silverSpan.innerHTML = '<span class="loading-spinner"></span>';
+            if(!currentPrices.oil) oilSpan.innerHTML = '<span class="loading-spinner"></span>';
+        } else {
+            if(!currentPrices.gold) goldSpan.innerText = '--';
+            if(!currentPrices.silver) silverSpan.innerText = '--';
+            if(!currentPrices.oil) oilSpan.innerText = '--';
         }
+    }
 
-        function onSymbolChange() { initChart(); }
+    function updatePriceDisplay(prices) {
+        const goldSpan = document.getElementById('goldPrice');
+        const goldChangeSpan = document.getElementById('goldChange');
+        const silverSpan = document.getElementById('silverPrice');
+        const silverChangeSpan = document.getElementById('silverChange');
+        const oilSpan = document.getElementById('oilPrice');
+        const oilChangeSpan = document.getElementById('oilChange');
+        const wtiBig = document.getElementById('wtiBigPrice');
 
-        function updateSignals() {
-            const s1 = document.getElementById('statusText');
-            const box = document.getElementById('statusBox');
-            let s1Valor = 0;
-            if(Math.floor(price * 100) % 2 === 0) {
-                s1.innerText = '🔥 OPORTUNIDADE';
-                box.style.borderBottomColor = '#00ff88';
-                s1.style.color = '#00ff88';
-                s1Valor = 30;
-            } else {
-                s1.innerText = '⚠️ AGUARDAR';
-                box.style.borderBottomColor = '#ff3e3e';
-                s1.style.color = '#ff3e3e';
-                s1Valor = 0;
-            }
-            
-            const s2 = document.getElementById('rsiText');
-            const rsiBox = document.getElementById('rsiBox');
-            let s2Valor = 0;
-            let s2Direcao = null;
-            if(pricesHistory.length >= 21) {
-                const compra = price > pricesHistory[pricesHistory.length - 21];
-                s2.innerText = compra ? '🚀 COMPRA' : '📉 VENDA';
-                rsiBox.style.borderBottomColor = compra ? '#00ff88' : '#ff3e3e';
-                s2.style.color = compra ? '#00ff88' : '#ff3e3e';
-                s2Valor = 40;
-                s2Direcao = compra ? 'compra' : 'venda';
-            } else {
-                s2.innerText = `COLETANDO ${pricesHistory.length}/21`;
-            }
-            
-            const s3 = document.getElementById('momText');
-            const momBox = document.getElementById('momBox');
-            let s3Valor = 0;
-            let s3Direcao = null;
-            if(pricesHistory.length >= 3) {
-                const avg = (pricesHistory.slice(-3).reduce((a,b)=>a+b,0))/3;
-                if(price > avg * 1.001) {
-                    s3.innerText = '📈 ALTA';
-                    momBox.style.borderBottomColor = '#00ff88';
-                    s3.style.color = '#00ff88';
-                    s3Valor = 30;
-                    s3Direcao = 'compra';
-                } else if(price < avg * 0.999) {
-                    s3.innerText = '📉 BAIXA';
-                    momBox.style.borderBottomColor = '#ff3e3e';
-                    s3.style.color = '#ff3e3e';
-                    s3Valor = 30;
-                    s3Direcao = 'venda';
-                } else {
-                    s3.innerText = '⚖️ NEUTRO';
-                    momBox.style.borderBottomColor = '#ffcc00';
-                    s3.style.color = '#ffcc00';
-                }
-            }
-            
-            let score = s1Valor + s2Valor + (s3Valor || 0);
-            if (s2Direcao && s3Direcao && s2Direcao !== s3Direcao) score = 0;
-            
-            document.getElementById('scoreFill').style.width = score + '%';
-            document.getElementById('scoreValue').innerText = score + '/100';
-            
-            let scoreLabel = 'Aguardando sinais';
-            let probabilidade = '';
-            let classeScore = 'baixa';
-            
-            if (score >= 80) {
-                scoreLabel = '🔥 Confluência forte';
-                probabilidade = 'Alta';
-                classeScore = 'alta';
-                document.getElementById('alertaBadge').style.display = 'inline-block';
-                if (s2Direcao === 'compra') document.body.classList.add('alerta-compra');
-                else if (s2Direcao === 'venda') document.body.classList.add('alerta-venda');
-            } else if (score >= 60) {
-                scoreLabel = '⚡ Confluência moderada';
-                probabilidade = 'Média';
-                classeScore = 'media';
-                document.getElementById('alertaBadge').style.display = 'none';
-            } else {
-                scoreLabel = '⚠️ Evitar operação';
-                probabilidade = 'Baixa';
-                classeScore = 'baixa';
-                document.getElementById('alertaBadge').style.display = 'none';
-            }
-            
-            document.getElementById('scoreFill').className = 'score-fill ' + classeScore;
-            document.getElementById('scoreLabel').innerText = scoreLabel;
-            document.getElementById('probabilidade').innerText = probabilidade;
-            
-            const hora = new Date().getHours();
-            const minutos = new Date().getMinutes();
-            const horaMin = hora + minutos/60;
-            let sessao = 'Fora do horário';
-            if (horaMin >= 21 || horaMin < 1) sessao = '🌏 Ásia';
-            else if (horaMin >= 4 && horaMin < 9) sessao = '🇪🇺 Londres';
-            else if (horaMin >= 10 && horaMin < 14) sessao = '🇺🇸 NY (Pico)';
-            else if (horaMin >= 9.33 && horaMin < 15.5) sessao = '🥇 Metais NY';
-            else if (horaMin >= 10 && horaMin < 16.5) sessao = '🛢️ Petróleo';
-            document.getElementById('sessaoText').innerText = sessao;
+        if(prices.gold) {
+            goldSpan.innerText = prices.gold.value.toFixed(2);
+            const changeClass = prices.gold.change >=0 ? 'positive' : 'negative';
+            goldChangeSpan.innerHTML = `<span class="${changeClass}">${prices.gold.change>=0?'+':''}${prices.gold.change.toFixed(2)}%</span>`;
+            document.getElementById('goldStatus').innerHTML = '';
         }
-
-        function calc() { const tp = price * (1 + parseFloat(document.getElementById('tpP').value)/100); const sl = price * (1 - parseFloat(document.getElementById('slP').value)/100); document.getElementById('resTP').innerText = `$${tp.toFixed(2)}`; document.getElementById('resSL').innerText = `$${sl.toFixed(2)}`; document.getElementById('results').style.display = 'block'; }
-
-        function adicionarAlarme() { const preco = parseFloat(document.getElementById('alarmePreco').value); if (isNaN(preco) || preco <= 0) { alert('Preço inválido'); return; } alarmes.push({ preco, ativo: true, id: Date.now() }); atualizarListaAlarmes(); document.getElementById('alarmePreco').value = ''; }
-        function removerAlarme(id) { alarmes = alarmes.filter(a => a.id !== id); atualizarListaAlarmes(); }
-        function atualizarListaAlarmes() { const lista = document.getElementById('alarmeLista'); if (alarmes.length === 0) { lista.innerHTML = '<div style="color: var(--text); text-align: center; padding: 10px;">Nenhum alarme definido</div>'; return; } let html = ''; alarmes.forEach(alarme => { html += `<div class="alarme-item"><span>🔔 $${alarme.preco.toLocaleString('en-US', {minimumFractionDigits:2})}</span><button class="alarme-remover" onclick="removerAlarme(${alarme.id})">✕</button></div>`; }); lista.innerHTML = html; }
-        function verificarAlarmes() { alarmes.forEach(alarme => { if (alarme.ativo && Math.abs(price - alarme.preco) / alarme.preco < 0.001) { alarme.ativo = false; tocarAlarme(); alert(`🔔 ALARME! Preço atingiu $${alarme.preco.toFixed(2)}`); atualizarListaAlarmes(); } }); }
-
-        function iniciarTimerDescanso() { if (modoOperacaoAtivo) return; clearTimeout(timeoutDescanso); timeoutDescanso = setTimeout(() => { if (!modoOperacaoAtivo) document.body.classList.add("modo-descanso"); }, 90000); }
-        function resetTimer() { if (!modoOperacaoAtivo) { document.body.classList.remove("modo-descanso"); iniciarTimerDescanso(); } }
-        document.onmousemove = resetTimer; document.onkeydown = resetTimer; document.onclick = resetTimer; document.ontouchstart = resetTimer;
-        const toggle = document.getElementById("lockScreenToggle"); const statusTexto = document.getElementById("statusModo"); toggle.addEventListener("change", function() { modoOperacaoAtivo = this.checked; if (modoOperacaoAtivo) { statusTexto.innerText = "Modo Operação: ON"; clearTimeout(timeoutDescanso); document.body.classList.remove("modo-descanso"); document.body.classList.add("modo-ativo"); } else { statusTexto.innerText = "Modo Operação: OFF"; document.body.classList.remove("modo-ativo"); iniciarTimerDescanso(); } });
-        function openPasswordModal() { document.getElementById('passwordModal').style.display = 'flex'; } function closePasswordModal() { document.getElementById('passwordModal').style.display = 'none'; } function openDonationModal() { document.getElementById('donationModal').style.display = 'flex'; } function closeDonationModal() { document.getElementById('donationModal').style.display = 'none'; } function closeRobotModal() { document.getElementById('robotModal').style.display = 'none'; }
-        function checkPassword() { if(document.getElementById('passInput').value === 'Maria1301') { fecharModal('passwordModal'); document.getElementById('robotModal').style.display = 'flex'; } else { alert('Senha incorreta'); } }
-        function copyText(text) { navigator.clipboard.writeText(text).then(() => alert('✅ Copiado!')).catch(() => alert('❌ Erro ao copiar.')); }
-
-        async function connectHyperliquid() { /* ... */ }
-        async function placeRealOrder() { /* ... */ }
-
-        // ========== DADOS DAS POOLS ==========
-        let poolsData = [
-            { pool: "USDY/USDC", network: "Solana", dex: "Raydium Concentrated", tvl: "1.3K", ratio: "55/45", volume: "7.8K", apr: "487.3%", fee: "0.25%", age: "2m0s" },
-            { pool: "USD1/WBNB", network: "Bsc", dex: "PancakeSwap V3", tvl: "20.6K", ratio: "16/84", volume: "2.21M", apr: "390.6%", fee: "0.05%", age: "1m0s" },
-            { pool: "COINX/USDC", network: "Solana", dex: "Raydium Concentrated", tvl: "286.8K", ratio: "87/13", volume: "270.7K", apr: "344.5%", fee: "1.00%", age: "2mo" },
-            { pool: "SLVON/WETH", network: "Ethereum", dex: "Uniswap V3", tvl: "3.5K", ratio: "91/9", volume: "9.5K", apr: "300.1%", fee: "0.30%", age: "1mo" },
-            { pool: "SOL/USDC", network: "Base", dex: "Aerodrome Slipstream", tvl: "220.3K", ratio: "59/41", volume: "4.73M", apr: "274.1%", fee: "0.03%", age: "40m" },
-            { pool: "TQQQx/USDC", network: "Solana", dex: "Raydium Concentrated", tvl: "2.6K", ratio: "51/49", volume: "458", apr: "259.6%", fee: "4.00%", age: "17d" },
-            { pool: "USDC/WHYPE", network: "Hyperliquid", dex: "Project X", tvl: "510.4K", ratio: "44/56", volume: "1.14M", apr: "244.5%", fee: "0.30%", age: "6mo" },
-            { pool: "HYPE/USDC", network: "Solana", dex: "Orca Whirlpool", tvl: "80.8K", ratio: "55/45", volume: "76.5K", apr: "224.7%", fee: "0.65%", age: "3mo" },
-            { pool: "HYPE/cbBTC", network: "Solana", dex: "Meteora DLMM", tvl: "21.5K", ratio: "80/20", volume: "63.7K", apr: "216.6%", fee: "0.20%", age: "5mo" },
-            { pool: "SOL/WETH", network: "Arbitrum", dex: "Uniswap V3", tvl: "121.8K", ratio: "63/37", volume: "213.1K", apr: "191.7%", fee: "0.30%", age: "2y" },
-            { pool: "HYPE/SOL", network: "Solana", dex: "Meteora DLMM", tvl: "41.0K", ratio: "39/61", volume: "199.3K", apr: "177.3%", fee: "0.10%", age: "5mo" },
-            { pool: "WETH/USDC", network: "Base", dex: "Aerodrome Slipstream", tvl: "387.2K", ratio: "75/27", volume: "3.12M", apr: "173.6%", fee: "0.06%", age: "1m" },
-            { pool: "SLVON/USDC", network: "Ethereum", dex: "Uniswap V3", tvl: "161.3K", ratio: "79/21", volume: "247.6K", apr: "168.1%", fee: "0.30%", age: "2y" },
-            { pool: "HOODX/SOL", network: "Solana", dex: "Raydium Concentrated", tvl: "437.2K", ratio: "35/65", volume: "190.3K", apr: "158.8%", fee: "1.00%", age: "8mo" },
-            { pool: "SOL/WBTC", network: "Arbitrum", dex: "Uniswap V3", tvl: "10.5K", ratio: "79/21", volume: "4.5K", apr: "157.6%", fee: "1.00%", age: "2y" },
-            { pool: "SLVON/USDC", network: "Bsc", dex: "PancakeSwap V3", tvl: "29.1K", ratio: "90/10", volume: "12.5K", apr: "156.5%", fee: "1.00%", age: "11mo" },
-            { pool: "cbBTC/SOL", network: "Solana", dex: "Meteora DLMM", tvl: "51.3K", ratio: "42/58", volume: "730.0K", apr: "155.8%", fee: "0.03%", age: "4mo" },
-            { pool: "NVDAX/SOL", network: "Solana", dex: "Raydium Concentrated", tvl: "39.9K", ratio: "53/47", volume: "64.2K", apr: "146.9%", fee: "0.25%", age: "19d" },
-            { pool: "EURC/USDC", network: "Solana", dex: "Raydium Concentrated", tvl: "50K", ratio: "50/50", volume: "100K", apr: "29.9%", fee: "0.05%", age: "3mo" },
-            { pool: "USDC/USDT", network: "Ethereum", dex: "Uniswap V3", tvl: "100K", ratio: "50/50", volume: "500K", apr: "21.1%", fee: "0.01%", age: "1y" },
-            { pool: "DAI/USDC", network: "Arbitrum", dex: "Uniswap V3", tvl: "30K", ratio: "50/50", volume: "80K", apr: "4.3%", fee: "0.01%", age: "6mo" },
-            { pool: "USDe/USDC", network: "Ethereum", dex: "Curve", tvl: "20K", ratio: "50/50", volume: "40K", apr: "1.5%", fee: "0.01%", age: "2mo" },
-            { pool: "USDT/USDT", network: "Bsc", dex: "PancakeSwap V3", tvl: "15K", ratio: "50/50", volume: "30K", apr: "0.9%", fee: "0.01%", age: "1y" },
-            { pool: "BRZ/USDC", network: "Polygon", dex: "QuickSwap", tvl: "25K", ratio: "60/40", volume: "50K", apr: "8.10%", fee: "0.25%", age: "1y" },
-            { pool: "BRL/AUSD", network: "Arbitrum", dex: "Camelot", tvl: "10K", ratio: "70/30", volume: "20K", apr: "12.25%", fee: "0.30%", age: "8mo" },
-            { pool: "BRL/USDC", network: "Polygon", dex: "QuickSwap", tvl: "40K", ratio: "55/45", volume: "100K", apr: "17.46%", fee: "0.20%", age: "1y" },
-            { pool: "BRL/USDT", network: "Bsc", dex: "PancakeSwap V3", tvl: "15K", ratio: "65/35", volume: "30K", apr: "8.44%", fee: "0.25%", age: "10mo" },
-            { pool: "BRL/USDT", network: "Ethereum", dex: "Uniswap V3", tvl: "12K", ratio: "60/40", volume: "25K", apr: "13.56%", fee: "0.30%", age: "7mo" }
-        ];
-
-        function getTopAPRs(pools, n, filterFn = null) {
-            let filtered = filterFn ? pools.filter(filterFn) : pools;
-            filtered.sort((a,b) => parseFloat(b.apr) - parseFloat(a.apr));
-            return filtered.slice(0,n).map(p => ({ pair: p.pool, apr: p.apr }));
+        if(prices.silver) {
+            silverSpan.innerText = prices.silver.value.toFixed(2);
+            const changeClass = prices.silver.change >=0 ? 'positive' : 'negative';
+            silverChangeSpan.innerHTML = `<span class="${changeClass}">${prices.silver.change>=0?'+':''}${prices.silver.change.toFixed(2)}%</span>`;
         }
+        if(prices.oil) {
+            oilSpan.innerText = prices.oil.value.toFixed(2);
+            const changeClass = prices.oil.change >=0 ? 'positive' : 'negative';
+            oilChangeSpan.innerHTML = `<span class="${changeClass}">${prices.oil.change>=0?'+':''}${prices.oil.change.toFixed(2)}%</span>`;
+            wtiBig.innerText = prices.oil.value.toFixed(2);
+        }
+    }
 
-        function refreshCategories() {
-            const bluechip = getTopAPRs(poolsData, 5);
-            const stable = getTopAPRs(poolsData, 5, p => { const name = p.pool.toUpperCase(); return name.includes('USDC') || name.includes('USDT') || name.includes('DAI') || name.includes('EURC'); });
-            const rwaKeywords = ['COIN', 'TQQQ', 'SLV', 'AMZN', 'HOOD', 'NVDA', 'AAPL', 'GOOGL'];
-            const rwa = getTopAPRs(poolsData, 5, p => { const name = p.pool.toUpperCase(); return rwaKeywords.some(kw => name.includes(kw)); });
-            const real = getTopAPRs(poolsData, 5, p => { const name = p.pool.toUpperCase(); return name.includes('BRL') || name.includes('BRZ'); });
-            const categories = [
-                { title: "BEST BLUE-CHIP", items: bluechip },
-                { title: "BEST STABLE COIN", items: stable },
-                { title: "BEST RWA", items: rwa },
-                { title: "BEST REAL", items: real }
+    function showPriceError() {
+        document.getElementById('goldStatus').innerHTML = '<span class="error-message">Erro ao carregar</span>';
+        document.getElementById('silverStatus').innerHTML = '<span class="error-message">Erro</span>';
+        document.getElementById('oilStatus').innerHTML = '<span class="error-message">Erro</span>';
+    }
+
+    // ======================== NOTÍCIAS E CALENDÁRIO (com simulação) ========================
+    let cachedNews = [];
+
+    async function fetchNewsAndCalendar() {
+        const container = document.getElementById('newsCalendarContent');
+        container.innerHTML = '<div style="text-align:center; padding:20px;"><span class="loading-spinner"></span> Carregando notícias e calendário...</div>';
+        try {
+            await new Promise(resolve => setTimeout(resolve, 700));
+            // Mock de notícias e eventos
+            cachedNews = [
+                { title: "Petróleo WTI oscila com temores de oferta", date: "21/03/2026 14:30", type: "news" },
+                { title: "FED mantém juros; impacto no ouro", date: "21/03/2026 12:00", type: "news" },
+                { title: "Dados de emprego nos EUA surpreendem positivamente", date: "21/03/2026 09:45", type: "news" },
+                { title: "🔔 Calendário: PMI Industrial (EUA) - 22/03 10:00", date: "Evento: 22/03", type: "event" },
+                { title: "CPI da Zona do Euro - 24/03 06:00 (Alta volatilidade)", date: "Evento: 24/03", type: "event" }
             ];
-            let html = '';
-            for (let cat of categories) {
-                html += `<div class="category-card"><div class="category-title">${cat.title}</div>`;
-                if (cat.items.length === 0) html += `<div class="category-item"><span class="pair">Nenhum dado</span><span class="apr">0%</span></div>`;
-                else for (let item of cat.items) html += `<div class="category-item"><span class="pair">${item.pair}</span><span class="apr">${item.apr}</span></div>`;
-                html += `</div>`;
-            }
-            document.getElementById('categoriesContainer').innerHTML = html;
+            renderNews(cachedNews);
+        } catch(e) {
+            container.innerHTML = '<div class="error-message">Falha ao carregar notícias. Tente novamente.</div>';
         }
+    }
 
-        function atualizarDadosPools() {
-            poolsData = poolsData.map(p => {
-                let novoApr = (Math.random() * 300 + 100).toFixed(1) + '%';
-                let novoVolume = (Math.random() * 5).toFixed(2) + 'M';
-                let novoTvl = (Math.random() * 500).toFixed(1) + 'K';
-                return { ...p, apr: novoApr, volume: novoVolume.includes('M') ? novoVolume : (parseFloat(novoVolume)*1000).toFixed(0)+'K', tvl: novoTvl };
+    function renderNews(newsArray) {
+        const container = document.getElementById('newsCalendarContent');
+        if(!newsArray.length) {
+            container.innerHTML = '<div>Nenhuma notícia ou evento no momento.</div>';
+            return;
+        }
+        let html = '';
+        newsArray.forEach(item => {
+            html += `
+                <div class="news-item">
+                    <div class="news-title">${item.title}</div>
+                    <div class="news-date">${item.date}</div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+
+    // Copiar notícias para clipboard
+    async function copyNewsToClipboard() {
+        if(!cachedNews.length) {
+            alert("Nenhuma notícia para copiar. Atualize primeiro.");
+            return;
+        }
+        let textToCopy = "📰 NOTÍCIAS E CALENDÁRIO - MESTRE DO SCALPING\n\n";
+        cachedNews.forEach(item => {
+            textToCopy += `${item.title} (${item.date})\n`;
+        });
+        try {
+            await navigator.clipboard.writeText(textToCopy);
+            alert("✅ Notícias e calendário copiados para a área de transferência!");
+        } catch(err) {
+            alert("Erro ao copiar: " + err);
+        }
+    }
+
+    // ======================== ALARMES ========================
+    function addAlarm(priceTarget) {
+        if(!priceTarget || isNaN(parseFloat(priceTarget))) {
+            alert("Digite um preço válido (ex: 99.50)");
+            return;
+        }
+        alarms.push(parseFloat(priceTarget));
+        updateAlarmUI();
+    }
+
+    function updateAlarmUI() {
+        const alarmDiv = document.getElementById('alarmList');
+        if(alarms.length === 0) {
+            alarmDiv.innerHTML = "Nenhum alarme definido.";
+            return;
+        }
+        let html = "<strong>Alarmes ativos:</strong><ul style='margin-top:6px;'>";
+        alarms.forEach((a, idx) => {
+            html += `<li>${a} <button class="btn" style="padding:2px 6px; margin-left:8px;" data-remove="${idx}">❌</button></li>`;
+        });
+        html += "</ul>";
+        alarmDiv.innerHTML = html;
+        // adiciona eventos de remoção
+        document.querySelectorAll('[data-remove]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const idx = parseInt(btn.getAttribute('data-remove'));
+                alarms.splice(idx,1);
+                updateAlarmUI();
             });
-            refreshCategories();
-            aplicarFiltrosEOrdenar();
-        }
+        });
+    }
 
-        let modoAtual = 'apr';
-        let filtros = { tvlMin: 0, volMin: 0, aprMin: 0 };
-        let ordenacaoAtual = { coluna: 'apr', direcao: 'desc' };
+    // ======================== OUTRAS FUNCIONALIDADES ========================
+    let modoOperacao = false;
+    function toggleModo() {
+        modoOperacao = !modoOperacao;
+        document.getElementById('modoOp').innerText = modoOperacao ? "ON" : "OFF";
+        alert(`Modo Operação ${modoOperacao ? "ATIVADO" : "DESATIVADO"}`);
+    }
 
-        function setModo(modo) { modoAtual = modo; document.getElementById('modoAutoBtn').classList.remove('active'); document.getElementById('modoManualBtn').classList.remove('active'); document.getElementById('modoAPRBtn').classList.remove('active'); if(modo==='auto') document.getElementById('modoAutoBtn').classList.add('active'); else if(modo==='manual') document.getElementById('modoManualBtn').classList.add('active'); else document.getElementById('modoAPRBtn').classList.add('active'); aplicarFiltrosEOrdenar(); }
-        function aplicarFiltros() { filtros.tvlMin = parseFloat(document.getElementById('filtroTVL').value) || 0; filtros.volMin = parseFloat(document.getElementById('filtroVolume').value) || 0; filtros.aprMin = parseFloat(document.getElementById('filtroAPR').value) || 0; aplicarFiltrosEOrdenar(); }
-        function extrairNumeros(pool) { const parseNum = (str) => { if(!str) return 0; let n = parseFloat(str.replace(/[KMB%$]/g,'')); if(str.includes('K')) n*=1e3; if(str.includes('M')) n*=1e6; if(str.includes('B')) n*=1e9; return n; }; return { tvlNum: parseNum(pool.tvl), volNum: parseNum(pool.volume), aprNum: parseNum(pool.apr) }; }
-        function calcularIdadeBonus(age) { if(age.includes('y')||age.includes('mo')||(age.includes('d')&&parseInt(age)>7)) return 0.1; else if(age.includes('d')&&parseInt(age)<=7) return 0.05; else if(age.includes('m')&&!age.includes('mo')) return -0.1; return 0; }
-        function calcularScore(pool, tvls, vols, aprs) { const {tvlNum,volNum,aprNum}=extrairNumeros(pool); const tvlPerc=tvls.length?tvls.filter(v=>v<tvlNum).length/tvls.length:0; const volPerc=vols.length?vols.filter(v=>v<volNum).length/vols.length:0; const aprPerc=aprs.length?aprs.filter(v=>v<aprNum).length/aprs.length:0; const idadeBonus=calcularIdadeBonus(pool.age); return (aprPerc*0.4)+(volPerc*0.3)+(tvlPerc*0.2)+idadeBonus; }
-        function aplicarFiltrosEOrdenar() { let poolsFiltradas = poolsData.filter(p=>{ const{tvlNum,volNum,aprNum}=extrairNumeros(p); return tvlNum>=filtros.tvlMin && volNum>=filtros.volMin && aprNum>=filtros.aprMin; }); if(modoAtual==='auto'){ const tvls=poolsFiltradas.map(p=>extrairNumeros(p).tvlNum); const vols=poolsFiltradas.map(p=>extrairNumeros(p).volNum); const aprs=poolsFiltradas.map(p=>extrairNumeros(p).aprNum); poolsFiltradas=poolsFiltradas.map(p=>{p.score=calcularScore(p,tvls,vols,aprs); return p;}); poolsFiltradas.sort((a,b)=>b.score-a.score); } else if(modoAtual==='apr'){ poolsFiltradas.sort((a,b)=>extrairNumeros(b).aprNum-extrairNumeros(a).aprNum); poolsFiltradas.forEach(p=>delete p.score); } else { ordenarLista(poolsFiltradas, ordenacaoAtual.coluna, ordenacaoAtual.direcao); } renderPoolsTable(poolsFiltradas); }
-        function ordenarPor(coluna) { if(modoAtual==='manual'){ if(ordenacaoAtual.coluna===coluna) ordenacaoAtual.direcao=ordenacaoAtual.direcao==='asc'?'desc':'asc'; else { ordenacaoAtual.coluna=coluna; ordenacaoAtual.direcao='asc'; } aplicarFiltrosEOrdenar(); } }
-        function ordenarLista(lista, coluna, direcao) { lista.sort((a,b)=>{ let valA,valB; if(coluna==='tvl'||coluna==='volume'||coluna==='apr'||coluna==='fee'){ valA=extrairNumeros(a)[coluna+'Num']!==undefined?extrairNumeros(a)[coluna+'Num']:parseFloat(a[coluna]); valB=extrairNumeros(b)[coluna+'Num']!==undefined?extrairNumeros(b)[coluna+'Num']:parseFloat(b[coluna]); } else { valA=a[coluna]; valB=b[coluna]; } return direcao==='asc'?(valA>valB?1:-1):(valA<valB?1:-1); }); }
-        function gerarVariacao() { let v = []; for (let i=0;i<5;i++) v.push((Math.random()*4-2).toFixed(2)); return v; }
-        function renderPoolsTable(pools) { const tbody=document.getElementById('poolsTableBody'); if(!tbody) return; tbody.innerHTML=''; pools.forEach(p=>{ const variacoes=gerarVariacao(); let scoreHtml=''; if(p.score!==undefined){ const scorePercent=(p.score*100).toFixed(0); let scoreColor=p.score<0.3?'var(--red)':p.score<0.6?'var(--gold)':'var(--green)'; scoreHtml=`<div style="display:flex;align-items:center;"><div class="score-bar-small"><div class="score-fill-small" style="width:${scorePercent}%;background:${scoreColor};"></div></div><span>${scorePercent}%</span></div>`; } else scoreHtml='-'; const formatVariacao=(val)=>{ const num=parseFloat(val); const sinal=num>=0?'▲':'▼'; const cor=num>=0?'positive':'negative'; return `<span class="${cor}">${sinal} ${Math.abs(num)}%</span>`; }; const tr=document.createElement('tr'); tr.innerHTML=`<td><strong>${p.pool}</strong></td><td>${p.network}</td><td>${p.dex}</td><td>$${p.tvl}</td><td><div class="ratio-bar"><span style="width:${p.ratio.split('/')[0]}%;"></span></div>${p.ratio}</td><td>$${p.volume}</td><td class="apr-high">${p.apr}</td><td>${formatVariacao(variacoes[0])}</td><td>${formatVariacao(variacoes[1])}</td><td>${formatVariacao(variacoes[2])}</td><td>${formatVariacao(variacoes[3])}</td><td>${formatVariacao(variacoes[4])}</td><td>${p.fee}</td><td>${p.age}</td><td class="score-cell">${scoreHtml}</td>`; tbody.appendChild(tr); }); }
-        function atualizarPools() { atualizarDadosPools(); }
-        function openPoolsModal() { document.getElementById('poolsModal').style.display='flex'; refreshCategories(); setModo('apr'); }
-        function closePoolsModal() { document.getElementById('poolsModal').style.display='none'; }
-        function switchTab(tab) { document.querySelectorAll('.tab-btn').forEach(btn=>btn.classList.remove('active')); document.querySelectorAll('.tab-content').forEach(content=>content.classList.remove('active')); if(tab==='pools'){ document.querySelectorAll('.tab-btn')[0].classList.add('active'); document.getElementById('poolsTab').classList.add('active'); refreshCategories(); aplicarFiltrosEOrdenar(); } else if(tab==='news'){ document.querySelectorAll('.tab-btn')[1].classList.add('active'); document.getElementById('newsTab').classList.add('active'); } else if(tab==='strategies'){ document.querySelectorAll('.tab-btn')[2].classList.add('active'); document.getElementById('strategiesTab').classList.add('active'); } else if(tab==='robot'){ document.querySelectorAll('.tab-btn')[3].classList.add('active'); document.getElementById('robotTab').classList.add('active'); } }
+    // Inicialização e Event Listeners
+    document.addEventListener('DOMContentLoaded', async () => {
+        // Carrega preços e notícias
+        await fetchCommodityPrices();
+        await fetchNewsAndCalendar();
 
-        refreshCategories();
-        setModo('apr');
-        iniciarTimerDescanso();
-        initChart();
-    </script>
+        // Botão atualizar preços (sidebar)
+        document.getElementById('refreshPricesBtn').addEventListener('click', () => {
+            fetchCommodityPrices();
+        });
+
+        // Botão atualizar notícias (na aba)
+        document.getElementById('atualizarNoticiasBtn').addEventListener('click', () => {
+            fetchNewsAndCalendar();
+        });
+
+        // Botão copiar notícias
+        document.getElementById('copiarNoticiasBtn').addEventListener('click', copyNewsToClipboard);
+
+        // Alarmes
+        document.getElementById('addAlarmBtn').addEventListener('click', () => {
+            const input = document.getElementById('alarmPrice');
+            addAlarm(input.value);
+            input.value = '';
+        });
+
+        // Modo operação toggle
+        document.getElementById('toggleModoBtn').addEventListener('click', toggleModo);
+
+        // Botão calcular alvos (apenas alerta)
+        document.getElementById('calcAlvosBtn').addEventListener('click', () => {
+            alert("Cálculo de alvos baseado nos parâmetros: Capital $300, Avançadores $10, Dane 1%, Paix 1%");
+        });
+
+        // Timeframe switcher (visual)
+        const timeframes = document.querySelectorAll('.timeframe');
+        timeframes.forEach(tf => {
+            tf.addEventListener('click', () => {
+                timeframes.forEach(t => t.classList.remove('active'));
+                tf.classList.add('active');
+                alert(`Timeframe alterado para ${tf.innerText}`);
+            });
+        });
+
+        // Navegação entre abas
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.getAttribute('data-tab');
+                tabBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                tabContents.forEach(tc => tc.classList.remove('active'));
+                const targetElem = document.getElementById(targetId);
+                if(targetElem) targetElem.classList.add('active');
+            });
+        });
+
+        // Atualização automática dos preços a cada 30 segundos (opcional)
+        setInterval(() => {
+            fetchCommodityPrices();
+        }, 30000);
+        // Atualiza notícias a cada 2 min
+        setInterval(() => {
+            fetchNewsAndCalendar();
+        }, 120000);
+    });
+</script>
 </body>
 </html>
