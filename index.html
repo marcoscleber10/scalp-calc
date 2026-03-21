@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Mestre do Scalping Pro - Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Mestre do Scalping Pro</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: 'Segoe UI', system-ui, 'Inter', -apple-system, sans-serif;
         }
 
         body {
@@ -18,7 +18,7 @@
             padding: 20px;
         }
 
-        /* Dashboard container */
+        /* Layout principal */
         .dashboard {
             max-width: 1400px;
             margin: 0 auto;
@@ -33,25 +33,25 @@
             border-radius: 24px;
             padding: 20px;
             border: 1px solid #1e2a3a;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
         }
 
         .logo {
-            font-size: 1.4rem;
-            font-weight: 700;
+            font-size: 1.5rem;
+            font-weight: 800;
             background: linear-gradient(135deg, #f0b90b, #ff8c00);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            margin-bottom: 24px;
             text-align: center;
+            margin-bottom: 24px;
         }
 
         .timeframe-selector {
             background: #0a0e16;
             border-radius: 40px;
-            padding: 6px;
             display: flex;
+            padding: 5px;
             margin-bottom: 28px;
             border: 1px solid #1f2a3e;
         }
@@ -60,12 +60,12 @@
             flex: 1;
             text-align: center;
             padding: 8px 0;
-            border-radius: 32px;
+            border-radius: 30px;
             cursor: pointer;
-            font-size: 0.85rem;
             font-weight: 500;
-            transition: all 0.2s;
+            font-size: 0.85rem;
             color: #8e9aaf;
+            transition: 0.2s;
         }
 
         .timeframe.active {
@@ -74,7 +74,8 @@
             box-shadow: 0 2px 8px rgba(240,185,11,0.3);
         }
 
-        .commodity-price-card {
+        /* Cards de commodities */
+        .commodity-card {
             background: #0c111b;
             border-radius: 20px;
             padding: 16px;
@@ -90,17 +91,17 @@
             margin-bottom: 6px;
         }
 
-        .price-value {
-            font-size: 1.6rem;
-            font-weight: 700;
+        .price-row {
             display: flex;
             align-items: baseline;
-            gap: 8px;
+            justify-content: space-between;
             flex-wrap: wrap;
+            gap: 8px;
         }
 
         .price-number {
             font-size: 1.8rem;
+            font-weight: 700;
         }
 
         .price-change {
@@ -108,48 +109,24 @@
             font-weight: 500;
         }
 
-        .positive {
-            color: #2ecc71;
-        }
+        .positive { color: #2ecc71; }
+        .negative { color: #e74c3c; }
 
-        .negative {
-            color: #e74c3c;
-        }
-
-        .loading-spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(240,185,11,0.3);
-            border-top-color: #f0b90b;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .error-message {
-            color: #e74c3c;
-            font-size: 0.75rem;
-            background: rgba(231,76,60,0.1);
-            padding: 4px 8px;
-            border-radius: 8px;
-            display: inline-block;
-        }
-
-        .refresh-icon {
-            background: none;
-            border: none;
+        .loading-text {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
             color: #f0b90b;
-            cursor: pointer;
-            font-size: 1.2rem;
-            margin-left: 10px;
-            vertical-align: middle;
         }
 
-        /* Main content */
+        .error-text {
+            color: #e74c3c;
+            font-size: 0.7rem;
+            margin-top: 6px;
+        }
+
+        /* Conteúdo principal */
         .main-content {
             background: #11151f;
             border-radius: 24px;
@@ -157,7 +134,6 @@
             overflow: hidden;
         }
 
-        /* Gráfico / Área WTI (simulada) */
         .chart-area {
             padding: 20px;
             border-bottom: 1px solid #1e2a3a;
@@ -167,13 +143,13 @@
             display: flex;
             justify-content: space-between;
             align-items: baseline;
-            margin-bottom: 12px;
             flex-wrap: wrap;
+            margin-bottom: 12px;
         }
 
         .wti-symbol {
-            font-size: 1.4rem;
-            font-weight: 700;
+            font-size: 1.2rem;
+            font-weight: 600;
         }
 
         .wti-price {
@@ -183,24 +159,23 @@
 
         .mock-chart {
             background: #0a0e16;
-            height: 200px;
+            height: 180px;
             border-radius: 16px;
             margin: 16px 0;
-            background-image: repeating-linear-gradient(45deg, #1a2538 0px, #1a2538 2px, #0f1622 2px, #0f1622 8px);
+            background-image: repeating-linear-gradient(45deg, #1a2538 0px, #1a2538 2px, #0f1622 2px, #0f1622 10px);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #4b5e77;
+            color: #5a6e8a;
             font-size: 0.8rem;
         }
 
         /* Métricas */
         .metrics-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 16px;
-            margin: 20px 0;
-            padding: 0 20px;
+            padding: 20px;
         }
 
         .metric-card {
@@ -214,32 +189,30 @@
             font-size: 0.7rem;
             text-transform: uppercase;
             color: #7c8ba0;
-            letter-spacing: 1px;
         }
 
         .metric-value {
             font-size: 1.4rem;
             font-weight: 700;
-            margin: 6px 0;
+            margin: 8px 0;
         }
 
         .badge {
-            background: #2c3e50;
-            border-radius: 20px;
-            padding: 2px 8px;
+            background: #1e2a3a;
+            padding: 4px 8px;
+            border-radius: 30px;
             font-size: 0.7rem;
-            display: inline-block;
         }
 
-        /* Tabs */
+        /* Abas */
         .tabs-container {
-            padding: 0 20px 20px 20px;
+            padding: 0 20px 20px;
         }
 
         .tabs-header {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 6px;
             border-bottom: 1px solid #1e2a3a;
             margin-bottom: 20px;
             overflow-x: auto;
@@ -249,27 +222,27 @@
             background: none;
             border: none;
             color: #8e9aaf;
-            padding: 10px 18px;
+            padding: 8px 16px;
             font-size: 0.85rem;
             font-weight: 500;
             cursor: pointer;
-            transition: 0.2s;
             border-radius: 30px;
+            transition: 0.2s;
         }
 
         .tab-btn.active {
-            background: #f0b90b20;
+            background: rgba(240,185,11,0.2);
             color: #f0b90b;
             border-bottom: 2px solid #f0b90b;
         }
 
         .tab-content {
             display: none;
-            animation: fade 0.2s ease;
         }
 
         .tab-content.active {
             display: block;
+            animation: fade 0.2s ease;
         }
 
         @keyframes fade {
@@ -278,7 +251,7 @@
         }
 
         /* Notícias e calendário */
-        .news-item, .event-item {
+        .news-item {
             background: #0c111b;
             padding: 14px;
             border-radius: 16px;
@@ -299,8 +272,8 @@
         .action-buttons {
             display: flex;
             gap: 12px;
-            margin-top: 12px;
             justify-content: flex-end;
+            margin-bottom: 16px;
         }
 
         .btn {
@@ -325,10 +298,10 @@
         }
 
         .btn:hover {
-            filter: brightness(1.1);
+            filter: brightness(1.05);
         }
 
-        /* Alarmes e dados inferiores */
+        /* Alarmes */
         .alarm-section {
             padding: 20px;
             border-top: 1px solid #1e2a3a;
@@ -337,8 +310,8 @@
 
         .alarm-input-group {
             display: flex;
-            gap: 10px;
-            margin-top: 10px;
+            gap: 12px;
+            margin-top: 12px;
         }
 
         .alarm-input {
@@ -350,22 +323,19 @@
             color: white;
         }
 
+        /* Rodapé */
         .footer-stats {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             padding: 16px 20px;
             background: #0a0e16;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 12px;
         }
 
-        .sessions {
-            display: flex;
-            gap: 20px;
-        }
-
-        @media (max-width: 850px) {
+        @media (max-width: 800px) {
             .dashboard {
                 grid-template-columns: 1fr;
             }
@@ -374,7 +344,7 @@
 </head>
 <body>
 <div class="dashboard">
-    <!-- Sidebar -->
+    <!-- SIDEBAR ESQUERDA -->
     <div class="sidebar">
         <div class="logo">⚡ MESTRE DO SCALPING PRO</div>
         <div class="timeframe-selector">
@@ -382,35 +352,38 @@
             <div class="timeframe" data-tf="15m">Day Trade (15m)</div>
         </div>
 
-        <!-- Preços Ouro, Prata, Petróleo (corrigido) -->
-        <div class="commodity-price-card" id="goldCard">
+        <!-- OURO -->
+        <div class="commodity-card">
             <div class="commodity-title">OURO (XAU/USD)</div>
-            <div class="price-value">
+            <div class="price-row">
                 <span class="price-number" id="goldPrice">--</span>
                 <span class="price-change" id="goldChange"></span>
-                <button class="refresh-icon" id="refreshPricesBtn" title="Atualizar preços">↻</button>
             </div>
-            <div id="goldStatus" style="font-size:0.7rem; margin-top:4px;"></div>
+            <div id="goldError" class="error-text"></div>
         </div>
 
-        <div class="commodity-price-card" id="silverCard">
+        <!-- PRATA -->
+        <div class="commodity-card">
             <div class="commodity-title">PRATA (XAG/USD)</div>
-            <div class="price-value">
+            <div class="price-row">
                 <span class="price-number" id="silverPrice">--</span>
                 <span class="price-change" id="silverChange"></span>
             </div>
-            <div id="silverStatus"></div>
+            <div id="silverError" class="error-text"></div>
         </div>
 
-        <div class="commodity-price-card" id="oilCard">
+        <!-- PETRÓLEO WTI -->
+        <div class="commodity-card">
             <div class="commodity-title">PETRÓLEO WTI</div>
-            <div class="price-value">
+            <div class="price-row">
                 <span class="price-number" id="oilPrice">--</span>
                 <span class="price-change" id="oilChange"></span>
             </div>
-            <div id="oilStatus"></div>
+            <div id="oilError" class="error-text"></div>
+            <button id="refreshAllPrices" class="btn" style="margin-top:12px; width:100%;">↻ Atualizar preços</button>
         </div>
 
+        <!-- Outros indicadores -->
         <div class="metric-card">
             <div class="metric-label">Confiabilidade</div>
             <div class="metric-value">30/100</div>
@@ -424,12 +397,13 @@
         <div class="metric-card">
             <div class="metric-label">Modo Operação</div>
             <div class="metric-value" id="modoOp">OFF</div>
-            <button class="btn" id="toggleModoBtn" style="margin-top:8px; padding:4px 12px;">Ativar</button>
+            <button id="toggleModoBtn" class="btn" style="margin-top:8px; padding:4px 12px;">Ativar</button>
         </div>
     </div>
 
-    <!-- Main content -->
+    <!-- CONTEÚDO PRINCIPAL -->
     <div class="main-content">
+        <!-- Área do Petróleo (gráfico simulado) -->
         <div class="chart-area">
             <div class="wti-header">
                 <span class="wti-symbol">⚡ CFDs em Petróleo Bruto WTI</span>
@@ -438,12 +412,13 @@
             <div class="mock-chart">
                 📊 GRÁFICO DINÂMICO (simulação)
             </div>
-            <div style="display: flex; gap: 8px; justify-content: space-between; flex-wrap: wrap;">
-                <div>98,10 - 93,50 (+3,70%)</div>
-                <div>96,80 | 97,50 | 98,10 | 98,80 | 99,10 | 99,40 | 99,70 | 100,00</div>
+            <div style="font-size:0.8rem; display: flex; gap: 8px; flex-wrap: wrap;">
+                <span>98,10 - 93,50 (+3,70%)</span>
+                <span>96,80 | 97,50 | 98,10 | 98,80 | 99,10 | 99,40 | 99,70 | 100,00</span>
             </div>
         </div>
 
+        <!-- Cards de capital e alvos -->
         <div class="metrics-grid">
             <div class="metric-card">
                 <div class="metric-label">CAPITAL ($)</div>
@@ -462,192 +437,180 @@
                 <div class="metric-value">1,0</div>
             </div>
             <div class="metric-card">
-                <button class="btn btn-primary" id="calcAlvosBtn">CALCULAR ALVOS</button>
+                <button id="calcAlvosBtn" class="btn btn-primary">CALCULAR ALVOS</button>
             </div>
         </div>
 
-        <!-- Abas: Incluímos "Notícias e Calendário" com botão atualizar e copiar -->
+        <!-- Abas -->
         <div class="tabs-container">
             <div class="tabs-header">
-                <button class="tab-btn active" data-tab="tabNoticias">📰 Notícias & Calendário</button>
-                <button class="tab-btn" data-tab="tabSinais">📈 Sinais Invest</button>
-                <button class="tab-btn" data-tab="tabCombust">⚡ CombustAII</button>
-                <button class="tab-btn" data-tab="tabDCA">📊 Registro DCA</button>
-                <button class="tab-btn" data-tab="tabPepino">🥒 Pepinâmetro</button>
-                <button class="tab-btn" data-tab="tabHistoria">📜 História Cipas</button>
-                <button class="tab-btn" data-tab="tabOpcao">💼 InvestOpção</button>
+                <button class="tab-btn active" data-tab="noticias">📰 Notícias & Calendário</button>
+                <button class="tab-btn" data-tab="sinais">📈 Sinais Invest</button>
+                <button class="tab-btn" data-tab="combust">⚡ CombustAII</button>
+                <button class="tab-btn" data-tab="dca">📊 Registro DCA</button>
+                <button class="tab-btn" data-tab="pepino">🥒 Pepinâmetro</button>
+                <button class="tab-btn" data-tab="historia">📜 História Cipas</button>
+                <button class="tab-btn" data-tab="opcao">💼 InvestOpção</button>
             </div>
 
-            <!-- Aba Notícias e Calendário (com botão atualizar e copiar) -->
-            <div id="tabNoticias" class="tab-content active">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                    <h3 style="font-size: 1rem;">📰 Últimas Notícias & Eventos Econômicos</h3>
-                    <div class="action-buttons" style="margin-top:0;">
-                        <button class="btn" id="atualizarNoticiasBtn">🔄 Atualizar</button>
-                        <button class="btn btn-primary" id="copiarNoticiasBtn">📋 Copiar</button>
-                    </div>
+            <!-- ABA NOTÍCIAS E CALENDÁRIO (com botões atualizar e copiar) -->
+            <div id="noticias" class="tab-content active">
+                <div class="action-buttons">
+                    <button id="atualizarNoticiasBtn" class="btn">🔄 Atualizar</button>
+                    <button id="copiarNoticiasBtn" class="btn btn-primary">📋 Copiar</button>
                 </div>
                 <div id="newsCalendarContent">
-                    <div style="text-align:center; padding:20px;">Carregando notícias e calendário...</div>
+                    <div class="loading-text">Carregando notícias e calendário...</div>
                 </div>
             </div>
 
-            <!-- Outras abas (conteúdo estático exemplo) -->
-            <div id="tabSinais" class="tab-content">
-                <div class="news-item">Sinais de compra/venda baseados em IA em breve.</div>
+            <!-- Demais abas (conteúdo estático) -->
+            <div id="sinais" class="tab-content">
+                <div class="news-item">Sinais de compra/venda gerados por IA em breve.</div>
             </div>
-            <div id="tabCombust" class="tab-content">
+            <div id="combust" class="tab-content">
                 <div class="news-item">Análise de combustíveis e indicadores macro.</div>
             </div>
-            <div id="tabDCA" class="tab-content">
+            <div id="dca" class="tab-content">
                 <div class="news-item">Registro de entradas DCA: última atualização 21/03.</div>
             </div>
-            <div id="tabPepino" class="tab-content">
+            <div id="pepino" class="tab-content">
                 <div class="news-item">Pepinâmetro: tendência de curto prazo NEUTRO.</div>
             </div>
-            <div id="tabHistoria" class="tab-content">
+            <div id="historia" class="tab-content">
                 <div class="news-item">Histórico de cipas e reversões.</div>
             </div>
-            <div id="tabOpcao" class="tab-content">
+            <div id="opcao" class="tab-content">
                 <div class="news-item">Ferramenta InvestOpção: opções binárias simuladas.</div>
             </div>
         </div>
 
+        <!-- Alarmes de preço -->
         <div class="alarm-section">
             <div><strong>🔔 ALARME DE PREÇO</strong></div>
             <div class="alarm-input-group">
-                <input type="text" class="alarm-input" id="alarmPrice" placeholder="Preço alvo (ex: 99.50)">
-                <button class="btn" id="addAlarmBtn">Adicionar</button>
+                <input type="text" id="alarmPriceInput" class="alarm-input" placeholder="Preço alvo (ex: 99.50)">
+                <button id="addAlarmBtn" class="btn">Adicionar</button>
             </div>
             <div id="alarmList" style="margin-top: 12px; font-size:0.8rem;">Nenhum alarme definido.</div>
         </div>
 
+        <!-- Rodapé com sessões -->
         <div class="footer-stats">
             <div>SESSÕES CRIPTO / FOREX</div>
             <div class="sessions">
                 <span>🌏 Ásia 21:00-01:00 (médio)</span>
                 <span>🇬🇧 Londres 04:00-09:00 (alto)</span>
             </div>
-            <div>© Mestre do Scalping | Dados em tempo real simulados</div>
+            <div>© Mestre do Scalping | Dados simulados</div>
         </div>
     </div>
 </div>
 
 <script>
-    // ======================== MOCK API SIMULATION ========================
-    // Simula dados de ouro, prata e petróleo (corrige o carregamento eterno)
-    // e também simula notícias + calendário econômico
-
+    // ======================== SIMULAÇÃO DE DADOS ========================
+    // Preços de commodities
     let currentPrices = {
-        gold: null, silver: null, oil: null
+        gold: null,
+        silver: null,
+        oil: null
     };
-    let alarms = [];
 
-    // Função para buscar preços de commodities (simulação com delay)
+    // Função que simula uma requisição de API para obter os preços
     async function fetchCommodityPrices() {
-        // Mostra loading nos cards
-        setLoadingState(true);
+        // Exibe loading nos campos que ainda não têm valor
+        if (!currentPrices.gold) document.getElementById('goldPrice').innerHTML = '<span class="loading-text">⏳</span>';
+        if (!currentPrices.silver) document.getElementById('silverPrice').innerHTML = '<span class="loading-text">⏳</span>';
+        if (!currentPrices.oil) document.getElementById('oilPrice').innerHTML = '<span class="loading-text">⏳</span>';
+        
         try {
-            // Simula requisição de API
+            // Simula delay de rede (800ms)
             await new Promise(resolve => setTimeout(resolve, 800));
-            // Dados fictícios realistas
-            const newPrices = {
+            
+            // Dados fictícios realistas (valores e variações percentuais)
+            const newData = {
                 gold: { value: 3012.45, change: +0.68 },
                 silver: { value: 33.82, change: +0.42 },
                 oil: { value: 98.76, change: -0.15 }
             };
+            
             currentPrices = {
-                gold: newPrices.gold.value,
-                silver: newPrices.silver.value,
-                oil: newPrices.oil.value
+                gold: newData.gold.value,
+                silver: newData.silver.value,
+                oil: newData.oil.value
             };
-            updatePriceDisplay(newPrices);
-        } catch (err) {
+            
+            // Atualiza a interface
+            updatePriceDisplay(newData);
+        } catch (error) {
+            console.error("Erro ao carregar preços:", error);
             showPriceError();
-        } finally {
-            setLoadingState(false);
         }
     }
-
-    function setLoadingState(loading) {
-        const goldSpan = document.getElementById('goldPrice');
-        const silverSpan = document.getElementById('silverPrice');
-        const oilSpan = document.getElementById('oilPrice');
-        if(loading) {
-            if(!currentPrices.gold) goldSpan.innerHTML = '<span class="loading-spinner"></span>';
-            if(!currentPrices.silver) silverSpan.innerHTML = '<span class="loading-spinner"></span>';
-            if(!currentPrices.oil) oilSpan.innerHTML = '<span class="loading-spinner"></span>';
-        } else {
-            if(!currentPrices.gold) goldSpan.innerText = '--';
-            if(!currentPrices.silver) silverSpan.innerText = '--';
-            if(!currentPrices.oil) oilSpan.innerText = '--';
-        }
-    }
-
+    
     function updatePriceDisplay(prices) {
-        const goldSpan = document.getElementById('goldPrice');
+        // Ouro
+        document.getElementById('goldPrice').innerText = prices.gold.value.toFixed(2);
         const goldChangeSpan = document.getElementById('goldChange');
-        const silverSpan = document.getElementById('silverPrice');
+        goldChangeSpan.innerHTML = `<span class="${prices.gold.change >= 0 ? 'positive' : 'negative'}">${prices.gold.change >= 0 ? '+' : ''}${prices.gold.change.toFixed(2)}%</span>`;
+        document.getElementById('goldError').innerText = '';
+        
+        // Prata
+        document.getElementById('silverPrice').innerText = prices.silver.value.toFixed(2);
         const silverChangeSpan = document.getElementById('silverChange');
-        const oilSpan = document.getElementById('oilPrice');
+        silverChangeSpan.innerHTML = `<span class="${prices.silver.change >= 0 ? 'positive' : 'negative'}">${prices.silver.change >= 0 ? '+' : ''}${prices.silver.change.toFixed(2)}%</span>`;
+        document.getElementById('silverError').innerText = '';
+        
+        // Petróleo
+        document.getElementById('oilPrice').innerText = prices.oil.value.toFixed(2);
         const oilChangeSpan = document.getElementById('oilChange');
-        const wtiBig = document.getElementById('wtiBigPrice');
-
-        if(prices.gold) {
-            goldSpan.innerText = prices.gold.value.toFixed(2);
-            const changeClass = prices.gold.change >=0 ? 'positive' : 'negative';
-            goldChangeSpan.innerHTML = `<span class="${changeClass}">${prices.gold.change>=0?'+':''}${prices.gold.change.toFixed(2)}%</span>`;
-            document.getElementById('goldStatus').innerHTML = '';
-        }
-        if(prices.silver) {
-            silverSpan.innerText = prices.silver.value.toFixed(2);
-            const changeClass = prices.silver.change >=0 ? 'positive' : 'negative';
-            silverChangeSpan.innerHTML = `<span class="${changeClass}">${prices.silver.change>=0?'+':''}${prices.silver.change.toFixed(2)}%</span>`;
-        }
-        if(prices.oil) {
-            oilSpan.innerText = prices.oil.value.toFixed(2);
-            const changeClass = prices.oil.change >=0 ? 'positive' : 'negative';
-            oilChangeSpan.innerHTML = `<span class="${changeClass}">${prices.oil.change>=0?'+':''}${prices.oil.change.toFixed(2)}%</span>`;
-            wtiBig.innerText = prices.oil.value.toFixed(2);
-        }
+        oilChangeSpan.innerHTML = `<span class="${prices.oil.change >= 0 ? 'positive' : 'negative'}">${prices.oil.change >= 0 ? '+' : ''}${prices.oil.change.toFixed(2)}%</span>`;
+        document.getElementById('oilError').innerText = '';
+        
+        // Atualiza também o preço grande do WTI
+        document.getElementById('wtiBigPrice').innerText = prices.oil.value.toFixed(2);
     }
-
+    
     function showPriceError() {
-        document.getElementById('goldStatus').innerHTML = '<span class="error-message">Erro ao carregar</span>';
-        document.getElementById('silverStatus').innerHTML = '<span class="error-message">Erro</span>';
-        document.getElementById('oilStatus').innerHTML = '<span class="error-message">Erro</span>';
+        document.getElementById('goldError').innerText = '❌ Falha ao carregar';
+        document.getElementById('silverError').innerText = '❌ Falha ao carregar';
+        document.getElementById('oilError').innerText = '❌ Falha ao carregar';
+        document.getElementById('goldPrice').innerText = '--';
+        document.getElementById('silverPrice').innerText = '--';
+        document.getElementById('oilPrice').innerText = '--';
     }
-
-    // ======================== NOTÍCIAS E CALENDÁRIO (com simulação) ========================
-    let cachedNews = [];
-
+    
+    // ======================== NOTÍCIAS E CALENDÁRIO ========================
+    let newsData = [];
+    
     async function fetchNewsAndCalendar() {
         const container = document.getElementById('newsCalendarContent');
-        container.innerHTML = '<div style="text-align:center; padding:20px;"><span class="loading-spinner"></span> Carregando notícias e calendário...</div>';
+        container.innerHTML = '<div class="loading-text">⏳ Carregando notícias e calendário...</div>';
+        
         try {
             await new Promise(resolve => setTimeout(resolve, 700));
-            // Mock de notícias e eventos
-            cachedNews = [
+            // Simulação de notícias e eventos
+            newsData = [
                 { title: "Petróleo WTI oscila com temores de oferta", date: "21/03/2026 14:30", type: "news" },
                 { title: "FED mantém juros; impacto no ouro", date: "21/03/2026 12:00", type: "news" },
                 { title: "Dados de emprego nos EUA surpreendem positivamente", date: "21/03/2026 09:45", type: "news" },
                 { title: "🔔 Calendário: PMI Industrial (EUA) - 22/03 10:00", date: "Evento: 22/03", type: "event" },
                 { title: "CPI da Zona do Euro - 24/03 06:00 (Alta volatilidade)", date: "Evento: 24/03", type: "event" }
             ];
-            renderNews(cachedNews);
-        } catch(e) {
-            container.innerHTML = '<div class="error-message">Falha ao carregar notícias. Tente novamente.</div>';
+            renderNews(newsData);
+        } catch (err) {
+            container.innerHTML = '<div class="error-text">❌ Erro ao carregar notícias. Tente novamente.</div>';
         }
     }
-
-    function renderNews(newsArray) {
+    
+    function renderNews(data) {
         const container = document.getElementById('newsCalendarContent');
-        if(!newsArray.length) {
+        if (!data.length) {
             container.innerHTML = '<div>Nenhuma notícia ou evento no momento.</div>';
             return;
         }
         let html = '';
-        newsArray.forEach(item => {
+        data.forEach(item => {
             html += `
                 <div class="news-item">
                     <div class="news-title">${item.title}</div>
@@ -657,57 +620,60 @@
         });
         container.innerHTML = html;
     }
-
-    // Copiar notícias para clipboard
+    
     async function copyNewsToClipboard() {
-        if(!cachedNews.length) {
+        if (!newsData.length) {
             alert("Nenhuma notícia para copiar. Atualize primeiro.");
             return;
         }
-        let textToCopy = "📰 NOTÍCIAS E CALENDÁRIO - MESTRE DO SCALPING\n\n";
-        cachedNews.forEach(item => {
-            textToCopy += `${item.title} (${item.date})\n`;
+        let text = "📰 NOTÍCIAS E CALENDÁRIO - MESTRE DO SCALPING PRO\n\n";
+        newsData.forEach(item => {
+            text += `${item.title} (${item.date})\n`;
         });
         try {
-            await navigator.clipboard.writeText(textToCopy);
+            await navigator.clipboard.writeText(text);
             alert("✅ Notícias e calendário copiados para a área de transferência!");
-        } catch(err) {
-            alert("Erro ao copiar: " + err);
+        } catch (err) {
+            alert("❌ Erro ao copiar: " + err);
         }
     }
-
+    
     // ======================== ALARMES ========================
-    function addAlarm(priceTarget) {
-        if(!priceTarget || isNaN(parseFloat(priceTarget))) {
+    let alarms = [];
+    
+    function addAlarm(price) {
+        if (!price || isNaN(parseFloat(price))) {
             alert("Digite um preço válido (ex: 99.50)");
-            return;
+            return false;
         }
-        alarms.push(parseFloat(priceTarget));
+        alarms.push(parseFloat(price));
         updateAlarmUI();
+        return true;
     }
-
+    
     function updateAlarmUI() {
         const alarmDiv = document.getElementById('alarmList');
-        if(alarms.length === 0) {
+        if (alarms.length === 0) {
             alarmDiv.innerHTML = "Nenhum alarme definido.";
             return;
         }
-        let html = "<strong>Alarmes ativos:</strong><ul style='margin-top:6px;'>";
+        let html = "<strong>Alarmes ativos:</strong><ul style='margin-top:8px;'>";
         alarms.forEach((a, idx) => {
-            html += `<li>${a} <button class="btn" style="padding:2px 6px; margin-left:8px;" data-remove="${idx}">❌</button></li>`;
+            html += `<li>${a} <button class="btn" style="padding:2px 8px; margin-left:8px;" data-remove="${idx}">❌</button></li>`;
         });
         html += "</ul>";
         alarmDiv.innerHTML = html;
-        // adiciona eventos de remoção
+        
+        // Adiciona eventos de remoção
         document.querySelectorAll('[data-remove]').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const idx = parseInt(btn.getAttribute('data-remove'));
-                alarms.splice(idx,1);
+                alarms.splice(idx, 1);
                 updateAlarmUI();
             });
         });
     }
-
+    
     // ======================== OUTRAS FUNCIONALIDADES ========================
     let modoOperacao = false;
     function toggleModo() {
@@ -715,42 +681,42 @@
         document.getElementById('modoOp').innerText = modoOperacao ? "ON" : "OFF";
         alert(`Modo Operação ${modoOperacao ? "ATIVADO" : "DESATIVADO"}`);
     }
-
-    // Inicialização e Event Listeners
-    document.addEventListener('DOMContentLoaded', async () => {
-        // Carrega preços e notícias
-        await fetchCommodityPrices();
-        await fetchNewsAndCalendar();
-
+    
+    // ======================== EVENT LISTENERS ========================
+    document.addEventListener('DOMContentLoaded', () => {
+        // Carrega dados iniciais
+        fetchCommodityPrices();
+        fetchNewsAndCalendar();
+        
         // Botão atualizar preços (sidebar)
-        document.getElementById('refreshPricesBtn').addEventListener('click', () => {
+        document.getElementById('refreshAllPrices').addEventListener('click', () => {
             fetchCommodityPrices();
         });
-
-        // Botão atualizar notícias (na aba)
+        
+        // Botão atualizar notícias
         document.getElementById('atualizarNoticiasBtn').addEventListener('click', () => {
             fetchNewsAndCalendar();
         });
-
+        
         // Botão copiar notícias
         document.getElementById('copiarNoticiasBtn').addEventListener('click', copyNewsToClipboard);
-
-        // Alarmes
+        
+        // Adicionar alarme
         document.getElementById('addAlarmBtn').addEventListener('click', () => {
-            const input = document.getElementById('alarmPrice');
+            const input = document.getElementById('alarmPriceInput');
             addAlarm(input.value);
             input.value = '';
         });
-
-        // Modo operação toggle
-        document.getElementById('toggleModoBtn').addEventListener('click', toggleModo);
-
-        // Botão calcular alvos (apenas alerta)
+        
+        // Botão calcular alvos
         document.getElementById('calcAlvosBtn').addEventListener('click', () => {
-            alert("Cálculo de alvos baseado nos parâmetros: Capital $300, Avançadores $10, Dane 1%, Paix 1%");
+            alert("Cálculo de alvos baseado nos parâmetros:\nCapital $300\nAvançadores $10\nDane 1%\nPaix 1%");
         });
-
-        // Timeframe switcher (visual)
+        
+        // Alternar modo operação
+        document.getElementById('toggleModoBtn').addEventListener('click', toggleModo);
+        
+        // Timeframe (simples troca visual)
         const timeframes = document.querySelectorAll('.timeframe');
         timeframes.forEach(tf => {
             tf.addEventListener('click', () => {
@@ -759,7 +725,7 @@
                 alert(`Timeframe alterado para ${tf.innerText}`);
             });
         });
-
+        
         // Navegação entre abas
         const tabBtns = document.querySelectorAll('.tab-btn');
         const tabContents = document.querySelectorAll('.tab-content');
@@ -769,16 +735,15 @@
                 tabBtns.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 tabContents.forEach(tc => tc.classList.remove('active'));
-                const targetElem = document.getElementById(targetId);
-                if(targetElem) targetElem.classList.add('active');
+                const activeTab = document.getElementById(targetId);
+                if (activeTab) activeTab.classList.add('active');
             });
         });
-
-        // Atualização automática dos preços a cada 30 segundos (opcional)
+        
+        // Atualização automática a cada 30 segundos (preços) e 2 minutos (notícias)
         setInterval(() => {
             fetchCommodityPrices();
         }, 30000);
-        // Atualiza notícias a cada 2 min
         setInterval(() => {
             fetchNewsAndCalendar();
         }, 120000);
