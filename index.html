@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mestre do Scalping Pro</title>
     <style>
-        /* ========== ESTILOS (idênticos aos anteriores, mantidos) ========== */
         :root {
             --bg: #0d1117;
             --card: #161b22;
@@ -554,7 +553,7 @@
     </style>
 </head>
 <body>
-    <!-- CARD PRINCIPAL (intacto) -->
+    <!-- CARD PRINCIPAL -->
     <div class="card" id="mainCard">
         <h4>⚡ MESTRE DO SCALPING PRO ⚡</h4>
         <button class="btn-mode" onclick="toggleMode()">🖥️ ALTERNAR MODO COMPUTADOR</button>
@@ -692,14 +691,14 @@
 
         <!-- TABELA DE SESSÕES -->
         <table class="market-table">
-                         Bon<td colspan="3" class="market-header">🌍 SESSÕES CRIPTO / FOREX</td> </tr>
-                         <tr><td>🌏 Ásia</td><td>21:00-01:00</td><td style="color:var(--gold); text-align:right;">● médio</td></tr>
-                         <tr><td>🇪🇺 Londres</td><td>04:00-09:00</td><td style="color:var(--green); text-align:right;">● alto</td></tr>
-                         <tr><td>🇺🇸 NY (Pico)</td><td>10:00-14:00</td><td style="color:var(--green); text-align:right;">● PICO</td></tr>
-                         <tr><td colspan="3" class="market-header">🏆 EURO, PRATA & WTI</td></tr>
-                         <tr><td>🥇 Metais (NY)</td><td>09:20-15:30</td><td style="color:var(--gold); text-align:right;">● liquidez</td></tr>
-                         <tr><td>🛢️ Petróleo (WTI)</td><td>10:00-16:30</td><td style="color:var(--accent); text-align:right;">● volatilidade</td></tr>
-                       </table>
+            <tr><td colspan="3" class="market-header">🌍 SESSÕES CRIPTO / FOREX</td></tr>
+            <tr><td>🌏 Ásia</td><td>21:00-01:00</td><td style="color:var(--gold); text-align:right;">● médio</td></tr>
+            <tr><td>🇪🇺 Londres</td><td>04:00-09:00</td><td style="color:var(--green); text-align:right;">● alto</td></tr>
+            <tr><td>🇺🇸 NY (Pico)</td><td>10:00-14:00</td><td style="color:var(--green); text-align:right;">● PICO</td></tr>
+            <tr><td colspan="3" class="market-header">🏆 EURO, PRATA & WTI</td></tr>
+            <tr><td>🥇 Metais (NY)</td><td>09:20-15:30</td><td style="color:var(--gold); text-align:right;">● liquidez</td></tr>
+            <tr><td>🛢️ Petróleo (WTI)</td><td>10:00-16:30</td><td style="color:var(--accent); text-align:right;">● volatilidade</td></tr>
+        </table>
 
         <!-- NOVA SEÇÃO: NOTÍCIAS E CALENDÁRIO -->
         <div class="news-section">
@@ -818,9 +817,18 @@
     </div>
 
     <!-- ========== MODAIS DAS ESTRATÉGIAS (12 modais) ========== -->
-    <div id="modalEstrategia1" class="modal"><div class="modal-content" style="max-width:700px;"><h2>📘 Estratégia 1: Market Making Adaptativo</h2><div style="color:#c9d1d9;line-height:1.6;"><h3>🎯 Objetivo</h3><p>Detectar fluxo agressivo de compra/venda e ajustar o range da posição de liquidez ANTES do preço se mover, capturando taxas e reduzindo risco.</p><h3>⚙️ Como funciona (exemplo prático)</h3><p><strong>Cenário:</strong> Você tem uma posição LP em <strong>SOL/USDC</strong> com range de ±10% em torno de $150.</p><ul><li><strong>Detecção de fluxo:</strong> Um bot monitora o volume de negociações na pool. Se nas últimas 5 horas o volume comprador superar 65% do total, significa que muitos estão comprando agressivamente.</li><li><strong>Ação:</strong> O sistema ajusta o range para cima, por exemplo, mudando de [135-165] para [145-175], antecipando uma subida.</li><li><strong>Resultado:</strong> Se o preço realmente subir para $160, você continuará no range, capturando mais taxas. Caso contrário, o ajuste protege parte do capital.</li></ul><h3>📊 Exemplo numérico</h3><ul><li>Preço atual: $150</li><li>Volume comprador nas últimas 2h: 72%</li><li>Volume vendedor: 28%</li><li>Novo range sugerido: +5% acima, -2% abaixo → [147, 157.5]</li></ul><p>Essa antecipação permite que você esteja posicionado no momento exato do movimento, ganhando mais taxas.</p><h3>⚠️ Riscos</h3><p>Se o fluxo se reverter rapidamente, você pode ficar fora do range e sofrer impermanent loss (IL). Por isso, use dados de ordem flow confiáveis.</p></div><button class="close-btn" onclick="fecharModal('modalEstrategia1')">Fechar</button></div></div>
-    <div id="modalEstrategia2" class="modal"><div class="modal-content" style="max-width:700px;"><h2>📘 Estratégia 2: Gamma Scalping (nível opções)</h2><div style="color:#c9d1d9;line-height:1.6;"><h3>🎯 Objetivo</h3><p>Usar a posição LP como uma ferramenta de “gamma” – lucrar com a volatilidade por meio de ajustes de hedge (comprar/vender spot).</p><h3>⚙️ Como funciona (exemplo prático)</h3><p><strong>Cenário:</strong> Você tem uma posição LP em <strong>ETH/USDC</strong> com $10.000. A posição é delta neutra (valor equivalente em ETH e USDC).</p><ul><li>Se o preço do ETH sobe 5%, a posição LP passa a ter mais ETH do que USDC (delta positivo).</li><li>Para neutralizar, você <strong>vende ETH no mercado spot</strong> (equivalente ao excesso). Isso “realiza” lucro com a alta.</li><li>Se o preço cai, você <strong>compra ETH spot</strong> para reequilibrar, comprando na baixa.</li></ul><h3>📊 Exemplo numérico</h3><ul><li>Capital: $10.000, preço ETH = $2.000 → 5 ETH + $0 USDC (se 50/50).</li><li>Preço sobe para $2.100 → sua posição agora vale ~$10.500, com proporção 5 ETH + $500 USDC (delta +).</li><li>Você vende 0,5 ETH no spot ($1.050), retornando à proporção 4,5 ETH + $1.550 USDC. Lucro realizado = $1.050.</li><li>Se o preço cair, você compra ETH barato.</li></ul><h3>⚠️ Riscos</h3><p>Exige monitoramento constante e capital adicional para hedge. Em mercados laterais, pode gerar muitas transações com baixo ganho.</p></div><button class="close-btn" onclick="fecharModal('modalEstrategia2')">Fechar</button></div></div>
-    <!-- Os demais modais (3 a 12) seguem estrutura idêntica, mas por brevidade não serão listados aqui. No código completo estarão presentes. -->
+    <div id="modalEstrategia1" class="modal"><div class="modal-content" style="max-width:700px;"><h2>📘 Estratégia 1: Market Making Adaptativo</h2><div style="color:#c9d1d9;line-height:1.6;"><h3>🎯 Objetivo</h3><p>Detectar fluxo agressivo de compra/venda e ajustar o range da posição de liquidez ANTES do preço se mover.</p><h3>⚙️ Como funciona (exemplo prático)</h3><p><strong>Cenário:</strong> Posição LP em SOL/USDC com range de ±10% em torno de $150.</p><ul><li>Volume comprador > 65% → range para cima ([145-175])</li><li>Volume vendedor > 65% → range para baixo ([135-165])</li></ul><h3>📊 Exemplo numérico</h3><p>Preço $150, volume comprador 72% → novo range [147, 157.5]</p><h3>⚠️ Riscos</h3><p>Fluxo reverso pode causar perdas. Use dados confiáveis.</p></div><button class="close-btn" onclick="fecharModal('modalEstrategia1')">Fechar</button></div></div>
+    <div id="modalEstrategia2" class="modal"><div class="modal-content" style="max-width:700px;"><h2>📘 Estratégia 2: Gamma Scalping</h2><div style="color:#c9d1d9;line-height:1.6;"><h3>🎯 Objetivo</h3><p>Usar LP como posição delta neutra e hedge via spot.</p><h3>⚙️ Como funciona</h3><p>ETH/USDC: se sobe → vende spot (realiza lucro); se cai → compra spot.</p><h3>📊 Exemplo</h3><p>Capital $10.000, ETH $2.000 → 5 ETH. Sobe para $2.100 → vende 0,5 ETH ($1.050), lucro realizado.</p></div><button class="close-btn" onclick="fecharModal('modalEstrategia2')">Fechar</button></div></div>
+    <div id="modalEstrategia3" class="modal"><div class="modal-content" style="max-width:700px;"><h2>📘 Estratégia 3: Liquidity Sniping</h2><div style="color:#c9d1d9;line-height:1.6;"><h3>🎯 Objetivo</h3><p>Entrar cedo em pools novas com APR alto.</p><h3>⚙️ Como funciona</h3><p>Detecta pool nova + APR > 200% → aloca capital parcial. Sai se APR cair rápido.</p><h3>📊 Exemplo</h3><p>Pool XYZ/USDC com 550% → aloca 10% ($1.000). Após 2 dias, APR 80% → sai com lucro.</p></div><button class="close-btn" onclick="fecharModal('modalEstrategia3')">Fechar</button></div></div>
+    <div id="modalEstrategia4" class="modal"><div class="modal-content" style="max-width:700px;"><h2>📘 Estratégia 4: Range baseado em Volatilidade</h2><div style="color:#c9d1d9;line-height:1.6;"><h3>🎯 Objetivo</h3><p>Range = Preço atual ± (ATR × fator).</p><h3>📊 Exemplo</h3><p>SOL $150, ATR $10: conservador (1.5) → [135-165]; moderado (2.5) → [125-175]; agressivo (3.5) → [115-185]</p></div><button class="close-btn" onclick="fecharModal('modalEstrategia4')">Fechar</button></div></div>
+    <div id="modalEstrategia5" class="modal"><div class="modal-content" style="max-width:700px;"><h2>📘 Estratégia 5: Regime de Mercado</h2><div style="color:#c9d1d9;line-height:1.6;"><h3>🎯 Objetivo</h3><p>Alterar estratégia conforme tendência.</p><ul><li>Bull → range mais aberto (+20%)</li><li>Bear → move para stable</li><li>Sideways → range estreito (+5%)</li></ul></div><button class="close-btn" onclick="fecharModal('modalEstrategia5')">Fechar</button></div></div>
+    <div id="modalEstrategia6" class="modal"><div class="modal-content" style="max-width:700px;"><h2>📘 Estratégia 6: Rebalanceamento por Delta</h2><div style="color:#c9d1d9;line-height:1.6;"><h3>🎯 Objetivo</h3><p>Manter exposição ideal (ex: 60% BTC / 40% USDC).</p><h3>📊 Exemplo</h3><p>Patrimônio $10.000 (60/40). BTC sobe para 70% → vende $1.000 em BTC para rebalancear.</p></div><button class="close-btn" onclick="fecharModal('modalEstrategia6')">Fechar</button></div></div>
+    <div id="modalEstrategia7" class="modal"><div class="modal-content" style="max-width:700px;"><h2>📘 Estratégia 7: Stop Loss Inteligente para LP</h2><div style="color:#c9d1d9;line-height:1.6;"><h3>🎯 Objetivo</h3><p>Remover liquidez se preço sai do range + tendência forte.</p><h3>📊 Exemplo</h3><p>SOL cai de $150 para $130 com volume vendedor 80% → remove LP, evita IL maior.</p></div><button class="close-btn" onclick="fecharModal('modalEstrategia7')">Fechar</button></div></div>
+    <div id="modalEstrategia8" class="modal"><div class="modal-content" style="max-width:700px;"><h2>📘 Estratégia 8: Multi-Pool Optimization</h2><div style="color:#c9d1d9;line-height:1.6;"><h3>🎯 Objetivo</h3><p>Dividir capital entre pools: 40% stable, 30% SOL/USDC, 30% pool alto APR.</p></div><button class="close-btn" onclick="fecharModal('modalEstrategia8')">Fechar</button></div></div>
+    <div id="modalEstrategia9" class="modal"><div class="modal-content" style="max-width:700px;"><h2>📘 Estratégia 9: Arbitragem entre Pools</h2><div style="color:#c9d1d9;line-height:1.6;"><h3>🎯 Objetivo</h3><p>Comprar na pool mais barata e vender na mais cara.</p><h3>📊 Exemplo</h3><p>SOL Orca $150, Meteora $150,50 → compra Orca, vende Meteora, lucro $0,50/SOL.</p></div><button class="close-btn" onclick="fecharModal('modalEstrategia9')">Fechar</button></div></div>
+    <div id="modalEstrategia10" class="modal"><div class="modal-content" style="max-width:700px;"><h2>📘 Estratégia 10: Fee Harvesting Automático</h2><div style="color:#c9d1d9;line-height:1.6;"><h3>🎯 Objetivo</h3><p>Coletar taxas quando >5% do capital e reinvestir.</p><h3>📊 Exemplo</h3><p>Capital $1.000, taxas $50 → retira e adiciona à LP → novo capital $1.050.</p></div><button class="close-btn" onclick="fecharModal('modalEstrategia10')">Fechar</button></div></div>
+    <div id="modalEstrategia11" class="modal"><div class="modal-content" style="max-width:700px;"><h2>📘 Estratégia 11: Liquidez Direcional</h2><div style="color:#c9d1d9;line-height:1.6;"><h3>🎯 Objetivo</h3><p>Range assimétrico para apostar em direção.</p><h3>📊 Exemplo</h3><p>SOL $150, range [145, 180] (deslocado para cima). Se sobe para $170, captura taxas; se cai para $140, sai rápido.</p></div><button class="close-btn" onclick="fecharModal('modalEstrategia11')">Fechar</button></div></div>
+    <div id="modalEstrategia12" class="modal"><div class="modal-content" style="max-width:700px;"><h2>📘 Estratégia 12: Machine Learning</h2><div style="color:#c9d1d9;line-height:1.6;"><h3>🎯 Objetivo</h3><p>Usar modelos (LSTM, Random Forest) para prever range e entradas.</p><h3>📊 Exemplo</h3><p>Modelo prevê baixa volatilidade → range estreito (±3%). Alta volatilidade → range amplo (±12%).</p></div><button class="close-btn" onclick="fecharModal('modalEstrategia12')">Fechar</button></div></div>
 
     <!-- MODAL DE POOLS (com as quatro abas) -->
     <div id="poolsModal" class="modal">
@@ -899,14 +907,71 @@
                     <div class="code-block"><pre>Se volume comprador > 65%: mover range para cima (front-run)\nSe volume vendedor > 65%: mover range para baixo</pre></div>
                     <p>📊 Indicadores: Delta Volume, Order Flow imbalance, Liquidez no book (CEX).</p>
                     <hr>
-
                     <h3>⚡ Estratégia 2: Gamma Scalping (nível opções) <button class="btn-detalhe" onclick="abrirModal('modalEstrategia2')">📘 Ver detalhes</button></h3>
                     <p>Usa LP como posição delta neutra e faz hedge via trade.</p>
                     <div class="code-block"><pre>Se preço sobe: vender spot (reduz delta)\nSe preço cai: comprar spot (rebalanço)</pre></div>
                     <p>Transforma volatilidade em lucro puro (taxa + hedge).</p>
                     <hr>
-
-                    <!-- Demais estratégias (3 a 12) com seus botões, omitidas por brevidade, mas no código final estarão completas. -->
+                    <h3>🧬 Estratégia 3: Liquidity Sniping <button class="btn-detalhe" onclick="abrirModal('modalEstrategia3')">📘 Ver detalhes</button></h3>
+                    <p>Entrar ANTES da massa em pools novas com APR alto.</p>
+                    <div class="code-block"><pre>Se pool nova + APR > 200%: entrar com capital parcial\nSe liquidez aumentar rápido: manter posição\nSe APR cair rápido: sair</pre></div>
+                    <hr>
+                    <h3>🧮 Estratégia 4: Range baseado em Volatilidade Implícita <button class="btn-detalhe" onclick="abrirModal('modalEstrategia4')">📘 Ver detalhes</button></h3>
+                    <p>Range = Preço atual ± (ATR × fator)</p>
+                    <div class="code-block"><pre>Fator: 1.5 (conservador) / 2.5 (moderado) / 3.5 (agressivo)</pre></div>
+                    <hr>
+                    <h3>🧠 Estratégia 5: Regime de Mercado <button class="btn-detalhe" onclick="abrirModal('modalEstrategia5')">📘 Ver detalhes</button></h3>
+                    <ul><li><span class="strategy-badge">🟢 Tendência de alta</span> → range mais aberto, mais exposição</li>
+                    <li><span class="strategy-badge">🔴 Tendência de baixa</span> → foca em stablecoin, DCA ativo</li>
+                    <li><span class="strategy-badge">🟡 Lateral</span> → range curto, maximiza taxas</li></ul>
+                    <div class="code-block"><pre>if trend == "bull": expand_range_up()\nelif trend == "bear": move_to_stable()\nelif trend == "sideways": tighten_range()</pre></div>
+                    <hr>
+                    <h3>🧠 Estratégia 6: Rebalanceamento por Delta (institucional) <button class="btn-detalhe" onclick="abrirModal('modalEstrategia6')">📘 Ver detalhes</button></h3>
+                    <p>Define exposição ideal (ex: 60% BTC / 40% USDC) e rebalanceia automaticamente.</p>
+                    <div class="code-block"><pre>Se BTC > 70%: vender BTC\nSe BTC < 50%: comprar BTC</pre></div>
+                    <hr>
+                    <h3>🧠 Estratégia 7: Stop Loss Inteligente para LP <button class="btn-detalhe" onclick="abrirModal('modalEstrategia7')">📘 Ver detalhes</button></h3>
+                    <p>Detecta saída do range + tendência forte e remove liquidez para evitar IL extremo.</p>
+                    <div class="code-block"><pre>Se sair do range + tendência forte: remover liquidez</pre></div>
+                    <hr>
+                    <h3>🧠 Estratégia 8: Multi-Pool Optimization <button class="btn-detalhe" onclick="abrirModal('modalEstrategia8')">📘 Ver detalhes</button></h3>
+                    <p>Divide capital em várias pools (stable, volátil, high APR). Exemplo: 40% stable, 30% SOL/USDC, 30% pool de alto APR.</p>
+                    <hr>
+                    <h3>🧠 Estratégia 9: Arbitragem entre Pools <button class="btn-detalhe" onclick="abrirModal('modalEstrategia9')">📘 Ver detalhes</button></h3>
+                    <p>Detecta diferença de preço entre pools e lucra sem risco direcional.</p>
+                    <div class="code-block"><pre>Se preço Orca > Meteora: vender em Orca, comprar em Meteora</pre></div>
+                    <hr>
+                    <h3>🧠 Estratégia 10: Fee Harvesting Automático <button class="btn-detalhe" onclick="abrirModal('modalEstrategia10')">📘 Ver detalhes</button></h3>
+                    <p>Retira taxas periodicamente e reinveste (juros compostos).</p>
+                    <div class="code-block"><pre>Se fees > 5% do capital: coletar e reinvestir</pre></div>
+                    <hr>
+                    <h3>🧠 Estratégia 11: Liquidez Direcional <button class="btn-detalhe" onclick="abrirModal('modalEstrategia11')">📘 Ver detalhes</button></h3>
+                    <p>Range deslocado para apostar na direção. Ex: 90% acima do preço, 10% abaixo.</p>
+                    <hr>
+                    <h3>🧠 Estratégia 12: Machine Learning (nível absurdo) <button class="btn-detalhe" onclick="abrirModal('modalEstrategia12')">📘 Ver detalhes</button></h3>
+                    <p>Treina modelo (Random Forest, LSTM, Reinforcement Learning) para decidir melhor range, entrada e saída.</p>
+                    <hr>
+                    <h2>🔥 O MAIS IMPORTANTE (segredo profissional)</h2>
+                    <p>Não use só 1 estratégia – crie um <strong>Strategy Router</strong>:</p>
+                    <div class="code-block"><pre>if market == "trend": use_trend_strategy()\nelif market == "volatile": use_gamma_scalping()\nelif market == "crash": move_to_stable()\nelif market == "sideways": maximize_fees()</pre></div>
+                    <h2>💰 Alocação Ideal (com base no seu perfil)</h2>
+                    <ul><li><strong>50% → LP principal (SOL/USDC)</strong> – range dinâmico + volatilidade</li>
+                    <li><strong>25% → LP secundária (BTC/USDC)</strong> – range mais largo, estabilidade</li>
+                    <li><strong>25% → Caixa (USDC livre)</strong> – para DCA e proteção</li></ul>
+                    <h3>⚙️ Ajuste automático (SOL/USDC)</h3>
+                    <div class="code-block"><pre>Se preço subir +6%: mover range +4%\nSe preço cair -6%: mover range -4%</pre></div>
+                    <h3>📉 DCA Inteligente (usando os 25% em USDC)</h3>
+                    <div class="code-block"><pre>-3% → compra 10%\n-6% → compra 20%\n-10% → compra 30%\n+4% → vende 15%\n+8% → vende 25%\n+12% → vende 30%</pre></div>
+                    <h3>🔴 Modo Crise (ESSENCIAL)</h3>
+                    <p>Gatilhos: BTC cai >8% no dia, perde média 200, mercado em pânico.</p>
+                    <div class="code-block"><pre>Remover todas LPs, converter para USDC, ativar DCA de fundo.\nReentrada gradual quando estabilizar.</pre></div>
+                    <h3>⚡ Maximização de Taxas (extra)</h3>
+                    <div class="code-block"><pre>Se APR > 200%: mover 10–20% capital temporariamente → farmar e sair</pre></div>
+                    <h3>🧠 Controle de Risco (OURO)</h3>
+                    <p>Nunca deixar 100% em LP. Limites: Máx por pool 50%, Mín caixa 20%.</p>
+                    <h2>🚀 Diferencial dessa estratégia</h2>
+                    <ul><li>✅ Ganhando taxa (LP)</li><li>✅ Comprando fundo (DCA)</li><li>✅ Vendendo topo (DCA)</li><li>✅ Protegendo capital (crise)</li><li>✅ Ajustando automaticamente (range dinâmico)</li></ul>
+                    <p>👉 Isso é literalmente o que fundos fazem.</p>
                 </div>
             </div>
 
@@ -926,7 +991,7 @@
                     <li>Altere o endereço da pool (<code>POOL_ADDRESS</code>) para o pool desejado (ex: SOL/USDC da Meteora).</li>
                     <li>Execute com <code>node index.js</code></li></ol>
                     <h4>📄 Código completo (JavaScript)</h4>
-                    <div class="code-block"><pre>// Código do bot (mesmo da versão anterior)</pre></div>
+                    <div class="code-block"><pre>// =============================================\n// METEORA CLMM BOT (REAL LP + AUTO RANGE)\n// =============================================\nrequire('dotenv').config()\nconst { Connection, Keypair, PublicKey } = require('@solana/web3.js')\nconst axios = require('axios')\nconst { WhirlpoolContext, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID } = require("@orca-so/whirlpools-sdk")\n\nconst RPC = "https://api.mainnet-beta.solana.com"\nconst connection = new Connection(RPC, "confirmed")\nconst secret = JSON.parse(process.env.PRIVATE_KEY)\nconst wallet = Keypair.fromSecretKey(Uint8Array.from(secret))\nconsole.log("Wallet:", wallet.publicKey.toString())\n\nconst ctx = WhirlpoolContext.withConnection(connection, wallet, ORCA_WHIRLPOOL_PROGRAM_ID)\nconst client = buildWhirlpoolClient(ctx)\n\nconst POOL_ADDRESS = new PublicKey("HJPjoWUrhoZzkzZbXj4iAFH4x6U7kK...")\n\nasync function getPrice() {\n    const res = await axios.get("https://api.binance.com/api/v3/ticker/price?symbol=SOLUSDT")\n    return parseFloat(res.data.price)\n}\n\nfunction priceToTick(price) {\n    return Math.floor(Math.log(price) / Math.log(1.0001))\n}\n\nasync function addLiquidity(rangePercent = 10) {\n    const whirlpool = await client.getPool(POOL_ADDRESS)\n    const price = await getPrice()\n    const lower = price * (1 - rangePercent / 100)\n    const upper = price * (1 + rangePercent / 100)\n    const tickLower = priceToTick(lower)\n    const tickUpper = priceToTick(upper)\n    console.log("🔵 ADD LP")\n    console.log("Range:", lower, "-", upper)\n    const liquidityAmount = 1000000\n    const tx = await whirlpool.openPosition(tickLower, tickUpper, liquidityAmount)\n    const sig = await tx.buildAndExecute()\n    console.log("✅ Liquidez adicionada:", sig)\n}\n\nasync function removeLiquidity(position) {\n    console.log("🔴 Removendo LP...")\n    const tx = await position.closePosition()\n    const sig = await tx.buildAndExecute()\n    console.log("❌ Liquidez removida:", sig)\n}\n\nlet currentPosition = null\nlet lastPrice = 0\n\nasync function managePosition() {\n    const price = await getPrice()\n    if (!lastPrice) { lastPrice = price; return }\n    const change = ((price - lastPrice) / lastPrice) * 100\n    console.log("Preço:", price, "| Δ:", change.toFixed(2), "%")\n    if (change >= 5 || change <= -5) {\n        console.log("⚡ Reposicionando range...")\n        if (currentPosition) await removeLiquidity(currentPosition)\n        await addLiquidity(10)\n    }\n    if (change <= -8) {\n        console.log("🚨 CRASH - SAINDO")\n        if (currentPosition) await removeLiquidity(currentPosition)\n    }\n    lastPrice = price\n}\n\nsetInterval(managePosition, 20000)\n\n// INSTRUÇÕES: node index.js</pre></div>
                     <p><strong>⚠️ Atenção:</strong> Este código é um exemplo educacional. Antes de usar com fundos reais, teste em ambiente de simulação (devnet) e ajuste os parâmetros conforme sua estratégia. Nunca compartilhe sua chave privada.</p>
                 </div>
             </div>
@@ -936,18 +1001,11 @@
     <script src="https://s3.tradingview.com/tv.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <script>
-        // ========== FUNÇÕES GLOBAIS PARA MODAIS ==========
-        function abrirModal(id) {
-            const modal = document.getElementById(id);
-            if (modal) modal.style.display = 'flex';
-            else console.error("Modal não encontrado:", id);
-        }
-        function fecharModal(id) {
-            const modal = document.getElementById(id);
-            if (modal) modal.style.display = 'none';
-        }
+        // ========== FUNÇÕES GLOBAIS ==========
+        function abrirModal(id) { const modal = document.getElementById(id); if (modal) modal.style.display = 'flex'; }
+        function fecharModal(id) { const modal = document.getElementById(id); if (modal) modal.style.display = 'none'; }
 
-        // ========== CÓDIGO COMPLETO ==========
+        // ========== CÓDIGO COMPLETO (versão final) ==========
         let price = 74069.05;
         let pricesHistory = [];
         let isDesktop = false;
@@ -1091,8 +1149,104 @@
         }
 
         function updateSignals() {
-            // ... (mantido o código de atualização dos sinais)
-            // Por questões de espaço, omitimos aqui, mas está completo no código original.
+            const s1 = document.getElementById('statusText');
+            const box = document.getElementById('statusBox');
+            let s1Valor = 0;
+            if(Math.floor(price * 100) % 2 === 0) {
+                s1.innerText = '🔥 OPORTUNIDADE';
+                box.style.borderBottomColor = '#00ff88';
+                s1.style.color = '#00ff88';
+                s1Valor = 30;
+            } else {
+                s1.innerText = '⚠️ AGUARDAR';
+                box.style.borderBottomColor = '#ff3e3e';
+                s1.style.color = '#ff3e3e';
+                s1Valor = 0;
+            }
+            
+            const s2 = document.getElementById('rsiText');
+            const rsiBox = document.getElementById('rsiBox');
+            let s2Valor = 0;
+            let s2Direcao = null;
+            if(pricesHistory.length >= 21) {
+                const compra = price > pricesHistory[pricesHistory.length - 21];
+                s2.innerText = compra ? '🚀 COMPRA' : '📉 VENDA';
+                rsiBox.style.borderBottomColor = compra ? '#00ff88' : '#ff3e3e';
+                s2.style.color = compra ? '#00ff88' : '#ff3e3e';
+                s2Valor = 40;
+                s2Direcao = compra ? 'compra' : 'venda';
+            } else {
+                s2.innerText = `COLETANDO ${pricesHistory.length}/21`;
+            }
+            
+            const s3 = document.getElementById('momText');
+            const momBox = document.getElementById('momBox');
+            let s3Valor = 0;
+            let s3Direcao = null;
+            if(pricesHistory.length >= 3) {
+                const avg = (pricesHistory.slice(-3).reduce((a,b)=>a+b,0))/3;
+                if(price > avg * 1.001) {
+                    s3.innerText = '📈 ALTA';
+                    momBox.style.borderBottomColor = '#00ff88';
+                    s3.style.color = '#00ff88';
+                    s3Valor = 30;
+                    s3Direcao = 'compra';
+                } else if(price < avg * 0.999) {
+                    s3.innerText = '📉 BAIXA';
+                    momBox.style.borderBottomColor = '#ff3e3e';
+                    s3.style.color = '#ff3e3e';
+                    s3Valor = 30;
+                    s3Direcao = 'venda';
+                } else {
+                    s3.innerText = '⚖️ NEUTRO';
+                    momBox.style.borderBottomColor = '#ffcc00';
+                    s3.style.color = '#ffcc00';
+                }
+            }
+            
+            let score = s1Valor + s2Valor + (s3Valor || 0);
+            if (s2Direcao && s3Direcao && s2Direcao !== s3Direcao) score = 0;
+            
+            document.getElementById('scoreFill').style.width = score + '%';
+            document.getElementById('scoreValue').innerText = score + '/100';
+            
+            let scoreLabel = 'Aguardando sinais';
+            let probabilidade = '';
+            let classeScore = 'baixa';
+            
+            if (score >= 80) {
+                scoreLabel = '🔥 Confluência forte';
+                probabilidade = 'Alta';
+                classeScore = 'alta';
+                document.getElementById('alertaBadge').style.display = 'inline-block';
+                if (s2Direcao === 'compra') document.body.classList.add('alerta-compra');
+                else if (s2Direcao === 'venda') document.body.classList.add('alerta-venda');
+            } else if (score >= 60) {
+                scoreLabel = '⚡ Confluência moderada';
+                probabilidade = 'Média';
+                classeScore = 'media';
+                document.getElementById('alertaBadge').style.display = 'none';
+            } else {
+                scoreLabel = '⚠️ Evitar operação';
+                probabilidade = 'Baixa';
+                classeScore = 'baixa';
+                document.getElementById('alertaBadge').style.display = 'none';
+            }
+            
+            document.getElementById('scoreFill').className = 'score-fill ' + classeScore;
+            document.getElementById('scoreLabel').innerText = scoreLabel;
+            document.getElementById('probabilidade').innerText = probabilidade;
+            
+            const hora = new Date().getHours();
+            const minutos = new Date().getMinutes();
+            const horaMin = hora + minutos/60;
+            let sessao = 'Fora do horário';
+            if (horaMin >= 21 || horaMin < 1) sessao = '🌏 Ásia';
+            else if (horaMin >= 4 && horaMin < 9) sessao = '🇪🇺 Londres';
+            else if (horaMin >= 10 && horaMin < 14) sessao = '🇺🇸 NY (Pico)';
+            else if (horaMin >= 9.33 && horaMin < 15.5) sessao = '🥇 Metais NY';
+            else if (horaMin >= 10 && horaMin < 16.5) sessao = '🛢️ Petróleo';
+            document.getElementById('sessaoText').innerText = sessao;
         }
 
         function calc() {
@@ -1247,7 +1401,7 @@
             } catch(e){ document.getElementById('apiConsole').innerHTML = '❌ ' + e.message; }
         }
 
-        // ========== DADOS DAS POOLS E FUNÇÕES DO MODAL ==========
+        // ========== DADOS DAS POOLS ==========
         let poolsData = [
             { pool: "USDY/USDC", network: "Solana", dex: "Raydium Concentrated", tvl: "1.3K", ratio: "55/45", volume: "7.8K", apr: "487.3%", fee: "0.25%", age: "2m0s" },
             { pool: "USD1/WBNB", network: "Bsc", dex: "PancakeSwap V3", tvl: "20.6K", ratio: "16/84", volume: "2.21M", apr: "390.6%", fee: "0.05%", age: "1m0s" },
@@ -1473,7 +1627,6 @@
             } 
         }
         
-        // Inicialização
         refreshCategories();
         setModo('apr');
         iniciarTimerDescanso();
