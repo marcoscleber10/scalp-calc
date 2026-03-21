@@ -553,7 +553,7 @@
     </style>
 </head>
 <body>
-    <!-- CARD PRINCIPAL -->
+    <!-- CARD PRINCIPAL (intacto) -->
     <div class="card" id="mainCard">
         <h4>⚡ MESTRE DO SCALPING PRO ⚡</h4>
         <button class="btn-mode" onclick="toggleMode()">🖥️ ALTERNAR MODO COMPUTADOR</button>
@@ -691,13 +691,13 @@
 
         <!-- TABELA DE SESSÕES -->
         <table class="market-table">
-            <tr><td colspan="3" class="market-header">🌍 SESSÕES CRIPTO / FOREX</td></tr>
-            <tr><td>🌏 Ásia</td><td>21:00-01:00</td><td style="color:var(--gold); text-align:right;">● médio</td></tr>
-            <tr><td>🇪🇺 Londres</td><td>04:00-09:00</td><td style="color:var(--green); text-align:right;">● alto</td></tr>
-            <tr><td>🇺🇸 NY (Pico)</td><td>10:00-14:00</td><td style="color:var(--green); text-align:right;">● PICO</td></tr>
-            <tr><td colspan="3" class="market-header">🏆 EURO, PRATA & WTI</td></tr>
-            <tr><td>🥇 Metais (NY)</td><td>09:20-15:30</td><td style="color:var(--gold); text-align:right;">● liquidez</td></tr>
-            <tr><td>🛢️ Petróleo (WTI)</td><td>10:00-16:30</td><td style="color:var(--accent); text-align:right;">● volatilidade</td></tr>
+             <tr><td colspan="3" class="market-header">🌍 SESSÕES CRIPTO / FOREX</td></tr>
+             <tr><td>🌏 Ásia</td><td>21:00-01:00</td><td style="color:var(--gold); text-align:right;">● médio</td></tr>
+             <tr><td>🇪🇺 Londres</td><td>04:00-09:00</td><td style="color:var(--green); text-align:right;">● alto</td></tr>
+             <tr><td>🇺🇸 NY (Pico)</td><td>10:00-14:00</td><td style="color:var(--green); text-align:right;">● PICO</td></tr>
+             <tr><td colspan="3" class="market-header">🏆 EURO, PRATA & WTI</td></tr>
+             <tr><td>🥇 Metais (NY)</td><td>09:20-15:30</td><td style="color:var(--gold); text-align:right;">● liquidez</td></tr>
+             <tr><td>🛢️ Petróleo (WTI)</td><td>10:00-16:30</td><td style="color:var(--accent); text-align:right;">● volatilidade</td></tr>
         </table>
 
         <!-- NOVA SEÇÃO: NOTÍCIAS E CALENDÁRIO -->
@@ -876,7 +876,7 @@
                 <div class="table-wrapper">
                     <table class="pools-table" id="poolsTable">
                         <thead>
-                            <tr><th onclick="ordenarPor('pool')">Pool</th><th onclick="ordenarPor('network')">Network</th><th onclick="ordenarPor('dex')">DEX</th><th onclick="ordenarPor('tvl')">TVL</th><th>Ratio</th><th onclick="ordenarPor('volume')">Volume 24h</th><th onclick="ordenarPor('apr')">APR</th><th>1h</th><th>6h</th><th>24h</th><th>7d</th><th>30d</th><th onclick="ordenarPor('fee')">Fee</th><th onclick="ordenarPor('age')">Age</th><th>Score</th></tr>
+                             <tr><th onclick="ordenarPor('pool')">Pool</th><th onclick="ordenarPor('network')">Network</th><th onclick="ordenarPor('dex')">DEX</th><th onclick="ordenarPor('tvl')">TVL</th><th>Ratio</th><th onclick="ordenarPor('volume')">Volume 24h</th><th onclick="ordenarPor('apr')">APR</th><th>1h</th><th>6h</th><th>24h</th><th>7d</th><th>30d</th><th onclick="ordenarPor('fee')">Fee</th><th onclick="ordenarPor('age')">Age</th><th>Score</th></tr>
                         </thead>
                         <tbody id="poolsTableBody"></tbody>
                     </table>
@@ -899,7 +899,7 @@
                 </div>
             </div>
 
-            <!-- Aba Estratégias de Pool de Liquidez (com botões) -->
+            <!-- Aba Estratégias de Pool de Liquidez -->
             <div id="strategiesTab" class="tab-content">
                 <div class="strategy-content">
                     <h3>🧠 Estratégia 1: Market Making Adaptativo (AMM + Order Flow) <button class="btn-detalhe" onclick="abrirModal('modalEstrategia1')">📘 Ver detalhes</button></h3>
@@ -1005,7 +1005,7 @@
         function abrirModal(id) { const modal = document.getElementById(id); if (modal) modal.style.display = 'flex'; }
         function fecharModal(id) { const modal = document.getElementById(id); if (modal) modal.style.display = 'none'; }
 
-        // ========== CÓDIGO COMPLETO (versão final) ==========
+        // ========== CÓDIGO COMPLETO ==========
         let price = 74069.05;
         let pricesHistory = [];
         let isDesktop = false;
