@@ -684,7 +684,7 @@
                          <tr><td colspan="3" class="market-header">🏆 EURO, PRATA & WTI</td></tr>
                          <tr><td>🥇 Metais (NY)</td><td>09:20-15:30</td><td style="color:var(--gold); text-align:right;">● liquidez</td></tr>
                          <tr><td>🛢️ Petróleo (WTI)</td><td>10:00-16:30</td><td style="color:var(--accent); text-align:right;">● volatilidade</td></tr>
-                     </table>
+                      </table>
 
         <!-- NOVA SEÇÃO: NOTÍCIAS E CALENDÁRIO -->
         <div class="news-section">
@@ -867,7 +867,7 @@
                              </tr>
                         </thead>
                         <tbody id="poolsTableBody"></tbody>
-                     </table>
+                    </table>
                 </div>
                 <p style="color: var(--text); margin-top: 15px;">Mostrando 1–20 de 599 pools</p>
                 <div style="margin-top: 15px; text-align: center;"><a href="https://www.yldlab.xyz/" target="_blank" style="color: var(--green); font-weight: bold;">🔗 Ver mais em yldlab.xyz</a></div>
@@ -1038,11 +1038,29 @@ Reentrada gradual quando estabilizar.</pre>
                 </div>
             </div>
 
-            <!-- Aba Robô Automatizado -->
+            <!-- Aba Robô Automatizado (REFORMULADA) -->
             <div id="robotTab" class="tab-content">
                 <div class="robot-content">
-                    <h3>🤖 METEORA CLMM BOT (REAL LP + AUTO RANGE)</h3>
-                    <p>Este bot automatiza a gestão de liquidez em pools CLMM (Solana), ajustando o range de preço com base na volatilidade e protegendo o capital em crises.</p>
+                    <h3>🤖 Bot de Liquidez Automatizado (Solana - Meteora / Orca)</h3>
+                    <p>Este bot gerencia automaticamente uma posição de liquidez em um pool CLMM (Concentrated Liquidity Market Maker) na Solana. Ele ajusta o range de preço conforme a volatilidade e protege o capital em caso de queda brusca.</p>
+
+                    <h4>📌 Funcionalidades</h4>
+                    <ul>
+                        <li><strong>🔵 Adicionar liquidez</strong> – Cria uma posição com range de ±10% em torno do preço atual.</li>
+                        <li><strong>⚡ Auto-ajuste</strong> – Se o preço variar mais de 5%, o range é reposicionado para o novo preço.</li>
+                        <li><strong>🚨 Modo Crash</strong> – Se o preço cair mais de 8%, toda a liquidez é removida para evitar perdas.</li>
+                        <li><strong>📊 Preço em tempo real</strong> – Busca o preço da SOL na Binance a cada 20 segundos.</li>
+                    </ul>
+
+                    <h4>⚙️ Como usar (para desenvolvedores)</h4>
+                    <ol>
+                        <li>Instale as dependências: <code>npm install @solana/web3.js axios dotenv @orca-so/whirlpools-sdk</code></li>
+                        <li>Crie um arquivo <code>.env</code> com sua chave privada: <code>PRIVATE_KEY=...</code></li>
+                        <li>Altere o endereço da pool (<code>POOL_ADDRESS</code>) para o pool desejado (ex: SOL/USDC da Meteora).</li>
+                        <li>Execute com <code>node index.js</code></li>
+                    </ol>
+
+                    <h4>📄 Código completo (JavaScript)</h4>
                     <div class="code-block">
                         <pre>// =============================================
 // METEORA CLMM BOT (REAL LP + AUTO RANGE)
@@ -1052,35 +1070,32 @@ const { Connection, Keypair, PublicKey } = require('@solana/web3.js')
 const axios = require('axios')
 const { WhirlpoolContext, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID } = require("@orca-so/whirlpools-sdk")
 
-// CONFIG
+// CONFIGURAÇÃO
 const RPC = "https://api.mainnet-beta.solana.com"
 const connection = new Connection(RPC, "confirmed")
 const secret = JSON.parse(process.env.PRIVATE_KEY)
 const wallet = Keypair.fromSecretKey(Uint8Array.from(secret))
 console.log("Wallet:", wallet.publicKey.toString())
 
-// INIT WHIRLPOOL CLIENT
-const ctx = WhirlpoolContext.withConnection(
-    connection,
-    wallet,
-    ORCA_WHIRLPOOL_PROGRAM_ID
-)
+// INICIALIZAÇÃO DO CLIENTE
+const ctx = WhirlpoolContext.withConnection(connection, wallet, ORCA_WHIRLPOOL_PROGRAM_ID)
 const client = buildWhirlpoolClient(ctx)
 
-// POOL SOL/USDC (ajustar)
+// ENDEREÇO DO POOL (SUBSTITUIR PELO SEU)
 const POOL_ADDRESS = new PublicKey("HJPjoWUrhoZzkzZbXj4iAFH4x6U7kK...")
 
-// HELPERS
+// FUNÇÃO PARA OBTER PREÇO DA SOL (BINANCE)
 async function getPrice() {
     const res = await axios.get("https://api.binance.com/api/v3/ticker/price?symbol=SOLUSDT")
     return parseFloat(res.data.price)
 }
 
+// CONVERTE PREÇO PARA TICK (usado pelo protocolo)
 function priceToTick(price) {
     return Math.floor(Math.log(price) / Math.log(1.0001))
 }
 
-// ADD LIQUIDITY
+// ADICIONA LIQUIDEZ COM RANGE DINÂMICO
 async function addLiquidity(rangePercent = 10) {
     const whirlpool = await client.getPool(POOL_ADDRESS)
     const price = await getPrice()
@@ -1090,13 +1105,13 @@ async function addLiquidity(rangePercent = 10) {
     const tickUpper = priceToTick(upper)
     console.log("🔵 ADD LP")
     console.log("Range:", lower, "-", upper)
-    const liquidityAmount = 1000000
+    const liquidityAmount = 1000000  // ajuste conforme seu capital
     const tx = await whirlpool.openPosition(tickLower, tickUpper, liquidityAmount)
     const sig = await tx.buildAndExecute()
     console.log("✅ Liquidez adicionada:", sig)
 }
 
-// REMOVE LIQUIDITY
+// REMOVE LIQUIDEZ
 async function removeLiquidity(position) {
     console.log("🔴 Removendo LP...")
     const tx = await position.closePosition()
@@ -1104,49 +1119,36 @@ async function removeLiquidity(position) {
     console.log("❌ Liquidez removida:", sig)
 }
 
-// RANGE AUTO ADJUST
+// GERENCIAMENTO AUTOMÁTICO
 let currentPosition = null
 let lastPrice = 0
+
 async function managePosition() {
     const price = await getPrice()
     if (!lastPrice) { lastPrice = price; return }
     const change = ((price - lastPrice) / lastPrice) * 100
     console.log("Preço:", price, "| Δ:", change.toFixed(2), "%")
+    // Se variou mais de 5%, reposiciona
     if (change >= 5 || change <= -5) {
         console.log("⚡ Reposicionando range...")
-        if (currentPosition) { await removeLiquidity(currentPosition) }
+        if (currentPosition) await removeLiquidity(currentPosition)
         await addLiquidity(10)
     }
+    // Se queda maior que 8%, entra em modo crash
     if (change <= -8) {
         console.log("🚨 CRASH - SAINDO")
-        if (currentPosition) { await removeLiquidity(currentPosition) }
+        if (currentPosition) await removeLiquidity(currentPosition)
     }
     lastPrice = price
 }
 
-// LOOP
+// EXECUTA A CADA 20 SEGUNDOS
 setInterval(managePosition, 20000)
 
-// INSTRUÇÕES
-// npm install @solana/web3.js axios dotenv @orca-so/whirlpools-sdk
-// .env: PRIVATE_KEY=[SUA_KEY]
-// node index.js</pre>
+// INSTRUÇÕES: node index.js</pre>
                     </div>
-                    <p><strong>📌 Como usar:</strong></p>
-                    <ul>
-                        <li>Instale as dependências: <code>npm install @solana/web3.js axios dotenv @orca-so/whirlpools-sdk</code></li>
-                        <li>Crie um arquivo <code>.env</code> com sua chave privada: <code>PRIVATE_KEY=...</code></li>
-                        <li>Altere o endereço da pool <code>POOL_ADDRESS</code> para o pool desejado (ex: SOL/USDC da Meteora).</li>
-                        <li>Execute com <code>node index.js</code></li>
-                    </ul>
-                    <p><strong>⚙️ Funcionalidades:</strong></p>
-                    <ul>
-                        <li>🔵 Adiciona liquidez com range dinâmico (10% acima/abaixo do preço).</li>
-                        <li>⚡ Ajusta automaticamente o range quando o preço varia mais de 5%.</li>
-                        <li>🚨 Remove toda a liquidez em caso de queda brusca (>8%).</li>
-                        <li>📊 Consulta preço da Binance em tempo real.</li>
-                    </ul>
-                    <p><strong>⚠️ Atenção:</strong> Este é um exemplo educacional. Antes de usar com fundos reais, teste em ambiente de simulação e ajuste os parâmetros conforme sua estratégia.</p>
+
+                    <p><strong>⚠️ Atenção:</strong> Este código é um exemplo educacional. Antes de usar com fundos reais, teste em ambiente de simulação (devnet) e ajuste os parâmetros conforme sua estratégia. Nunca compartilhe sua chave privada.</p>
                 </div>
             </div>
         </div>
@@ -1156,11 +1158,6 @@ setInterval(managePosition, 20000)
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <script>
         // ========== CÓDIGO COMPLETO (mantido da versão funcional) ==========
-        // Inclui todas as funções: initChart, updateSignals, calc, adicionarAlarme, etc.
-        // e as funções de pools: refreshCategories, setModo, aplicarFiltrosEOrdenar, renderPoolsTable.
-        // Por questões de espaço, o código completo foi mantido, mas deve ser o mesmo da versão que funcionava.
-        // Abaixo está o resumo das funções principais. Na implementação real, todo o código JavaScript anterior deve estar presente.
-
         let price = 74069.05;
         let pricesHistory = [];
         let isDesktop = false;
@@ -1175,29 +1172,379 @@ setInterval(managePosition, 20000)
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioCtx = null;
 
-        function tocarAlarme() { /* ... */ }
-        function setTF(tf, btn) { /* ... */ }
-        function toggleMode() { /* ... */ }
-        function initChart() { /* ... */ }
-        async function fetchHyperliquidPrice(asset) { /* ... */ }
-        function onSymbolChange() { /* ... */ }
-        function updateSignals() { /* ... */ }
-        function calc() { /* ... */ }
-        function adicionarAlarme() { /* ... */ }
-        function removerAlarme(id) { /* ... */ }
-        function atualizarListaAlarmes() { /* ... */ }
-        function verificarAlarmes() { /* ... */ }
-        function iniciarTimerDescanso() { /* ... */ }
-        function resetTimer() { /* ... */ }
-        function openPasswordModal() { /* ... */ }
-        function closePasswordModal() { /* ... */ }
-        function openDonationModal() { /* ... */ }
-        function closeDonationModal() { /* ... */ }
-        function closeRobotModal() { /* ... */ }
-        function checkPassword() { /* ... */ }
-        function copyText(text) { /* ... */ }
-        async function connectHyperliquid() { /* ... */ }
-        async function placeRealOrder() { /* ... */ }
+        function tocarAlarme() {
+            try {
+                if (!audioCtx) audioCtx = new AudioContext();
+                const osc = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.value = 880;
+                gainNode.gain.value = 0.3;
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.5);
+                setTimeout(() => {
+                    const osc2 = audioCtx.createOscillator();
+                    osc2.type = 'sine';
+                    osc2.frequency.value = 880;
+                    const gain2 = audioCtx.createGain();
+                    gain2.gain.value = 0.3;
+                    osc2.connect(gain2);
+                    gain2.connect(audioCtx.destination);
+                    osc2.start();
+                    osc2.stop(audioCtx.currentTime + 0.5);
+                }, 600);
+                if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
+            } catch (e) {}
+        }
+
+        function setTF(tf, btn) {
+            currentTF = tf;
+            document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            initChart();
+        }
+
+        function toggleMode() {
+            isDesktop = !isDesktop;
+            document.getElementById('mainCard').classList.toggle('desktop-mode', isDesktop);
+            initChart();
+        }
+
+        function initChart() {
+            const symbol = document.getElementById('pairSelector').value;
+            const container = document.getElementById('chart_container');
+            container.innerHTML = '';
+            new TradingView.widget({
+                "autosize": true,
+                "symbol": symbol,
+                "interval": currentTF,
+                "theme": "dark",
+                "style": "1",
+                "locale": "br",
+                "container_id": "chart_container",
+                "hide_top_toolbar": !isDesktop,
+                "hide_legend": false
+            });
+
+            if (metalInterval) { clearInterval(metalInterval); metalInterval = null; }
+            if (activeWS) { activeWS.close(); activeWS = null; }
+
+            if (symbol.startsWith("TVC:")) {
+                let asset = "";
+                if (symbol === "TVC:GOLD") asset = "GOLD";
+                else if (symbol === "TVC:SILVER") asset = "SILVER";
+                else if (symbol === "TVC:USOIL") asset = "WTI";
+                if (asset) {
+                    if (asset === "GOLD") price = 2050;
+                    else if (asset === "SILVER") price = 26.5;
+                    else price = 78.5;
+                    document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
+                    pricesHistory.push(price);
+                    if(pricesHistory.length > 50) pricesHistory.shift();
+                    updateSignals();
+                    fetchHyperliquidPrice(asset);
+                    metalInterval = setInterval(() => fetchHyperliquidPrice(asset), 2000);
+                }
+            } else {
+                let pair = symbol.split(':')[1].toLowerCase();
+                let streamPair = (pair.includes('btc') ? 'btcusdt' : pair.includes('eth') ? 'ethusdt' : pair.includes('sol') ? 'solusdt' : 'btcusdt');
+                activeWS = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`);
+                activeWS.onmessage = (e) => {
+                    const data = JSON.parse(e.data);
+                    price = parseFloat(data.c);
+                    document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
+                    pricesHistory.push(price);
+                    if(pricesHistory.length > 50) pricesHistory.shift();
+                    updateSignals();
+                    verificarAlarmes();
+                };
+            }
+        }
+
+        async function fetchHyperliquidPrice(asset) {
+            try {
+                const response = await fetch('https://api.hyperliquid.xyz/info', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type: "allMids" })
+                });
+                const data = await response.json();
+                if (data && data[asset] !== undefined) {
+                    const midPrice = parseFloat(data[asset]);
+                    if (!isNaN(midPrice)) {
+                        price = midPrice;
+                        document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
+                        pricesHistory.push(price);
+                        if(pricesHistory.length > 50) pricesHistory.shift();
+                        updateSignals();
+                        verificarAlarmes();
+                    }
+                } else {
+                    console.warn(`Preço não encontrado para ${asset}`);
+                }
+            } catch (err) {
+                console.error("Erro ao buscar preço da Hyperliquid:", err);
+            }
+        }
+
+        function onSymbolChange() {
+            initChart();
+        }
+
+        function updateSignals() {
+            const s1 = document.getElementById('statusText');
+            const box = document.getElementById('statusBox');
+            let s1Valor = 0;
+            if(Math.floor(price * 100) % 2 === 0) {
+                s1.innerText = '🔥 OPORTUNIDADE';
+                box.style.borderBottomColor = '#00ff88';
+                s1.style.color = '#00ff88';
+                s1Valor = 30;
+            } else {
+                s1.innerText = '⚠️ AGUARDAR';
+                box.style.borderBottomColor = '#ff3e3e';
+                s1.style.color = '#ff3e3e';
+                s1Valor = 0;
+            }
+            
+            const s2 = document.getElementById('rsiText');
+            const rsiBox = document.getElementById('rsiBox');
+            let s2Valor = 0;
+            let s2Direcao = null;
+            if(pricesHistory.length >= 21) {
+                const compra = price > pricesHistory[pricesHistory.length - 21];
+                s2.innerText = compra ? '🚀 COMPRA' : '📉 VENDA';
+                rsiBox.style.borderBottomColor = compra ? '#00ff88' : '#ff3e3e';
+                s2.style.color = compra ? '#00ff88' : '#ff3e3e';
+                s2Valor = 40;
+                s2Direcao = compra ? 'compra' : 'venda';
+            } else {
+                s2.innerText = `COLETANDO ${pricesHistory.length}/21`;
+            }
+            
+            const s3 = document.getElementById('momText');
+            const momBox = document.getElementById('momBox');
+            let s3Valor = 0;
+            let s3Direcao = null;
+            if(pricesHistory.length >= 3) {
+                const avg = (pricesHistory.slice(-3).reduce((a,b)=>a+b,0))/3;
+                if(price > avg * 1.001) {
+                    s3.innerText = '📈 ALTA';
+                    momBox.style.borderBottomColor = '#00ff88';
+                    s3.style.color = '#00ff88';
+                    s3Valor = 30;
+                    s3Direcao = 'compra';
+                } else if(price < avg * 0.999) {
+                    s3.innerText = '📉 BAIXA';
+                    momBox.style.borderBottomColor = '#ff3e3e';
+                    s3.style.color = '#ff3e3e';
+                    s3Valor = 30;
+                    s3Direcao = 'venda';
+                } else {
+                    s3.innerText = '⚖️ NEUTRO';
+                    momBox.style.borderBottomColor = '#ffcc00';
+                    s3.style.color = '#ffcc00';
+                }
+            }
+            
+            let score = s1Valor + s2Valor + (s3Valor || 0);
+            if (s2Direcao && s3Direcao && s2Direcao !== s3Direcao) score = 0;
+            
+            document.getElementById('scoreFill').style.width = score + '%';
+            document.getElementById('scoreValue').innerText = score + '/100';
+            
+            let scoreLabel = 'Aguardando sinais';
+            let probabilidade = '';
+            let classeScore = 'baixa';
+            
+            if (score >= 80) {
+                scoreLabel = '🔥 Confluência forte';
+                probabilidade = 'Alta';
+                classeScore = 'alta';
+                document.getElementById('alertaBadge').style.display = 'inline-block';
+                if (s2Direcao === 'compra') document.body.classList.add('alerta-compra');
+                else if (s2Direcao === 'venda') document.body.classList.add('alerta-venda');
+            } else if (score >= 60) {
+                scoreLabel = '⚡ Confluência moderada';
+                probabilidade = 'Média';
+                classeScore = 'media';
+                document.getElementById('alertaBadge').style.display = 'none';
+            } else {
+                scoreLabel = '⚠️ Evitar operação';
+                probabilidade = 'Baixa';
+                classeScore = 'baixa';
+                document.getElementById('alertaBadge').style.display = 'none';
+            }
+            
+            document.getElementById('scoreFill').className = 'score-fill ' + classeScore;
+            document.getElementById('scoreLabel').innerText = scoreLabel;
+            document.getElementById('probabilidade').innerText = probabilidade;
+            
+            const hora = new Date().getHours();
+            const minutos = new Date().getMinutes();
+            const horaMin = hora + minutos/60;
+            let sessao = 'Fora do horário';
+            if (horaMin >= 21 || horaMin < 1) sessao = '🌏 Ásia';
+            else if (horaMin >= 4 && horaMin < 9) sessao = '🇪🇺 Londres';
+            else if (horaMin >= 10 && horaMin < 14) sessao = '🇺🇸 NY (Pico)';
+            else if (horaMin >= 9.33 && horaMin < 15.5) sessao = '🥇 Metais NY';
+            else if (horaMin >= 10 && horaMin < 16.5) sessao = '🛢️ Petróleo';
+            document.getElementById('sessaoText').innerText = sessao;
+        }
+
+        function calc() {
+            const tp = price * (1 + parseFloat(document.getElementById('tpP').value)/100);
+            const sl = price * (1 - parseFloat(document.getElementById('slP').value)/100);
+            document.getElementById('resTP').innerText = `$${tp.toFixed(2)}`;
+            document.getElementById('resSL').innerText = `$${sl.toFixed(2)}`;
+            document.getElementById('results').style.display = 'block';
+        }
+
+        function adicionarAlarme() {
+            const preco = parseFloat(document.getElementById('alarmePreco').value);
+            if (isNaN(preco) || preco <= 0) { alert('Preço inválido'); return; }
+            alarmes.push({ preco, ativo: true, id: Date.now() });
+            atualizarListaAlarmes();
+            document.getElementById('alarmePreco').value = '';
+        }
+        
+        function removerAlarme(id) {
+            alarmes = alarmes.filter(a => a.id !== id);
+            atualizarListaAlarmes();
+        }
+        
+        function atualizarListaAlarmes() {
+            const lista = document.getElementById('alarmeLista');
+            if (alarmes.length === 0) {
+                lista.innerHTML = '<div style="color: var(--text); text-align: center; padding: 10px;">Nenhum alarme definido</div>';
+                return;
+            }
+            let html = '';
+            alarmes.forEach(alarme => {
+                html += `<div class="alarme-item"><span>🔔 $${alarme.preco.toLocaleString('en-US', {minimumFractionDigits:2})}</span><button class="alarme-remover" onclick="removerAlarme(${alarme.id})">✕</button></div>`;
+            });
+            lista.innerHTML = html;
+        }
+        
+        function verificarAlarmes() {
+            alarmes.forEach(alarme => {
+                if (alarme.ativo && Math.abs(price - alarme.preco) / alarme.preco < 0.001) {
+                    alarme.ativo = false;
+                    tocarAlarme();
+                    alert(`🔔 ALARME! Preço atingiu $${alarme.preco.toFixed(2)}`);
+                    atualizarListaAlarmes();
+                }
+            });
+        }
+
+        function iniciarTimerDescanso() {
+            if (modoOperacaoAtivo) return;
+            clearTimeout(timeoutDescanso);
+            timeoutDescanso = setTimeout(() => {
+                if (!modoOperacaoAtivo) document.body.classList.add("modo-descanso");
+            }, 90000);
+        }
+
+        function resetTimer() {
+            if (!modoOperacaoAtivo) {
+                document.body.classList.remove("modo-descanso");
+                iniciarTimerDescanso();
+            }
+        }
+
+        document.onmousemove = resetTimer;
+        document.onkeydown = resetTimer;
+        document.onclick = resetTimer;
+        document.ontouchstart = resetTimer;
+
+        const toggle = document.getElementById("lockScreenToggle");
+        const statusTexto = document.getElementById("statusModo");
+        toggle.addEventListener("change", function() {
+            modoOperacaoAtivo = this.checked;
+            if (modoOperacaoAtivo) {
+                statusTexto.innerText = "Modo Operação: ON";
+                clearTimeout(timeoutDescanso);
+                document.body.classList.remove("modo-descanso");
+                document.body.classList.add("modo-ativo");
+            } else {
+                statusTexto.innerText = "Modo Operação: OFF";
+                document.body.classList.remove("modo-ativo");
+                iniciarTimerDescanso();
+            }
+        });
+
+        function openPasswordModal() { document.getElementById('passwordModal').style.display = 'flex'; }
+        function closePasswordModal() { document.getElementById('passwordModal').style.display = 'none'; }
+        function openDonationModal() { document.getElementById('donationModal').style.display = 'flex'; }
+        function closeDonationModal() { document.getElementById('donationModal').style.display = 'none'; }
+        function closeRobotModal() { document.getElementById('robotModal').style.display = 'none'; }
+
+        function checkPassword() {
+            if(document.getElementById('passInput').value === 'Maria1301') {
+                closePasswordModal();
+                document.getElementById('robotModal').style.display = 'flex';
+            } else {
+                alert('Senha incorreta');
+            }
+        }
+
+        function copyText(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✅ Copiado para a área de transferência!');
+            }).catch(() => {
+                alert('❌ Erro ao copiar. Tente novamente.');
+            });
+        }
+
+        async function connectHyperliquid() { 
+            const mainAddr = document.getElementById('hlMainAddress').value.trim();
+            const apiAddr = document.getElementById('hlApiAddress').value.trim();
+            const privKey = document.getElementById('hlApiPrivateKey').value.trim();
+            if(!mainAddr || !apiAddr || !privKey) { alert('Preencha todos os campos'); return; }
+            try {
+                const provider = new ethers.providers.JsonRpcProvider('https://arb1.arbitrum.io/rpc');
+                const wallet = new ethers.Wallet(privKey, provider);
+                if(wallet.address.toLowerCase() !== apiAddr.toLowerCase()) throw new Error(`Chave não corresponde.`);
+                hlConnection = { mainAddress: mainAddr, apiWallet: wallet, apiAddress: apiAddr };
+                document.getElementById('apiConsole').innerHTML = `✅ Conectado como ${apiAddr.slice(0,6)}...${apiAddr.slice(-4)}`;
+            } catch(e) { document.getElementById('apiConsole').innerHTML = `❌ Erro: ${e.message}`; alert(e.message); }
+        }
+
+        async function placeRealOrder() { 
+            if(!hlConnection){ alert('Conecte a API primeiro'); return; }
+            const capital = parseFloat(document.getElementById('botCapital').value);
+            const pair = document.getElementById('botPair').value;
+            const sl = parseFloat(document.getElementById('botSL').value)/100;
+            const tp = parseFloat(document.getElementById('botTP').value)/100;
+            if(capital < 5){ alert('Capital mínimo: 5 USDC'); return; }
+            if(!price || price === 0){ alert('Aguardando preço...'); return; }
+            try {
+                const assetMap = { BTC:0, ETH:1, SOL:2, GOLD:3, SILVER:4, WTI:5 };
+                const assetId = assetMap[pair];
+                if (assetId === undefined) { alert('Par inválido'); return; }
+                const size = (capital / price).toFixed(6);
+                const priceStr = price.toFixed(2);
+                const nonce = Date.now() + Math.floor(Math.random() * 1000);
+                const action = { type: "order", orders: [{ a: assetId, b: true, p: priceStr, r: false, s: size, t: { limit: { tif: "Gtc" } } }], grouping: "na" };
+                const domain = { name: "Hyperliquid", version: "1", chainId: 42161 };
+                const types = { Action: [ { name: "type", type: "string" }, { name: "orders", type: "Order[]" }, { name: "grouping", type: "string" } ], Order: [ { name: "a", type: "uint32" }, { name: "b", type: "bool" }, { name: "p", type: "string" }, { name: "r", type: "bool" }, { name: "s", type: "string" }, { name: "t", type: "OrderType" } ], OrderType: [ { name: "limit", type: "Limit" } ], Limit: [ { name: "tif", type: "string" } ] };
+                document.getElementById('apiConsole').innerHTML = '⏳ Assinando ordem...';
+                const signature = await hlConnection.apiWallet._signTypedData(domain, types, action);
+                const sig = ethers.utils.splitSignature(signature);
+                const requestBody = { action, nonce, signature: { r: sig.r, s: sig.s, v: sig.v }, vaultAddress: null };
+                document.getElementById('apiConsole').innerHTML = '⏳ Enviando ordem...';
+                const response = await fetch('https://api.hyperliquid.xyz/exchange', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(requestBody) });
+                const result = await response.json();
+                if(result.status === "ok" || result.response?.data?.statuses?.[0]?.resting){
+                    document.getElementById('apiConsole').innerHTML = '✅ Ordem enviada!';
+                    const stopPrice = price * (1 - sl);
+                    const takePrice = price * (1 + tp);
+                    alert(`✅ ORDEM REAL!\nComprar ${size} ${pair}\nPreço: $${price.toFixed(2)}\nStop: $${stopPrice.toFixed(2)}\nTake: $${takePrice.toFixed(2)}`);
+                } else { document.getElementById('apiConsole').innerHTML = '❌ ' + JSON.stringify(result); }
+            } catch(e){ document.getElementById('apiConsole').innerHTML = '❌ ' + e.message; }
+        }
 
         // ========== DADOS DAS POOLS E FUNÇÕES DO MODAL ==========
         let poolsData = [
