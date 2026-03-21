@@ -254,7 +254,7 @@
         .vol-media { background: #ffcc0020; color: #ffcc00; border: 1px solid #ffcc00; }
         .vol-baixa { background: #ff3e3e20; color: #ff3e3e; border: 1px solid #ff3e3e; }
 
-        /* ===== ESTILOS PARA O MODAL DE POOLS (Top Pools) ===== */
+        /* ===== ESTILOS PARA O MODAL DE POOLS ===== */
         .tabs-container {
             display: flex;
             gap: 10px;
@@ -712,13 +712,13 @@
         <!-- TABELA DE SESSÕES -->
         <table class="market-table">
                Bon<td colspan="3" class="market-header">🌍 SESSÕES CRIPTO / FOREX</td>
-            <tr><td>🌏 Ásia</td><td>21:00-01:00</td><td style="color:var(--gold); text-align:right;">● médio</td></tr>
-            <tr><td>🇪🇺 Londres</td><td>04:00-09:00</td><td style="color:var(--green); text-align:right;">● alto</td></tr>
-            <tr><td>🇺🇸 NY (Pico)</td><td>10:00-14:00</td><td style="color:var(--green); text-align:right;">● PICO</td></tr>
-            <tr><td colspan="3" class="market-header">🏆 EURO, PRATA & WTI</td></tr>
-            <tr><td>🥇 Metais (NY)</td><td>09:20-15:30</td><td style="color:var(--gold); text-align:right;">● liquidez</td></tr>
-            <tr><td>🛢️ Petróleo (WTI)</td><td>10:00-16:30</td><td style="color:var(--accent); text-align:right;">● volatilidade</td></tr>
-        </table>
+                <tr><td>🌏 Ásia</td><td>21:00-01:00</td><td style="color:var(--gold); text-align:right;">● médio</td></tr>
+                <tr><td>🇪🇺 Londres</td><td>04:00-09:00</td><td style="color:var(--green); text-align:right;">● alto</td></tr>
+                <tr><td>🇺🇸 NY (Pico)</td><td>10:00-14:00</td><td style="color:var(--green); text-align:right;">● PICO</td></tr>
+                <tr><td colspan="3" class="market-header">🏆 EURO, PRATA & WTI</td></tr>
+                <tr><td>🥇 Metais (NY)</td><td>09:20-15:30</td><td style="color:var(--gold); text-align:right;">● liquidez</td></tr>
+                <tr><td>🛢️ Petróleo (WTI)</td><td>10:00-16:30</td><td style="color:var(--accent); text-align:right;">● volatilidade</td></tr>
+            </table>
 
         <!-- NOVA SEÇÃO: NOTÍCIAS E CALENDÁRIO -->
         <div class="news-section">
@@ -789,15 +789,38 @@
                 <div class="warning-high-apr">⚠️ Os valores de APR nos cards são os maiores de cada categoria com base nos dados atuais. Sempre analise volume e liquidez.</div>
                 <div class="mode-toggle"><button id="modoAutoBtn" class="mode-btn" onclick="setModo('auto')">🤖 Automático (Score)</button><button id="modoManualBtn" class="mode-btn" onclick="setModo('manual')">👆 Manual</button><button id="modoAPRBtn" class="mode-btn apr-high active" onclick="setModo('apr')">🔥 APR altos</button></div>
                 <div class="filter-row"><div class="filter-item"><label>TVL mínimo ($)</label><input type="number" id="filtroTVL" placeholder="10000" value="0" step="1000"></div><div class="filter-item"><label>Volume mínimo ($)</label><input type="number" id="filtroVolume" placeholder="5000" value="0" step="1000"></div><div class="filter-item"><label>APR mínimo (%)</label><input type="number" id="filtroAPR" placeholder="100" value="0" step="10"></div><button class="btn-filter" onclick="aplicarFiltros()">Aplicar</button></div>
-                <div class="table-wrapper"><table class="pools-table" id="poolsTable"><thead> <tr><th onclick="ordenarPor('pool')">Pool</th><th onclick="ordenarPor('network')">Network</th><th onclick="ordenarPor('dex')">DEX</th><th onclick="ordenarPor('tvl')">TVL</th><th>Ratio</th><th onclick="ordenarPor('volume')">Volume 24h</th><th onclick="ordenarPor('apr')">APR</th><th>1h</th><th>6h</th><th>24h</th><th>7d</th><th>30d</th><th onclick="ordenarPor('fee')">Fee</th><th onclick="ordenarPor('age')">Age</th><th>Score</th> </tr></thead><tbody id="poolsTableBody"></tbody></table></div>
+                <div class="table-wrapper"><table class="pools-table" id="poolsTable"><thead>  <tr><th onclick="ordenarPor('pool')">Pool</th><th onclick="ordenarPor('network')">Network</th><th onclick="ordenarPor('dex')">DEX</th><th onclick="ordenarPor('tvl')">TVL</th><th>Ratio</th><th onclick="ordenarPor('volume')">Volume 24h</th><th onclick="ordenarPor('apr')">APR</th><th>1h</th><th>6h</th><th>24h</th><th>7d</th><th>30d</th><th onclick="ordenarPor('fee')">Fee</th><th onclick="ordenarPor('age')">Age</th><th>Score</th></tr></thead><tbody id="poolsTableBody"></tbody></table></div>
                 <p style="color: var(--text); margin-top: 15px;">Mostrando 1–20 de 599 pools</p>
                 <div style="margin-top: 15px; text-align: center;"><a href="https://www.yldlab.xyz/" target="_blank" style="color: var(--green); font-weight: bold;">🔗 Ver mais em yldlab.xyz</a></div>
             </div>
 
-            <!-- Aba Notícias e Calendário -->
+            <!-- Aba Notícias e Calendário (com calendário completo) -->
             <div id="newsTab" class="tab-content">
-                <h3 style="color: var(--gold); margin-bottom: 15px;">📅 Calendário Econômico</h3><div class="calendar-link"><a href="https://www.tradingview.com/economic-calendar/" target="_blank">📈 TradingView Economic Calendar</a></div>
-                <h3 style="color: var(--gold); margin: 20px 0 15px;">📰 Principais Notícias Cripto</h3><div class="news-grid"><div class="news-card"><h4>🇧🇷 Livecoins</h4><a href="https://livecoins.com.br/" target="_blank">livecoins.com.br</a><p>Maior portal brasileiro de notícias sobre Bitcoin e criptomoedas.</p></div><div class="news-card"><h4>📡 Cointelegraph Brasil</h4><a href="https://cointelegraph.com.br/" target="_blank">cointelegraph.com.br</a><p>Notícias atualizadas sobre o mercado cripto em português.</p></div><div class="news-card"><h4>🌎 CoinDesk</h4><a href="https://www.coindesk.com/" target="_blank">coindesk.com</a><p>Principal fonte internacional de notícias sobre criptomoedas.</p></div><div class="news-card"><h4>⚡ Cointelegraph</h4><a href="https://cointelegraph.com/" target="_blank">cointelegraph.com</a><p>Notícias globais sobre Bitcoin, Ethereum e blockchain.</p></div><div class="news-card"><h4>📊 Crypto Breaking</h4><a href="https://www.cryptobreaking.com/" target="_blank">cryptobreaking.com</a><p>Últimas notícias e análises do mercado cripto.</p></div></div>
+                <h3 style="color: var(--gold); margin-bottom: 15px;">📅 Calendário Econômico</h3>
+                <!-- Widget oficial do TradingView Economic Calendar -->
+                <div style="background: #0f141c; border-radius: 16px; overflow: hidden; margin-bottom: 25px;">
+                    <!-- TradingView Widget BEGIN -->
+                    <div class="tradingview-widget-container">
+                        <div class="tradingview-widget-container__widget"></div>
+                        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+                        {
+                        "width": "100%",
+                        "height": "600",
+                        "colorTheme": "dark",
+                        "locale": "br"
+                        }
+                        </script>
+                    </div>
+                    <!-- TradingView Widget END -->
+                </div>
+                <h3 style="color: var(--gold); margin: 20px 0 15px;">📰 Principais Notícias Cripto</h3>
+                <div class="news-grid">
+                    <div class="news-card"><h4>🇧🇷 Livecoins</h4><a href="https://livecoins.com.br/" target="_blank">livecoins.com.br</a><p>Maior portal brasileiro de notícias sobre Bitcoin e criptomoedas.</p></div>
+                    <div class="news-card"><h4>📡 Cointelegraph Brasil</h4><a href="https://cointelegraph.com.br/" target="_blank">cointelegraph.com.br</a><p>Notícias atualizadas sobre o mercado cripto em português.</p></div>
+                    <div class="news-card"><h4>🌎 CoinDesk</h4><a href="https://www.coindesk.com/" target="_blank">coindesk.com</a><p>Principal fonte internacional de notícias sobre criptomoedas.</p></div>
+                    <div class="news-card"><h4>⚡ Cointelegraph</h4><a href="https://cointelegraph.com/" target="_blank">cointelegraph.com</a><p>Notícias globais sobre Bitcoin, Ethereum e blockchain.</p></div>
+                    <div class="news-card"><h4>📊 Crypto Breaking</h4><a href="https://www.cryptobreaking.com/" target="_blank">cryptobreaking.com</a><p>Últimas notícias e análises do mercado cripto.</p></div>
+                </div>
             </div>
 
             <!-- Aba Estratégias de Pool de Liquidez (com botões para submodais) -->
@@ -996,7 +1019,7 @@
                         document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
                     } else {
                         price = 0;
-                        document.getElementById('priceText').innerText = `$ carregando...`;
+                        document.getElementById('priceText').innerHTML = `$ carregando...`;
                     }
                     fetchHyperliquidPrice(asset);
                     metalInterval = setInterval(() => fetchHyperliquidPrice(asset), 2000);
