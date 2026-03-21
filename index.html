@@ -506,18 +506,6 @@
         }
         .news-links a { color: var(--accent); text-decoration: none; font-size: 12px; }
         .news-links a:hover { text-decoration: underline; }
-        .copy-news-btn {
-            background: var(--accent);
-            border: none;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: 11px;
-            font-weight: bold;
-            margin-left: 10px;
-        }
-        .copy-news-btn:hover { background: var(--green); color: #000; }
 
         /* Estilos para a aba de estratégias */
         .strategy-content {
@@ -622,7 +610,7 @@
     </style>
 </head>
 <body>
-    <!-- CARD PRINCIPAL -->
+    <!-- CARD PRINCIPAL (intacto) -->
     <div class="card" id="mainCard">
         <h4>⚡ MESTRE DO SCALPING PRO ⚡</h4>
         <button class="btn-mode" onclick="toggleMode()">🖥️ ALTERNAR MODO COMPUTADOR</button>
@@ -723,19 +711,18 @@
 
         <!-- TABELA DE SESSÕES -->
         <table class="market-table">
-               <td colspan="3" class="market-header">🌍 SESSÕES CRIPTO / FOREX</td>
-             </tr>
-             <tr><td>🌏 Ásia</td><td>21:00-01:00</td><td style="color:var(--gold); text-align:right;">● médio</td></tr>
-             <tr><td>🇪🇺 Londres</td><td>04:00-09:00</td><td style="color:var(--green); text-align:right;">● alto</td></tr>
-             <tr><td>🇺🇸 NY (Pico)</td><td>10:00-14:00</td><td style="color:var(--green); text-align:right;">● PICO</td></tr>
-             <tr><td colspan="3" class="market-header">🏆 EURO, PRATA & WTI</td></tr>
-             <tr><td>🥇 Metais (NY)</td><td>09:20-15:30</td><td style="color:var(--gold); text-align:right;">● liquidez</td></tr>
-             <tr><td>🛢️ Petróleo (WTI)</td><td>10:00-16:30</td><td style="color:var(--accent); text-align:right;">● volatilidade</td></tr>
-         </table>
+               Bon<td colspan="3" class="market-header">🌍 SESSÕES CRIPTO / FOREX</td>
+                <tr><td>🌏 Ásia</td><td>21:00-01:00</td><td style="color:var(--gold); text-align:right;">● médio</td></tr>
+                <tr><td>🇪🇺 Londres</td><td>04:00-09:00</td><td style="color:var(--green); text-align:right;">● alto</td></tr>
+                <tr><td>🇺🇸 NY (Pico)</td><td>10:00-14:00</td><td style="color:var(--green); text-align:right;">● PICO</td></tr>
+                <tr><td colspan="3" class="market-header">🏆 EURO, PRATA & WTI</td></tr>
+                <tr><td>🥇 Metais (NY)</td><td>09:20-15:30</td><td style="color:var(--gold); text-align:right;">● liquidez</td></tr>
+                <tr><td>🛢️ Petróleo (WTI)</td><td>10:00-16:30</td><td style="color:var(--accent); text-align:right;">● volatilidade</td></tr>
+            </table>
 
-        <!-- NOVA SEÇÃO: NOTÍCIAS E CALENDÁRIO (com botão copiar) -->
+        <!-- NOVA SEÇÃO: NOTÍCIAS E CALENDÁRIO -->
         <div class="news-section">
-            <h4>📰 Notícias e Calendário <button class="copy-news-btn" onclick="copyMainNews()">📋 Copiar</button></h4>
+            <h4>📰 Notícias e Calendário</h4>
             <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: space-between;">
                 <div style="flex: 1; min-width: 200px;">
                     <div class="news-block"><h5>📅 Calendário Econômico</h5><a href="https://www.tradingview.com/economic-calendar/" target="_blank" style="color: var(--accent);">TradingView Economic Calendar</a></div>
@@ -791,7 +778,7 @@
                 <button class="tab-btn robot" onclick="switchTab('robot')">🤖 Robô Automatizado</button>
             </div>
 
-            <!-- Aba Top Pools -->
+            <!-- Aba Top Pools (restaurada) -->
             <div id="poolsTab" class="tab-content active">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <p style="color: var(--text);">Track DeFi pools across Ethereum, Arbitrum, Base, and Solana.</p>
@@ -802,19 +789,17 @@
                 <div class="warning-high-apr">⚠️ Os valores de APR nos cards são os maiores de cada categoria com base nos dados atuais. Sempre analise volume e liquidez.</div>
                 <div class="mode-toggle"><button id="modoAutoBtn" class="mode-btn" onclick="setModo('auto')">🤖 Automático (Score)</button><button id="modoManualBtn" class="mode-btn" onclick="setModo('manual')">👆 Manual</button><button id="modoAPRBtn" class="mode-btn apr-high active" onclick="setModo('apr')">🔥 APR altos</button></div>
                 <div class="filter-row"><div class="filter-item"><label>TVL mínimo ($)</label><input type="number" id="filtroTVL" placeholder="10000" value="0" step="1000"></div><div class="filter-item"><label>Volume mínimo ($)</label><input type="number" id="filtroVolume" placeholder="5000" value="0" step="1000"></div><div class="filter-item"><label>APR mínimo (%)</label><input type="number" id="filtroAPR" placeholder="100" value="0" step="10"></div><button class="btn-filter" onclick="aplicarFiltros()">Aplicar</button></div>
-                <div class="table-wrapper"><table class="pools-table" id="poolsTable"><thead>   <th onclick="ordenarPor('pool')">Pool</th><th onclick="ordenarPor('network')">Network</th><th onclick="ordenarPor('dex')">DEX</th><th onclick="ordenarPor('tvl')">TVL</th><th>Ratio</th><th onclick="ordenarPor('volume')">Volume 24h</th><th onclick="ordenarPor('apr')">APR</th><th>1h</th><th>6h</th><th>24h</th><th>7d</th><th>30d</th><th onclick="ordenarPor('fee')">Fee</th><th onclick="ordenarPor('age')">Age</th><th>Score</th> </thead><tbody id="poolsTableBody"></tbody></table></div>
+                <div class="table-wrapper"><table class="pools-table" id="poolsTable"><thead>   <th onclick="ordenarPor('pool')">Pool</th><th onclick="ordenarPor('network')">Network</th><th onclick="ordenarPor('dex')">DEX</th><th onclick="ordenarPor('tvl')">TVL</th><th>Ratio</th><th onclick="ordenarPor('volume')">Volume 24h</th><th onclick="ordenarPor('apr')">APR</th><th>1h</th><th>6h</th><th>24h</th><th>7d</th><th>30d</th><th onclick="ordenarPor('fee')">Fee</th><th onclick="ordenarPor('age')">Age</th><th>Score</th></thead><tbody id="poolsTableBody"></tbody></table></div>
                 <p style="color: var(--text); margin-top: 15px;">Mostrando 1–20 de 599 pools</p>
                 <div style="margin-top: 15px; text-align: center;"><a href="https://www.yldlab.xyz/" target="_blank" style="color: var(--green); font-weight: bold;">🔗 Ver mais em yldlab.xyz</a></div>
             </div>
 
-            <!-- Aba Notícias e Calendário (com botão copiar) -->
+            <!-- Aba Notícias e Calendário (com calendário completo) -->
             <div id="newsTab" class="tab-content">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h3 style="color: var(--gold); margin-bottom: 15px;">📅 Calendário Econômico</h3>
-                    <button class="copy-news-btn" onclick="copyNewsTab()">📋 Copiar</button>
-                </div>
+                <h3 style="color: var(--gold); margin-bottom: 15px;">📅 Calendário Econômico</h3>
                 <!-- Widget oficial do TradingView Economic Calendar -->
                 <div style="background: #0f141c; border-radius: 16px; overflow: hidden; margin-bottom: 25px;">
+                    <!-- TradingView Widget BEGIN -->
                     <div class="tradingview-widget-container">
                         <div class="tradingview-widget-container__widget"></div>
                         <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
@@ -826,6 +811,7 @@
                         }
                         </script>
                     </div>
+                    <!-- TradingView Widget END -->
                 </div>
                 <h3 style="color: var(--gold); margin: 20px 0 15px;">📰 Principais Notícias Cripto</h3>
                 <div class="news-grid">
@@ -948,7 +934,7 @@
         let modoOperacaoAtivo = false;
         let timeoutDescanso;
         let metalInterval = null;
-        let lastValidPrice = {}; // guarda último preço válido por ativo
+        let lastValidPrice = { GOLD: null, SILVER: null, WTI: null };
 
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioCtx = null;
@@ -957,29 +943,6 @@
 
         function setTF(tf, btn) { currentTF = tf; document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); initChart(); }
         function toggleMode() { isDesktop = !isDesktop; document.getElementById('mainCard').classList.toggle('desktop-mode', isDesktop); initChart(); }
-
-        // Função de busca de preços de metais (corrigida)
-        function fetchMetalPrice(asset) {
-            const basePrices = {
-                GOLD: 3012.45,
-                SILVER: 33.82,
-                WTI: 98.76
-            };
-            const base = basePrices[asset] || 0;
-            if (base === 0) return;
-            const variation = (Math.random() - 0.5) * 0.01; // ±0,5%
-            let newPrice = base * (1 + variation);
-            // Mantém dentro de um range plausível
-            if (asset === 'GOLD') newPrice = Math.min(Math.max(newPrice, 2950), 3100);
-            else if (asset === 'SILVER') newPrice = Math.min(Math.max(newPrice, 32), 36);
-            else if (asset === 'WTI') newPrice = Math.min(Math.max(newPrice, 95), 105);
-            
-            lastValidPrice[asset] = newPrice;
-            price = newPrice;
-            document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
-            updateSignals();
-            verificarAlarmes();
-        }
 
         async function fetchHyperliquidPrice(asset) {
             try {
@@ -1050,24 +1013,16 @@
                 else if (symbol === "TVC:SILVER") asset = "SILVER";
                 else if (symbol === "TVC:USOIL") asset = "WTI";
                 if (asset) {
-                    // Se já tiver último preço válido, exibe imediatamente
+                    // tenta usar último preço válido, senão mostra "carregando..."
                     if (lastValidPrice[asset]) {
                         price = lastValidPrice[asset];
                         document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
                     } else {
-                        // Gera um preço inicial base e já exibe (nunca fica "carregando...")
-                        const basePrices = { GOLD: 3012.45, SILVER: 33.82, WTI: 98.76 };
-                        const base = basePrices[asset] || 0;
-                        if (base) {
-                            lastValidPrice[asset] = base;
-                            price = base;
-                            document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
-                        } else {
-                            document.getElementById('priceText').innerHTML = `$ carregando...`;
-                        }
+                        price = 0;
+                        document.getElementById('priceText').innerHTML = `$ carregando...`;
                     }
-                    // Atualiza a cada 2 segundos
-                    metalInterval = setInterval(() => fetchMetalPrice(asset), 2000);
+                    fetchHyperliquidPrice(asset);
+                    metalInterval = setInterval(() => fetchHyperliquidPrice(asset), 2000);
                 }
             } else {
                 let pair = symbol.split(':')[1].toLowerCase();
@@ -1202,29 +1157,6 @@
         function openPasswordModal() { document.getElementById('passwordModal').style.display = 'flex'; } function closePasswordModal() { document.getElementById('passwordModal').style.display = 'none'; } function openDonationModal() { document.getElementById('donationModal').style.display = 'flex'; } function closeDonationModal() { document.getElementById('donationModal').style.display = 'none'; } function closeRobotModal() { document.getElementById('robotModal').style.display = 'none'; }
         function checkPassword() { if(document.getElementById('passInput').value === 'Maria1301') { fecharModal('passwordModal'); document.getElementById('robotModal').style.display = 'flex'; } else { alert('Senha incorreta'); } }
         function copyText(text) { navigator.clipboard.writeText(text).then(() => alert('✅ Copiado!')).catch(() => alert('❌ Erro ao copiar.')); }
-
-        // Função copiar notícias da aba "Notícias e Calendário" do modal
-        function copyNewsTab() {
-            let text = "📅 Calendário Econômico (TradingView)\n";
-            text += "📰 Notícias Cripto:\n";
-            text += "- Livecoins: https://livecoins.com.br/\n";
-            text += "- Cointelegraph Brasil: https://cointelegraph.com.br/\n";
-            text += "- CoinDesk: https://www.coindesk.com/\n";
-            text += "- Cointelegraph: https://cointelegraph.com/\n";
-            text += "- Crypto Breaking: https://www.cryptobreaking.com/\n";
-            navigator.clipboard.writeText(text).then(() => alert('✅ Notícias e calendário copiados!')).catch(() => alert('❌ Erro ao copiar.'));
-        }
-        // Função copiar notícias da seção principal do card
-        function copyMainNews() {
-            let text = "📅 Calendário Econômico: https://www.tradingview.com/economic-calendar/\n";
-            text += "📰 Notícias Cripto:\n";
-            text += "- Livecoins: https://livecoins.com.br/\n";
-            text += "- Cointelegraph Brasil: https://cointelegraph.com.br/\n";
-            text += "- CoinDesk: https://www.coindesk.com/\n";
-            text += "- Cointelegraph: https://cointelegraph.com/\n";
-            text += "- Crypto Breaking: https://www.cryptobreaking.com/\n";
-            navigator.clipboard.writeText(text).then(() => alert('✅ Notícias e calendário copiados!')).catch(() => alert('❌ Erro ao copiar.'));
-        }
 
         async function connectHyperliquid() { /* ... */ }
         async function placeRealOrder() { /* ... */ }
