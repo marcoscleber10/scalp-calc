@@ -18,7 +18,6 @@
             padding: 20px;
         }
 
-        /* Layout principal */
         .dashboard {
             max-width: 1400px;
             margin: 0 auto;
@@ -27,7 +26,7 @@
             gap: 20px;
         }
 
-        /* Sidebar esquerda */
+        /* SIDEBAR */
         .sidebar {
             background: #11151f;
             border-radius: 24px;
@@ -71,7 +70,6 @@
         .timeframe.active {
             background: #f0b90b;
             color: #0a0c12;
-            box-shadow: 0 2px 8px rgba(240,185,11,0.3);
         }
 
         /* Cards de commodities */
@@ -348,7 +346,7 @@
     <div class="sidebar">
         <div class="logo">⚡ MESTRE DO SCALPING PRO</div>
         <div class="timeframe-selector">
-            <div class="timeframe active" data-tf="1m">Courço Cabeludo (1m)</div>
+            <div class="timeframe active" data-tf="1m">Curso Cabeludo (1m)</div>
             <div class="timeframe" data-tf="15m">Day Trade (15m)</div>
         </div>
 
@@ -383,19 +381,19 @@
             <button id="refreshAllPrices" class="btn" style="margin-top:12px; width:100%;">↻ Atualizar preços</button>
         </div>
 
-        <!-- Outros indicadores -->
+        <!-- Indicadores laterais -->
         <div class="metric-card">
-            <div class="metric-label">Confiabilidade</div>
+            <div class="metric-label">CONFIABILIDADE</div>
             <div class="metric-value">30/100</div>
             <div class="badge">Evitar operação (Baixa)</div>
         </div>
         <div class="metric-card">
-            <div class="metric-label">Volatilidade</div>
+            <div class="metric-label">VOLATILIDADE</div>
             <div class="metric-value">MÉDIA</div>
             <div>Sessão: Metade NY</div>
         </div>
         <div class="metric-card">
-            <div class="metric-label">Modo Operação</div>
+            <div class="metric-label">MODO OPERAÇÃO</div>
             <div class="metric-value" id="modoOp">OFF</div>
             <button id="toggleModoBtn" class="btn" style="margin-top:8px; padding:4px 12px;">Ativar</button>
         </div>
@@ -413,7 +411,7 @@
                 📊 GRÁFICO DINÂMICO (simulação)
             </div>
             <div style="font-size:0.8rem; display: flex; gap: 8px; flex-wrap: wrap;">
-                <span>98,10 - 93,50 (+3,70%)</span>
+                <span>98,10 – 93,50 (+3,70%)</span>
                 <span>96,80 | 97,50 | 98,10 | 98,80 | 99,10 | 99,40 | 99,70 | 100,00</span>
             </div>
         </div>
@@ -499,8 +497,8 @@
         <div class="footer-stats">
             <div>SESSÕES CRIPTO / FOREX</div>
             <div class="sessions">
-                <span>🌏 Ásia 21:00-01:00 (médio)</span>
-                <span>🇬🇧 Londres 04:00-09:00 (alto)</span>
+                <span>🌏 Ásia 21:00–01:00 (médio)</span>
+                <span>🇬🇧 Londres 04:00–09:00 (alto)</span>
             </div>
             <div>© Mestre do Scalping | Dados simulados</div>
         </div>
@@ -508,29 +506,23 @@
 </div>
 
 <script>
-    // ======================== SIMULAÇÃO DE DADOS ========================
-    // Preços de commodities
-    let currentPrices = {
-        gold: null,
-        silver: null,
-        oil: null
-    };
+    // ======================== SIMULAÇÃO DE PREÇOS ========================
+    let currentPrices = { gold: null, silver: null, oil: null };
 
-    // Função que simula uma requisição de API para obter os preços
     async function fetchCommodityPrices() {
-        // Exibe loading nos campos que ainda não têm valor
-        if (!currentPrices.gold) document.getElementById('goldPrice').innerHTML = '<span class="loading-text">⏳</span>';
-        if (!currentPrices.silver) document.getElementById('silverPrice').innerHTML = '<span class="loading-text">⏳</span>';
-        if (!currentPrices.oil) document.getElementById('oilPrice').innerHTML = '<span class="loading-text">⏳</span>';
+        // Mostra loading apenas se ainda não tem valor
+        if (!currentPrices.gold) setLoadingPrice('gold', true);
+        if (!currentPrices.silver) setLoadingPrice('silver', true);
+        if (!currentPrices.oil) setLoadingPrice('oil', true);
         
         try {
-            // Simula delay de rede (800ms)
+            // Simula chamada de API (substitua aqui pela sua fonte real)
             await new Promise(resolve => setTimeout(resolve, 800));
             
-            // Dados fictícios realistas (valores e variações percentuais)
+            // Dados fictícios (valores reais e variações)
             const newData = {
                 gold: { value: 3012.45, change: +0.68 },
-                silver: { value: 33.82, change: +0.42 },
+                silver: { value: 33.82, change: -0.42 },
                 oil: { value: 98.76, change: -0.15 }
             };
             
@@ -540,11 +532,22 @@
                 oil: newData.oil.value
             };
             
-            // Atualiza a interface
             updatePriceDisplay(newData);
         } catch (error) {
-            console.error("Erro ao carregar preços:", error);
             showPriceError();
+        } finally {
+            setLoadingPrice('gold', false);
+            setLoadingPrice('silver', false);
+            setLoadingPrice('oil', false);
+        }
+    }
+    
+    function setLoadingPrice(commodity, isLoading) {
+        const priceSpan = document.getElementById(`${commodity}Price`);
+        if (isLoading && !currentPrices[commodity]) {
+            priceSpan.innerHTML = '<span class="loading-text">⏳</span>';
+        } else if (!isLoading && currentPrices[commodity]) {
+            // será atualizado depois
         }
     }
     
@@ -567,7 +570,7 @@
         oilChangeSpan.innerHTML = `<span class="${prices.oil.change >= 0 ? 'positive' : 'negative'}">${prices.oil.change >= 0 ? '+' : ''}${prices.oil.change.toFixed(2)}%</span>`;
         document.getElementById('oilError').innerText = '';
         
-        // Atualiza também o preço grande do WTI
+        // Atualiza o preço grande do WTI
         document.getElementById('wtiBigPrice').innerText = prices.oil.value.toFixed(2);
     }
     
@@ -589,13 +592,13 @@
         
         try {
             await new Promise(resolve => setTimeout(resolve, 700));
-            // Simulação de notícias e eventos
+            // Dados simulados (exatamente como no print)
             newsData = [
-                { title: "Petróleo WTI oscila com temores de oferta", date: "21/03/2026 14:30", type: "news" },
-                { title: "FED mantém juros; impacto no ouro", date: "21/03/2026 12:00", type: "news" },
-                { title: "Dados de emprego nos EUA surpreendem positivamente", date: "21/03/2026 09:45", type: "news" },
-                { title: "🔔 Calendário: PMI Industrial (EUA) - 22/03 10:00", date: "Evento: 22/03", type: "event" },
-                { title: "CPI da Zona do Euro - 24/03 06:00 (Alta volatilidade)", date: "Evento: 24/03", type: "event" }
+                { title: "Petróleo WTI oscila com temores de oferta", date: "21/03/2026 14:30" },
+                { title: "FED mantém juros; Impacto no ouro", date: "21/03/2026 12:00" },
+                { title: "Dados de emprego nos EUA surpreendem positivamente", date: "21/03/2026 09:45" },
+                { title: "Calendário: PMI Industrial (EUA) – 22/03 10:00", date: "Evento: 22/03" },
+                { title: "CPI da Zona do Euro – 24/03 06:00 (Alta volatilidade)", date: "Evento: 24/03" }
             ];
             renderNews(newsData);
         } catch (err) {
@@ -688,15 +691,11 @@
         fetchCommodityPrices();
         fetchNewsAndCalendar();
         
-        // Botão atualizar preços (sidebar)
-        document.getElementById('refreshAllPrices').addEventListener('click', () => {
-            fetchCommodityPrices();
-        });
+        // Botão atualizar preços
+        document.getElementById('refreshAllPrices').addEventListener('click', fetchCommodityPrices);
         
         // Botão atualizar notícias
-        document.getElementById('atualizarNoticiasBtn').addEventListener('click', () => {
-            fetchNewsAndCalendar();
-        });
+        document.getElementById('atualizarNoticiasBtn').addEventListener('click', fetchNewsAndCalendar);
         
         // Botão copiar notícias
         document.getElementById('copiarNoticiasBtn').addEventListener('click', copyNewsToClipboard);
@@ -708,15 +707,15 @@
             input.value = '';
         });
         
-        // Botão calcular alvos
+        // Calcular alvos
         document.getElementById('calcAlvosBtn').addEventListener('click', () => {
             alert("Cálculo de alvos baseado nos parâmetros:\nCapital $300\nAvançadores $10\nDane 1%\nPaix 1%");
         });
         
-        // Alternar modo operação
+        // Toggle modo operação
         document.getElementById('toggleModoBtn').addEventListener('click', toggleModo);
         
-        // Timeframe (simples troca visual)
+        // Timeframe selector (apenas visual)
         const timeframes = document.querySelectorAll('.timeframe');
         timeframes.forEach(tf => {
             tf.addEventListener('click', () => {
@@ -740,7 +739,7 @@
             });
         });
         
-        // Atualização automática a cada 30 segundos (preços) e 2 minutos (notícias)
+        // Atualizações automáticas periódicas (opcional)
         setInterval(() => {
             fetchCommodityPrices();
         }, 30000);
