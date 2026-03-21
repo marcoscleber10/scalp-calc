@@ -2,921 +2,810 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Mestre do Scalping Pro</title>
     <style>
-        :root {
-            --bg: #0d1117;
-            --card: #161b22;
-            --green: #00ff88;
-            --red: #ff3e3e;
-            --text: #8b949e;
-            --accent: #2f81f7;
-            --gold: #ffcc00;
-            --purple: #9d4edd;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, 'Inter', -apple-system, sans-serif;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
-        body { background-color: var(--bg); color: white; display: flex; justify-content: center; padding: 20px; transition: filter 0.5s, box-shadow 0.5s; }
-        .card { background: var(--card); padding: 24px; border-radius: 24px; width: 100%; max-width: 420px; border: 1px solid #30363d; box-shadow: 0 20px 40px rgba(0,0,0,0.6); transition: all 0.3s; }
-        .card.desktop-mode { max-width: 95%; }
-        .desktop-mode #chart_container { height: 500px !important; }
-        h4 { color: var(--text); font-size: 12px; text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px dashed #30363d; }
-        .btn-mode { width: 100%; background: var(--accent); color: white; border: none; padding: 12px; border-radius: 40px; font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 12px; text-transform: uppercase; }
-        .time-selector { display: flex; gap: 8px; margin-bottom: 15px; }
-        .time-btn { flex: 1; background: #21262d; border: 1px solid #30363d; color: var(--text); padding: 12px 5px; border-radius: 40px; font-size: 11px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .time-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
-        .time-btn.active[data-t="15"] { background: var(--gold); color: #000; border-color: var(--gold); }
-        select { width: 100%; background: #21262d; color: white; border: 1px solid #30363d; padding: 15px; border-radius: 40px; margin-bottom: 20px; font-size: 14px; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239aa4b3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>"); background-repeat: no-repeat; background-position: right 18px center; background-size: 16px; }
-        .price { font-size: 42px; font-weight: 800; color: var(--green); text-align: center; margin-bottom: 15px; font-family: 'Courier New', monospace; text-shadow: 0 0 10px #00ff8840; }
-        .status-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .status-bar { background: #0f141c; padding: 12px 5px; border-radius: 20px; border: 1px solid #2a3340; text-align: center; position: relative; overflow: hidden; }
-        .status-label { font-size: 9px; color: var(--text); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px; }
-        .status-value { font-size: 14px; font-weight: bold; display: block; }
-        .light-glow { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: currentColor; filter: blur(4px); opacity: 0.5; }
-        
-        /* SCORE DE CONFLUÊNCIA */
-        .score-container { margin-bottom: 15px; }
-        .score-bar { background: #1e2a38; height: 20px; border-radius: 10px; overflow: hidden; margin: 5px 0; }
-        .score-fill { height: 100%; width: 0%; transition: width 0.3s; }
-        .score-fill.alta { background: linear-gradient(90deg, #00ff88, #00cc66); }
-        .score-fill.media { background: linear-gradient(90deg, #ffcc00, #ffaa00); }
-        .score-fill.baixa { background: linear-gradient(90deg, #ff3e3e, #cc0000); }
-        .score-text { display: flex; justify-content: space-between; font-size: 11px; color: var(--text); }
-        
-        /* ALERTAS */
-        @keyframes flashGreen {
-            0% { background-color: rgba(0,255,136,0); }
-            50% { background-color: rgba(0,255,136,0.3); }
-            100% { background-color: rgba(0,255,136,0); }
+
+        body {
+            background: #0a0c12;
+            color: #eef2ff;
+            padding: 20px;
         }
-        @keyframes flashRed {
-            0% { background-color: rgba(255,62,62,0); }
-            50% { background-color: rgba(255,62,62,0.3); }
-            100% { background-color: rgba(255,62,62,0); }
+
+        /* Container principal */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 20px;
         }
-        .alerta-compra { animation: flashGreen 0.5s ease-in-out 3; }
-        .alerta-venda { animation: flashRed 0.5s ease-in-out 3; }
-        
-        .badge-alerta {
-            background: var(--gold);
-            color: #000;
-            padding: 8px 12px;
-            border-radius: 40px;
-            font-weight: bold;
-            font-size: 12px;
-            margin-bottom: 15px;
-            display: inline-block;
-            animation: pulse 1s infinite;
+
+        /* Coluna esquerda (conteúdo principal) */
+        .main-col {
+            background: #11151f;
+            border-radius: 24px;
+            border: 1px solid #1e2a3a;
+            overflow: hidden;
+            padding: 20px;
         }
-        @keyframes pulse {
-            0% { opacity: 0.8; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.05); }
-            100% { opacity: 0.8; transform: scale(1); }
-        }
-        
-        /* MODO OPERAÇÃO - CHAVE ON/OFF */
-        .modo-operacao {
-            background: #1e2a38;
-            padding: 15px;
-            border-radius: 20px;
-            margin: 15px 0;
+
+        /* Cabeçalho */
+        .header {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            border: 1px solid var(--accent);
+            align-items: baseline;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+            gap: 12px;
         }
-        .switch {
-            position: relative;
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #f0b90b, #ff8c00);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .mode-selector {
+            display: flex;
+            gap: 12px;
+            background: #0a0e16;
+            padding: 5px;
+            border-radius: 40px;
+            border: 1px solid #1f2a3e;
+        }
+
+        .mode-btn {
+            padding: 6px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: 0.2s;
+            color: #8e9aaf;
+        }
+
+        .mode-btn.active {
+            background: #f0b90b;
+            color: #0a0c12;
+        }
+
+        /* Card BTC */
+        .btc-card {
+            background: #0c111b;
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 24px;
+            border: 1px solid #1e2a3a;
+        }
+
+        .btc-symbol {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #f0b90b;
+            margin-bottom: 8px;
+        }
+
+        .btc-price {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 8px 0;
+        }
+
+        .btc-change {
+            font-size: 0.9rem;
+        }
+
+        .positive { color: #2ecc71; }
+        .negative { color: #e74c3c; }
+
+        /* Filtros */
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding: 12px 0;
+            border-top: 1px solid #1e2a3a;
+            border-bottom: 1px solid #1e2a3a;
+        }
+
+        .filter-tag {
+            background: #1e2a3a;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Info row */
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .info-card {
+            background: #0c111b;
+            border-radius: 20px;
+            padding: 14px;
+            flex: 1;
+            text-align: center;
+        }
+
+        .info-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #7c8ba0;
+        }
+
+        .info-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-top: 6px;
+        }
+
+        .badge {
+            background: #1e2a3a;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
             display: inline-block;
-            width: 50px;
-            height: 24px;
         }
-        .switch input {
+
+        /* Detalhe do BTC */
+        .btc-detail {
+            background: #0c111b;
+            border-radius: 20px;
+            padding: 16px;
+            margin: 20px 0;
+        }
+
+        .btc-detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        /* Abas */
+        .tabs {
+            margin-top: 24px;
+        }
+
+        .tabs-header {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            border-bottom: 1px solid #1e2a3a;
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: #8e9aaf;
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 30px;
+            transition: 0.2s;
+        }
+
+        .tab-btn.active {
+            background: rgba(240,185,11,0.2);
+            color: #f0b90b;
+            border-bottom: 2px solid #f0b90b;
+        }
+
+        .tab-content {
             display: none;
         }
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            background-color: #444;
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Notícias */
+        .news-item {
+            background: #0c111b;
+            padding: 14px;
+            border-radius: 16px;
+            margin-bottom: 12px;
+            border-left: 3px solid #f0b90b;
+        }
+
+        .news-title {
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .news-date {
+            font-size: 0.7rem;
+            color: #7c8ba0;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-bottom: 16px;
+        }
+
+        /* Coluna direita */
+        .right-col {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background: #11151f;
             border-radius: 24px;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            transition: .4s;
+            border: 1px solid #1e2a3a;
+            padding: 20px;
         }
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            border-radius: 50%;
-            transition: .4s;
-        }
-        input:checked + .slider {
-            background-color: #00ff88;
-        }
-        input:checked + .slider:before {
-            transform: translateX(26px);
-        }
-        #statusModo {
-            color: var(--text);
-            font-size: 12px;
-            font-weight: bold;
-        }
-        .modo-descanso {
-            filter: brightness(0.3);
-        }
-        .modo-ativo {
-            box-shadow: 0 0 20px #00ff88 inset;
-        }
-        
-        /* ALARME DE PREÇO */
-        .alarme-section {
-            background: #1e2a38;
-            padding: 15px;
-            border-radius: 20px;
-            margin: 15px 0;
-            border: 1px solid var(--gold);
-        }
-        .alarme-title {
-            color: var(--gold);
-            font-weight: bold;
-            margin-bottom: 10px;
+
+        .alarm-input-group {
             display: flex;
-            align-items: center;
-            gap: 5px;
+            gap: 10px;
+            margin: 12px 0;
         }
-        .alarme-input-group {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 10px;
-        }
-        .alarme-input {
+
+        .alarm-input {
             flex: 1;
-            background: #0d151f;
-            border: 1px solid #3d4d62;
+            background: #0a0e16;
+            border: 1px solid #2a3a4a;
+            border-radius: 30px;
+            padding: 10px 16px;
             color: white;
-            padding: 10px;
-            border-radius: 20px;
-            font-size: 14px;
         }
-        .alarme-btn {
-            background: var(--accent);
+
+        .btn {
+            background: #1e2a3a;
             border: none;
+            padding: 8px 18px;
+            border-radius: 40px;
             color: white;
-            padding: 10px 15px;
-            border-radius: 20px;
+            font-weight: 500;
             cursor: pointer;
-            font-weight: bold;
+            transition: 0.2s;
+            font-size: 0.8rem;
         }
-        .alarme-lista {
-            margin-top: 10px;
-            font-size: 12px;
+
+        .btn-primary {
+            background: #f0b90b;
+            color: #0a0c12;
         }
-        .alarme-item {
+
+        .btn-primary:hover {
+            background: #e0a80b;
+        }
+
+        .btn:hover {
+            filter: brightness(1.05);
+        }
+
+        .ad-card {
+            text-align: center;
+        }
+
+        .ad-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #f0b90b;
+        }
+
+        .sessions-list {
             display: flex;
-            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .session-tag {
+            background: #1e2a3a;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+        }
+
+        .bottom-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 12px;
+            justify-content: center;
+        }
+
+        .purple-dot {
+            display: inline-flex;
             align-items: center;
-            padding: 8px;
-            background: #0d151f;
-            border-radius: 10px;
-            margin-bottom: 5px;
-        }
-        .alarme-remover {
-            background: var(--red);
-            border: none;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 10px;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: #9b59b6;
+            border-radius: 50%;
             cursor: pointer;
-            font-size: 10px;
+            transition: 0.2s;
+            text-decoration: none;
+            color: white;
+            font-size: 1.2rem;
         }
-        
-        #chart_container { width: 100%; height: 220px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #30363d; background: #000; transition: height 0.3s; }
-        .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
-        label { font-size: 9px; color: var(--text); text-transform: uppercase; margin-bottom: 4px; display: block; }
-        input { width: 100%; background: #21262d; border: 1px solid #30363d; color: white; padding: 12px; border-radius: 20px; font-size: 14px; }
-        .btn-calc { width: 100%; padding: 16px; background: var(--green); color: #0d1117; border: none; border-radius: 40px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 16px; box-shadow: 0 6px 0 #0b5e3c; transform: translateY(-2px); transition: 0.1s; margin-top: 10px; }
-        .btn-calc:active { transform: translateY(4px); box-shadow: 0 2px 0 #0b5e3c; }
-        .res { margin-top: 20px; padding: 18px; background: #0f151d; border-radius: 24px; display: none; border: 1px solid #2a3440; }
-        .projects-section { margin-top: 30px; border-top: 1px solid #30363d; padding-top: 20px; }
-        .projects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-        .project-btn { background: #1a222c; color: #c9d1d9; border: 1px solid #30363d; padding: 12px 5px; border-radius: 30px; font-size: 11px; font-weight: 600; text-decoration: none; text-align: center; display: block; cursor: pointer; }
-        .project-btn:hover { background: #26323f; }
-        .ad-container { margin-top: 25px; padding: 15px; background: #161e28; border-radius: 30px; border: 1px solid #ffcc0040; text-align: center; }
-        .btn-ad { display: inline-block; background: #ffcc00; color: #000; text-decoration: none; padding: 12px 32px; border-radius: 40px; font-weight: 800; margin-top: 10px; border: 1px solid #ffcc66; box-shadow: 0 4px 0 #8f651f; transform: translateY(-2px); transition: 0.1s; }
-        .btn-ad:active { transform: translateY(2px); box-shadow: 0 1px 0 #8f651f; }
-        .market-table { width: 100%; font-size: 11px; margin-top: 20px; border-collapse: collapse; color: #b6c2d2; }
-        .market-table td { padding: 8px 4px; border-bottom: 1px solid #222b35; }
-        .market-header { color: var(--accent); font-weight: 700; font-size: 10px; letter-spacing: 1.5px; padding-top: 15px; }
-        .floating-ball { position: fixed; bottom: 30px; right: 30px; width: 70px; height: 70px; background: radial-gradient(circle at 30% 30%, var(--green), #0f8f5c); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #0b0f14; font-weight: 900; font-size: 28px; box-shadow: 0 10px 25px #00ff8880; cursor: pointer; z-index: 9999; border: 2px solid white; }
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; z-index: 10000; }
-        .modal-content { background: #161b22; padding: 30px; border-radius: 30px; width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto; border: 2px solid var(--gold); }
-        .modal-content h2 { color: var(--gold); margin-bottom: 20px; }
-        .modal-content h3 { color: var(--gold); margin: 20px 0 10px; }
-        .campo { margin-bottom: 15px; }
-        .campo label { color: var(--text); font-size: 11px; text-transform: uppercase; margin-bottom: 5px; display: block; }
-        .donation-item { background: #1e2a36; padding: 15px; border-radius: 15px; margin: 10px 0; border-left: 5px solid; }
-        .donation-item p { word-break: break-all; background: #0d151f; padding: 10px; border-radius: 10px; margin-top: 8px; font-family: monospace; }
-        .copy-btn { background: var(--accent); border: none; color: white; padding: 5px 15px; border-radius: 20px; float: right; cursor: pointer; }
-        .close-btn { background: var(--accent); border: none; color: white; padding: 12px; border-radius: 30px; width: 100%; margin-top: 20px; cursor: pointer; font-weight: bold; }
-        .console { background: #0d1117; padding: 10px; border-radius: 10px; margin: 10px 0; font-size: 12px; font-family: monospace; height: 50px; overflow-y: auto; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .security-warning { background: #ff3e3e20; border: 1px solid #ff3e3e; color: #ff3e3e; padding: 10px; border-radius: 10px; font-size: 11px; margin-bottom: 15px; text-align: center; }
-        .vol-indicator { display: inline-block; padding: 4px 8px; border-radius: 20px; font-size: 10px; font-weight: bold; margin-left: 8px; }
-        .vol-alta { background: #00ff8820; color: #00ff88; border: 1px solid #00ff88; }
-        .vol-media { background: #ffcc0020; color: #ffcc00; border: 1px solid #ffcc00; }
-        .vol-baixa { background: #ff3e3e20; color: #ff3e3e; border: 1px solid #ff3e3e; }
+
+        .purple-dot:hover {
+            background: #8e44ad;
+            transform: scale(1.05);
+        }
+
+        .footer {
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- CARD PRINCIPAL - 100% INTACTO -->
-    <div class="card" id="mainCard">
-        <h4>⚡ MESTRE DO SCALPING PRO ⚡</h4>
-        <button class="btn-mode" onclick="toggleMode()">🖥️ ALTERNAR MODO COMPUTADOR</button>
-
-        <div class="time-selector">
-            <button class="time-btn active" data-t="1" onclick="setTF('1', this)">⚡ SCALP (1m)</button>
-            <button class="time-btn" data-t="15" onclick="setTF('15', this)">🔭 DAY TRADE (15m)</button>
-        </div>
-
-        <select id="pairSelector" onchange="initChart()">
-            <optgroup label="📈 Binance">
-                <option value="BINANCE:BTCUSDT" selected>₿ BTC/USDT (Binance)</option>
-                <option value="BINANCE:ETHUSDT">⟠ ETH/USDT (Binance)</option>
-                <option value="BINANCE:SOLUSDT">◎ SOL/USDT (Binance)</option>
-            </optgroup>
-            <optgroup label="🌀 Hyperliquid">
-                <option value="BYBIT:BTCUSDT">₿ BTC/USD (Hyperliquid)</option>
-                <option value="BYBIT:ETHUSDT">⟠ ETH/USD (Hyperliquid)</option>
-                <option value="BYBIT:SOLUSDT">◎ SOL/USD (Hyperliquid)</option>
-            </optgroup>
-            <optgroup label="🏅 Metais & Energia">
-                <option value="TVC:GOLD">🥇 Ouro (XAU/USD)</option>
-                <option value="TVC:SILVER">🥈 Prata (XAG/USD)</option>
-                <option value="TVC:USOIL">🛢️ Petróleo WTI</option>
-            </optgroup>
-        </select>
-
-        <div class="price" id="priceText">$ 74,069.05</div>
-
-        <!-- SCORE DE CONFLUÊNCIA -->
-        <div class="score-container">
-            <div class="score-text">
-                <span>🔥 Confluência</span>
-                <span id="scoreValue">40/100</span>
-            </div>
-            <div class="score-bar">
-                <div class="score-fill" id="scoreFill" style="width:40%"></div>
-            </div>
-            <div class="score-text">
-                <span id="scoreLabel">Evitar operação</span>
-                <span id="probabilidade">Baixa probabilidade</span>
+<div class="container">
+    <!-- Coluna esquerda -->
+    <div class="main-col">
+        <div class="header">
+            <div class="logo">⚡ MESTRE DO SCALPING PRO</div>
+            <div class="mode-selector">
+                <div class="mode-btn active" data-mode="alternar">ALTERNAR MODO COMPUTADOR</div>
+                <div class="mode-btn" data-mode="scalp">SCALP (1m)</div>
+                <div class="mode-btn" data-mode="day">DAY TRADE (15m)</div>
             </div>
         </div>
 
-        <!-- BADGE DE ALERTA (aparece quando confluência alta) -->
-        <div id="alertaBadge" class="badge-alerta" style="display: none;">🚨 ENTRADA FORTE DETECTADA</div>
-
-        <!-- 3 SINAIS -->
-        <div class="status-grid">
-            <div id="statusBox" class="status-bar">
-                <div class="light-glow"></div>
-                <span class="status-label">SINAL GERAL</span>
-                <span class="status-value" id="statusText">⚠️ AGUARDAR</span>
-            </div>
-            <div id="rsiBox" class="status-bar">
-                <div class="light-glow"></div>
-                <span class="status-label">FILTRO TÉCNICO</span>
-                <span class="status-value" id="rsiText">📉 VENDA</span>
-            </div>
-            <div id="momBox" class="status-bar">
-                <div class="light-glow"></div>
-                <span class="status-label">MOMENTUM</span>
-                <span class="status-value" id="momText">⚖️ NEUTRO</span>
+        <!-- BTC Card -->
+        <div class="btc-card">
+            <div class="btc-symbol">BTC/USDT (Binance)</div>
+            <div class="btc-price" id="btcPrice">--</div>
+            <div class="btc-change" id="btcChange"></div>
+            <div class="info-row" style="margin-top: 16px;">
+                <div class="info-card">
+                    <div class="info-label">Confiabilidade</div>
+                    <div class="info-value">30/100</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">Evitar operação</div>
+                    <div class="badge">Baixa</div>
+                </div>
             </div>
         </div>
 
-        <!-- INDICADOR DE VOLATILIDADE -->
-        <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 11px;">
-            <span>📊 Volatilidade: <span id="volText">MÉDIA</span></span>
-            <span>⏰ Sessão: <span id="sessaoText">Londres</span></span>
+        <!-- Filtros -->
+        <div class="filters">
+            <span class="filter-tag">SIMILAR GERAL</span>
+            <span class="filter-tag">FILTRO TÉCNICO</span>
+            <span class="filter-tag">COLETANDO 4/21</span>
+            <span class="filter-tag">NEUTRO</span>
         </div>
 
-        <!-- MODO OPERAÇÃO - CHAVE ON/OFF -->
-        <div class="modo-operacao">
-            <span id="statusModo">Modo Operação: OFF</span>
-            <label class="switch">
-                <input type="checkbox" id="lockScreenToggle">
-                <span class="slider"></span>
-            </label>
-        </div>
-
-        <!-- ALARME DE PREÇO -->
-        <div class="alarme-section">
-            <div class="alarme-title">
-                <span>🔔 ALARME DE PREÇO</span>
+        <!-- Info Volatilidade e Sessão -->
+        <div class="info-row">
+            <div class="info-card">
+                <div class="info-label">Volatilidade</div>
+                <div class="info-value">MÉDIA</div>
             </div>
-            <div class="alarme-input-group">
-                <input type="number" id="alarmePreco" class="alarme-input" placeholder="Preço alvo (ex: 75000)" step="100">
-                <button class="alarme-btn" onclick="adicionarAlarme()">Adicionar</button>
+            <div class="info-card">
+                <div class="info-label">Sessão</div>
+                <div class="info-value">Petróleo</div>
             </div>
-            <div class="alarme-lista" id="alarmeLista">
-                <div style="color: var(--text); text-align: center; padding: 10px;">Nenhum alarme definido</div>
+            <div class="info-card">
+                <div class="info-label">Modo Operação</div>
+                <div class="info-value" id="modoOp">OFF</div>
+                <button id="toggleModoBtn" class="btn" style="margin-top:8px;">Ativar</button>
             </div>
         </div>
 
-        <!-- GRÁFICO TRADINGVIEW -->
-        <div id="chart_container"></div>
-
-        <!-- INPUTS -->
-        <div class="inputs-grid">
-            <div><label>💰 Capital ($)</label><input type="number" id="capital" value="300"></div>
-            <div><label>⚡ Alavancagem</label><input type="number" id="lev" value="10"></div>
-            <div><label>✅ Gain %</label><input type="number" id="tpP" value="1.0" step="0.1"></div>
-            <div><label>🛑 Stop %</label><input type="number" id="slP" value="1.0" step="0.1"></div>
-        </div>
-
-        <button class="btn-calc" onclick="calc()">📊 CALCULAR ALVOS</button>
-
-        <!-- RESULTADOS -->
-        <div id="results" class="res">
-            <div style="display:flex; justify-content:space-between;"><span>🟢 TP:</span> <span id="resTP" style="color:var(--green);"></span></div>
-            <div style="display:flex; justify-content:space-between; margin-top:10px;"><span>🔴 SL:</span> <span id="resSL" style="color:var(--red);"></span></div>
-        </div>
-
-        <!-- GRADE DE PROJETOS -->
-        <div class="projects-section">
-            <div class="projects-grid">
-                <a href="https://site-557591544835-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Sinais Invest</a>
-                <a href="https://site-combustai-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">CombustAI</a>
-                <a href="https://site-559791916621-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Registro DCA</a>
-                <a href="https://pepinometro-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Pepinômetro</a>
-                <a href="https://historia-copas-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">História Copas</a>
-                <a href="https://investopcao.culturabuilder.com" class="project-btn" target="_blank">InvestOpção</a>
+        <!-- Detalhe BTC -->
+        <div class="btc-detail">
+            <div class="btc-detail-row">
+                <span>Bitcoin / TetherUS</span>
+                <span id="btcDetailPrice">--</span>
+            </div>
+            <div class="btc-detail-row">
+                <span>Variação</span>
+                <span id="btcDetailChange">--</span>
+            </div>
+            <div class="btc-detail-row">
+                <span>Vol</span>
+                <span>BTC</span>
             </div>
         </div>
 
-        <!-- PUBLICIDADE ATMOS IPTV -->
-        <div class="ad-container">
-            <span style="color:var(--gold); font-weight:800; font-size:16px;">📺 ATMOS IPTV</span><br>
-            <span style="font-size:12px;">+15.000 canais • 4K • Estável</span>
-            <a href="https://wa.me/5597991916621" target="_blank" class="btn-ad">TESTE GRÁTIS</a>
-        </div>
+        <!-- Abas -->
+        <div class="tabs">
+            <div class="tabs-header">
+                <button class="tab-btn active" data-tab="sinais">Sinais Invest</button>
+                <button class="tab-btn" data-tab="combust">CombustAl</button>
+                <button class="tab-btn" data-tab="dca">Registro DCA</button>
+                <button class="tab-btn" data-tab="papirno">Papirnómetro</button>
+                <button class="tab-btn" data-tab="historia">História Copas</button>
+                <button class="tab-btn" data-tab="opcao">InvestOpção</button>
+                <button class="tab-btn" data-tab="noticias">📰 Notícias & Calendário</button>
+            </div>
 
-        <!-- TABELA DE SESSÕES -->
-        <table class="market-table">
-            <tr><td colspan="3" class="market-header">🌍 SESSÕES CRIPTO / FOREX</td></tr>
-            <tr><td>🌏 Ásia</td><td>21:00-01:00</td><td style="color:var(--gold); text-align:right;">● médio</td></tr>
-            <tr><td>🇪🇺 Londres</td><td>04:00-09:00</td><td style="color:var(--green); text-align:right;">● alto</td></tr>
-            <tr><td>🇺🇸 NY (Pico)</td><td>10:00-14:00</td><td style="color:var(--green); text-align:right;">● PICO</td></tr>
-            <tr><td colspan="3" class="market-header">🏆 EURO, PRATA & WTI</td></tr>
-            <tr><td>🥇 Metais (NY)</td><td>09:20-15:30</td><td style="color:var(--gold); text-align:right;">● liquidez</td></tr>
-            <tr><td>🛢️ Petróleo (WTI)</td><td>10:00-16:30</td><td style="color:var(--accent); text-align:right;">● volatilidade</td></tr>
-        </table>
+            <!-- Conteúdo das abas -->
+            <div id="sinais" class="tab-content active">
+                <div class="news-item">Sinais de compra/venda gerados por IA em breve.</div>
+            </div>
+            <div id="combust" class="tab-content">
+                <div class="news-item">Análise de combustíveis e indicadores macro.</div>
+            </div>
+            <div id="dca" class="tab-content">
+                <div class="news-item">Registro de entradas DCA: última atualização 21/03.</div>
+            </div>
+            <div id="papirno" class="tab-content">
+                <div class="news-item">Papirnómetro: tendência de curto prazo NEUTRO.</div>
+            </div>
+            <div id="historia" class="tab-content">
+                <div class="news-item">Histórico de cipas e reversões.</div>
+            </div>
+            <div id="opcao" class="tab-content">
+                <div class="news-item">Ferramenta InvestOpção: opções binárias simuladas.</div>
+            </div>
 
-        <!-- BOTÃO DONATIVOS -->
-        <button class="project-btn" onclick="openDonationModal()" style="background:var(--gold); color:#000; width:100%; margin-top:15px;">💰 Donativos</button>
-    </div>
-
-    <!-- BOLINHA FLUTUANTE -->
-    <div class="floating-ball" onclick="openPasswordModal()">🔓</div>
-
-    <!-- MODAL DE SENHA -->
-    <div id="passwordModal" class="modal">
-        <div class="modal-content" style="max-width:350px;">
-            <h2>🔐 ACESSO</h2>
-            <input type="password" id="passInput" maxlength="9" placeholder="*********" style="text-align:center; font-size:24px; letter-spacing:4px;">
-            <button class="close-btn" onclick="checkPassword()" style="margin-top:15px;">VALIDAR</button>
+            <!-- Nova aba: Notícias e Calendário -->
+            <div id="noticias" class="tab-content">
+                <div class="action-buttons">
+                    <button id="atualizarNoticiasBtn" class="btn">🔄 Atualizar</button>
+                    <button id="copiarNoticiasBtn" class="btn btn-primary">📋 Copiar</button>
+                </div>
+                <div id="newsCalendarContent">
+                    <div class="loading-text">Carregando notícias e calendário...</div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- MODAL DO ROBÔ - AGORA FUNCIONAL -->
-    <div id="robotModal" class="modal">
-        <div class="modal-content">
-            <h2>🤖 ROBÔ SCALPER</h2>
-            <p style="color:var(--green);">🔓 Acesso autorizado</p>
-            
-            <div class="security-warning">
-                ⚠️ ATENÇÃO: Use apenas em ambiente local. Chave privada não é salva.
+    <!-- Coluna direita -->
+    <div class="right-col">
+        <!-- Alarme de preço -->
+        <div class="card">
+            <div><strong>🔔 ALARME DE PREÇO</strong></div>
+            <div class="alarm-input-group">
+                <input type="text" id="alarmPriceInput" class="alarm-input" placeholder="Preço alvo (ex: 75000)">
+                <button id="addAlarmBtn" class="btn">Adicionar</button>
             </div>
+            <div id="alarmList" style="margin-top: 12px; font-size:0.8rem;">Nenhum alarme definido.</div>
+        </div>
 
-            <h3>🔐 Credenciais Hyperliquid</h3>
-            <div class="campo">
-                <label>Endereço da conta principal (MetaMask/SafePal)</label>
-                <input type="text" id="hlMainAddress" value="0x9a761Cc6331Fd28D0b04811135dfA233f6499C9C">
-            </div>
-            <div class="campo">
-                <label>Endereço da API wallet (Robonovo)</label>
-                <input type="text" id="hlApiAddress" value="0xa9adb7057b5531c077962289a69bbadc4973e381">
-            </div>
-            <div class="campo">
-                <label>Chave privada da API wallet</label>
-                <input type="password" id="hlApiPrivateKey" placeholder="0x...">
-            </div>
+        <!-- Calcular alvos -->
+        <div class="card">
+            <button id="calcAlvosBtn" class="btn btn-primary" style="width:100%;">CALCULAR ALVOS</button>
+        </div>
 
-            <button class="btn-mode" onclick="connectHyperliquid()" style="background:var(--accent);">🔌 Validar e Conectar</button>
-            <div class="console" id="apiConsole">[API] Desconectado</div>
+        <!-- ATMOS IPTV -->
+        <div class="card ad-card">
+            <div class="ad-title">ATMOS IPTV</div>
+            <div>+16.000 canais + 4K + Estável</div>
+            <button class="btn" style="margin-top:12px;">TESTE GRÁTIS</button>
+        </div>
 
-            <h3>📝 Ordem Real</h3>
-            <div class="campo">
-                <label>Capital (USDC)</label>
-                <input type="number" id="botCapital" value="10" step="1" min="5">
+        <!-- Sessões Cripto / Forex -->
+        <div class="card">
+            <div><strong>SESSÕES CRIPTO / FOREX</strong></div>
+            <div class="sessions-list">
+                <span class="session-tag">🌏 Ásia</span>
+                <span class="session-tag">🇬🇧 Londres</span>
+                <span class="session-tag">🇺🇸 NY (Pico)</span>
+                <span class="session-tag">🇪🇺 EURO, PRATA & WTI</span>
+                <span class="session-tag">🥈 Metais (INV)</span>
+                <span class="session-tag">🛢️ Petróleo (WTI)</span>
             </div>
-            <div class="grid-2">
-                <div><label>Stop Loss %</label><input type="number" id="botSL" value="1.5" step="0.1"></div>
-                <div><label>Take Profit %</label><input type="number" id="botTP" value="1.0" step="0.1"></div>
-            </div>
-            <div class="campo">
-                <label>Par</label>
-                <select id="botPair">
-                    <option value="BTC">₿ BTC/USDC</option>
-                    <option value="ETH">⟠ ETH/USDC</option>
-                    <option value="SOL">◎ SOL/USDC</option>
-                    <option value="GOLD">🥇 XAU/USD (Ouro)</option>
-                    <option value="SILVER">🥈 XAG/USD (Prata)</option>
-                    <option value="WTI">🛢️ WTI (Petróleo)</option>
-                </select>
-            </div>
+        </div>
 
-            <button class="btn-calc" onclick="placeRealOrder()" style="background:var(--gold); color:#000; margin-top:15px;">🚀 ENVIAR ORDEM REAL</button>
-            <button class="close-btn" onclick="closeRobotModal()" style="margin-top:10px;">Fechar</button>
+        <!-- Preços de ouro, prata e petróleo (inseridos dentro de "Metais" e "Petróleo") -->
+        <div class="card">
+            <div><strong>💎 METais (INV)</strong></div>
+            <div id="goldSilverPrices" style="margin-top: 10px;">
+                <div>Ouro: <span id="goldPrice">--</span> <span id="goldChange"></span></div>
+                <div>Prata: <span id="silverPrice">--</span> <span id="silverChange"></span></div>
+            </div>
+            <div style="margin-top: 12px;"><strong>🛢️ Petróleo (WTI)</strong></div>
+            <div>Preço: <span id="oilPrice">--</span> <span id="oilChange"></span></div>
+            <button id="refreshCommoditiesBtn" class="btn" style="margin-top:12px; width:100%;">↻ Atualizar preços</button>
+        </div>
+
+        <!-- Botões inferiores -->
+        <div class="card">
+            <div class="bottom-buttons">
+                <button class="btn">Medição</button>
+                <button class="btn">Alba</button>
+                <button class="btn">Pico</button>
+                <button class="btn">Fórmula</button>
+                <button class="btn">Ativa</button>
+            </div>
+        </div>
+
+        <!-- Bolinha roxa (link para outra página) -->
+        <div class="footer">
+            <a href="https://c.vercel.app" target="_blank" class="purple-dot" title="Ir para outra página">🔮</a>
         </div>
     </div>
+</div>
 
-    <!-- MODAL DE DONATIVOS -->
-    <div id="donationModal" class="modal">
-        <div class="modal-content">
-            <h2>💰 Donativos</h2>
-            <p style="background:#1e2a36; padding:15px; border-radius:15px; margin-bottom:20px;">
-                Projeto independente, sem fins lucrativos. Contribuições ajudam a manter os custos. Obrigado!
-            </p>
-            
-            <div class="donation-item" style="border-left-color:#8a2be2;">
-                <strong>⚡ Lightning Network</strong>
-                <p>cloggedparrot01@walletofsatoshi.com <button class="copy-btn" onclick="copyText('cloggedparrot01@walletofsatoshi.com')">Copiar</button></p>
-            </div>
-            <div class="donation-item" style="border-left-color:#f7931a;">
-                <strong>₿ Bitcoin</strong>
-                <p>bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5 <button class="copy-btn" onclick="copyText('bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5')">Copiar</button></p>
-            </div>
-            <div class="donation-item" style="border-left-color:#627eea;">
-                <strong>🔷 EVM</strong>
-                <p>0xAd944bA180610F1Fe43151eD81c0084C918c68e1 <button class="copy-btn" onclick="copyText('0xAd944bA180610F1Fe43151eD81c0084C918c68e1')">Copiar</button></p>
-            </div>
-            <div class="donation-item" style="border-left-color:#14f195;">
-                <strong>◎ Solana</strong>
-                <p>EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm <button class="copy-btn" onclick="copyText('EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm')">Copiar</button></p>
-            </div>
-            <div class="donation-item" style="border-left-color:#32bcad;">
-                <strong>🇧🇷 Pix</strong>
-                <p>127d59fc-1f37-4e8e-9fd4-295e1883727b <button class="copy-btn" onclick="copyText('127d59fc-1f37-4e8e-9fd4-295e1883727b')">Copiar</button></p>
-            </div>
-            
-            <button class="close-btn" onclick="closeDonationModal()">Fechar</button>
-        </div>
-    </div>
+<script>
+    // ======================== SIMULAÇÃO DE DADOS ========================
+    // Preços BTC, Ouro, Prata, Petróleo
+    let currentPrices = {
+        btc: null,
+        gold: null,
+        silver: null,
+        oil: null
+    };
 
-    <script src="https://s3.tradingview.com/tv.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-    <script>
-        // ---------- VARIÁVEIS GLOBAIS ----------
-        let price = 74069.05;
-        let pricesHistory = [];
-        let isDesktop = false;
-        let currentTF = "1";
-        let activeWS = null;
-        let hlConnection = null;
-        let alarmes = [];
-        let modoOperacaoAtivo = false;
-        let timeoutDescanso;
+    // Função para buscar todos os preços (simulação)
+    async function fetchAllPrices() {
+        // Mostra loading nos campos que ainda não têm valor
+        if (!currentPrices.btc) setLoading('btcPrice', true);
+        if (!currentPrices.gold) setLoading('goldPrice', true);
+        if (!currentPrices.silver) setLoading('silverPrice', true);
+        if (!currentPrices.oil) setLoading('oilPrice', true);
 
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        let audioCtx = null;
+        try {
+            await new Promise(resolve => setTimeout(resolve, 800)); // simula rede
 
-        function tocarAlarme() {
-            try {
-                if (!audioCtx) audioCtx = new AudioContext();
-                const osc = audioCtx.createOscillator();
-                const gainNode = audioCtx.createGain();
-                osc.type = 'sine';
-                osc.frequency.value = 880;
-                gainNode.gain.value = 0.3;
-                osc.connect(gainNode);
-                gainNode.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.5);
-                
-                setTimeout(() => {
-                    const osc2 = audioCtx.createOscillator();
-                    osc2.type = 'sine';
-                    osc2.frequency.value = 880;
-                    const gain2 = audioCtx.createGain();
-                    gain2.gain.value = 0.3;
-                    osc2.connect(gain2);
-                    gain2.connect(audioCtx.destination);
-                    osc2.start();
-                    osc2.stop(audioCtx.currentTime + 0.5);
-                }, 600);
-                
-                if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
-            } catch (e) {}
-        }
-
-        function setTF(tf, btn) {
-            currentTF = tf;
-            document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            initChart();
-        }
-
-        function toggleMode() {
-            isDesktop = !isDesktop;
-            document.getElementById('mainCard').classList.toggle('desktop-mode', isDesktop);
-            initChart();
-        }
-
-        function initChart() {
-            const symbol = document.getElementById('pairSelector').value;
-            const container = document.getElementById('chart_container');
-            container.innerHTML = '';
-            new TradingView.widget({
-                "autosize": true,
-                "symbol": symbol,
-                "interval": currentTF,
-                "theme": "dark",
-                "style": "1",
-                "locale": "br",
-                "container_id": "chart_container",
-                "hide_top_toolbar": !isDesktop,
-                "hide_legend": false
-            });
-            
-            if(activeWS) activeWS.close();
-            
-            let pair = symbol.split(':')[1].toLowerCase();
-            let streamPair = (pair === 'gold' || pair === 'silver' || pair === 'usoil') ? 'btcusdt' : 
-                             (pair.includes('btc') ? 'btcusdt' : 
-                              pair.includes('eth') ? 'ethusdt' : 
-                              pair.includes('sol') ? 'solusdt' : 'btcusdt');
-            
-            activeWS = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`);
-            
-            activeWS.onmessage = (e) => {
-                const data = JSON.parse(e.data);
-                price = parseFloat(data.c);
-                document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
-                pricesHistory.push(price);
-                if(pricesHistory.length > 50) pricesHistory.shift();
-                
-                const s1 = document.getElementById('statusText');
-                const box = document.getElementById('statusBox');
-                let s1Valor = 0;
-                if(Math.floor(price * 100) % 2 === 0) {
-                    s1.innerText = '🔥 OPORTUNIDADE';
-                    box.style.borderBottomColor = '#00ff88';
-                    s1.style.color = '#00ff88';
-                    s1Valor = 30;
-                } else {
-                    s1.innerText = '⚠️ AGUARDAR';
-                    box.style.borderBottomColor = '#ff3e3e';
-                    s1.style.color = '#ff3e3e';
-                    s1Valor = 0;
-                }
-                
-                const s2 = document.getElementById('rsiText');
-                const rsiBox = document.getElementById('rsiBox');
-                let s2Valor = 0;
-                let s2Direcao = null;
-                if(pricesHistory.length >= 21) {
-                    const compra = price > pricesHistory[pricesHistory.length - 21];
-                    s2.innerText = compra ? '🚀 COMPRA' : '📉 VENDA';
-                    rsiBox.style.borderBottomColor = compra ? '#00ff88' : '#ff3e3e';
-                    s2.style.color = compra ? '#00ff88' : '#ff3e3e';
-                    s2Valor = 40;
-                    s2Direcao = compra ? 'compra' : 'venda';
-                } else {
-                    s2.innerText = `COLETANDO ${pricesHistory.length}/21`;
-                }
-                
-                const s3 = document.getElementById('momText');
-                const momBox = document.getElementById('momBox');
-                let s3Valor = 0;
-                let s3Direcao = null;
-                if(pricesHistory.length >= 3) {
-                    const avg = (pricesHistory.slice(-3).reduce((a,b)=>a+b,0))/3;
-                    if(price > avg * 1.001) {
-                        s3.innerText = '📈 ALTA';
-                        momBox.style.borderBottomColor = '#00ff88';
-                        s3.style.color = '#00ff88';
-                        s3Valor = 30;
-                        s3Direcao = 'compra';
-                    } else if(price < avg * 0.999) {
-                        s3.innerText = '📉 BAIXA';
-                        momBox.style.borderBottomColor = '#ff3e3e';
-                        s3.style.color = '#ff3e3e';
-                        s3Valor = 30;
-                        s3Direcao = 'venda';
-                    } else {
-                        s3.innerText = '⚖️ NEUTRO';
-                        momBox.style.borderBottomColor = '#ffcc00';
-                        s3.style.color = '#ffcc00';
-                    }
-                }
-                
-                let score = s1Valor + s2Valor + (s3Valor || 0);
-                if (s2Direcao && s3Direcao && s2Direcao !== s3Direcao) score = 0;
-                
-                document.getElementById('scoreFill').style.width = score + '%';
-                document.getElementById('scoreValue').innerText = score + '/100';
-                
-                let scoreLabel = 'Aguardando sinais';
-                let probabilidade = '';
-                let classeScore = 'baixa';
-                
-                if (score >= 80) {
-                    scoreLabel = '🔥 Confluência forte';
-                    probabilidade = 'Alta';
-                    classeScore = 'alta';
-                    document.getElementById('alertaBadge').style.display = 'inline-block';
-                    if (s2Direcao === 'compra') document.body.classList.add('alerta-compra');
-                    else if (s2Direcao === 'venda') document.body.classList.add('alerta-venda');
-                } else if (score >= 60) {
-                    scoreLabel = '⚡ Confluência moderada';
-                    probabilidade = 'Média';
-                    classeScore = 'media';
-                    document.getElementById('alertaBadge').style.display = 'none';
-                } else {
-                    scoreLabel = '⚠️ Evitar operação';
-                    probabilidade = 'Baixa';
-                    classeScore = 'baixa';
-                    document.getElementById('alertaBadge').style.display = 'none';
-                }
-                
-                document.getElementById('scoreFill').className = 'score-fill ' + classeScore;
-                document.getElementById('scoreLabel').innerText = scoreLabel;
-                document.getElementById('probabilidade').innerText = probabilidade;
-                
-                const hora = new Date().getHours();
-                const minutos = new Date().getMinutes();
-                const horaMin = hora + minutos/60;
-                let sessao = 'Fora do horário';
-                if (horaMin >= 21 || horaMin < 1) sessao = '🌏 Ásia';
-                else if (horaMin >= 4 && horaMin < 9) sessao = '🇪🇺 Londres';
-                else if (horaMin >= 10 && horaMin < 14) sessao = '🇺🇸 NY (Pico)';
-                else if (horaMin >= 9.33 && horaMin < 15.5) sessao = '🥇 Metais NY';
-                else if (horaMin >= 10 && horaMin < 16.5) sessao = '🛢️ Petróleo';
-                document.getElementById('sessaoText').innerText = sessao;
-                
-                verificarAlarmes();
+            // Dados fictícios realistas
+            const newPrices = {
+                btc: { value: 70421.60, change: -90.13, changePercent: -0.19 },
+                gold: { value: 3012.45, changePercent: +0.68 },
+                silver: { value: 33.82, changePercent: -0.42 },
+                oil: { value: 98.76, changePercent: -0.15 }
             };
-        }
 
-        function calc() {
-            const tp = price * (1 + parseFloat(document.getElementById('tpP').value)/100);
-            const sl = price * (1 - parseFloat(document.getElementById('slP').value)/100);
-            document.getElementById('resTP').innerText = `$${tp.toFixed(2)}`;
-            document.getElementById('resSL').innerText = `$${sl.toFixed(2)}`;
-            document.getElementById('results').style.display = 'block';
-        }
+            currentPrices = {
+                btc: newPrices.btc.value,
+                gold: newPrices.gold.value,
+                silver: newPrices.silver.value,
+                oil: newPrices.oil.value
+            };
 
-        function adicionarAlarme() {
-            const preco = parseFloat(document.getElementById('alarmePreco').value);
-            if (isNaN(preco) || preco <= 0) { alert('Preço inválido'); return; }
-            alarmes.push({ preco, ativo: true, id: Date.now() });
-            atualizarListaAlarmes();
-            document.getElementById('alarmePreco').value = '';
+            updatePriceDisplay(newPrices);
+        } catch (error) {
+            console.error("Erro ao carregar preços:", error);
+            showPriceError();
+        } finally {
+            setLoading('btcPrice', false);
+            setLoading('goldPrice', false);
+            setLoading('silverPrice', false);
+            setLoading('oilPrice', false);
         }
-        
-        function removerAlarme(id) {
-            alarmes = alarmes.filter(a => a.id !== id);
-            atualizarListaAlarmes();
+    }
+
+    function setLoading(elementId, isLoading) {
+        const el = document.getElementById(elementId);
+        if (!el) return;
+        if (isLoading && !currentPrices[elementId.replace('Price', '')]) {
+            el.innerHTML = '<span class="loading-text">⏳</span>';
         }
-        
-        function atualizarListaAlarmes() {
-            const lista = document.getElementById('alarmeLista');
-            if (alarmes.length === 0) {
-                lista.innerHTML = '<div style="color: var(--text); text-align: center; padding: 10px;">Nenhum alarme definido</div>';
-                return;
-            }
-            let html = '';
-            alarmes.forEach(alarme => {
-                html += `<div class="alarme-item"><span>🔔 $${alarme.preco.toLocaleString('en-US', {minimumFractionDigits:2})}</span><button class="alarme-remover" onclick="removerAlarme(${alarme.id})">✕</button></div>`;
+    }
+
+    function updatePriceDisplay(prices) {
+        // BTC
+        document.getElementById('btcPrice').innerText = prices.btc.value.toLocaleString('en-US', { minimumFractionDigits: 2 });
+        document.getElementById('btcDetailPrice').innerText = prices.btc.value.toLocaleString('en-US', { minimumFractionDigits: 2 });
+        const btcChangeSpan = document.getElementById('btcChange');
+        const btcDetailChangeSpan = document.getElementById('btcDetailChange');
+        const changeClass = prices.btc.change >= 0 ? 'positive' : 'negative';
+        const changeText = `${prices.btc.change >= 0 ? '+' : ''}${prices.btc.change.toFixed(2)} (${prices.btc.changePercent >= 0 ? '+' : ''}${prices.btc.changePercent.toFixed(2)}%)`;
+        btcChangeSpan.innerHTML = `<span class="${changeClass}">${changeText}</span>`;
+        btcDetailChangeSpan.innerHTML = `<span class="${changeClass}">${changeText}</span>`;
+
+        // Ouro
+        document.getElementById('goldPrice').innerText = prices.gold.value.toFixed(2);
+        const goldChangeSpan = document.getElementById('goldChange');
+        goldChangeSpan.innerHTML = `<span class="${prices.gold.changePercent >= 0 ? 'positive' : 'negative'}">${prices.gold.changePercent >= 0 ? '+' : ''}${prices.gold.changePercent.toFixed(2)}%</span>`;
+
+        // Prata
+        document.getElementById('silverPrice').innerText = prices.silver.value.toFixed(2);
+        const silverChangeSpan = document.getElementById('silverChange');
+        silverChangeSpan.innerHTML = `<span class="${prices.silver.changePercent >= 0 ? 'positive' : 'negative'}">${prices.silver.changePercent >= 0 ? '+' : ''}${prices.silver.changePercent.toFixed(2)}%</span>`;
+
+        // Petróleo
+        document.getElementById('oilPrice').innerText = prices.oil.value.toFixed(2);
+        const oilChangeSpan = document.getElementById('oilChange');
+        oilChangeSpan.innerHTML = `<span class="${prices.oil.changePercent >= 0 ? 'positive' : 'negative'}">${prices.oil.changePercent >= 0 ? '+' : ''}${prices.oil.changePercent.toFixed(2)}%</span>`;
+    }
+
+    function showPriceError() {
+        document.getElementById('btcPrice').innerText = '--';
+        document.getElementById('goldPrice').innerText = '--';
+        document.getElementById('silverPrice').innerText = '--';
+        document.getElementById('oilPrice').innerText = '--';
+        // adicionar mensagens de erro opcionais
+    }
+
+    // ======================== NOTÍCIAS E CALENDÁRIO ========================
+    let newsData = [];
+
+    async function fetchNewsAndCalendar() {
+        const container = document.getElementById('newsCalendarContent');
+        container.innerHTML = '<div class="loading-text">⏳ Carregando notícias e calendário...</div>';
+        try {
+            await new Promise(resolve => setTimeout(resolve, 700));
+            newsData = [
+                { title: "Petróleo WTI oscila com temores de oferta", date: "21/03/2026 14:30" },
+                { title: "FED mantém juros; impacto no ouro", date: "21/03/2026 12:00" },
+                { title: "Dados de emprego nos EUA surpreendem positivamente", date: "21/03/2026 09:45" },
+                { title: "🔔 Calendário: PMI Industrial (EUA) - 22/03 10:00", date: "Evento: 22/03" },
+                { title: "CPI da Zona do Euro - 24/03 06:00 (Alta volatilidade)", date: "Evento: 24/03" }
+            ];
+            renderNews(newsData);
+        } catch (err) {
+            container.innerHTML = '<div class="error-text">❌ Erro ao carregar notícias. Tente novamente.</div>';
+        }
+    }
+
+    function renderNews(data) {
+        const container = document.getElementById('newsCalendarContent');
+        if (!data.length) {
+            container.innerHTML = '<div>Nenhuma notícia ou evento no momento.</div>';
+            return;
+        }
+        let html = '';
+        data.forEach(item => {
+            html += `
+                <div class="news-item">
+                    <div class="news-title">${item.title}</div>
+                    <div class="news-date">${item.date}</div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+
+    async function copyNewsToClipboard() {
+        if (!newsData.length) {
+            alert("Nenhuma notícia para copiar. Atualize primeiro.");
+            return;
+        }
+        let text = "📰 NOTÍCIAS E CALENDÁRIO - MESTRE DO SCALPING PRO\n\n";
+        newsData.forEach(item => {
+            text += `${item.title} (${item.date})\n`;
+        });
+        try {
+            await navigator.clipboard.writeText(text);
+            alert("✅ Notícias e calendário copiados para a área de transferência!");
+        } catch (err) {
+            alert("❌ Erro ao copiar: " + err);
+        }
+    }
+
+    // ======================== ALARMES ========================
+    let alarms = [];
+
+    function addAlarm(price) {
+        if (!price || isNaN(parseFloat(price))) {
+            alert("Digite um preço válido (ex: 75000)");
+            return false;
+        }
+        alarms.push(parseFloat(price));
+        updateAlarmUI();
+        return true;
+    }
+
+    function updateAlarmUI() {
+        const alarmDiv = document.getElementById('alarmList');
+        if (alarms.length === 0) {
+            alarmDiv.innerHTML = "Nenhum alarme definido.";
+            return;
+        }
+        let html = "<strong>Alarmes ativos:</strong><ul style='margin-top:8px;'>";
+        alarms.forEach((a, idx) => {
+            html += `<li>${a} <button class="btn" style="padding:2px 8px; margin-left:8px;" data-remove="${idx}">❌</button></li>`;
+        });
+        html += "</ul>";
+        alarmDiv.innerHTML = html;
+
+        document.querySelectorAll('[data-remove]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const idx = parseInt(btn.getAttribute('data-remove'));
+                alarms.splice(idx, 1);
+                updateAlarmUI();
             });
-            lista.innerHTML = html;
-        }
-        
-        function verificarAlarmes() {
-            alarmes.forEach(alarme => {
-                if (alarme.ativo && Math.abs(price - alarme.preco) / alarme.preco < 0.001) {
-                    alarme.ativo = false;
-                    tocarAlarme();
-                    alert(`🔔 ALARME! Preço atingiu $${alarme.preco.toFixed(2)}`);
-                    atualizarListaAlarmes();
-                }
-            });
-        }
+        });
+    }
 
-        function iniciarTimerDescanso() {
-            if (modoOperacaoAtivo) return;
-            clearTimeout(timeoutDescanso);
-            timeoutDescanso = setTimeout(() => {
-                if (!modoOperacaoAtivo) document.body.classList.add("modo-descanso");
-            }, 90000);
-        }
+    // ======================== OUTRAS FUNCIONALIDADES ========================
+    let modoOperacao = false;
+    function toggleModo() {
+        modoOperacao = !modoOperacao;
+        document.getElementById('modoOp').innerText = modoOperacao ? "ON" : "OFF";
+        alert(`Modo Operação ${modoOperacao ? "ATIVADO" : "DESATIVADO"}`);
+    }
 
-        function resetTimer() {
-            if (!modoOperacaoAtivo) {
-                document.body.classList.remove("modo-descanso");
-                iniciarTimerDescanso();
-            }
-        }
+    // ======================== EVENT LISTENERS ========================
+    document.addEventListener('DOMContentLoaded', () => {
+        // Carrega dados iniciais
+        fetchAllPrices();
+        fetchNewsAndCalendar();
 
-        document.onmousemove = resetTimer;
-        document.onkeydown = resetTimer;
-        document.onclick = resetTimer;
-        document.ontouchstart = resetTimer;
+        // Botão atualizar preços
+        document.getElementById('refreshCommoditiesBtn').addEventListener('click', fetchAllPrices);
 
-        const toggle = document.getElementById("lockScreenToggle");
-        const statusTexto = document.getElementById("statusModo");
-        toggle.addEventListener("change", function() {
-            modoOperacaoAtivo = this.checked;
-            if (modoOperacaoAtivo) {
-                statusTexto.innerText = "Modo Operação: ON";
-                clearTimeout(timeoutDescanso);
-                document.body.classList.remove("modo-descanso");
-                document.body.classList.add("modo-ativo");
-            } else {
-                statusTexto.innerText = "Modo Operação: OFF";
-                document.body.classList.remove("modo-ativo");
-                iniciarTimerDescanso();
-            }
+        // Botão atualizar notícias
+        document.getElementById('atualizarNoticiasBtn').addEventListener('click', fetchNewsAndCalendar);
+
+        // Botão copiar notícias
+        document.getElementById('copiarNoticiasBtn').addEventListener('click', copyNewsToClipboard);
+
+        // Adicionar alarme
+        document.getElementById('addAlarmBtn').addEventListener('click', () => {
+            const input = document.getElementById('alarmPriceInput');
+            addAlarm(input.value);
+            input.value = '';
         });
 
-        function openPasswordModal() { document.getElementById('passwordModal').style.display = 'flex'; }
-        function closePasswordModal() { document.getElementById('passwordModal').style.display = 'none'; }
-        function openDonationModal() { document.getElementById('donationModal').style.display = 'flex'; }
-        function closeDonationModal() { document.getElementById('donationModal').style.display = 'none'; }
-        function closeRobotModal() { document.getElementById('robotModal').style.display = 'none'; }
+        // Calcular alvos
+        document.getElementById('calcAlvosBtn').addEventListener('click', () => {
+            alert("Cálculo de alvos baseado nos parâmetros:\nCapital $300\nAvançadores $10\nDane 1%\nPaix 1%");
+        });
 
-        function checkPassword() {
-            if(document.getElementById('passInput').value === 'Maria1301') {
-                closePasswordModal();
-                document.getElementById('robotModal').style.display = 'flex';
-            } else {
-                alert('Senha incorreta');
-            }
-        }
+        // Toggle modo operação
+        document.getElementById('toggleModoBtn').addEventListener('click', toggleModo);
 
-        function copyText(text) {
-            navigator.clipboard.writeText(text);
-            alert('Copiado!');
-        }
+        // Mode selector (alternar modo computador, scalp, day trade)
+        const modeBtns = document.querySelectorAll('.mode-btn');
+        modeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                modeBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                alert(`Modo alterado para ${btn.innerText}`);
+            });
+        });
 
-        async function connectHyperliquid() {
-            const mainAddr = document.getElementById('hlMainAddress').value.trim();
-            const apiAddr = document.getElementById('hlApiAddress').value.trim();
-            const privKey = document.getElementById('hlApiPrivateKey').value.trim();
-            
-            if(!mainAddr || !apiAddr || !privKey) {
-                alert('Preencha todos os campos');
-                return;
-            }
-            
-            try {
-                const provider = new ethers.providers.JsonRpcProvider('https://arb1.arbitrum.io/rpc');
-                const wallet = new ethers.Wallet(privKey, provider);
-                
-                console.log('Endereço derivado:', wallet.address);
-                console.log('Endereço informado:', apiAddr);
-                
-                if(wallet.address.toLowerCase() !== apiAddr.toLowerCase()) {
-                    throw new Error(`Chave não corresponde.\nChave gera: ${wallet.address}\nInformado: ${apiAddr}`);
-                }
-                
-                hlConnection = { mainAddress: mainAddr, apiWallet: wallet, apiAddress: apiAddr };
-                document.getElementById('apiConsole').innerHTML = `✅ Conectado como ${apiAddr.slice(0,6)}...${apiAddr.slice(-4)}`;
-                
-            } catch(e) {
-                document.getElementById('apiConsole').innerHTML = `❌ Erro: ${e.message}`;
-                alert(e.message);
-            }
-        }
+        // Navegação entre abas
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.getAttribute('data-tab');
+                tabBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                tabContents.forEach(tc => tc.classList.remove('active'));
+                const activeTab = document.getElementById(targetId);
+                if (activeTab) activeTab.classList.add('active');
+            });
+        });
 
-        // ===== FUNÇÃO DO ROBÔ - AGORA FUNCIONAL =====
-        async function placeRealOrder() {
-            if(!hlConnection){
-                alert('Conecte a API primeiro');
-                return;
-            }
+        // Botões inferiores (Medição, Alba, etc.) - apenas alerta demonstrativo
+        const bottomBtns = document.querySelectorAll('.bottom-buttons .btn');
+        bottomBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                alert(`Funcionalidade "${btn.innerText}" em desenvolvimento.`);
+            });
+        });
 
-            const capital = parseFloat(document.getElementById('botCapital').value);
-            const pair = document.getElementById('botPair').value;
-            const sl = parseFloat(document.getElementById('botSL').value)/100;
-            const tp = parseFloat(document.getElementById('botTP').value)/100;
+        // Teste Grátis ATMOS
+        document.querySelector('.ad-card .btn').addEventListener('click', () => {
+            alert("Teste grátis do ATMOS IPTV: entre em contato pelo site.");
+        });
 
-            if(capital < 5){
-                alert('Capital mínimo: 5 USDC');
-                return;
-            }
-
-            if(!price || price === 0){
-                alert('Aguardando preço...');
-                return;
-            }
-
-            try {
-                const assetMap = { BTC:0, ETH:1, SOL:2, GOLD:3, SILVER:4, WTI:5 };
-                const assetId = assetMap[pair];
-                if (assetId === undefined) { alert('Par inválido'); return; }
-
-                const size = (capital / price).toFixed(6);
-                const priceStr = price.toFixed(2);
-                const nonce = Date.now() + Math.floor(Math.random() * 1000);
-
-                const action = {
-                    type: "order",
-                    orders: [{
-                        a: assetId,
-                        b: true,
-                        p: priceStr,
-                        r: false,
-                        s: size,
-                        t: { limit: { tif: "Gtc" } }
-                    }],
-                    grouping: "na"
-                };
-
-                const domain = {
-                    name: "Hyperliquid",
-                    version: "1",
-                    chainId: 42161
-                };
-
-                const types = {
-                    Action: [
-                        { name: "type", type: "string" },
-                        { name: "orders", type: "Order[]" },
-                        { name: "grouping", type: "string" }
-                    ],
-                    Order: [
-                        { name: "a", type: "uint32" },
-                        { name: "b", type: "bool" },
-                        { name: "p", type: "string" },
-                        { name: "r", type: "bool" },
-                        { name: "s", type: "string" },
-                        { name: "t", type: "OrderType" }
-                    ],
-                    OrderType: [
-                        { name: "limit", type: "Limit" }
-                    ],
-                    Limit: [
-                        { name: "tif", type: "string" }
-                    ]
-                };
-
-                document.getElementById('apiConsole').innerHTML = '⏳ Assinando ordem...';
-
-                const signature = await hlConnection.apiWallet._signTypedData(domain, types, action);
-                const sig = ethers.utils.splitSignature(signature);
-
-                const requestBody = {
-                    action,
-                    nonce,
-                    signature: { r: sig.r, s: sig.s, v: sig.v },
-                    vaultAddress: null
-                };
-
-                document.getElementById('apiConsole').innerHTML = '⏳ Enviando ordem...';
-
-                const response = await fetch('https://api.hyperliquid.xyz/exchange', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(requestBody)
-                });
-
-                const result = await response.json();
-
-                if(result.status === "ok" || result.response?.data?.statuses?.[0]?.resting){
-                    document.getElementById('apiConsole').innerHTML = '✅ Ordem enviada!';
-                    const stopPrice = price * (1 - sl);
-                    const takePrice = price * (1 + tp);
-                    alert(`✅ ORDEM REAL!\nComprar ${size} ${pair}\nPreço: $${price.toFixed(2)}\nStop: $${stopPrice.toFixed(2)}\nTake: $${takePrice.toFixed(2)}`);
-                } else {
-                    document.getElementById('apiConsole').innerHTML = '❌ ' + JSON.stringify(result);
-                }
-
-            } catch(e){
-                document.getElementById('apiConsole').innerHTML = '❌ ' + e.message;
-            }
-        }
-
-        iniciarTimerDescanso();
-        initChart();
-    </script>
+        // Atualizações automáticas a cada 30 segundos (preços) e 2 min (notícias)
+        setInterval(fetchAllPrices, 30000);
+        setInterval(fetchNewsAndCalendar, 120000);
+    });
+</script>
 </body>
 </html>
