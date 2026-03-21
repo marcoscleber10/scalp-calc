@@ -699,7 +699,7 @@
                          <tr><td colspan="3" class="market-header">🏆 EURO, PRATA & WTI</td></tr>
                          <tr><td>🥇 Metais (NY)</td><td>09:20-15:30</td><td style="color:var(--gold); text-align:right;">● liquidez</td></tr>
                          <tr><td>🛢️ Petróleo (WTI)</td><td>10:00-16:30</td><td style="color:var(--accent); text-align:right;">● volatilidade</td></tr>
-                     </table>
+                       </table>
 
         <!-- NOVA SEÇÃO: NOTÍCIAS E CALENDÁRIO -->
         <div class="news-section">
@@ -818,7 +818,6 @@
     </div>
 
     <!-- ========== MODAIS DAS ESTRATÉGIAS (12 modais) ========== -->
-    <!-- Modal Estratégia 1 -->
     <div id="modalEstrategia1" class="modal">
         <div class="modal-content" style="max-width: 700px;">
             <h2>📘 Estratégia 1: Market Making Adaptativo</h2>
@@ -847,7 +846,6 @@
         </div>
     </div>
 
-    <!-- Modal Estratégia 2 -->
     <div id="modalEstrategia2" class="modal">
         <div class="modal-content" style="max-width: 700px;">
             <h2>📘 Estratégia 2: Gamma Scalping (nível opções)</h2>
@@ -875,7 +873,6 @@
         </div>
     </div>
 
-    <!-- Modal Estratégia 3 -->
     <div id="modalEstrategia3" class="modal">
         <div class="modal-content" style="max-width: 700px;">
             <h2>📘 Estratégia 3: Liquidity Sniping</h2>
@@ -904,7 +901,6 @@
         </div>
     </div>
 
-    <!-- Modal Estratégia 4 -->
     <div id="modalEstrategia4" class="modal">
         <div class="modal-content" style="max-width: 700px;">
             <h2>📘 Estratégia 4: Range baseado em Volatilidade Implícita</h2>
@@ -927,7 +923,6 @@
         </div>
     </div>
 
-    <!-- Modal Estratégia 5 -->
     <div id="modalEstrategia5" class="modal">
         <div class="modal-content" style="max-width: 700px;">
             <h2>📘 Estratégia 5: Regime de Mercado</h2>
@@ -949,7 +944,6 @@
         </div>
     </div>
 
-    <!-- Modal Estratégia 6 -->
     <div id="modalEstrategia6" class="modal">
         <div class="modal-content" style="max-width: 700px;">
             <h2>📘 Estratégia 6: Rebalanceamento por Delta (institucional)</h2>
@@ -971,7 +965,6 @@
         </div>
     </div>
 
-    <!-- Modal Estratégia 7 -->
     <div id="modalEstrategia7" class="modal">
         <div class="modal-content" style="max-width: 700px;">
             <h2>📘 Estratégia 7: Stop Loss Inteligente para LP</h2>
@@ -993,7 +986,6 @@
         </div>
     </div>
 
-    <!-- Modal Estratégia 8 -->
     <div id="modalEstrategia8" class="modal">
         <div class="modal-content" style="max-width: 700px;">
             <h2>📘 Estratégia 8: Multi-Pool Optimization</h2>
@@ -1015,7 +1007,6 @@
         </div>
     </div>
 
-    <!-- Modal Estratégia 9 -->
     <div id="modalEstrategia9" class="modal">
         <div class="modal-content" style="max-width: 700px;">
             <h2>📘 Estratégia 9: Arbitragem entre Pools</h2>
@@ -1037,7 +1028,6 @@
         </div>
     </div>
 
-    <!-- Modal Estratégia 10 -->
     <div id="modalEstrategia10" class="modal">
         <div class="modal-content" style="max-width: 700px;">
             <h2>📘 Estratégia 10: Fee Harvesting Automático</h2>
@@ -1060,7 +1050,6 @@
         </div>
     </div>
 
-    <!-- Modal Estratégia 11 -->
     <div id="modalEstrategia11" class="modal">
         <div class="modal-content" style="max-width: 700px;">
             <h2>📘 Estratégia 11: Liquidez Direcional</h2>
@@ -1078,7 +1067,6 @@
         </div>
     </div>
 
-    <!-- Modal Estratégia 12 -->
     <div id="modalEstrategia12" class="modal">
         <div class="modal-content" style="max-width: 700px;">
             <h2>📘 Estratégia 12: Machine Learning (nível avançado)</h2>
@@ -1142,7 +1130,7 @@
                 <div class="table-wrapper">
                     <table class="pools-table" id="poolsTable">
                         <thead>
-                            <tr>
+                             <tr>
                                 <th onclick="ordenarPor('pool')">Pool</th>
                                 <th onclick="ordenarPor('network')">Network</th>
                                 <th onclick="ordenarPor('dex')">DEX</th>
@@ -1158,7 +1146,7 @@
                                 <th onclick="ordenarPor('fee')">Fee</th>
                                 <th onclick="ordenarPor('age')">Age</th>
                                 <th>Score</th>
-                            </tr>
+                             </tr>
                         </thead>
                         <tbody id="poolsTableBody"></tbody>
                     </table>
@@ -1332,7 +1320,7 @@ Reentrada gradual quando estabilizar.</pre>
                 </div>
             </div>
 
-            <!-- Aba Robô Automatizado (idêntica à anterior) -->
+            <!-- Aba Robô Automatizado -->
             <div id="robotTab" class="tab-content">
                 <div class="robot-content">
                     <h3>🤖 Bot de Liquidez Automatizado (Solana - Meteora / Orca)</h3>
@@ -1449,12 +1437,19 @@ setInterval(managePosition, 20000)
     <script src="https://s3.tradingview.com/tv.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <script>
-        // ========== FUNÇÕES AUXILIARES DOS MODAIS ==========
+        // ========== FUNÇÕES GLOBAIS PARA MODAIS ==========
         function abrirModal(id) {
-            document.getElementById(id).style.display = 'flex';
+            const modal = document.getElementById(id);
+            if (modal) {
+                modal.style.display = 'flex';
+                console.log("Modal aberto:", id);
+            } else {
+                console.error("Modal não encontrado:", id);
+            }
         }
         function fecharModal(id) {
-            document.getElementById(id).style.display = 'none';
+            const modal = document.getElementById(id);
+            if (modal) modal.style.display = 'none';
         }
 
         // ========== CÓDIGO COMPLETO (mantido da versão funcional) ==========
@@ -1734,3 +1729,4 @@ setInterval(managePosition, 20000)
     </script>
 </body>
 </html>
+        
