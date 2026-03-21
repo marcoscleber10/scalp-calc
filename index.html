@@ -711,14 +711,14 @@
 
         <!-- TABELA DE SESSÕES -->
         <table class="market-table">
-               Bon<td colspan="3" class="market-header">🌍 SESSÕES CRIPTO / FOREX</td> </tr>
-               <tr><td>🌏 Ásia</td><td>21:00-01:00</td><td style="color:var(--gold); text-align:right;">● médio</td></tr>
-               <tr><td>🇪🇺 Londres</td><td>04:00-09:00</td><td style="color:var(--green); text-align:right;">● alto</td></tr>
-               <tr><td>🇺🇸 NY (Pico)</td><td>10:00-14:00</td><td style="color:var(--green); text-align:right;">● PICO</td></tr>
-               <tr><td colspan="3" class="market-header">🏆 EURO, PRATA & WTI</td></tr>
-               <tr><td>🥇 Metais (NY)</td><td>09:20-15:30</td><td style="color:var(--gold); text-align:right;">● liquidez</td></tr>
-               <tr><td>🛢️ Petróleo (WTI)</td><td>10:00-16:30</td><td style="color:var(--accent); text-align:right;">● volatilidade</td></tr>
-            </table>
+               Bon<td colspan="3" class="market-header">🌍 SESSÕES CRIPTO / FOREX</td>
+            <tr><td>🌏 Ásia</td><td>21:00-01:00</td><td style="color:var(--gold); text-align:right;">● médio</td></tr>
+            <tr><td>🇪🇺 Londres</td><td>04:00-09:00</td><td style="color:var(--green); text-align:right;">● alto</td></tr>
+            <tr><td>🇺🇸 NY (Pico)</td><td>10:00-14:00</td><td style="color:var(--green); text-align:right;">● PICO</td></tr>
+            <tr><td colspan="3" class="market-header">🏆 EURO, PRATA & WTI</td></tr>
+            <tr><td>🥇 Metais (NY)</td><td>09:20-15:30</td><td style="color:var(--gold); text-align:right;">● liquidez</td></tr>
+            <tr><td>🛢️ Petróleo (WTI)</td><td>10:00-16:30</td><td style="color:var(--accent); text-align:right;">● volatilidade</td></tr>
+        </table>
 
         <!-- NOVA SEÇÃO: NOTÍCIAS E CALENDÁRIO -->
         <div class="news-section">
@@ -789,7 +789,7 @@
                 <div class="warning-high-apr">⚠️ Os valores de APR nos cards são os maiores de cada categoria com base nos dados atuais. Sempre analise volume e liquidez.</div>
                 <div class="mode-toggle"><button id="modoAutoBtn" class="mode-btn" onclick="setModo('auto')">🤖 Automático (Score)</button><button id="modoManualBtn" class="mode-btn" onclick="setModo('manual')">👆 Manual</button><button id="modoAPRBtn" class="mode-btn apr-high active" onclick="setModo('apr')">🔥 APR altos</button></div>
                 <div class="filter-row"><div class="filter-item"><label>TVL mínimo ($)</label><input type="number" id="filtroTVL" placeholder="10000" value="0" step="1000"></div><div class="filter-item"><label>Volume mínimo ($)</label><input type="number" id="filtroVolume" placeholder="5000" value="0" step="1000"></div><div class="filter-item"><label>APR mínimo (%)</label><input type="number" id="filtroAPR" placeholder="100" value="0" step="10"></div><button class="btn-filter" onclick="aplicarFiltros()">Aplicar</button></div>
-                <div class="table-wrapper"><table class="pools-table" id="poolsTable"><thead> <tr><th onclick="ordenarPor('pool')">Pool</th><th onclick="ordenarPor('network')">Network</th><th onclick="ordenarPor('dex')">DEX</th><th onclick="ordenarPor('tvl')">TVL</th><th>Ratio</th><th onclick="ordenarPor('volume')">Volume 24h</th><th onclick="ordenarPor('apr')">APR</th><th>1h</th><th>6h</th><th>24h</th><th>7d</th><th>30d</th><th onclick="ordenarPor('fee')">Fee</th><th onclick="ordenarPor('age')">Age</th><th>Score</th></tr></thead><tbody id="poolsTableBody"></tbody></table></div>
+                <div class="table-wrapper"><table class="pools-table" id="poolsTable"><thead> <tr><th onclick="ordenarPor('pool')">Pool</th><th onclick="ordenarPor('network')">Network</th><th onclick="ordenarPor('dex')">DEX</th><th onclick="ordenarPor('tvl')">TVL</th><th>Ratio</th><th onclick="ordenarPor('volume')">Volume 24h</th><th onclick="ordenarPor('apr')">APR</th><th>1h</th><th>6h</th><th>24h</th><th>7d</th><th>30d</th><th onclick="ordenarPor('fee')">Fee</th><th onclick="ordenarPor('age')">Age</th><th>Score</th> </tr></thead><tbody id="poolsTableBody"></tbody></table></div>
                 <p style="color: var(--text); margin-top: 15px;">Mostrando 1–20 de 599 pools</p>
                 <div style="margin-top: 15px; text-align: center;"><a href="https://www.yldlab.xyz/" target="_blank" style="color: var(--green); font-weight: bold;">🔗 Ver mais em yldlab.xyz</a></div>
             </div>
@@ -911,7 +911,7 @@
         let modoOperacaoAtivo = false;
         let timeoutDescanso;
         let metalInterval = null;
-        let currentMetalAsset = null;
+        let lastValidPrice = {}; // guarda último preço válido por ativo
 
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioCtx = null;
@@ -931,19 +931,34 @@
                 const data = await res.json();
                 if (data && data[asset] !== undefined) {
                     const midPrice = parseFloat(data[asset]);
-                    if (!isNaN(midPrice)) {
+                    if (!isNaN(midPrice) && midPrice > 0) {
+                        lastValidPrice[asset] = midPrice;
                         price = midPrice;
                         document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
                         pricesHistory.push(price);
                         if(pricesHistory.length > 50) pricesHistory.shift();
                         updateSignals();
                         verificarAlarmes();
+                    } else {
+                        console.warn(`Preço inválido para ${asset}: ${data[asset]}`);
+                        if (lastValidPrice[asset]) {
+                            price = lastValidPrice[asset];
+                            document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
+                        }
                     }
                 } else {
                     console.warn(`Preço não encontrado para ${asset}`);
+                    if (lastValidPrice[asset]) {
+                        price = lastValidPrice[asset];
+                        document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
+                    }
                 }
             } catch (err) {
                 console.error("Erro ao buscar preço da Hyperliquid:", err);
+                if (lastValidPrice[asset]) {
+                    price = lastValidPrice[asset];
+                    document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
+                }
             }
         }
 
@@ -975,10 +990,14 @@
                 else if (symbol === "TVC:SILVER") asset = "SILVER";
                 else if (symbol === "TVC:USOIL") asset = "WTI";
                 if (asset) {
-                    currentMetalAsset = asset;
-                    // Não define valor inicial fixo; aguarda resposta da API
-                    price = 0;
-                    document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
+                    // tenta usar último preço válido, senão mostra "carregando"
+                    if (lastValidPrice[asset]) {
+                        price = lastValidPrice[asset];
+                        document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
+                    } else {
+                        price = 0;
+                        document.getElementById('priceText').innerText = `$ carregando...`;
+                    }
                     fetchHyperliquidPrice(asset);
                     metalInterval = setInterval(() => fetchHyperliquidPrice(asset), 2000);
                 }
