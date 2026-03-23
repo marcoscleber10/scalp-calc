@@ -299,6 +299,9 @@
             margin-bottom: 10px;
             font-size: 14px;
             text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
         .category-item {
             display: flex;
@@ -654,6 +657,24 @@
             font-size: 14px;
         }
         .link-pool:hover { color: var(--green); }
+        .risk-dot {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+        .risk-verde { background: #00ff88; box-shadow: 0 0 6px #00ff88; }
+        .risk-amarelo { background: #ffcc00; box-shadow: 0 0 6px #ffcc00; }
+        .risk-vermelho { background: #ff3e3e; box-shadow: 0 0 6px #ff3e3e; }
+        .signal-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
     </style>
 </head>
 <body>
@@ -697,9 +718,21 @@
         <div id="alertaBadge" class="badge-alerta" style="display: none;">🚨 ENTRADA FORTE DETECTADA</div>
 
         <div class="status-grid">
-            <div id="statusBox" class="status-bar"><div class="light-glow"></div><span class="status-label">SINAL GERAL</span><span class="status-value" id="statusText">⚠️ AGUARDAR</span></div>
-            <div id="rsiBox" class="status-bar"><div class="light-glow"></div><span class="status-label">FILTRO TÉCNICO</span><span class="status-value" id="rsiText">📉 VENDA</span></div>
-            <div id="momBox" class="status-bar"><div class="light-glow"></div><span class="status-label">MOMENTUM</span><span class="status-value" id="momText">⚖️ NEUTRO</span></div>
+            <div id="statusBox" class="status-bar">
+                <div class="light-glow"></div>
+                <span class="status-label">SINAL GERAL</span>
+                <span class="status-value"><span id="sinalGeralIcon" class="signal-icon" style="background:#ffcc00;"></span><span id="statusText">⚠️ AGUARDAR</span></span>
+            </div>
+            <div id="rsiBox" class="status-bar">
+                <div class="light-glow"></div>
+                <span class="status-label">FILTRO TÉCNICO</span>
+                <span class="status-value"><span id="sinalTecnicoIcon" class="signal-icon" style="background:#ff3e3e;"></span><span id="rsiText">📉 VENDA</span></span>
+            </div>
+            <div id="momBox" class="status-bar">
+                <div class="light-glow"></div>
+                <span class="status-label">MOMENTUM</span>
+                <span class="status-value"><span id="sinalMomentumIcon" class="signal-icon" style="background:#ffcc00;"></span><span id="momText">⚖️ NEUTRO</span></span>
+            </div>
         </div>
 
         <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 11px;">
@@ -754,7 +787,7 @@
              <tr><td colspan="3" class="market-header">🏆 EURO, PRATA & WTI</td></tr>
              <tr><td>🥇 Metais (NY)</td><td>09:20-15:30</td><td style="color:var(--gold); text-align:right;">● liquidez</td></tr>
              <tr><td>🛢️ Petróleo (WTI)</td><td>10:00-16:30</td><td style="color:var(--accent); text-align:right;">● volatilidade</td></tr>
-         </table>
+        </table>
 
         <div class="news-section">
             <h4>📰 Notícias e Calendário</h4>
@@ -776,7 +809,7 @@
     <!-- MODAL DE SENHA -->
     <div id="passwordModal" class="modal"><div class="modal-content" style="max-width:350px;"><h2>🔐 ACESSO</h2><input type="password" id="passInput" maxlength="9" placeholder="*********" style="text-align:center; font-size:24px; letter-spacing:4px;"><div class="button-group"><button class="close-btn" onclick="checkPassword()">VALIDAR</button><button class="close-btn" onclick="fecharModal('passwordModal')">Fechar</button></div></div></div>
 
-    <!-- MODAL DO ROBÔ -->
+    <!-- MODAL DO ROBÔ (versão amigável) -->
     <div id="robotModal" class="modal"><div class="modal-content"><h2>🤖 ROBÔ DE LIQUIDEZ</h2><p style="color:var(--green);">🔓 Acesso autorizado</p>
         <div class="modo-operacao" style="margin-bottom: 15px;">
             <span>🎯 Filtro MVRV (regime de mercado)</span>
@@ -786,21 +819,25 @@
             📊 Regime atual: <strong id="mvrvRegimeAtualRobot">-</strong><br>
             💡 <span id="mvrvRecomendacaoRobot">-</span>
         </div>
-        
-        <!-- MODO DEMONSTRAÇÃO -->
+
+        <!-- SIMULADOR DE AUTOMAÇÃO DE LIQUIDEZ -->
         <div class="alarme-section" style="border-color: var(--green); margin-bottom: 20px;">
-            <div class="alarme-title">🧪 MODO DEMONSTRAÇÃO</div>
-            <p style="font-size: 12px;">Sugestões baseadas no regime MVRV para pools de liquidez</p>
-            <div id="demoSugestao" style="background: #0d151f; padding: 12px; border-radius: 12px; margin-top: 10px;">
-                📊 Regime: <strong id="demoRegime">ACUMULAÇÃO</strong><br>
-                🎯 Sugestão: <span id="demoTexto">Adicionar liquidez em SOL/USDC</span><br>
-                📈 Range sugerido: <span id="demoRange">$145 - $175</span><br>
-                💰 Capital sugerido: <span id="demoCapital">50% do total</span>
+            <div class="alarme-title">🧪 SIMULADOR DE AUTOMAÇÃO (Demo)</div>
+            <p style="font-size: 12px;">Configure os parâmetros e veja como o bot se comportaria</p>
+            <div class="grid-2">
+                <div><label>Pool</label><select id="demoPoolSelect"></select></div>
+                <div><label>Valor (USDC)</label><input type="number" id="demoAmount" value="1000" step="100"></div>
+                <div><label>Range (%)</label><select id="demoRangeSelect"><option>±5%</option><option selected>±10%</option><option>±15%</option></select></div>
+                <div><label>Auto-ajuste</label><select id="demoAutoAdjust"><option>ON</option><option>OFF</option></select></div>
             </div>
-            <button class="copy-strategy-btn" onclick="copiarDemoEstrategia()" style="margin-top: 12px;">📋 COPIAR CONFIGURAÇÃO</button>
+            <button class="btn-calc" onclick="simularBotLiquidez()" style="margin-top: 10px;">▶️ ATIVAR ROBÔ (DEMO)</button>
+            <div id="demoLog" style="background: #0d151f; padding: 10px; border-radius: 12px; margin-top: 15px; font-family: monospace; font-size: 11px; height: 120px; overflow-y: auto;">
+                [Bot] Aguardando simulação...
+            </div>
+            <p style="font-size: 10px; margin-top: 8px; color: var(--text);">⚠️ Versão demonstrativa – em breve integração real com Meteora/Orca.</p>
         </div>
-        
-        <!-- MODO REAL HYPERLIQUID -->
+
+        <!-- MODO REAL HYPERLIQUID (mantido) -->
         <div class="security-warning">⚠️ ATENÇÃO: Use apenas em ambiente local. Chave privada não é salva.</div>
         <h3>🔌 MODO REAL (Hyperliquid - Futuros)</h3>
         <div class="campo"><label>Endereço da conta principal</label><input type="text" id="hlMainAddress" value="0x9a761Cc6331Fd28D0b04811135dfA233f6499C9C"></div>
@@ -811,18 +848,7 @@
         <div class="grid-2"><div><label>Stop Loss %</label><input type="number" id="botSL" value="1.5" step="0.1"></div><div><label>Take Profit %</label><input type="number" id="botTP" value="1.0" step="0.1"></div></div>
         <div class="campo"><label>Par</label><select id="botPair"><option value="BTC">₿ BTC/USDC</option><option value="ETH">⟠ ETH/USDC</option><option value="SOL">◎ SOL/USDC</option><option value="GOLD">🥇 XAU/USD (Ouro)</option><option value="SILVER">🥈 XAG/USD (Prata)</option><option value="WTI">🛢️ WTI (Petróleo)</option></select></div>
         <button class="close-btn" onclick="placeRealOrder()">🚀 ENVIAR ORDEM REAL</button>
-        
-        <!-- MODO FUTURO SOLANA -->
-        <div class="alarme-section" style="border-color: var(--accent); margin-top: 20px;">
-            <div class="alarme-title">🌊 MODO REAL (Solana - Pools de Liquidez)</div>
-            <p style="font-size: 12px;">🚧 Em desenvolvimento - Integração com Meteora/Orca em breve</p>
-            <div style="background: #0d151f; padding: 12px; border-radius: 12px;">
-                <div class="grid-2"><div><label>Pool</label><select><option>SOL/USDC</option><option>HYPE/USDC</option><option>BTC/USDC</option></select></div><div><label>Valor (USDC)</label><input type="number" placeholder="1000"></div></div>
-                <div class="grid-2"><div><label>Range</label><select><option>±5%</option><option>±10%</option><option>±15%</option></select></div><div><label>Auto-ajuste</label><select><option>ON</option><option>OFF</option></select></div></div>
-                <button class="btn-calc" style="margin-top: 12px;" onclick="alert('🚧 Em desenvolvimento - Em breve')">🔌 CONECTAR SOLANA WALLET</button>
-            </div>
-        </div>
-        
+
         <div class="button-group"><button class="close-btn" onclick="fecharModal('robotModal')">Fechar</button></div></div></div>
 
     <!-- MODAL DE DONATIVOS -->
@@ -834,20 +860,20 @@
         <div class="donation-item" style="border-left-color:#32bcad;"><strong>🇧🇷 Pix</strong><p>127d59fc-1f37-4e8e-9fd4-295e1883727b <button class="copy-btn" onclick="copyText('127d59fc-1f37-4e8e-9fd4-295e1883727b')">Copiar</button></p></div>
         <div class="button-group"><button class="close-btn" onclick="fecharModal('donationModal')">Fechar</button></div></div></div>
 
-    <!-- SUBMODAIS DAS ESTRATÉGIAS (resumidas para brevidade, mas mantendo funcionalidade) -->
-    <div id="submodalEstrategia1" class="submodal"><div class="submodal-content"><h2>📘 Market Making Adaptativo</h2><p>Detecta fluxo agressivo e ajusta o range da posição de liquidez ANTES do preço se mover.</p><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia1')">Fechar</button></div></div></div>
-    <div id="submodalEstrategia2" class="submodal"><div class="submodal-content"><h2>📘 Gamma Scalping</h2><p>Usa a posição LP como ferramenta de gamma, lucrando com volatilidade.</p><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia2')">Fechar</button></div></div></div>
-    <div id="submodalEstrategia3" class="submodal"><div class="submodal-content"><h2>📘 Liquidity Sniping</h2><p>Entra em pools novas com APR muito alto antes da massa.</p><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia3')">Fechar</button></div></div></div>
-    <div id="submodalEstrategia4" class="submodal"><div class="submodal-content"><h2>📘 Range por Volatilidade</h2><p>Ajusta o range da LP de acordo com a volatilidade real.</p><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia4')">Fechar</button></div></div></div>
-    <div id="submodalEstrategia5" class="submodal"><div class="submodal-content"><h2>📘 Regime de Mercado</h2><p>Altera a estratégia conforme o tipo de mercado.</p><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia5')">Fechar</button></div></div></div>
-    <div id="submodalEstrategia6" class="submodal"><div class="submodal-content"><h2>📘 Rebalanceamento por Delta</h2><p>Mantém exposição ideal rebalanceando automaticamente.</p><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia6')">Fechar</button></div></div></div>
-    <div id="submodalEstrategia7" class="submodal"><div class="submodal-content"><h2>📘 Stop Loss Inteligente</h2><p>Remove liquidez quando preço sai do range + tendência forte.</p><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia7')">Fechar</button></div></div></div>
-    <div id="submodalEstrategia8" class="submodal"><div class="submodal-content"><h2>📘 Multi-Pool Optimization</h2><p>Divide capital entre diferentes pools para diversificar risco.</p><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia8')">Fechar</button></div></div></div>
-    <div id="submodalEstrategia9" class="submodal"><div class="submodal-content"><h2>📘 Arbitragem entre Pools</h2><p>Lucra com diferenças de preço do mesmo ativo em diferentes pools.</p><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia9')">Fechar</button></div></div></div>
-    <div id="submodalEstrategia10" class="submodal"><div class="submodal-content"><h2>📘 Fee Harvesting Automático</h2><p>Coleta taxas periodicamente e reinveste.</p><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia10')">Fechar</button></div></div></div>
-    <div id="submodalEstrategia11" class="submodal"><div class="submodal-content"><h2>📘 Liquidez Direcional</h2><p>Range assimétrico para apostar em direção.</p><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia11')">Fechar</button></div></div></div>
-    <div id="submodalEstrategia12" class="submodal"><div class="submodal-content"><h2>📘 Machine Learning</h2><p>Usa modelos de ML para prever ranges e entradas.</p><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia12')">Fechar</button></div></div></div>
-    <div id="submodalEstrategia13" class="submodal"><div class="submodal-content"><h2>📘 Coin-M Inverse Long</h2><p>Opera contratos perpétuos inversos na Binance com alavancagem moderada.</p><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia13')">Fechar</button></div></div></div>
+    <!-- SUBMODAIS DAS ESTRATÉGIAS (ricas em detalhes) -->
+    <div id="submodalEstrategia1" class="submodal"><div class="submodal-content"><h2>📘 Estratégia 1: Market Making Adaptativo</h2><p><strong>Objetivo:</strong> Detectar fluxo agressivo de compra/venda e ajustar o range da posição de liquidez ANTES do preço se mover, capturando taxas e reduzindo risco.</p><p><strong>Exemplo prático:</strong> Posição LP em SOL/USDC com range de ±10% em torno de $150. Se volume comprador > 65%, o bot move o range para cima ([145-175]); se volume vendedor > 65%, move para baixo ([135-165]). Assim, a liquidez fica onde o volume está concentrado, aumentando as taxas coletadas.</p><p><strong>Riscos:</strong> Em mercados com fluxo falso, o ajuste pode causar saída do range ideal. Recomenda-se usar dados de order book confiáveis.</p><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia1')">Fechar</button></div></div></div>
+    <div id="submodalEstrategia2" class="submodal"><div class="submodal-content"><h2>📘 Estratégia 2: Gamma Scalping</h2><p><strong>Objetivo:</strong> Usar a posição LP como ferramenta de "gamma" – lucrar com volatilidade por meio de hedge (comprar/vender spot).</p><p><strong>Exemplo:</strong> LP em ETH/USDC com $10.000, delta neutra. Se o preço sobe para $2.100, a posição vale $10.500 e fica com delta positivo. O bot vende 0,5 ETH (≈$1.050), retornando a 4,5 ETH + $1.550 USDC, realizando lucro. Se o preço cair, compra spot para rebalancear.</p><p><strong>Riscos:</strong> Exige monitoramento constante e capital extra. Em mercados laterais, muitas transações podem gerar pequenos lucros mas também custos.</p><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia2')">Fechar</button></div></div></div>
+    <div id="submodalEstrategia3" class="submodal"><div class="submodal-content"><h2>📘 Estratégia 3: Liquidity Sniping</h2><p><strong>Objetivo:</strong> Entrar em pools novas com APR muito alto antes da massa, capturando os melhores yields iniciais.</p><p><strong>Exemplo:</strong> Detecta pool nova + APR > 200% → aloca capital parcial (ex: 10% do portfólio). Se a liquidez aumentar rapidamente, mantém a posição; se o APR cair rápido, sai com lucro.</p><p><strong>Riscos:</strong> Pools novas podem ser fraudulentas (rug pull) ou perder liquidez rapidamente. Invista apenas em pools auditadas e com volume razoável.</p><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia3')">Fechar</button></div></div></div>
+    <div id="submodalEstrategia4" class="submodal"><div class="submodal-content"><h2>📘 Estratégia 4: Range baseado em Volatilidade Implícita</h2><p><strong>Objetivo:</strong> Ajustar o range da LP de acordo com a volatilidade real do ativo, usando o indicador ATR.</p><p><strong>Fórmula:</strong> Range = Preço atual ± (ATR × fator). Fator 1.5 (conservador), 2.5 (moderado), 3.5 (agressivo). Quanto maior a volatilidade, maior o range para evitar sair do intervalo.</p><p><strong>Riscos:</strong> Em alta volatilidade, range largo reduz eficiência de capital. Em baixa volatilidade, range estreito aumenta risco de sair do range.</p><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia4')">Fechar</button></div></div></div>
+    <div id="submodalEstrategia5" class="submodal"><div class="submodal-content"><h2>📘 Estratégia 5: Regime de Mercado</h2><p><strong>Objetivo:</strong> Alterar a estratégia de LP conforme o tipo de mercado: tendência de alta, baixa ou lateral.</p><p><strong>Exemplo:</strong> Em Bull Market → range mais aberto (+20%) para capturar alta; em Bear → move parte para stablecoins e faz DCA; em Sideways → range estreito (+5%) para maximizar taxas.</p><p><strong>Riscos:</strong> Falsas tendências podem levar a ajustes errados. Combine com indicadores como médias móveis e RSI.</p><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia5')">Fechar</button></div></div></div>
+    <div id="submodalEstrategia6" class="submodal"><div class="submodal-content"><h2>📘 Estratégia 6: Rebalanceamento por Delta (institucional)</h2><p><strong>Objetivo:</strong> Manter exposição ideal (ex: 60% BTC / 40% USDC) rebalanceando automaticamente.</p><p><strong>Exemplo:</strong> Se BTC sobe e a carteira passa a ter 70% BTC, o bot vende o excesso de BTC para rebalancear. Se BTC cai para 50%, compra BTC.</p><p><strong>Riscos:</strong> Rebalancear muito frequentemente pode gerar muitas taxas. Use limites (ex: rebalancear apenas quando diferença > 10%).</p><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia6')">Fechar</button></div></div></div>
+    <div id="submodalEstrategia7" class="submodal"><div class="submodal-content"><h2>📘 Estratégia 7: Stop Loss Inteligente para LP</h2><p><strong>Objetivo:</strong> Remover liquidez quando preço sai do range + tendência forte, evitando IL extremo.</p><p><strong>Exemplo:</strong> SOL/USDC com range $135-$165. Se SOL cai para $130 com volume vendedor > 80%, o bot remove a LP, evitando perda maior.</p><p><strong>Riscos:</strong> Pode sair cedo em correção temporária. Use indicadores de momentum para confirmar.</p><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia7')">Fechar</button></div></div></div>
+    <div id="submodalEstrategia8" class="submodal"><div class="submodal-content"><h2>📘 Estratégia 8: Multi-Pool Optimization</h2><p><strong>Objetivo:</strong> Dividir capital entre diferentes pools para diversificar risco e maximizar yield.</p><p><strong>Exemplo:</strong> 40% stable (USDC/USDT), 30% SOL/USDC, 30% pool de alto APR (ex: COINX/USDC).</p><p><strong>Riscos:</strong> Monitoramento de várias pools e maior complexidade operacional.</p><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia8')">Fechar</button></div></div></div>
+    <div id="submodalEstrategia9" class="submodal"><div class="submodal-content"><h2>📘 Estratégia 9: Arbitragem entre Pools</h2><p><strong>Objetivo:</strong> Lucrar com diferenças de preço do mesmo ativo em diferentes pools.</p><p><strong>Exemplo:</strong> SOL a $150 na Orca e $150,50 na Meteora → compra na Orca, vende na Meteora, lucro $0,50/SOL (menos taxas).</p><p><strong>Riscos:</strong> Exige capital separado e rápida execução para evitar que a diferença se feche.</p><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia9')">Fechar</button></div></div></div>
+    <div id="submodalEstrategia10" class="submodal"><div class="submodal-content"><h2>📘 Estratégia 10: Fee Harvesting Automático</h2><p><strong>Objetivo:</strong> Coletar taxas periodicamente e reinvestir para juros compostos.</p><p><strong>Exemplo:</strong> Capital $1.000, taxas acumuladas $50 → o bot retira e adiciona à LP, aumentando o capital para $1.050.</p><p><strong>Riscos:</strong> Reinvestir taxas pode aumentar exposição ao ativo em momentos ruins. Combine com análise de mercado.</p><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia10')">Fechar</button></div></div></div>
+    <div id="submodalEstrategia11" class="submodal"><div class="submodal-content"><h2>📘 Estratégia 11: Liquidez Direcional</h2><p><strong>Objetivo:</strong> Range assimétrico para apostar em direção. Ex: 90% acima do preço, 10% abaixo.</p><p><strong>Exemplo:</strong> SOL $150, range [145, 180] (deslocado para cima). Se sobe para $170, captura mais taxas; se cai para $140, sai rápido.</p><p><strong>Riscos:</strong> Se a direção estiver errada, pode perder taxas e sofrer IL assimétrico.</p><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia11')">Fechar</button></div></div></div>
+    <div id="submodalEstrategia12" class="submodal"><div class="submodal-content"><h2>📘 Estratégia 12: Machine Learning (nível avançado)</h2><p><strong>Objetivo:</strong> Usar modelos de aprendizado de máquina para prever ranges, entradas e saídas.</p><p><strong>Exemplo:</strong> Modelo prevê baixa volatilidade → range estreito (±3%). Alta volatilidade → range amplo (±12%).</p><p><strong>Riscos:</strong> Modelos podem errar, especialmente em eventos imprevistos. Exige conhecimento técnico e dados de qualidade.</p><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia12')">Fechar</button></div></div></div>
+    <div id="submodalEstrategia13" class="submodal"><div class="submodal-content"><h2>📘 Estratégia 13: Coin-M Inverse Long (BTC/USD)</h2><p><strong>Objetivo:</strong> Operar contratos perpétuos inversos (Coin-M) na Binance, apostando na alta do BTC com alavancagem moderada.</p><p><strong>Exemplo:</strong> Posição de 1 contrato BTCUSD com margem 0.5 BTC (alavancagem 2x). Se BTC sobe 10%, lucro de 0.1 BTC. Stop loss móvel para proteger lucros.</p><p><strong>Riscos:</strong> Mercados voláteis podem causar perdas rápidas. Use stop loss e nunca alavanque mais do que seu capital permite.</p><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia13')">Fechar</button></div></div></div>
 
     <!-- MODAL DE POOLS COM 8 ABAS -->
     <div id="poolsModal" class="modal">
@@ -867,27 +893,35 @@
                 <button class="tab-btn" onclick="switchTab('liquidity')">🤖 Auto Liquidity</button>
             </div>
 
-            <!-- ABA TOP POOLS (VERSÃO ORIGINAL) -->
+            <!-- ABA TOP POOLS (COM SEMÁFORO DE RISCO E BUSCA MELHORADA) -->
             <div id="poolsTab" class="tab-content active">
-                <input type="text" id="searchPairInput" class="search-pair-input" placeholder="🔍 Buscar par (ex: WBTC/USDT, SOL/USDC, ETH/USDT)..." onkeyup="filtrarPorPar()">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                    <input type="text" id="searchPairInput" class="search-pair-input" style="flex:1;" placeholder="🔍 Buscar par (ex: WBTC, SOL, ETH, BRL)..." onkeyup="filtrarPorPar()">
+                    <button class="btn-atualizar" onclick="atualizarPoolsCompleto()" style="margin:0;">🔄 Atualizar</button>
+                </div>
                 <div class="categories-grid" id="categoriesContainer"></div>
                 <div class="warning-high-apr">⚠️ Os valores de APR são atualizados dinamicamente. Sempre analise volume e liquidez.</div>
                 <div class="mode-toggle"><button id="modoAutoBtn" class="mode-btn" onclick="setModo('auto')">🤖 Automático (Score)</button><button id="modoManualBtn" class="mode-btn" onclick="setModo('manual')">👆 Manual</button><button id="modoAPRBtn" class="mode-btn apr-high active" onclick="setModo('apr')">🔥 APR altos</button></div>
-                <div class="filter-row"><div class="filter-item"><label>TVL mínimo ($)</label><input type="number" id="filtroTVL" placeholder="10000" value="0" step="1000"></div><div class="filter-item"><label>Volume mínimo ($)</label><input type="number" id="filtroVolume" placeholder="5000" value="0" step="1000"></div><div class="filter-item"><label>APR mínimo (%)</label><input type="number" id="filtroAPR" placeholder="100" value="0" step="10"></div><button class="btn-filter" onclick="aplicarFiltros()">Aplicar</button></div>
+                <div class="filter-row">
+                    <div class="filter-item"><label>TVL mínimo ($)</label><input type="number" id="filtroTVL" placeholder="ex: 10000" value="0" step="1000"></div>
+                    <div class="filter-item"><label>Volume mínimo ($)</label><input type="number" id="filtroVolume" placeholder="ex: 5000" value="0" step="1000"></div>
+                    <div class="filter-item"><label>APR mínimo (%)</label><input type="number" id="filtroAPR" placeholder="ex: 100" value="0" step="10"></div>
+                    <button class="btn-filter" onclick="aplicarFiltros()">Aplicar</button>
+                </div>
                 <div class="table-wrapper"><table class="pools-table" id="poolsTable"><thead><tr><th onclick="ordenarPor('pool')">Pool</th><th onclick="ordenarPor('network')">Network</th><th onclick="ordenarPor('dex')">DEX</th><th onclick="ordenarPor('tvl')">TVL</th><th>Ratio</th><th onclick="ordenarPor('volume')">Volume 24h</th><th onclick="ordenarPor('apr')">APR</th><th>1h</th><th>6h</th><th>24h</th><th>7d</th><th>30d</th><th onclick="ordenarPor('fee')">Fee</th><th onclick="ordenarPor('age')">Age</th><th>Score</th></tr></thead><tbody id="poolsTableBody"></tbody></table></div>
             </div>
 
-            <!-- ABA POOLS ESTRATÉGICAS (com botão atualizar e links) -->
+            <!-- ABA POOLS ESTRATÉGICAS (COM SEMÁFORO DE OPORTUNIDADE) -->
             <div id="poolsEstrategicasTab" class="tab-content">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h3 style="color: var(--gold); margin: 0;">🎯 Pools Estratégicas Selecionadas</h3>
                     <button class="btn-atualizar" onclick="atualizarPoolsEstrategicas()">🔄 Atualizar</button>
                 </div>
                 <p style="color: var(--text); margin-bottom: 15px;">12 pools selecionadas para estratégias de alocação baseadas em MVRV. Clique no link 🔗 para acessar a pool na DEX.</p>
-                <div class="table-wrapper"><table class="pools-table" id="poolsEstrategicasTable"><thead><tr><th>Pool</th><th>Network</th><th>DEX</th><th>TVL</th><th>Ratio</th><th>Volume 24h</th><th>APR</th><th>Fee</th><th>Age</th><th>Link</th></tr></thead><tbody id="poolsEstrategicasBody"></tbody></table></div>
+                <div class="table-wrapper"><table class="pools-table" id="poolsEstrategicasTable"><thead><tr><th>Pool</th><th>Network</th><th>DEX</th><th>TVL</th><th>Ratio</th><th>Volume 24h</th><th>APR</th><th>Fee</th><th>Age</th><th>Oportunidade</th><th>Link</th></tr></thead><tbody id="poolsEstrategicasBody"></tbody></table></div>
             </div>
 
-            <!-- ABA NOTÍCIAS (com botão atualizar calendário) -->
+            <!-- ABA NOTÍCIAS (COM BOTÃO ATUALIZAR) -->
             <div id="newsTab" class="tab-content">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h3 style="color: var(--gold); margin: 0;">📅 Calendário Econômico</h3>
@@ -907,7 +941,7 @@
                 </div>
             </div>
 
-            <!-- ABA ESTRATÉGIAS (versão completa resumida para caber, mantendo as principais) -->
+            <!-- ABA ESTRATÉGIAS (mantida) -->
             <div id="strategiesTab" class="tab-content">
                 <div class="strategy-content">
                     <h3>🧠 Estratégia 1: Market Making Adaptativo <button class="btn-detalhe" onclick="abrirSubmodal('submodalEstrategia1')">📘 Ver detalhes</button></h3>
@@ -962,7 +996,7 @@
                 </div>
             </div>
 
-            <!-- ABA ROBÔ (híbrido) -->
+            <!-- ABA ROBÔ (já tratada no modal principal) -->
             <div id="robotTab" class="tab-content">
                 <div class="robot-content">
                     <h3>🤖 Bot de Liquidez Automatizado (Solana)</h3>
@@ -973,7 +1007,7 @@
                 </div>
             </div>
 
-            <!-- ABA MVRV CYCLE com texto explicativo completo -->
+            <!-- ABA MVRV CYCLE -->
             <div id="mvrvTab" class="tab-content">
                 <div class="strategy-content">
                     <h3>📈 MVRV Ratio (Market Value / Realized Value)</h3>
@@ -998,17 +1032,17 @@
                 </div>
             </div>
 
-            <!-- ABA INDICADORES DE CICLO (com inputs e texto explicativo) -->
+            <!-- ABA INDICADORES DE CICLO (COM EXPLICAÇÕES) -->
             <div id="cicloTab" class="tab-content">
                 <div class="strategy-content">
                     <h3>📈 Indicadores de Ciclo do Bitcoin</h3>
                     <div class="grid-2">
                         <div class="indicator-card"><div class="indicator-label">📊 MVRV</div><input type="number" id="inputMVRV" class="indicator-input" value="1.29" step="0.01" onchange="calcularScoreCiclo()"><div class="indicator-label" style="font-size:10px;">&lt;1 = barato | &gt;3.5 = caro</div></div>
-                        <div class="indicator-card"><div class="indicator-label">📈 NUPL</div><input type="number" id="inputNUPL" class="indicator-input" value="0.30" step="0.01" onchange="calcularScoreCiclo()"><div class="indicator-label" style="font-size:10px;">&lt;0.25 = capitulação | &gt;0.6 = euforia</div></div>
-                        <div class="indicator-card"><div class="indicator-label">🔥 SOPR</div><input type="number" id="inputSOPR" class="indicator-input" value="1.00" step="0.01" onchange="calcularScoreCiclo()"><div class="indicator-label" style="font-size:10px;">&lt;1 = prejuízo | &gt;1.1 = lucro</div></div>
-                        <div class="indicator-card"><div class="indicator-label">🏦 Realized Price</div><input type="number" id="inputRealizedPrice" class="indicator-input" value="20000" step="1000" onchange="calcularScoreCiclo()"><div class="indicator-label" style="font-size:10px;">Preço médio de compra</div></div>
+                        <div class="indicator-card"><div class="indicator-label">📈 NUPL (Lucro/Prejuízo não realizado)</div><input type="number" id="inputNUPL" class="indicator-input" value="0.30" step="0.01" onchange="calcularScoreCiclo()"><div class="indicator-label" style="font-size:10px;">&lt;0.25 = capitulação | &gt;0.6 = euforia</div></div>
+                        <div class="indicator-card"><div class="indicator-label">🔥 SOPR (Lucro/Prejuízo realizado)</div><input type="number" id="inputSOPR" class="indicator-input" value="1.00" step="0.01" onchange="calcularScoreCiclo()"><div class="indicator-label" style="font-size:10px;">&lt;1 = prejuízo (compra) | &gt;1.1 = lucro (venda)</div></div>
+                        <div class="indicator-card"><div class="indicator-label">🏦 Realized Price (Preço médio de compra)</div><input type="number" id="inputRealizedPrice" class="indicator-input" value="20000" step="1000" onchange="calcularScoreCiclo()"><div class="indicator-label" style="font-size:10px;">Preço abaixo = oportunidade</div></div>
                         <div class="indicator-card"><div class="indicator-label">📉 RHODL Ratio</div><input type="number" id="inputRHODL" class="indicator-input" value="2000" step="100" onchange="calcularScoreCiclo()"><div class="indicator-label" style="font-size:10px;">&lt;1000 = acumulação | &gt;5000 = topo</div></div>
-                        <div class="indicator-card"><div class="indicator-label">⛏️ Puell Multiple</div><input type="number" id="inputPuell" class="indicator-input" value="0.8" step="0.1" onchange="calcularScoreCiclo()"><div class="indicator-label" style="font-size:10px;">&lt;0.5 = fundo | &gt;3 = topo</div></div>
+                        <div class="indicator-card"><div class="indicator-label">⛏️ Puell Multiple (Receita mineradores)</div><input type="number" id="inputPuell" class="indicator-input" value="0.8" step="0.1" onchange="calcularScoreCiclo()"><div class="indicator-label" style="font-size:10px;">&lt;0.5 = fundo | &gt;3 = topo</div></div>
                     </div>
                     <div class="mvrv-card" style="text-align:center;">
                         <div style="display:flex; justify-content:center; align-items:center; margin-bottom:15px;"><span id="semaforoIcon" class="semaforo semaforo-amarelo"></span><span id="sinalTexto" style="font-size:24px; font-weight:bold;">NEUTRO</span></div>
@@ -1016,8 +1050,14 @@
                         <div class="indicator-label">SCORE TOTAL</div>
                         <div id="recomendacaoCiclo" style="margin-top:15px; padding:12px; background:#0d151f; border-radius:12px;">Preencha os valores acima para calcular</div>
                     </div>
-                    <details class="guide-box"><summary>📘 COMO USAR OS INDICADORES</summary>
-                        <p><strong>MVRV:</strong> &lt;1 compra, &gt;3.5 topo</p><p><strong>NUPL:</strong> &lt;0.25 capitulação, &gt;0.6 euforia</p><p><strong>SOPR:</strong> &lt;1 prejuízo (compra), &gt;1.1 lucro (venda)</p><p><strong>Realized Price:</strong> Preço abaixo = compra</p><p><strong>RHODL:</strong> Baixo = acumulação, alto = topo</p><p><strong>Puell:</strong> &lt;0.5 fundo, &gt;3 topo</p><p><strong>Score:</strong> +5 a +10 = COMPRA FORTE, -5 a -10 = TOPO</p>
+                    <details class="guide-box"><summary>📘 O QUE CADA INDICADOR SIGNIFICA?</summary>
+                        <p><strong>MVRV:</strong> Compara preço atual com preço médio de compra. &lt;1 = barato (compra), &gt;3.5 = caro (topo).</p>
+                        <p><strong>NUPL:</strong> Mede lucro/prejuízo não realizado. &lt;0.25 = capitulação (fundo), &gt;0.6 = euforia (topo).</p>
+                        <p><strong>SOPR:</strong> Mede se as moedas são vendidas com lucro. &lt;1 = prejuízo (oportunidade), &gt;1.1 = lucro (risco).</p>
+                        <p><strong>Realized Price:</strong> Preço médio de compra de todos os BTC. Preço abaixo = zona de oportunidade histórica.</p>
+                        <p><strong>RHODL:</strong> Compara holders antigos vs novos. Baixo = acumulação, alto = topo.</p>
+                        <p><strong>Puell Multiple:</strong> Receita dos mineradores vs média. &lt;0.5 = fundo, &gt;3 = topo.</p>
+                        <p><strong>Score:</strong> +5 a +10 = 🟢 COMPRA FORTE, -4 a +4 = 🟡 NEUTRO, -5 a -10 = 🔴 TOPO.</p>
                     </details>
                     <button class="btn-calc" onclick="calcularScoreCiclo()">🔄 CALCULAR SCORE</button>
                 </div>
@@ -1054,6 +1094,7 @@
         // ========== VARIÁVEIS GLOBAIS ==========
         let price = 67728.12;
         let pricesHistory = [];
+        let ema50 = 0;
         let isDesktop = false;
         let currentTF = "1";
         let activeWS = null;
@@ -1121,12 +1162,28 @@
         let modoLiquidity = 'auto';
         let carteiraManual = {};
         
-        // ========== FUNÇÕES ==========
+        // ========== FUNÇÕES AUXILIARES ==========
         function abrirSubmodal(id) { document.getElementById(id).style.display = 'flex'; }
         function fecharSubmodal(id) { document.getElementById(id).style.display = 'none'; }
         function fecharModal(id) { document.getElementById(id).style.display = 'none'; }
         function copyText(text) { navigator.clipboard.writeText(text).then(() => alert('✅ Copiado!')).catch(() => alert('❌ Erro ao copiar.')); }
         
+        // ========== SEMÁFORO DE RISCO PARA POOLS ==========
+        function getRiskLevel(pool) {
+            const tvlNum = parseFloat(pool.tvl) * (pool.tvl.includes('K') ? 1e3 : (pool.tvl.includes('M') ? 1e6 : 1));
+            const volNum = parseFloat(pool.volume) * (pool.volume.includes('K') ? 1e3 : (pool.volume.includes('M') ? 1e6 : 1));
+            const aprNum = parseFloat(pool.apr);
+            let ageDays = 0;
+            if (pool.age.includes('d')) ageDays = parseFloat(pool.age);
+            else if (pool.age.includes('mo')) ageDays = parseFloat(pool.age) * 30;
+            else if (pool.age.includes('y')) ageDays = parseFloat(pool.age) * 365;
+            else if (pool.age.includes('m')) ageDays = parseFloat(pool.age);
+            if (tvlNum > 100000 && volNum > 100000 && aprNum < 200 && ageDays > 30) return { emoji: '🟢', class: 'risk-verde', text: 'Baixo risco' };
+            if (tvlNum > 10000 && volNum > 10000 && aprNum < 400) return { emoji: '🟡', class: 'risk-amarelo', text: 'Risco médio' };
+            return { emoji: '🔴', class: 'risk-vermelho', text: 'Alto risco' };
+        }
+        
+        // ========== FUNÇÕES MVRV ==========
         function calcularRegimeMVRV(mvrv, sth) {
             if (mvrv < 1.2 && sth < 0.95) return { regime: 'COMPRA_FORTE', cor: '#00ff88', msg: '🔥 Zona de compra forte! Aumente agressividade.', strategy: 'Máxima agressividade - foco em blue chips' };
             if (mvrv < 1.5) return { regime: 'ACUMULAÇÃO', cor: '#ffcc00', msg: '📈 Zona de acumulação. Operações normais com viés de alta.', strategy: 'Alto APR com crescimento - SOL/HYPE/NVDA' };
@@ -1154,21 +1211,9 @@
             document.getElementById('liquidityMvrv').innerText = mvrvData.total;
             document.getElementById('liquidityStrategy').innerText = regimeObj.strategy;
             atualizarAlocacao();
-            atualizarDemoRobot();
         }
         
-        function atualizarDemoRobot() {
-            document.getElementById('demoRegime').innerText = mvrvData.regime;
-            document.getElementById('demoTexto').innerText = mvrvData.regime === 'ACUMULAÇÃO' ? 'Adicionar liquidez em SOL/USDC' : 'Priorizar stable pools';
-            document.getElementById('demoRange').innerText = mvrvData.regime === 'ACUMULAÇÃO' ? '$145 - $175' : '$50 - $200';
-            document.getElementById('demoCapital').innerText = mvrvData.regime === 'ACUMULAÇÃO' ? '50% do total' : '30% do total';
-        }
-        
-        function copiarDemoEstrategia() {
-            const texto = `🧪 ESTRATÉGIA DEMONSTRAÇÃO\n\nRegime MVRV: ${mvrvData.regime}\nMVRV: ${mvrvData.total} | STH: ${mvrvData.sth}\n\n${mvrvData.recomendacao}\n\nAção sugerida: ${mvrvData.regime === 'ACUMULAÇÃO' ? 'Adicionar liquidez em SOL/USDC' : 'Priorizar stable pools'}`;
-            navigator.clipboard.writeText(texto).then(() => alert('✅ Estratégia copiada!')).catch(() => alert('❌ Erro ao copiar.'));
-        }
-        
+        // ========== SCORE DE CICLO ==========
         function calcularScoreCiclo() {
             const mvrv = parseFloat(document.getElementById('inputMVRV').value) || 0;
             const nupl = parseFloat(document.getElementById('inputNUPL').value) || 0;
@@ -1194,6 +1239,7 @@
             document.getElementById('recomendacaoCiclo').innerHTML = recomendacao;
         }
         
+        // ========== AUTO LIQUIDITY ==========
         function setModoLiquidity(modo) {
             modoLiquidity = modo;
             document.getElementById('modoAutoLiquidityBtn').classList.toggle('active', modo === 'auto');
@@ -1273,11 +1319,12 @@
             alert('✅ APRs atualizados com simulação!');
         }
         
-        // Funções para Top Pools
+        // ========== FUNÇÕES DE POOLS (TOP POOLS) ==========
         function extrairNumeros(pool) {
             const parseNum = (str) => { if(!str) return 0; let n = parseFloat(str.replace(/[KMB%$]/g,'')); if(str.includes('K')) n*=1e3; if(str.includes('M')) n*=1e6; return n; };
             return { tvlNum: parseNum(pool.tvl), volNum: parseNum(pool.volume), aprNum: parseNum(pool.apr) };
         }
+        
         function calcularScore(pool, tvls, vols, aprs) {
             const {tvlNum,volNum,aprNum}=extrairNumeros(pool);
             const tvlPerc=tvls.length?tvls.filter(v=>v<tvlNum).length/tvls.length:0;
@@ -1285,15 +1332,17 @@
             const aprPerc=aprs.length?aprs.filter(v=>v<aprNum).length/aprs.length:0;
             return (aprPerc*0.4)+(volPerc*0.3)+(tvlPerc*0.2);
         }
+        
         function getTopAPRs(pools, n, filterFn = null) {
             let filtered = filterFn ? pools.filter(filterFn) : pools;
             filtered.sort((a,b) => parseFloat(b.apr) - parseFloat(a.apr));
-            return filtered.slice(0,n).map(p => ({ pair: p.pool, apr: p.apr }));
+            return filtered.slice(0,n).map(p => ({ pair: p.pool, apr: p.apr, risk: getRiskLevel(p) }));
         }
+        
         function refreshCategories() {
             const bluechip = getTopAPRs(poolsData, 5);
-            const stable = getTopAPRs(poolsData, 5, p => p.pool.toUpperCase().includes('USDC') || p.pool.toUpperCase().includes('USDT'));
-            const rwa = getTopAPRs(poolsData, 5, p => ['COIN','NVDA','SLV','HOOD','TQQQ'].some(k => p.pool.toUpperCase().includes(k)));
+            const stable = getTopAPRs(poolsData, 5, p => p.pool.toUpperCase().includes('USDC') || p.pool.toUpperCase().includes('USDT') || p.pool.toUpperCase().includes('DAI'));
+            const rwa = getTopAPRs(poolsData, 5, p => ['COIN', 'NVDA', 'SLV', 'HOOD', 'TQQQ'].some(k => p.pool.toUpperCase().includes(k)));
             const real = getTopAPRs(poolsData, 5, p => p.pool.toUpperCase().includes('BRL') || p.pool.toUpperCase().includes('BRZ'));
             const categories = [
                 { title: "BEST BLUE-CHIP", items: bluechip },
@@ -1303,13 +1352,15 @@
             ];
             let html = '';
             for (let cat of categories) {
-                html += `<div class="category-card"><div class="category-title">${cat.title}</div>`;
-                for (let item of cat.items) html += `<div class="category-item"><span class="pair">${item.pair}</span><span class="apr">${item.apr}</span></div>`;
+                html += `<div class="category-card"><div class="category-title">${cat.title}<span class="risk-dot ${cat.items[0]?.risk.class || 'risk-amarelo'}"></span></div>`;
+                for (let item of cat.items) html += `<div class="category-item"><span class="pair"><span class="risk-dot ${item.risk.class}"></span>${item.pair}</span><span class="apr">${item.apr}</span></div>`;
                 html += `</div>`;
             }
             document.getElementById('categoriesContainer').innerHTML = html;
         }
+        
         function gerarVariacao() { return [(Math.random()*4-2).toFixed(2), (Math.random()*4-2).toFixed(2), (Math.random()*4-2).toFixed(2), (Math.random()*4-2).toFixed(2), (Math.random()*4-2).toFixed(2)]; }
+        
         function renderPoolsTable(pools) {
             const tbody=document.getElementById('poolsTableBody');
             if(!tbody) return;
@@ -1319,11 +1370,13 @@
                 const scorePercent = Math.min(100, (aprNum / 500) * 100);
                 const variacoes=gerarVariacao();
                 const formatVar = (v) => `<span class="${parseFloat(v)>=0?'positive':'negative'}">${parseFloat(v)>=0?'▲':'▼'} ${Math.abs(v)}%</span>`;
+                const risk = getRiskLevel(p);
                 const tr=document.createElement('tr');
-                tr.innerHTML=`<td><strong>${p.pool}</strong></td><td>${p.network}</td><td>${p.dex}</td><td>$${p.tvl}</td><td><div class="ratio-bar"><span style="width:${p.ratio.split('/')[0]}%;"></span></div>${p.ratio}</td><td>$${p.volume}</td><td class="apr-high">${p.apr}</td><td>${formatVar(variacoes[0])}</td><td>${formatVar(variacoes[1])}</td><td>${formatVar(variacoes[2])}</td><td>${formatVar(variacoes[3])}</td><td>${formatVar(variacoes[4])}</td><td>${p.fee}</td><td>${p.age}</td><td><div class="score-bar-small"><div class="score-fill-small" style="width:${scorePercent}%;"></div></div>${Math.round(scorePercent)}%</td>`;
+                tr.innerHTML=`<td><span class="risk-dot ${risk.class}"></span><strong>${p.pool}</strong></td><td>${p.network}</td><td>${p.dex}</td><td>$${p.tvl}</td><td><div class="ratio-bar"><span style="width:${p.ratio.split('/')[0]}%;"></span></div>${p.ratio}</td><td>$${p.volume}</td><td class="apr-high">${p.apr}</td><td>${formatVar(variacoes[0])}</td><td>${formatVar(variacoes[1])}</td><td>${formatVar(variacoes[2])}</td><td>${formatVar(variacoes[3])}</td><td>${formatVar(variacoes[4])}</td><td>${p.fee}</td><td>${p.age}</td><td><div class="score-bar-small"><div class="score-fill-small" style="width:${scorePercent}%;"></div></div>${Math.round(scorePercent)}%</td>`;
                 tbody.appendChild(tr);
             });
         }
+        
         function ordenarLista(lista, coluna, direcao) {
             lista.sort((a,b)=>{
                 let valA,valB;
@@ -1332,13 +1385,14 @@
                 return direcao==='asc'?(valA>valB?1:-1):(valA<valB?1:-1);
             });
         }
+        
         function aplicarFiltrosEOrdenar() {
             let poolsFiltradas = poolsData.filter(p => {
                 const {tvlNum,volNum,aprNum}=extrairNumeros(p);
                 if(tvlNum<filtros.tvlMin) return false;
                 if(volNum<filtros.volMin) return false;
                 if(aprNum<filtros.aprMin) return false;
-                if(searchTerm && !p.pool.toUpperCase().includes(searchTerm)) return false;
+                if(searchTerm && !p.pool.toUpperCase().includes(searchTerm.toUpperCase())) return false;
                 return true;
             });
             if(modoAtual==='auto') {
@@ -1354,28 +1408,52 @@
             }
             renderPoolsTable(poolsFiltradas);
         }
+        
         function setModo(modo) { modoAtual = modo; aplicarFiltrosEOrdenar(); }
         function aplicarFiltros() { filtros.tvlMin = parseFloat(document.getElementById('filtroTVL').value) || 0; filtros.volMin = parseFloat(document.getElementById('filtroVolume').value) || 0; filtros.aprMin = parseFloat(document.getElementById('filtroAPR').value) || 0; aplicarFiltrosEOrdenar(); }
         function ordenarPor(coluna) { if(modoAtual==='manual') ordenacaoAtual = { coluna, direcao: ordenacaoAtual.coluna===coluna && ordenacaoAtual.direcao==='asc' ? 'desc' : 'asc' }; aplicarFiltrosEOrdenar(); }
-        function filtrarPorPar() { searchTerm = document.getElementById('searchPairInput').value.trim().toUpperCase(); aplicarFiltrosEOrdenar(); }
-        function atualizarPools() { refreshCategories(); aplicarFiltrosEOrdenar(); }
+        function filtrarPorPar() { searchTerm = document.getElementById('searchPairInput').value.trim(); aplicarFiltrosEOrdenar(); }
+        function atualizarPoolsCompleto() {
+            poolsData.forEach(p => {
+                let novoApr = parseFloat(p.apr) + (Math.random() * 30 - 15);
+                novoApr = Math.max(5, Math.min(500, novoApr));
+                p.apr = novoApr.toFixed(1) + '%';
+                let novoTvl = parseFloat(p.tvl) + (Math.random() * 20 - 10);
+                novoTvl = Math.max(1, Math.min(500, novoTvl));
+                p.tvl = novoTvl.toFixed(1) + 'K';
+                let novoVol = parseFloat(p.volume) + (Math.random() * 30 - 15);
+                novoVol = Math.max(0.1, Math.min(10, novoVol));
+                p.volume = novoVol.toFixed(2) + 'M';
+            });
+            refreshCategories();
+            aplicarFiltrosEOrdenar();
+            alert('✅ Dados das pools atualizados!');
+        }
         
+        // ========== POOLS ESTRATÉGICAS ==========
         function renderPoolsEstrategicas() {
             const tbody = document.getElementById('poolsEstrategicasBody');
             if (!tbody) return;
             tbody.innerHTML = '';
             poolsEstrategicas.forEach(p => {
+                const risk = getRiskLevel(p);
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td><strong>${p.pool}</strong></td><td>${p.network}</td><td>${p.dex}</td><td>$${p.tvl}</td><td><div class="ratio-bar"><span style="width:${p.ratio.split('/')[0]}%;"></span></div>${p.ratio}</td><td>$${p.volume}</td><td class="apr-high">${p.apr}</td><td>${p.fee}</td><td>${p.age}</td><td><a href="${p.link}" target="_blank" class="link-pool">🔗 Acessar</a></td>`;
+                tr.innerHTML = `<td><span class="risk-dot ${risk.class}"></span><strong>${p.pool}</strong></td><td>${p.network}</td><td>${p.dex}</td><td>$${p.tvl}</td><td><div class="ratio-bar"><span style="width:${p.ratio.split('/')[0]}%;"></span></div>${p.ratio}</td><td>$${p.volume}</td><td class="apr-high">${p.apr}</td><td>${p.fee}</td><td>${p.age}</td><td><span class="risk-dot ${risk.class}"></span> ${risk.text}</td><td><a href="${p.link}" target="_blank" class="link-pool">🔗 Acessar</a></td>`;
                 tbody.appendChild(tr);
             });
         }
         
         function atualizarPoolsEstrategicas() {
             poolsEstrategicas.forEach(p => {
-                let novoApr = parseFloat(p.apr) + (Math.random() * 30 - 15); novoApr = Math.max(5, Math.min(500, novoApr)); p.apr = novoApr.toFixed(1) + '%';
-                let novoTvl = parseFloat(p.tvl) + (Math.random() * 20 - 10); novoTvl = Math.max(1, Math.min(500, novoTvl)); p.tvl = novoTvl.toFixed(1) + 'K';
-                let novoVol = parseFloat(p.volume) + (Math.random() * 30 - 15); novoVol = Math.max(0.1, Math.min(10, novoVol)); p.volume = novoVol.toFixed(2) + 'M';
+                let novoApr = parseFloat(p.apr) + (Math.random() * 30 - 15);
+                novoApr = Math.max(5, Math.min(500, novoApr));
+                p.apr = novoApr.toFixed(1) + '%';
+                let novoTvl = parseFloat(p.tvl) + (Math.random() * 20 - 10);
+                novoTvl = Math.max(1, Math.min(500, novoTvl));
+                p.tvl = novoTvl.toFixed(1) + 'K';
+                let novoVol = parseFloat(p.volume) + (Math.random() * 30 - 15);
+                novoVol = Math.max(0.1, Math.min(10, novoVol));
+                p.volume = novoVol.toFixed(2) + 'M';
             });
             renderPoolsEstrategicas();
             alert('✅ Dados das pools estratégicas atualizados!');
@@ -1395,7 +1473,38 @@
             alert('✅ Calendário recarregado!');
         }
         
-        // Funções principais da interface
+        // ========== ROBÔ DEMO ==========
+        function simularBotLiquidez() {
+            const poolSelect = document.getElementById('demoPoolSelect');
+            const selectedPool = poolSelect.options[poolSelect.selectedIndex]?.text || 'SOL/USDC';
+            const amount = parseFloat(document.getElementById('demoAmount').value) || 1000;
+            const range = document.getElementById('demoRangeSelect').value;
+            const autoAdjust = document.getElementById('demoAutoAdjust').value;
+            const logDiv = document.getElementById('demoLog');
+            logDiv.innerHTML = `[${new Date().toLocaleTimeString()}] 🚀 Iniciando simulação...\n`;
+            logDiv.innerHTML += `[Bot] Pool: ${selectedPool}\n`;
+            logDiv.innerHTML += `[Bot] Valor: ${amount} USDC\n`;
+            logDiv.innerHTML += `[Bot] Range: ${range}\n`;
+            logDiv.innerHTML += `[Bot] Auto-ajuste: ${autoAdjust}\n`;
+            logDiv.innerHTML += `[Bot] Adicionando liquidez...\n`;
+            setTimeout(() => {
+                logDiv.innerHTML += `[Bot] ✅ Liquidez adicionada com sucesso!\n`;
+                if (autoAdjust === 'ON') {
+                    logDiv.innerHTML += `[Bot] Monitorando preço...\n`;
+                    setTimeout(() => {
+                        logDiv.innerHTML += `[Bot] ⚡ Preço variou mais de 5%! Ajustando range...\n`;
+                        logDiv.innerHTML += `[Bot] Novo range: ${range} deslocado para o novo preço.\n`;
+                    }, 2000);
+                }
+                setTimeout(() => {
+                    logDiv.innerHTML += `[Bot] 📈 Taxas acumuladas: ${(amount * 0.002).toFixed(2)} USDC\n`;
+                    logDiv.innerHTML += `[Bot] 🔄 Reinvestindo taxas...\n`;
+                    logDiv.innerHTML += `[Bot] ✅ Simulação concluída.\n`;
+                }, 4000);
+            }, 1500);
+        }
+        
+        // ========== FUNÇÕES PRINCIPAIS DA INTERFACE ==========
         function setTF(tf, btn) { currentTF = tf; document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); initChart(); }
         function toggleMode() { isDesktop = !isDesktop; document.getElementById('mainCard').classList.toggle('desktop-mode', isDesktop); initChart(); }
         
@@ -1442,34 +1551,67 @@
         
         function onSymbolChange() { initChart(); }
         
-        function updateSignals() {
-            let s1Valor = 0;
-            if(Math.floor(price * 100) % 2 === 0) { document.getElementById('statusText').innerText = '🔥 OPORTUNIDADE'; s1Valor = 30; }
-            else { document.getElementById('statusText').innerText = '⚠️ AGUARDAR'; s1Valor = 0; }
-            let s2Valor = 0, s2Direcao = null;
-            if(pricesHistory.length >= 21) {
-                const compra = price > pricesHistory[pricesHistory.length - 21];
-                document.getElementById('rsiText').innerText = compra ? '🚀 COMPRA' : '📉 VENDA';
-                s2Valor = 40; s2Direcao = compra ? 'compra' : 'venda';
-            } else { document.getElementById('rsiText').innerText = `COLETANDO ${pricesHistory.length}/21`; }
-            let s3Valor = 0, s3Direcao = null;
-            if(pricesHistory.length >= 3) {
-                const avg = pricesHistory.slice(-3).reduce((a,b)=>a+b,0)/3;
-                if(price > avg * 1.001) { document.getElementById('momText').innerText = '📈 ALTA'; s3Valor = 30; s3Direcao = 'compra'; }
-                else if(price < avg * 0.999) { document.getElementById('momText').innerText = '📉 BAIXA'; s3Valor = 30; s3Direcao = 'venda'; }
-                else document.getElementById('momText').innerText = '⚖️ NEUTRO';
+        // ========== SINAIS E CONFLUÊNCIA MELHORADOS ==========
+        function calcularEMA50() {
+            if (pricesHistory.length < 50) return price;
+            let multiplier = 2 / (50 + 1);
+            let ema = pricesHistory[0];
+            for (let i = 1; i < pricesHistory.length; i++) {
+                ema = (pricesHistory[i] - ema) * multiplier + ema;
             }
-            let score = s1Valor + s2Valor + s3Valor;
-            if(s2Direcao && s3Direcao && s2Direcao !== s3Direcao) score = 0;
+            return ema;
+        }
+        
+        function updateSignals() {
+            // Sinal Geral (EMA 50)
+            ema50 = calcularEMA50();
+            const sinalGeral = price > ema50 ? '🟢 OPORTUNIDADE' : '🔴 AGUARDAR';
+            const sinalGeralIcon = price > ema50 ? '🟢' : '🔴';
+            document.getElementById('statusText').innerText = sinalGeral;
+            document.getElementById('sinalGeralIcon').style.background = price > ema50 ? '#00ff88' : '#ff3e3e';
+            
+            // Filtro Técnico (21 períodos)
+            let sinalTecnico = '⚖️ NEUTRO', sinalTecnicoIcon = '🟡', sinalTecnicoValor = 0;
+            if (pricesHistory.length >= 21) {
+                const compra = price > pricesHistory[pricesHistory.length - 21];
+                sinalTecnico = compra ? '🚀 COMPRA' : '📉 VENDA';
+                sinalTecnicoIcon = compra ? '🟢' : '🔴';
+                sinalTecnicoValor = compra ? 40 : 0;
+            }
+            document.getElementById('rsiText').innerText = sinalTecnico;
+            document.getElementById('sinalTecnicoIcon').style.background = sinalTecnicoIcon === '🟢' ? '#00ff88' : (sinalTecnicoIcon === '🔴' ? '#ff3e3e' : '#ffcc00');
+            
+            // Momentum (variação percentual da média 3)
+            let sinalMomentum = '⚖️ NEUTRO', sinalMomentumIcon = '🟡', sinalMomentumValor = 0;
+            if (pricesHistory.length >= 3) {
+                const avg3 = pricesHistory.slice(-3).reduce((a,b)=>a+b,0)/3;
+                const variacao = (price - avg3) / avg3 * 100;
+                if (variacao > 0.2) { sinalMomentum = '📈 ALTA'; sinalMomentumIcon = '🟢'; sinalMomentumValor = 30; }
+                else if (variacao < -0.2) { sinalMomentum = '📉 BAIXA'; sinalMomentumIcon = '🔴'; sinalMomentumValor = 30; }
+                else { sinalMomentum = '⚖️ NEUTRO'; sinalMomentumIcon = '🟡'; sinalMomentumValor = 0; }
+            }
+            document.getElementById('momText').innerText = sinalMomentum;
+            document.getElementById('sinalMomentumIcon').style.background = sinalMomentumIcon === '🟢' ? '#00ff88' : (sinalMomentumIcon === '🔴' ? '#ff3e3e' : '#ffcc00');
+            
+            // Score e conflito
+            let score = (price > ema50 ? 30 : 0) + sinalTecnicoValor + sinalMomentumValor;
+            // Conflito: se técnico e momentum têm direções opostas, score zera
+            if ((sinalTecnico.includes('COMPRA') && sinalMomentum.includes('BAIXA')) ||
+                (sinalTecnico.includes('VENDA') && sinalMomentum.includes('ALTA'))) {
+                score = 0;
+            }
             document.getElementById('scoreFill').style.width = score + '%';
             document.getElementById('scoreValue').innerText = score + '/100';
+            
             let scoreLabel = '⚠️ Evitar operação', probabilidade = 'Baixa', classeScore = 'baixa';
-            if(score >= 80) { scoreLabel = '🔥 Confluência forte'; probabilidade = 'Alta'; classeScore = 'alta'; document.getElementById('alertaBadge').style.display = 'inline-block'; }
-            else if(score >= 60) { scoreLabel = '⚡ Confluência moderada'; probabilidade = 'Média'; classeScore = 'media'; document.getElementById('alertaBadge').style.display = 'none'; }
+            if (score >= 80) { scoreLabel = '🔥 Confluência forte'; probabilidade = 'Alta'; classeScore = 'alta'; document.getElementById('alertaBadge').style.display = 'inline-block'; }
+            else if (score >= 60) { scoreLabel = '⚡ Confluência moderada'; probabilidade = 'Média'; classeScore = 'media'; document.getElementById('alertaBadge').style.display = 'none'; }
             else document.getElementById('alertaBadge').style.display = 'none';
             document.getElementById('scoreFill').className = 'score-fill ' + classeScore;
             document.getElementById('scoreLabel').innerText = scoreLabel;
             document.getElementById('probabilidade').innerText = probabilidade;
+            
+            // Sessão
             const hora = new Date().getHours(), minutos = new Date().getMinutes(), horaMin = hora + minutos/60;
             let sessao = 'Fora do horário';
             if (horaMin >= 21 || horaMin < 1) sessao = '🌏 Ásia';
@@ -1530,7 +1672,7 @@
             alert('⚠️ Ordem simulada. Conecte-se à Hyperliquid para ordens reais.');
         }
         
-        // Inicialização
+        // ========== INICIALIZAÇÃO ==========
         refreshCategories();
         setModo('apr');
         iniciarTimerDescanso();
@@ -1538,6 +1680,16 @@
         atualizarMVRV();
         renderPoolsEstrategicas();
         calcularScoreCiclo();
+        // Preencher select do robô demo
+        const demoSelect = document.getElementById('demoPoolSelect');
+        if (demoSelect) {
+            poolsEstrategicas.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p.pool;
+                opt.text = p.pool;
+                demoSelect.appendChild(opt);
+            });
+        }
         
         const mvrvFilterToggle = document.getElementById('mvrvFilterToggle');
         const mvrvStatusRobot = document.getElementById('mvrvStatusRobot');
