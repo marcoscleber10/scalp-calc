@@ -571,6 +571,94 @@
             text-align: center;
             font-family: monospace;
         }
+        .search-pair-input {
+            width: 100%;
+            background: #0d151f;
+            border: 1px solid #3d4d62;
+            color: white;
+            padding: 12px 16px;
+            border-radius: 30px;
+            font-size: 13px;
+            margin-bottom: 15px;
+            outline: none;
+        }
+        .search-pair-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 5px var(--accent);
+        }
+        .mode-toggle {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .mode-btn {
+            flex: 1;
+            min-width: 100px;
+            background: #21262d;
+            border: 1px solid #30363d;
+            color: var(--text);
+            padding: 8px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .mode-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+        .mode-btn.apr-high { background: var(--orange); color: #000; border-color: var(--orange); }
+        .mode-btn.apr-high.active { background: var(--orange); color: #000; border-color: var(--orange); box-shadow: 0 0 10px var(--orange); }
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 15px;
+            background: #1a222c;
+            padding: 15px;
+            border-radius: 20px;
+        }
+        .filter-item { flex: 1; min-width: 100px; }
+        .filter-item label { font-size: 9px; color: var(--text); text-transform: uppercase; margin-bottom: 2px; display: block; }
+        .filter-item input {
+            width: 100%;
+            background: #0d151f;
+            border: 1px solid #3d4d62;
+            color: white;
+            padding: 8px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+        .btn-filter {
+            background: var(--accent);
+            border: none;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 12px;
+            height: 36px;
+        }
+        .btn-filter:hover { background: var(--green); color: #000; }
+        .btn-atualizar {
+            background: var(--accent);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 15px;
+            margin-left: 10px;
+        }
+        .btn-atualizar:hover { background: var(--green); color: #000; }
+        .link-pool {
+            color: var(--accent);
+            text-decoration: none;
+            margin-left: 8px;
+            font-size: 14px;
+        }
+        .link-pool:hover { color: var(--green); }
     </style>
 </head>
 <body>
@@ -603,7 +691,7 @@
             </optgroup>
         </select>
 
-        <div class="price" id="priceText">$ 74,069.05</div>
+        <div class="price" id="priceText">$ 67,728.12</div>
 
         <div class="score-container">
             <div class="score-text"><span>🔥 Confluência</span><span id="scoreValue">40/100</span></div>
@@ -766,7 +854,7 @@
     <div id="submodalEstrategia12" class="submodal"><div class="submodal-content"><h2>📘 Estratégia 12: Machine Learning (nível avançado)</h2><h3>🎯 Objetivo</h3><p>Usar modelos de aprendizado de máquina para prever ranges, entradas e saídas.</p><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia12')">Fechar</button></div></div></div>
     <div id="submodalEstrategia13" class="submodal"><div class="submodal-content"><h2>📘 Estratégia 13: Coin-M Inverse Long (BTC/USD)</h2><h3>🎯 Objetivo</h3><p>Operar contratos perpétuos inversos (Coin-M) na Binance, apostando na alta do BTC com alavancagem moderada.</p><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia13')">Fechar</button></div></div></div>
 
-    <!-- MODAL DE POOLS COM 7 ABAS -->
+    <!-- MODAL DE POOLS COM 8 ABAS -->
     <div id="poolsModal" class="modal">
         <div class="modal-content pool-modal-content">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -784,9 +872,9 @@
                 <button class="tab-btn" onclick="switchTab('liquidity')">🤖 Auto Liquidity</button>
             </div>
 
-            <!-- ABA TOP POOLS (ORIGINAL) -->
+            <!-- ABA TOP POOLS (VERSÃO ORIGINAL RESTAURADA) -->
             <div id="poolsTab" class="tab-content active">
-                <input type="text" id="searchPairInput" class="search-pair-input" placeholder="🔍 Buscar par (ex: WBTC/USDT, SOL/USDC)..." onkeyup="filtrarPorPar()">
+                <input type="text" id="searchPairInput" class="search-pair-input" placeholder="🔍 Buscar par (ex: WBTC/USDT, SOL/USDC, ETH/USDT, BRL/USDC)..." onkeyup="filtrarPorPar()">
                 <div class="categories-grid" id="categoriesContainer"></div>
                 <div class="warning-high-apr">⚠️ Os valores de APR são atualizados dinamicamente. Sempre analise volume e liquidez.</div>
                 <div class="mode-toggle"><button id="modoAutoBtn" class="mode-btn" onclick="setModo('auto')">🤖 Automático (Score)</button><button id="modoManualBtn" class="mode-btn" onclick="setModo('manual')">👆 Manual</button><button id="modoAPRBtn" class="mode-btn apr-high active" onclick="setModo('apr')">🔥 APR altos</button></div>
@@ -794,17 +882,23 @@
                 <div class="table-wrapper"><table class="pools-table" id="poolsTable"><thead><tr><th onclick="ordenarPor('pool')">Pool</th><th onclick="ordenarPor('network')">Network</th><th onclick="ordenarPor('dex')">DEX</th><th onclick="ordenarPor('tvl')">TVL</th><th>Ratio</th><th onclick="ordenarPor('volume')">Volume 24h</th><th onclick="ordenarPor('apr')">APR</th><th>1h</th><th>6h</th><th>24h</th><th>7d</th><th>30d</th><th onclick="ordenarPor('fee')">Fee</th><th onclick="ordenarPor('age')">Age</th><th>Score</th></tr></thead><tbody id="poolsTableBody"></tbody></table></div>
             </div>
 
-            <!-- ABA POOLS ESTRATÉGICAS (12 NOVAS POOLS) -->
+            <!-- ABA POOLS ESTRATÉGICAS (com botão atualizar e links) -->
             <div id="poolsEstrategicasTab" class="tab-content">
-                <h3 style="color: var(--gold); margin-bottom: 15px;">🎯 Pools Estratégicas Selecionadas</h3>
-                <p style="color: var(--text); margin-bottom: 15px;">12 pools selecionadas para estratégias de alocação baseadas em MVRV.</p>
-                <div class="table-wrapper"><table class="pools-table" id="poolsEstrategicasTable"><thead><tr><th>Pool</th><th>Network</th><th>DEX</th><th>TVL</th><th>Ratio</th><th>Volume 24h</th><th>APR</th><th>Fee</th><th>Age</th></tr></thead><tbody id="poolsEstrategicasBody"></tbody></table></div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="color: var(--gold); margin: 0;">🎯 Pools Estratégicas Selecionadas</h3>
+                    <button class="btn-atualizar" onclick="atualizarPoolsEstrategicas()">🔄 Atualizar</button>
+                </div>
+                <p style="color: var(--text); margin-bottom: 15px;">12 pools selecionadas para estratégias de alocação baseadas em MVRV. Clique no link 🔗 para acessar a pool na DEX.</p>
+                <div class="table-wrapper"><table class="pools-table" id="poolsEstrategicasTable"><thead><tr><th>Pool</th><th>Network</th><th>DEX</th><th>TVL</th><th>Ratio</th><th>Volume 24h</th><th>APR</th><th>Fee</th><th>Age</th><th>Link</th></tr></thead><tbody id="poolsEstrategicasBody"></tbody></table></div>
             </div>
 
-            <!-- ABA NOTÍCIAS -->
+            <!-- ABA NOTÍCIAS (com botão atualizar calendário) -->
             <div id="newsTab" class="tab-content">
-                <h3 style="color: var(--gold); margin-bottom: 15px;">📅 Calendário Econômico</h3>
-                <div style="background: #0f141c; border-radius: 16px; overflow: hidden; margin-bottom: 25px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="color: var(--gold); margin: 0;">📅 Calendário Econômico</h3>
+                    <button class="btn-atualizar" onclick="atualizarCalendario()">🔄 Atualizar Calendário</button>
+                </div>
+                <div style="background: #0f141c; border-radius: 16px; overflow: hidden; margin-bottom: 25px;" id="calendarioContainer">
                     <div class="tradingview-widget-container">
                         <div class="tradingview-widget-container__widget"></div>
                         <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>{"width":"100%","height":"600","colorTheme":"dark","locale":"br"}</script>
@@ -903,7 +997,7 @@
                 </div>
             </div>
 
-            <!-- ABA MVRV CYCLE (com texto explicativo) -->
+            <!-- ABA MVRV CYCLE (com texto explicativo completo) -->
             <div id="mvrvTab" class="tab-content">
                 <div class="strategy-content">
                     <h3>📈 MVRV Ratio (Market Value / Realized Value)</h3>
@@ -938,22 +1032,23 @@
                         <p id="mvrvRecomendacao">STH MVRV abaixo de 1 = capitulação de curto prazo. Zona de compra agressiva.</p>
                     </div>
                     
-                    <details class="guide-box" style="margin-top: 20px;">
+                    <details class="guide-box" open style="margin-top: 20px;">
                         <summary>📘 ENTENDENDO O MVRV (Para Iniciantes)</summary>
-                        <p><strong>O que significa MVRV?</strong><br>M = Market Value (preço atual) | R = Realized Value (preço médio pago) | V = Ratio (divisão)</p>
-                        <p><strong>🟢 ZONA VERDE (MVRV < 1,2):</strong> Bitcoin está mais barato que o preço médio pago. Zona de oportunidade histórica para compra.</p>
-                        <p><strong>🟡 ZONA AMARELA (MVRV 1,2 a 2,5):</strong> Mercado equilibrado. Momento de acumular aos poucos.</p>
-                        <p><strong>🔴 ZONA VERMELHA (MVRV > 2,5):</strong> Bitcoin está muito acima do preço médio. Risco de topo. Realizar lucros.</p>
-                        <p><strong>👤 STH MVRV (Short Term):</strong> Investidores de curto prazo. Abaixo de 1 = capitulação (sinal de compra). Acima de 1,4 = euforia (risco).</p>
-                        <p><strong>🧓 LTH MVRV (Long Term):</strong> Holders antigos. Acima de 3 = sinal de topo de ciclo.</p>
-                        <p><strong>💡 Como usar:</strong> Combine MVRV baixo + STH abaixo de 1 = COMPRA FORTE. MVRV alto + STH acima de 1,4 = REALIZAR LUCROS.</p>
+                        <p><strong>O que significa MVRV?</strong><br>M = Market Value (preço atual) | R = Realized Value (preço médio pago) | V = Ratio (divisão). Mostra se o Bitcoin está "caro" ou "barato" em relação ao preço médio que as pessoas pagaram.</p>
+                        <p><strong>🟢 ZONA VERDE (MVRV < 1,2):</strong> Bitcoin está mais barato que o preço médio pago. Zona de oportunidade histórica para compra. Investidores de curto prazo estão no prejuízo (capitulação).</p>
+                        <p><strong>🟡 ZONA AMARELA (MVRV 1,2 a 2,5):</strong> Mercado equilibrado, próximo do preço médio. Momento de acumular aos poucos. Operações normais com cautela.</p>
+                        <p><strong>🔴 ZONA VERMELHA (MVRV > 2,5):</strong> Bitcoin está muito acima do preço médio. Zona de lucro generalizado. Risco de topo. Momento de realizar lucros e reduzir exposição.</p>
+                        <p><strong>👤 STH MVRV (Short Term Holders):</strong> Investidores de curto prazo (últimos 155 dias). Abaixo de 1 = capitulação (sinal de compra forte). Acima de 1,4 = euforia (risco de correção).</p>
+                        <p><strong>🧓 LTH MVRV (Long Term Holders):</strong> Investidores de longo prazo. Abaixo de 1 é raro (fundo extremo). Acima de 3 = sinal de topo de ciclo.</p>
+                        <p><strong>💡 Como usar na prática:</strong> Combine MVRV baixo (<1,2) + STH abaixo de 1 = COMPRA FORTE. MVRV alto (>2,5) + STH acima de 1,4 = REALIZAR LUCROS.</p>
+                        <p><strong>📊 Exemplo prático:</strong> Se MVRV = 1,29 e STH = 0,83 (como agora), estamos em ZONA DE ACUMULAÇÃO. Ótimo momento para comprar aos poucos, pois os traders de curto prazo estão no prejuízo (capitulação).</p>
                     </details>
                     
                     <button class="btn-calc" onclick="atualizarMVRV()" style="margin-top: 10px;">🔄 ATUALIZAR DADOS MVRV</button>
                 </div>
             </div>
 
-            <!-- ABA INDICADORES DE CICLO (6 indicadores com inputs manuais) -->
+            <!-- ABA INDICADORES DE CICLO (com texto explicativo completo) -->
             <div id="cicloTab" class="tab-content">
                 <div class="strategy-content">
                     <h3>📈 Indicadores de Ciclo do Bitcoin</h3>
@@ -1005,29 +1100,33 @@
                     </div>
                     
                     <details class="guide-box" style="margin-top: 20px;">
-                        <summary>📘 COMO USAR OS INDICADORES</summary>
-                        <p><strong>MVRV:</strong> &lt;1 = COMPRA FORTE | 1-3.5 = NEUTRO | &gt;3.5 = TOPO</p>
-                        <p><strong>NUPL:</strong> &lt;0.25 = CAPITULAÇÃO | 0.25-0.6 = NEUTRO | &gt;0.6 = EUFORIA</p>
-                        <p><strong>SOPR:</strong> &lt;1 = PREJUÍZO (COMPRA) | &gt;1.1 = LUCRO (VENDA)</p>
-                        <p><strong>Realized Price:</strong> Preço abaixo = COMPRA | Preço acima = NEUTRO</p>
-                        <p><strong>RHODL:</strong> &lt;1000 = ACUMULAÇÃO | &gt;5000 = TOPO</p>
-                        <p><strong>Puell Multiple:</strong> &lt;0.5 = FUNDO | &gt;3 = TOPO</p>
-                        <p><strong>Score Total:</strong> +5 a +10 = 🟢 COMPRA FORTE | -4 a +4 = 🟡 NEUTRO | -5 a -10 = 🔴 TOPO</p>
+                        <summary>📘 COMO USAR OS INDICADORES DE CICLO (Para Iniciantes)</summary>
+                        <p><strong>📊 MVRV:</strong> Compara preço atual com preço médio de compra. &lt;1 = barato (compra) | &gt;3.5 = caro (topo)</p>
+                        <p><strong>📈 NUPL:</strong> Mede lucro/prejuízo não realizado. &lt;0.25 = capitulação (fundo) | &gt;0.6 = euforia (topo)</p>
+                        <p><strong>🔥 SOPR:</strong> Mede se moedas são vendidas com lucro. &lt;1 = prejuízo (oportunidade) | &gt;1.1 = lucro (risco)</p>
+                        <p><strong>🏦 Realized Price:</strong> Preço médio de compra. Preço abaixo = zona de oportunidade histórica</p>
+                        <p><strong>📉 RHODL:</strong> Compara holders antigos vs novos. Baixo = acumulação | Alto = topo</p>
+                        <p><strong>⛏️ Puell Multiple:</strong> Receita dos mineradores. &lt;0.5 = fundo | &gt;3 = topo</p>
+                        <p><strong>🎯 Score Total:</strong> +5 a +10 = 🟢 COMPRA FORTE | -4 a +4 = 🟡 NEUTRO | -5 a -10 = 🔴 TOPO</p>
+                        <p><strong>💡 Como usar:</strong> Combine os indicadores. Exemplo: MVRV baixo + NUPL em capitulação + SOPR &lt; 1 = COMPRA FORTE. MVRV alto + NUPL em euforia = TOPO.</p>
                     </details>
                     
                     <button class="btn-calc" onclick="calcularScoreCiclo()" style="margin-top: 10px;">🔄 CALCULAR SCORE</button>
                 </div>
             </div>
 
-            <!-- ABA AUTO LIQUIDITY (dois modos) -->
+            <!-- ABA AUTO LIQUIDITY (com botão atualizar APRs) -->
             <div id="liquidityTab" class="tab-content">
                 <div class="strategy-content">
                     <h3>🤖 AUTO LIQUIDITY</h3>
                     <p>Bot que recomenda alocação em pools baseado no regime MVRV.</p>
                     
-                    <div class="mode-toggle" style="margin-bottom: 20px;">
-                        <button id="modoAutoLiquidityBtn" class="mode-btn active" onclick="setModoLiquidity('auto')">🤖 Automático (MVRV)</button>
-                        <button id="modoManualLiquidityBtn" class="mode-btn" onclick="setModoLiquidity('manual')">👆 Manual</button>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <div class="mode-toggle" style="margin-bottom: 0;">
+                            <button id="modoAutoLiquidityBtn" class="mode-btn active" onclick="setModoLiquidity('auto')">🤖 Automático (MVRV)</button>
+                            <button id="modoManualLiquidityBtn" class="mode-btn" onclick="setModoLiquidity('manual')">👆 Manual</button>
+                        </div>
+                        <button class="btn-atualizar" onclick="atualizarAPRsAutoLiquidity()">🔄 Atualizar APRs</button>
                     </div>
                     
                     <div id="liquidityAutoContent">
@@ -1132,18 +1231,18 @@
         
         // Pools estratégicas (12 selecionadas)
         let poolsEstrategicas = [
-            { pool: "SOL/USDC", network: "Solana", dex: "Meteora DLMM", tvl: "220.3K", ratio: "59/41", volume: "4.73M", apr: "274.1%", fee: "0.03%", age: "40m" },
-            { pool: "HYPE/USDC", network: "Solana", dex: "Meteora DLMM", tvl: "80.8K", ratio: "55/45", volume: "76.5K", apr: "224.7%", fee: "0.65%", age: "3mo" },
-            { pool: "USDC/USDT", network: "Ethereum", dex: "Uniswap V3", tvl: "100K", ratio: "50/50", volume: "500K", apr: "21.1%", fee: "0.01%", age: "1y" },
-            { pool: "BTC/USDC", network: "Base", dex: "Aerodrome Slipstream", tvl: "387.2K", ratio: "75/27", volume: "3.12M", apr: "45.3%", fee: "0.06%", age: "1m" },
-            { pool: "ETH/USDC", network: "Arbitrum", dex: "Uniswap V3", tvl: "121.8K", ratio: "63/37", volume: "213.1K", apr: "38.7%", fee: "0.30%", age: "2y" },
-            { pool: "WBTC/WETH", network: "Ethereum", dex: "Uniswap V3", tvl: "10.5K", ratio: "79/21", volume: "4.5K", apr: "18.5%", fee: "1.00%", age: "2y" },
-            { pool: "cbBTC/SOL", network: "Solana", dex: "Meteora DLMM", tvl: "51.3K", ratio: "42/58", volume: "730.0K", apr: "155.8%", fee: "0.03%", age: "4mo" },
-            { pool: "COINX/USDC", network: "Solana", dex: "Raydium Concentrated", tvl: "286.8K", ratio: "87/13", volume: "270.7K", apr: "344.5%", fee: "1.00%", age: "2mo" },
-            { pool: "NVDAX/USDC", network: "Solana", dex: "Raydium Concentrated", tvl: "39.9K", ratio: "53/47", volume: "64.2K", apr: "146.9%", fee: "0.25%", age: "19d" },
-            { pool: "AAPL/USDC", network: "Solana", dex: "Raydium", tvl: "25.0K", ratio: "60/40", volume: "45.0K", apr: "82.4%", fee: "0.30%", age: "6mo" },
-            { pool: "MSFT/USDC", network: "Solana", dex: "Raydium", tvl: "22.0K", ratio: "58/42", volume: "38.0K", apr: "75.6%", fee: "0.30%", age: "6mo" },
-            { pool: "TQQQx/USDC", network: "Solana", dex: "Raydium Concentrated", tvl: "2.6K", ratio: "51/49", volume: "458", apr: "259.6%", fee: "4.00%", age: "17d" }
+            { pool: "SOL/USDC", network: "Solana", dex: "Meteora DLMM", tvl: "220.3K", ratio: "59/41", volume: "4.73M", apr: "274.1%", fee: "0.03%", age: "40m", link: "https://app.meteora.ag/pool/SOL-USDC" },
+            { pool: "HYPE/USDC", network: "Solana", dex: "Meteora DLMM", tvl: "80.8K", ratio: "55/45", volume: "76.5K", apr: "224.7%", fee: "0.65%", age: "3mo", link: "https://app.meteora.ag/pool/HYPE-USDC" },
+            { pool: "USDC/USDT", network: "Ethereum", dex: "Uniswap V3", tvl: "100K", ratio: "50/50", volume: "500K", apr: "21.1%", fee: "0.01%", age: "1y", link: "https://app.uniswap.org/pools" },
+            { pool: "BTC/USDC", network: "Base", dex: "Aerodrome Slipstream", tvl: "387.2K", ratio: "75/27", volume: "3.12M", apr: "45.3%", fee: "0.06%", age: "1m", link: "https://aerodrome.finance/pools" },
+            { pool: "ETH/USDC", network: "Arbitrum", dex: "Uniswap V3", tvl: "121.8K", ratio: "63/37", volume: "213.1K", apr: "38.7%", fee: "0.30%", age: "2y", link: "https://app.uniswap.org/pools" },
+            { pool: "WBTC/WETH", network: "Ethereum", dex: "Uniswap V3", tvl: "10.5K", ratio: "79/21", volume: "4.5K", apr: "18.5%", fee: "1.00%", age: "2y", link: "https://app.uniswap.org/pools" },
+            { pool: "cbBTC/SOL", network: "Solana", dex: "Meteora DLMM", tvl: "51.3K", ratio: "42/58", volume: "730.0K", apr: "155.8%", fee: "0.03%", age: "4mo", link: "https://app.meteora.ag/pool/cbBTC-SOL" },
+            { pool: "COINX/USDC", network: "Solana", dex: "Raydium Concentrated", tvl: "286.8K", ratio: "87/13", volume: "270.7K", apr: "344.5%", fee: "1.00%", age: "2mo", link: "https://raydium.io/pools" },
+            { pool: "NVDAX/USDC", network: "Solana", dex: "Raydium Concentrated", tvl: "39.9K", ratio: "53/47", volume: "64.2K", apr: "146.9%", fee: "0.25%", age: "19d", link: "https://raydium.io/pools" },
+            { pool: "AAPL/USDC", network: "Solana", dex: "Raydium", tvl: "25.0K", ratio: "60/40", volume: "45.0K", apr: "82.4%", fee: "0.30%", age: "6mo", link: "https://raydium.io/pools" },
+            { pool: "MSFT/USDC", network: "Solana", dex: "Raydium", tvl: "22.0K", ratio: "58/42", volume: "38.0K", apr: "75.6%", fee: "0.30%", age: "6mo", link: "https://raydium.io/pools" },
+            { pool: "TQQQx/USDC", network: "Solana", dex: "Raydium Concentrated", tvl: "2.6K", ratio: "51/49", volume: "458", apr: "259.6%", fee: "4.00%", age: "17d", link: "https://raydium.io/pools" }
         ];
         
         let modoAtual = 'apr';
@@ -1223,7 +1322,7 @@
             navigator.clipboard.writeText(texto).then(() => alert('✅ Estratégia copiada!')).catch(() => alert('❌ Erro ao copiar.'));
         }
         
-        // ========== SCORE DE CICLO (6 indicadores) ==========
+        // ========== SCORE DE CICLO ==========
         function calcularScoreCiclo() {
             const mvrv = parseFloat(document.getElementById('inputMVRV').value) || 0;
             const nupl = parseFloat(document.getElementById('inputNUPL').value) || 0;
@@ -1235,36 +1334,27 @@
             
             let score = 0;
             
-            // MVRV
             if (mvrv < 1) score += 2;
             else if (mvrv > 3.5) score -= 2;
             
-            // NUPL
             if (nupl < 0.25) score += 2;
             else if (nupl > 0.6) score -= 2;
             
-            // SOPR
             if (sopr < 1) score += 1;
             else if (sopr > 1.1) score -= 1;
             
-            // Realized Price
             if (currentPrice < realizedPrice) score += 2;
             else score -= 1;
             
-            // RHODL
             if (rhodl < 1000) score += 2;
             else if (rhodl > 5000) score -= 2;
             
-            // Puell Multiple
             if (puell < 0.5) score += 2;
             else if (puell > 3) score -= 2;
             
             document.getElementById('scoreCiclo').innerText = score;
             
-            let sinal = '';
-            let corClass = '';
-            let recomendacao = '';
-            
+            let sinal = '', corClass = '', recomendacao = '';
             if (score >= 5) {
                 sinal = 'COMPRA FORTE';
                 corClass = 'semaforo-verde';
@@ -1446,7 +1536,21 @@
             navigator.clipboard.writeText(texto).then(() => alert('✅ Estratégia copiada!')).catch(() => alert('❌ Erro ao copiar.'));
         }
         
-        // ========== FUNÇÕES DE POOLS ==========
+        function atualizarAPRsAutoLiquidity() {
+            // Simula atualização dos APRs nas pools estratégicas
+            poolsEstrategicas.forEach(pool => {
+                const variacao = (Math.random() * 30 - 15).toFixed(1);
+                let novoApr = parseFloat(pool.apr) + parseFloat(variacao);
+                novoApr = Math.max(5, Math.min(500, novoApr));
+                pool.apr = novoApr.toFixed(1) + '%';
+            });
+            renderPoolsEstrategicas();
+            atualizarAlocacao();
+            if (modoLiquidity === 'manual') carregarPoolsManual();
+            alert('✅ APRs atualizados com simulação!');
+        }
+        
+        // ========== FUNÇÕES DE POOLS (TOP POOLS) ==========
         function extrairNumeros(pool) {
             const parseNum = (str) => { if(!str) return 0; let n = parseFloat(str.replace(/[KMB%$]/g,'')); if(str.includes('K')) n*=1e3; if(str.includes('M')) n*=1e6; return n; };
             return { tvlNum: parseNum(pool.tvl), volNum: parseNum(pool.volume), aprNum: parseNum(pool.apr) };
@@ -1486,14 +1590,38 @@
             document.getElementById('categoriesContainer').innerHTML = html;
         }
         
-        function renderPoolsEstrategicas() {
-            const tbody = document.getElementById('poolsEstrategicasBody');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-            poolsEstrategicas.forEach(p => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td><strong>${p.pool}</strong></td><td>${p.network}</td><td>${p.dex}</td><td>$${p.tvl}</td><td><div class="ratio-bar"><span style="width:${p.ratio.split('/')[0]}%;"></span></div>${p.ratio}</td><td>$${p.volume}</td><td class="apr-high">${p.apr}</td><td>${p.fee}</td><td>${p.age}</td>`;
+        function gerarVariacao() {
+            let v = [];
+            for (let i=0;i<5;i++) v.push((Math.random()*4-2).toFixed(2));
+            return v;
+        }
+        
+        function renderPoolsTable(pools) {
+            const tbody=document.getElementById('poolsTableBody');
+            if(!tbody) return;
+            tbody.innerHTML='';
+            pools.forEach(p=>{
+                const {aprNum}=extrairNumeros(p);
+                const scorePercent = Math.min(100, (aprNum / 500) * 100);
+                const variacoes=gerarVariacao();
+                const formatVar = (v) => `<span class="${parseFloat(v)>=0?'positive':'negative'}">${parseFloat(v)>=0?'▲':'▼'} ${Math.abs(v)}%</span>`;
+                const tr=document.createElement('tr');
+                tr.innerHTML=`<td><strong>${p.pool}</strong></td><td>${p.network}</td><td>${p.dex}</td><td>$${p.tvl}</td><td><div class="ratio-bar"><span style="width:${p.ratio.split('/')[0]}%;"></span></div>${p.ratio}</td><td>$${p.volume}</td><td class="apr-high">${p.apr}</td><td>${formatVar(variacoes[0])}</td><td>${formatVar(variacoes[1])}</td><td>${formatVar(variacoes[2])}</td><td>${formatVar(variacoes[3])}</td><td>${formatVar(variacoes[4])}</td><td>${p.fee}</td><td>${p.age}</td><td><div class="score-bar-small"><div class="score-fill-small" style="width:${scorePercent}%;"></div></div>${Math.round(scorePercent)}%</td>`;
                 tbody.appendChild(tr);
+            });
+        }
+        
+        function ordenarLista(lista, coluna, direcao) {
+            lista.sort((a,b)=>{
+                let valA,valB;
+                if(coluna==='tvl'||coluna==='volume'||coluna==='apr') {
+                    valA=extrairNumeros(a)[coluna+'Num'];
+                    valB=extrairNumeros(b)[coluna+'Num'];
+                } else {
+                    valA=a[coluna];
+                    valB=b[coluna];
+                }
+                return direcao==='asc'?(valA>valB?1:-1):(valA<valB?1:-1);
             });
         }
         
@@ -1520,35 +1648,6 @@
             renderPoolsTable(poolsFiltradas);
         }
         
-        function ordenarLista(lista, coluna, direcao) {
-            lista.sort((a,b)=>{
-                let valA,valB;
-                if(coluna==='tvl'||coluna==='volume'||coluna==='apr') {
-                    valA=extrairNumeros(a)[coluna+'Num'];
-                    valB=extrairNumeros(b)[coluna+'Num'];
-                } else {
-                    valA=a[coluna];
-                    valB=b[coluna];
-                }
-                return direcao==='asc'?(valA>valB?1:-1):(valA<valB?1:-1);
-            });
-        }
-        
-        function renderPoolsTable(pools) {
-            const tbody=document.getElementById('poolsTableBody');
-            if(!tbody) return;
-            tbody.innerHTML='';
-            pools.forEach(p=>{
-                const {aprNum}=extrairNumeros(p);
-                const scorePercent = Math.min(100, (aprNum / 500) * 100);
-                const variacoes = [(Math.random()*4-2).toFixed(2), (Math.random()*4-2).toFixed(2), (Math.random()*4-2).toFixed(2), (Math.random()*4-2).toFixed(2), (Math.random()*4-2).toFixed(2)];
-                const formatVar = (v) => `<span class="${parseFloat(v)>=0?'positive':'negative'}">${parseFloat(v)>=0?'▲':'▼'} ${Math.abs(v)}%</span>`;
-                const tr=document.createElement('tr');
-                tr.innerHTML=`<td><strong>${p.pool}</strong></td><td>${p.network}</td><td>${p.dex}</td><td>$${p.tvl}</td><td><div class="ratio-bar"><span style="width:${p.ratio.split('/')[0]}%;"></span></div>${p.ratio}</td><td>$${p.volume}</td><td class="apr-high">${p.apr}</td><td>${formatVar(variacoes[0])}</td><td>${formatVar(variacoes[1])}</td><td>${formatVar(variacoes[2])}</td><td>${formatVar(variacoes[3])}</td><td>${formatVar(variacoes[4])}</td><td>${p.fee}</td><td>${p.age}</td><td><div class="score-bar-small"><div class="score-fill-small" style="width:${scorePercent}%;"></div></div>${Math.round(scorePercent)}%</td>`;
-                tbody.appendChild(tr);
-            });
-        }
-        
         function setModo(modo) { modoAtual = modo; aplicarFiltrosEOrdenar(); }
         function aplicarFiltros() {
             filtros.tvlMin = parseFloat(document.getElementById('filtroTVL').value) || 0;
@@ -1560,210 +1659,34 @@
         function filtrarPorPar() { searchTerm = document.getElementById('searchPairInput').value.trim().toUpperCase(); aplicarFiltrosEOrdenar(); }
         function atualizarPools() { refreshCategories(); aplicarFiltrosEOrdenar(); }
         
-        // ========== FUNÇÕES DE INTERFACE PRINCIPAL ==========
-        function setTF(tf, btn) { currentTF = tf; document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); initChart(); }
-        function toggleMode() { isDesktop = !isDesktop; document.getElementById('mainCard').classList.toggle('desktop-mode', isDesktop); initChart(); }
-        
-        function initChart() {
-            const symbol = document.getElementById('pairSelector').value;
-            const container = document.getElementById('chart_container');
-            container.innerHTML = '';
-            setTimeout(() => {
-                try {
-                    new TradingView.widget({ autosize: true, symbol: symbol, interval: currentTF, theme: "dark", style: "1", locale: "br", container_id: "chart_container", hide_top_toolbar: !isDesktop });
-                } catch(e) { container.innerHTML = '<div style="color:red;text-align:center;padding:20px;">Erro ao carregar gráfico.</div>'; }
-            }, 100);
-            if(metalInterval) clearInterval(metalInterval);
-            if(activeWS) activeWS.close();
-            
-            if(symbol.startsWith("TVC:")) {
-                let asset = symbol === "TVC:GOLD" ? "GOLD" : symbol === "TVC:SILVER" ? "SILVER" : "WTI";
-                metalInterval = setInterval(() => fetchHyperliquidPrice(asset), 3000);
-                fetchHyperliquidPrice(asset);
-            } else {
-                let pair = symbol.split(':')[1].toLowerCase();
-                let streamPair = pair.includes('btc') ? 'btcusdt' : pair.includes('eth') ? 'ethusdt' : 'solusdt';
-                activeWS = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`);
-                activeWS.onmessage = (e) => {
-                    const data = JSON.parse(e.data);
-                    price = parseFloat(data.c);
-                    document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
-                    pricesHistory.push(price);
-                    if(pricesHistory.length > 50) pricesHistory.shift();
-                    updateSignals();
-                    verificarAlarmes();
-                };
-            }
-        }
-        
-        async function fetchHyperliquidPrice(asset) {
-            try {
-                const defaults = { GOLD: 4528.50, SILVER: 32.85, WTI: 78.42 };
-                let newPrice = defaults[asset];
-                document.getElementById('priceText').innerHTML = `$ ${newPrice.toLocaleString('en-US', {minimumFractionDigits:2})}`;
-                price = newPrice;
-                pricesHistory.push(price);
-                if(pricesHistory.length > 50) pricesHistory.shift();
-                updateSignals();
-                verificarAlarmes();
-            } catch(e) { console.error(e); }
-        }
-        
-        function onSymbolChange() { initChart(); }
-        
-        function updateSignals() {
-            const s1 = document.getElementById('statusText');
-            let s1Valor = 0;
-            if(Math.floor(price * 100) % 2 === 0) {
-                s1.innerText = '🔥 OPORTUNIDADE';
-                s1Valor = 30;
-            } else {
-                s1.innerText = '⚠️ AGUARDAR';
-                s1Valor = 0;
-            }
-            
-            let s2Valor = 0, s2Direcao = null;
-            if(pricesHistory.length >= 21) {
-                const compra = price > pricesHistory[pricesHistory.length - 21];
-                document.getElementById('rsiText').innerText = compra ? '🚀 COMPRA' : '📉 VENDA';
-                s2Valor = 40;
-                s2Direcao = compra ? 'compra' : 'venda';
-            } else {
-                document.getElementById('rsiText').innerText = `COLETANDO ${pricesHistory.length}/21`;
-            }
-            
-            let s3Valor = 0, s3Direcao = null;
-            if(pricesHistory.length >= 3) {
-                const avg = pricesHistory.slice(-3).reduce((a,b)=>a+b,0)/3;
-                if(price > avg * 1.001) {
-                    document.getElementById('momText').innerText = '📈 ALTA';
-                    s3Valor = 30;
-                    s3Direcao = 'compra';
-                } else if(price < avg * 0.999) {
-                    document.getElementById('momText').innerText = '📉 BAIXA';
-                    s3Valor = 30;
-                    s3Direcao = 'venda';
-                } else {
-                    document.getElementById('momText').innerText = '⚖️ NEUTRO';
-                }
-            }
-            
-            let score = s1Valor + s2Valor + s3Valor;
-            if(s2Direcao && s3Direcao && s2Direcao !== s3Direcao) score = 0;
-            
-            document.getElementById('scoreFill').style.width = score + '%';
-            document.getElementById('scoreValue').innerText = score + '/100';
-            
-            let scoreLabel = '⚠️ Evitar operação';
-            let probabilidade = 'Baixa';
-            let classeScore = 'baixa';
-            if(score >= 80) { scoreLabel = '🔥 Confluência forte'; probabilidade = 'Alta'; classeScore = 'alta'; document.getElementById('alertaBadge').style.display = 'inline-block'; }
-            else if(score >= 60) { scoreLabel = '⚡ Confluência moderada'; probabilidade = 'Média'; classeScore = 'media'; document.getElementById('alertaBadge').style.display = 'none'; }
-            else document.getElementById('alertaBadge').style.display = 'none';
-            
-            document.getElementById('scoreFill').className = 'score-fill ' + classeScore;
-            document.getElementById('scoreLabel').innerText = scoreLabel;
-            document.getElementById('probabilidade').innerText = probabilidade;
-            
-            const hora = new Date().getHours();
-            const minutos = new Date().getMinutes();
-            const horaMin = hora + minutos/60;
-            let sessao = 'Fora do horário';
-            if (horaMin >= 21 || horaMin < 1) sessao = '🌏 Ásia';
-            else if (horaMin >= 4 && horaMin < 9) sessao = '🇪🇺 Londres';
-            else if (horaMin >= 10 && horaMin < 14) sessao = '🇺🇸 NY (Pico)';
-            else if (horaMin >= 9.33 && horaMin < 15.5) sessao = '🥇 Metais NY';
-            else if (horaMin >= 10 && horaMin < 16.5) sessao = '🛢️ Petróleo';
-            document.getElementById('sessaoText').innerText = sessao;
-        }
-        
-        function calc() { 
-            const tp = price * (1 + parseFloat(document.getElementById('tpP').value)/100); 
-            const sl = price * (1 - parseFloat(document.getElementById('slP').value)/100); 
-            document.getElementById('resTP').innerText = `$${tp.toFixed(2)}`; 
-            document.getElementById('resSL').innerText = `$${sl.toFixed(2)}`; 
-            document.getElementById('results').style.display = 'block'; 
-        }
-        
-        function adicionarAlarme() { 
-            const preco = parseFloat(document.getElementById('alarmePreco').value); 
-            if(isNaN(preco)) return; 
-            alarmes.push({ preco, ativo: true, id: Date.now() }); 
-            atualizarListaAlarmes(); 
-        }
-        function removerAlarme(id) { alarmes = alarmes.filter(a => a.id !== id); atualizarListaAlarmes(); }
-        function atualizarListaAlarmes() {
-            const lista = document.getElementById('alarmeLista');
-            if(alarmes.length === 0) { lista.innerHTML = '<div style="color: var(--text); text-align: center; padding: 10px;">Nenhum alarme definido</div>'; return; }
-            let html = '';
-            alarmes.forEach(alarme => html += `<div class="alarme-item"><span>🔔 $${alarme.preco.toLocaleString('en-US', {minimumFractionDigits:2})}</span><button class="alarme-remover" onclick="removerAlarme(${alarme.id})">✕</button></div>`);
-            lista.innerHTML = html;
-        }
-        function verificarAlarmes() { alarmes.forEach(alarme => { if(alarme.ativo && Math.abs(price - alarme.preco) / alarme.preco < 0.001) { alarme.ativo = false; alert(`🔔 ALARME! Preço atingiu $${alarme.preco.toFixed(2)}`); atualizarListaAlarmes(); } }); }
-        
-        function iniciarTimerDescanso() { clearTimeout(timeoutDescanso); timeoutDescanso = setTimeout(() => { if(!modoOperacaoAtivo) document.body.classList.add("modo-descanso"); }, 90000); }
-        function resetTimer() { if(!modoOperacaoAtivo) { document.body.classList.remove("modo-descanso"); iniciarTimerDescanso(); } }
-        document.onmousemove = resetTimer; document.onkeydown = resetTimer;
-        
-        const toggleLock = document.getElementById("lockScreenToggle");
-        const statusTexto = document.getElementById("statusModo");
-        toggleLock.addEventListener("change", function() {
-            modoOperacaoAtivo = this.checked;
-            if(modoOperacaoAtivo) { statusTexto.innerText = "Modo Operação: ON"; clearTimeout(timeoutDescanso); document.body.classList.remove("modo-descanso"); document.body.classList.add("modo-ativo"); }
-            else { statusTexto.innerText = "Modo Operação: OFF"; document.body.classList.remove("modo-ativo"); iniciarTimerDescanso(); }
-        });
-        
-        function openPasswordModal() { document.getElementById('passwordModal').style.display = 'flex'; }
-        function openDonationModal() { document.getElementById('donationModal').style.display = 'flex'; }
-        function openPoolsModal() { document.getElementById('poolsModal').style.display = 'flex'; refreshCategories(); setModo('apr'); renderPoolsEstrategicas(); }
-        function closePoolsModal() { document.getElementById('poolsModal').style.display = 'none'; }
-        
-        function switchTab(tab) {
-            document.querySelectorAll('.tab-btn').forEach(btn=>btn.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content=>content.classList.remove('active'));
-            const tabMap = { pools: 0, poolsEstrategicas: 1, news: 2, strategies: 3, robot: 4, mvrv: 5, ciclo: 6, liquidity: 7 };
-            const idx = tabMap[tab];
-            document.querySelectorAll('.tab-btn')[idx]?.classList.add('active');
-            document.getElementById(`${tab}Tab`)?.classList.add('active');
-            if(tab === 'pools') refreshCategories();
-            if(tab === 'mvrv') atualizarMVRV();
-            if(tab === 'liquidity') { atualizarMVRV(); atualizarAlocacao(); }
-            if(tab === 'ciclo') calcularScoreCiclo();
-        }
-        
-        function checkPassword() {
-            if(document.getElementById('passInput').value === 'Maria1301') {
-                fecharModal('passwordModal');
-                document.getElementById('robotModal').style.display = 'flex';
-            } else alert('Senha incorreta');
-        }
-        
-        function connectHyperliquid() { document.getElementById('apiConsole').innerHTML = '[API] Conectado com sucesso! (modo simulação)'; }
-        function placeRealOrder() {
-            const mvrvFilterActive = document.getElementById('mvrvFilterToggle')?.checked;
-            if(mvrvFilterActive && (mvrvData.regime === 'TOPO' || mvrvData.regime === 'REALIZAÇÃO')) {
-                alert(`⚠️ Filtro MVRV ativo: Mercado em ${mvrvData.regime}. Operação bloqueada!`);
-                return;
-            }
-            alert('⚠️ Ordem simulada. Conecte-se à Hyperliquid para ordens reais.');
-        }
-        
-        // ========== INICIALIZAÇÃO ==========
-        refreshCategories();
-        setModo('apr');
-        iniciarTimerDescanso();
-        initChart();
-        atualizarMVRV();
-        renderPoolsEstrategicas();
-        calcularScoreCiclo();
-        
-        const mvrvFilterToggle = document.getElementById('mvrvFilterToggle');
-        const mvrvStatusRobot = document.getElementById('mvrvStatusRobot');
-        if(mvrvFilterToggle) {
-            mvrvFilterToggle.addEventListener('change', function() {
-                if(mvrvStatusRobot) mvrvStatusRobot.style.display = this.checked ? 'block' : 'none';
+        // ========== POOLS ESTRATÉGICAS ==========
+        function renderPoolsEstrategicas() {
+            const tbody = document.getElementById('poolsEstrategicasBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            poolsEstrategicas.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td><strong>${p.pool}</strong></td><td>${p.network}</td><td>${p.dex}</td><td>$${p.tvl}</td><td><div class="ratio-bar"><span style="width:${p.ratio.split('/')[0]}%;"></span></div>${p.ratio}</td><td>$${p.volume}</td><td class="apr-high">${p.apr}</td><td>${p.fee}</td><td>${p.age}</td><td><a href="${p.link}" target="_blank" class="link-pool">🔗 Acessar</a></td>`;
+                tbody.appendChild(tr);
             });
         }
-    </script>
-</body>
-</html>
+        
+        function atualizarPoolsEstrategicas() {
+            poolsEstrategicas.forEach(pool => {
+                const variacaoApr = (Math.random() * 30 - 15).toFixed(1);
+                let novoApr = parseFloat(pool.apr) + parseFloat(variacaoApr);
+                novoApr = Math.max(5, Math.min(500, novoApr));
+                pool.apr = novoApr.toFixed(1) + '%';
+                
+                const variacaoTvl = (Math.random() * 20 - 10).toFixed(1);
+                let novoTvl = parseFloat(pool.tvl) + parseFloat(variacaoTvl);
+                novoTvl = Math.max(1, Math.min(500, novoTvl));
+                pool.tvl = novoTvl.toFixed(1) + 'K';
+                
+                const variacaoVol = (Math.random() * 30 - 15).toFixed(1);
+                let novoVol = parseFloat(pool.volume) + parseFloat(variacaoVol);
+                novoVol = Math.max(0.1, Math.min(10, novoVol));
+                pool.volume = novoVol.toFixed(2) + 'M';
+            });
+            renderPoolsEstrategicas();
+            alert('✅ Dados
