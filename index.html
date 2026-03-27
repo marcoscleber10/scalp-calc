@@ -226,12 +226,12 @@
         <div class="projects-section"><div class="projects-grid"><a href="https://site-557591544835-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Sinais Invest</a><a href="https://site-combustai-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">CombustAI</a><a href="https://site-559791916621-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Registro DCA</a><a href="https://pepinometro-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">Pepinômetro</a><a href="https://historia-copas-620634786284.southamerica-east1.run.app" class="project-btn" target="_blank">História Copas</a><a href="https://investopcao.culturabuilder.com" class="project-btn" target="_blank">InvestOpção</a><button class="project-btn" onclick="openPoolsModal()" style="background: var(--purple); color: white;">🌊 Dados de Mercado</button></div></div>
         <div class="ad-container"><span style="color:var(--gold); font-weight:800; font-size:16px;">📺 ATMOS IPTV</span><br><span style="font-size:12px;">+15.000 canais • 4K • Estável</span><a href="https://wa.me/5597991916621" target="_blank" class="btn-ad">TESTE GRÁTIS</a></div>
         <table class="market-table">汽<td colspan="3" class="market-header">🌍 SESSÕES CRIPTO / FOREX</td> </tr>
-          <tr><td>🌏 Ásia</td><td>21:00-01:00</td><td style="color:var(--gold); text-align:right;">● médio</td></tr>
-          <tr><td>🇪🇺 Londres</td><td>04:00-09:00</td><td style="color:var(--green); text-align:right;">● alto</td></tr>
-          <tr><td>🇺🇸 NY (Pico)</td><td>10:00-14:00</td><td style="color:var(--green); text-align:right;">● PICO</td></tr>
-          <tr><td colspan="3" class="market-header">🏆 EURO, PRATA & WTI</td></tr>
-          <tr><td>🥇 Metais (NY)</td><td>09:20-15:30</td><td style="color:var(--gold); text-align:right;">● liquidez</td></tr>
-          <tr><td>🛢️ Petróleo (WTI)</td><td>10:00-16:30</td><td style="color:var(--accent); text-align:right;">● volatilidade</td></tr>
+         <tr><td>🌏 Ásia</td><td>21:00-01:00</td><td style="color:var(--gold); text-align:right;">● médio</td></tr>
+         <tr><td>🇪🇺 Londres</td><td>04:00-09:00</td><td style="color:var(--green); text-align:right;">● alto</td></tr>
+         <tr><td>🇺🇸 NY (Pico)</td><td>10:00-14:00</td><td style="color:var(--green); text-align:right;">● PICO</td></tr>
+         <tr><td colspan="3" class="market-header">🏆 EURO, PRATA & WTI</td></tr>
+         <tr><td>🥇 Metais (NY)</td><td>09:20-15:30</td><td style="color:var(--gold); text-align:right;">● liquidez</td></tr>
+         <tr><td>🛢️ Petróleo (WTI)</td><td>10:00-16:30</td><td style="color:var(--accent); text-align:right;">● volatilidade</td></tr>
         </table>
         <div class="news-section"><h4>📰 Notícias e Calendário</h4><div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: space-between;"><div style="flex: 1; min-width: 200px;"><div class="news-block"><h5>📅 Calendário Econômico</h5><a href="https://www.tradingview.com/economic-calendar/" target="_blank" style="color: var(--accent);">TradingView Economic Calendar</a></div></div><div style="flex: 2; min-width: 300px;"><div class="news-block"><h5>📰 Principais Notícias Cripto</h5><div class="news-links"><a href="https://livecoins.com.br/" target="_blank">Livecoins</a><a href="https://cointelegraph.com.br/" target="_blank">CoinTelegraph Brasil</a><a href="https://www.coindesk.com/" target="_blank">CoinDesk</a><a href="https://cointelegraph.com/" target="_blank">CoinTelegraph</a><a href="https://www.cryptobreaking.com/" target="_blank">Crypto Breaking</a></div></div></div></div></div>
         <button class="project-btn" onclick="openDonationModal()" style="background:var(--gold); color:#000; width:100%; margin-top:15px;">💰 Donativos</button>
@@ -331,14 +331,14 @@
                     </select>
                 </div>
                 <div class="filter-row"><div class="filter-item"><label>TVL mínimo ($)</label><input type="number" id="filtroTVL" placeholder="ex: 10000" value="0" step="1000"></div><div class="filter-item"><label>Volume mínimo ($)</label><input type="number" id="filtroVolume" placeholder="ex: 5000" value="0" step="1000"></div><div class="filter-item"><label>APR mínimo (%)</label><input type="number" id="filtroAPR" placeholder="ex: 100" value="0" step="10"></div><button class="btn-filter" onclick="aplicarFiltros()">Aplicar</button></div>
-                <div class="table-wrapper"><table class="pools-table" id="poolsTable"><thead>汽<th onclick="ordenarPor('pool')">Pool</th><th onclick="ordenarPor('network')">Network</th><th onclick="ordenarPor('dex')">DEX</th><th onclick="ordenarPor('tvl')">TVL</th><th>Ratio</th><th onclick="ordenarPor('volume')">Volume 24h</th><th onclick="ordenarPor('apr')">APR</th><th>Fee APY 1h</th><th>Fee APY 6h</th><th>Fee APY 24h</th><th>Fee APY 7d</th><th>Fee APY 30d</th><th onclick="ordenarPor('fee')">Fee</th><th onclick="ordenarPor('age')">Age</th><th>Score</th> </thead><tbody id="poolsTableBody"></tbody> </table</div>
+                <div class="table-wrapper"><table class="pools-table" id="poolsTable"><thead><tr><th onclick="ordenarPor('pool')">Pool</th><th onclick="ordenarPor('network')">Network</th><th onclick="ordenarPor('dex')">DEX</th><th onclick="ordenarPor('tvl')">TVL</th><th>Ratio</th><th onclick="ordenarPor('volume')">Volume 24h</th><th onclick="ordenarPor('apr')">APR</th><th>Fee APY 1h</th><th>Fee APY 6h</th><th>Fee APY 24h</th><th>Fee APY 7d</th><th>Fee APY 30d</th><th onclick="ordenarPor('fee')">Fee</th><th onclick="ordenarPor('age')">Age</th><th>Score</th> </tr></thead><tbody id="poolsTableBody"></tbody></table></div>
             </div>
 
             <!-- POOLS ESTRATÉGICAS -->
             <div id="poolsEstrategicasTab" class="tab-content">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;"><h3 style="color: var(--gold); margin: 0;">🎯 Pools Estratégicas Selecionadas</h3><button class="btn-atualizar" onclick="atualizarPoolsEstrategicas()">🔄 Atualizar</button></div>
                 <p style="color: var(--text); margin-bottom: 15px;">12 pools selecionadas para estratégias de alocação baseadas em MVRV. Clique no link 🔗 para acessar a pool na DEX.</p>
-                <div class="table-wrapper"><table class="pools-table" id="poolsEstrategicasTable"><thead>汽<th>Pool</th><th>Network</th><th>DEX</th><th>TVL</th><th>Ratio</th><th>Volume 24h</th><th>APR</th><th>Fee APY</th><th>Fee</th><th>Age</th><th>Oportunidade</th><th>Link</th> </thead><tbody id="poolsEstrategicasBody"></tbody> </table</div>
+                <div class="table-wrapper"><table class="pools-table" id="poolsEstrategicasTable"><thead><tr><th>Pool</th><th>Network</th><th>DEX</th><th>TVL</th><th>Ratio</th><th>Volume 24h</th><th>APR</th><th>Fee APY</th><th>Fee</th><th>Age</th><th>Oportunidade</th><th>Link</th> </tr></thead><tbody id="poolsEstrategicasBody"></tbody></table></div>
             </div>
 
             <!-- NOTÍCIAS -->
@@ -540,13 +540,13 @@
                 const scorePercent = Math.min(100, (aprNum / 500) * 100);
                 const risk = getRiskLevel(p);
                 const tr=document.createElement('tr');
-                tr.innerHTML=`汽<span class="risk-dot ${risk.class}"></span><span class="risk-dot ${getFeeSignal(p, '1h').class}"></span><strong>${p.pool}</strong>汽
-                    汽${p.network}汽汽${p.dex}汽汽$${p.tvl}汽
-                    汽<div class="ratio-bar"><span style="width:${p.ratio.split('/')[0]}%;"></span></div>${p.ratio}汽
-                    汽$${p.volume}汽<td class="apr-high">${p.apr}汽
-                    汽${p.fee1h}汽汽${p.fee6h}汽汽${p.fee24h}汽汽${p.fee7d}汽汽${p.fee30d}汽
-                    汽${p.fee}汽汽${p.age}汽
-                    汽<div class="score-bar-small"><div class="score-fill-small" style="width:${scorePercent}%;"></div></div>${Math.round(scorePercent)}%汽`;
+                tr.innerHTML=`<td><span class="risk-dot ${risk.class}"></span><span class="risk-dot ${getFeeSignal(p, '1h').class}"></span><strong>${p.pool}</strong></td>
+                    <td>${p.network}</td><td>${p.dex}</td><td>$${p.tvl}</td>
+                    <td><div class="ratio-bar"><span style="width:${p.ratio.split('/')[0]}%;"></span></div>${p.ratio}</td>
+                    <td>$${p.volume}</td><td class="apr-high">${p.apr}</td>
+                    <td>${p.fee1h}</td><td>${p.fee6h}</td><td>${p.fee24h}</td><td>${p.fee7d}</td><td>${p.fee30d}</td>
+                    <td>${p.fee}</td><td>${p.age}</td>
+                    <td><div class="score-bar-small"><div class="score-fill-small" style="width:${scorePercent}%;"></div></div>${Math.round(scorePercent)}%</td>`;
                 tbody.appendChild(tr);
             });
         }
@@ -609,13 +609,13 @@
             poolsEstrategicas.forEach(p => {
                 const risk = getRiskLevel(p);
                 const tr = document.createElement('tr');
-                tr.innerHTML = `汽<span class="risk-dot ${risk.class}"></span><span class="risk-dot ${getFeeSignal(p, feePeriodo).class}"></span><strong>${p.pool}</strong>汽
-                    汽${p.network}汽汽${p.dex}汽汽$${p.tvl}汽
-                    汽<div class="ratio-bar"><span style="width:${p.ratio.split('/')[0]}%;"></span></div>${p.ratio}汽
-                    汽$${p.volume}汽<td class="apr-high">${p.apr}汽
-                    汽${p[`fee${feePeriodo}`] || p.fee24h}汽汽${p.fee}汽汽${p.age}汽
-                    汽<span class="risk-dot ${risk.class}"></span> ${risk.text}汽
-                    汽<a href="${p.link}" target="_blank" class="link-pool">🔗 Acessar</a>汽`;
+                tr.innerHTML = `<td><span class="risk-dot ${risk.class}"></span><span class="risk-dot ${getFeeSignal(p, feePeriodo).class}"></span><strong>${p.pool}</strong></td>
+                    <td>${p.network}</td><td>${p.dex}</td><td>$${p.tvl}</td>
+                    <td><div class="ratio-bar"><span style="width:${p.ratio.split('/')[0]}%;"></span></div>${p.ratio}</td>
+                    <td>$${p.volume}</td><td class="apr-high">${p.apr}</td>
+                    <td>${p[`fee${feePeriodo}`] || p.fee24h}</td><td>${p.fee}</td><td>${p.age}</td>
+                    <td><span class="risk-dot ${risk.class}"></span> ${risk.text}</td>
+                    <td><a href="${p.link}" target="_blank" class="link-pool">🔗 Acessar</a></td>`;
                 tbody.appendChild(tr);
             });
         }
