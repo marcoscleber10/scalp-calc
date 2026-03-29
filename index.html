@@ -280,7 +280,7 @@
 
     <!-- MODAL DE DONATIVOS -->
     <div id="donationModal" class="modal"><div class="modal-content"><h2>💰 Donativos</h2><p style="background:#1e2a36; padding:15px; border-radius:15px; margin-bottom:20px;">Projeto independente, sem fins lucrativos. Contribuições ajudam a manter os custos. Obrigado!</p>
-        <div class="donation-item" style="border-left-color:#8a2be2;"><strong>⚡ Lightning Network</strong><p>cloggedparrot01@walletofsatoshi.com <button class="copy-btn" onclick="copyText('cloggedparrot01@walletofsatoshi.com')">Copiar</button></p></div>
+        <div class="donation-item" style="border-left-color:#8a2be2;"><strong>⚡ Lightning Network</strong><p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="187b74777f7f7d7c68796a6a776c2829586f7974747d6c777e6b796c776b7071367b7775">[email&#160;protected]</a> <button class="copy-btn" onclick="copyText('cloggedparrot01@walletofsatoshi.com')">Copiar</button></p></div>
         <div class="donation-item" style="border-left-color:#f7931a;"><strong>₿ Bitcoin</strong><p>bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5 <button class="copy-btn" onclick="copyText('bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5')">Copiar</button></p></div>
         <div class="donation-item" style="border-left-color:#627eea;"><strong>🔷 EVM</strong><p>0xAd944bA180610F1Fe43151eD81c0084C918c68e1 <button class="copy-btn" onclick="copyText('0xAd944bA180610F1Fe43151eD81c0084C918c68e1')">Copiar</button></p></div>
         <div class="donation-item" style="border-left-color:#14f195;"><strong>◎ Solana</strong><p>EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm <button class="copy-btn" onclick="copyText('EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm')">Copiar</button></p></div>
@@ -357,7 +357,7 @@
             <div style="background: #0f141c; border-radius: 16px; overflow: hidden; margin-bottom: 25px;" id="calendarioContainer">
                 <div class="tradingview-widget-container">
                     <div class="tradingview-widget-container__widget"></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+                    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
                     {"width":"100%","height":"600","colorTheme":"dark","locale":"br"}
                     </script>
                 </div>
@@ -630,7 +630,14 @@
         const tvlPerc=tvls.length?tvls.filter(v=>v<tvlNum).length/tvls.length:0;
         const volPerc=vols.length?vols.filter(v=>v<volNum).length/vols.length:0;
         const aprPerc=aprs.length?aprs.filter(v=>v<aprNum).length/aprs.length:0;
-        return (aprPerc*0.4)+(volPerc*0.3)+(tvlPerc*0.2);
+        // Fee consistency: recompensa pools com fee APY decrescente e consistente (24h > 7d > 30d)
+        const f24 = parseFloat(pool.fee24h) || 0;
+        const f7d = parseFloat(pool.fee7d)  || 0;
+        const f30d= parseFloat(pool.fee30d) || 0;
+        const feeConsistency = (f24 > 0 && f7d > 0 && f30d > 0 && f24 >= f7d && f7d >= f30d) ? 0.1 : 0;
+        // Penaliza pools muito novas (< 1 dia) — alto risco
+        const agePenalty = (pool.age && (pool.age.includes('m0s') || pool.age.includes('40m'))) ? -0.05 : 0;
+        return Math.max(0, (aprPerc*0.4)+(volPerc*0.25)+(tvlPerc*0.2)+feeConsistency+agePenalty);
     }
     
     // ========== FUNÇÕES DE RENDERIZAÇÃO DE TABELAS ==========
@@ -693,16 +700,37 @@
     function filtrarPorPar() { searchTerm = document.getElementById('searchPairInput').value.trim(); aplicarFiltrosEOrdenar(); }
     
     function atualizarPoolsCompleto() {
+        const parseVal = (str) => {
+            if (!str) return 0;
+            const n = parseFloat(str.replace(/[KMB%$,]/g, ''));
+            if (str.includes('M')) return n * 1e6;
+            if (str.includes('K')) return n * 1e3;
+            return n;
+        };
+        const fmtTVL = (n) => n >= 1e6 ? (n/1e6).toFixed(2)+'M' : (n/1e3).toFixed(1)+'K';
+        const fmtVol = (n) => n >= 1e6 ? (n/1e6).toFixed(2)+'M' : (n/1e3).toFixed(1)+'K';
         poolsData.forEach(p => {
-            let novoApr = parseFloat(p.apr) + (Math.random() * 30 - 15); novoApr = Math.max(5, Math.min(500, novoApr)); p.apr = novoApr.toFixed(1) + '%';
-            let novoTvl = parseFloat(p.tvl) + (Math.random() * 20 - 10); novoTvl = Math.max(1, Math.min(500, novoTvl)); p.tvl = novoTvl.toFixed(1) + 'K';
-            let novoVol = parseFloat(p.volume) + (Math.random() * 30 - 15); novoVol = Math.max(0.1, Math.min(10, novoVol)); p.volume = novoVol.toFixed(2) + 'M';
+            const aprBase = parseVal(p.apr);
+            const tvlBase = parseVal(p.tvl);
+            const volBase = parseVal(p.volume);
+            let novoApr = aprBase * (1 + (Math.random() * 0.12 - 0.06));
+            novoApr = Math.max(5, Math.min(600, novoApr));
+            p.apr = novoApr.toFixed(1) + '%';
+            let novoTvl = tvlBase * (1 + (Math.random() * 0.08 - 0.04));
+            novoTvl = Math.max(1000, novoTvl);
+            p.tvl = fmtTVL(novoTvl);
+            let novoVol = volBase * (1 + (Math.random() * 0.15 - 0.075));
+            novoVol = Math.max(1000, novoVol);
+            p.volume = fmtVol(novoVol);
             ['fee1h','fee6h','fee24h','fee7d','fee30d'].forEach(f => {
-                let novoFee = parseFloat(p[f]) + (Math.random() * 10 - 5); novoFee = Math.max(0.1, Math.min(30, novoFee)); p[f] = novoFee.toFixed(1) + '%';
+                const base = parseFloat(p[f]) || 1;
+                let novoFee = base * (1 + (Math.random() * 0.1 - 0.05));
+                novoFee = Math.max(0.1, Math.min(50, novoFee));
+                p[f] = novoFee.toFixed(1) + '%';
             });
         });
         refreshCategories(); aplicarFiltrosEOrdenar();
-        alert('✅ Dados das pools atualizados!');
+        alert('✅ Dados das pools atualizados com variação realista!');
     }
     
     function renderPoolsEstrategicas() {
@@ -724,16 +752,37 @@
     }
     
     function atualizarPoolsEstrategicas() {
+        const parseVal = (str) => {
+            if (!str) return 0;
+            const n = parseFloat(str.replace(/[KMB%$,]/g, ''));
+            if (str.includes('M')) return n * 1e6;
+            if (str.includes('K')) return n * 1e3;
+            return n;
+        };
+        const fmtTVL = (n) => n >= 1e6 ? (n/1e6).toFixed(2)+'M' : (n/1e3).toFixed(1)+'K';
+        const fmtVol = (n) => n >= 1e6 ? (n/1e6).toFixed(2)+'M' : (n/1e3).toFixed(1)+'K';
         poolsEstrategicas.forEach(p => {
-            let novoApr = parseFloat(p.apr) + (Math.random() * 30 - 15); novoApr = Math.max(5, Math.min(500, novoApr)); p.apr = novoApr.toFixed(1) + '%';
-            let novoTvl = parseFloat(p.tvl) + (Math.random() * 20 - 10); novoTvl = Math.max(1, Math.min(500, novoTvl)); p.tvl = novoTvl.toFixed(1) + 'K';
-            let novoVol = parseFloat(p.volume) + (Math.random() * 30 - 15); novoVol = Math.max(0.1, Math.min(10, novoVol)); p.volume = novoVol.toFixed(2) + 'M';
+            const aprBase = parseVal(p.apr);
+            const tvlBase = parseVal(p.tvl);
+            const volBase = parseVal(p.volume);
+            let novoApr = aprBase * (1 + (Math.random() * 0.1 - 0.05));
+            novoApr = Math.max(5, Math.min(600, novoApr));
+            p.apr = novoApr.toFixed(1) + '%';
+            let novoTvl = tvlBase * (1 + (Math.random() * 0.06 - 0.03));
+            novoTvl = Math.max(1000, novoTvl);
+            p.tvl = fmtTVL(novoTvl);
+            let novoVol = volBase * (1 + (Math.random() * 0.12 - 0.06));
+            novoVol = Math.max(1000, novoVol);
+            p.volume = fmtVol(novoVol);
             ['fee1h','fee6h','fee24h','fee7d','fee30d'].forEach(f => {
-                let novoFee = parseFloat(p[f]) + (Math.random() * 10 - 5); novoFee = Math.max(0.1, Math.min(30, novoFee)); p[f] = novoFee.toFixed(1) + '%';
+                const base = parseFloat(p[f]) || 1;
+                let novoFee = base * (1 + (Math.random() * 0.08 - 0.04));
+                novoFee = Math.max(0.1, Math.min(50, novoFee));
+                p[f] = novoFee.toFixed(1) + '%';
             });
         });
         renderPoolsEstrategicas();
-        alert('✅ Dados das pools estratégicas atualizados!');
+        alert('✅ Pools estratégicas atualizadas!');
     }
     
     function atualizarCalendario() {
@@ -1182,7 +1231,34 @@ ${allocationText}
             else { let pair = symbol.split(':')[1].toLowerCase(); let streamPair = pair.includes('btc') ? 'btcusdt' : pair.includes('eth') ? 'ethusdt' : 'solusdt'; activeWS = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`); activeWS.onmessage = (e) => { const data = JSON.parse(e.data); price = parseFloat(data.c); document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`; pricesHistory.push(price); if(pricesHistory.length > 50) pricesHistory.shift(); updateSignals(); verificarAlarmes(); }; }
         }
         
-        async function fetchHyperliquidPrice(asset) { const defaults = { GOLD: 4528.50, SILVER: 32.85, WTI: 78.42 }; price = defaults[asset]; document.getElementById('priceText').innerHTML = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`; pricesHistory.push(price); if(pricesHistory.length > 50) pricesHistory.shift(); updateSignals(); verificarAlarmes(); }
+        async function fetchHyperliquidPrice(asset) {
+            const fallbacks = { GOLD: 3280.00, SILVER: 32.50, WTI: 61.50 };
+            let newPrice = null;
+            try {
+                if (asset === 'GOLD') {
+                    const res = await fetch('https://economia.awesomeapi.com.br/json/last/XAU-USD', { signal: AbortSignal.timeout(7000) });
+                    const data = await res.json();
+                    if (data.XAUUSD?.bid) newPrice = parseFloat(data.XAUUSD.bid);
+                } else if (asset === 'SILVER') {
+                    const res = await fetch('https://economia.awesomeapi.com.br/json/last/XAG-USD', { signal: AbortSignal.timeout(7000) });
+                    const data = await res.json();
+                    if (data.XAGUSD?.bid) newPrice = parseFloat(data.XAGUSD.bid);
+                } else if (asset === 'WTI') {
+                    const res = await fetch('https://economia.awesomeapi.com.br/json/last/BRENT-USD', { signal: AbortSignal.timeout(7000) });
+                    const data = await res.json();
+                    if (data.BRENTUSD?.bid) newPrice = parseFloat(data.BRENTUSD.bid) - 3.5;
+                }
+            } catch(e) { console.warn('Falha ao buscar preço de ' + asset + ':', e); }
+            price = newPrice || fallbacks[asset];
+            const labels = { GOLD: '🥇 Ouro XAU/USD', SILVER: '🥈 Prata XAG/USD', WTI: '🛢️ Petróleo WTI/USD' };
+            document.getElementById('priceText').innerHTML =
+                '<span style="font-size:0.45em;opacity:0.6;">' + labels[asset] + '</span><br>$ ' +
+                price.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+            pricesHistory.push(price);
+            if (pricesHistory.length > 50) pricesHistory.shift();
+            updateSignals();
+            verificarAlarmes();
+        }
         function onSymbolChange() { initChart(); }
         
         function calcularEMA50() { if (pricesHistory.length < 50) return price; let multiplier = 2 / (50 + 1); let ema = pricesHistory[0]; for (let i = 1; i < pricesHistory.length; i++) ema = (pricesHistory[i] - ema) * multiplier + ema; return ema; }
@@ -1260,12 +1336,4 @@ ${allocationText}
         // Event listeners do simulador
         document.getElementById('simuladorValor')?.addEventListener('input', calcularSimuladorRetorno);
         document.getElementById('simuladorDias')?.addEventListener('input', calcularSimuladorRetorno);
-        document.getElementById('simuladorPreset')?.addEventListener('change', function(e) {
-            if (e.target.value !== 'custom') aplicarPresetSimulador(e.target.value);
-        });
-        
-        renderizarSimuladorPools();
-        atualizarTotalSimulador();
-    </script>
-</body>
-</html>
+        document.getElementById('simuladorPreset')?.ad
