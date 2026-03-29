@@ -226,7 +226,7 @@
         <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 11px;"><span>📊 Volatilidade: <span id="volText">MÉDIA</span></span><span>⏰ Sessão: <span id="sessaoText">Londres</span></span></div>
         <div class="modo-operacao"><span id="statusModo">Modo Operação: OFF</span><label class="switch"><input type="checkbox" id="lockScreenToggle"><span class="slider"></span></label></div>
         <div class="alarme-section"><div class="alarme-title"><span>🔔 ALARME DE PREÇO</span></div><div class="alarme-input-group"><input type="number" id="alarmePreco" class="alarme-input" placeholder="Preço alvo (ex: 75000)" step="100"><button class="alarme-btn" onclick="adicionarAlarme()">Adicionar</button></div><div class="alarme-lista" id="alarmeLista"><div style="color: var(--text); text-align: center; padding: 10px;">Nenhum alarme definido</div></div></div>
-        <div id="chart_container" class="tradingview-widget-container" style="height:400px;width:100%;margin:12px 0;border-radius:16px;overflow:hidden;"></div>
+        <div id="chart_container"></div>
         <div class="inputs-grid"><div><label>💰 Capital ($)</label><input type="number" id="capital" value="300"></div><div><label>⚡ Alavancagem</label><input type="number" id="lev" value="10"></div><div><label>✅ Gain %</label><input type="number" id="tpP" value="1.0" step="0.1"></div><div><label>🛑 Stop %</label><input type="number" id="slP" value="1.0" step="0.1"></div></div>
         <button class="btn-calc" onclick="calc()">📊 CALCULAR ALVOS</button>
         <div id="results" class="res"><div style="display:flex; justify-content:space-between;"><span>🟢 TP:</span> <span id="resTP" style="color:var(--green);"></span></div><div style="display:flex; justify-content:space-between; margin-top:10px;"><span>🔴 SL:</span> <span id="resSL" style="color:var(--red);"></span></div></div>
@@ -274,13 +274,13 @@
         <button class="close-btn" onclick="connectHyperliquid()">🔌 Validar e Conectar</button>
         <div class="console" id="apiConsole">[API] Desconectado</div>
         <div class="grid-2"><div><label>Stop Loss %</label><input type="number" id="botSL" value="1.5" step="0.1"></div><div><label>Take Profit %</label><input type="number" id="botTP" value="1.0" step="0.1"></div></div>
-        <div class="campo"><label>Par</label><select id="botPair"><option value="BTC">₿ BTC/USDC</option><option value="ETH">⟠ ETH/USDC</option><option value="SOL">◎ SOL/USDC</option><option value="GOLD">🥇 XAU/USD (Ouro)</option><option value="SILVER">🥈 XAG/USD (Prata)</option><option value="WTI">🛢️ WTI (Petróleo)</option><option value="HYPE">⚡ HYPE/USDT</option></select></div>
+        <div class="campo"><label>Par</label><select id="botPair"><option value="BTC">₿ BTC/USDC</option><option value="ETH">⟠ ETH/USDC</option><option value="SOL">◎ SOL/USDC</option><option value="GOLD">🥇 XAU/USD (Ouro)</option><option value="SILVER">🥈 XAG/USD (Prata)</option><option value="WTI">🛢️ WTI (Petróleo)</option></select></div>
         <button class="close-btn" onclick="placeRealOrder()">🚀 ENVIAR ORDEM REAL</button>
         <div class="button-group"><button class="close-btn" onclick="fecharModal('robotModal')">Fechar</button></div></div></div>
 
     <!-- MODAL DE DONATIVOS -->
     <div id="donationModal" class="modal"><div class="modal-content"><h2>💰 Donativos</h2><p style="background:#1e2a36; padding:15px; border-radius:15px; margin-bottom:20px;">Projeto independente, sem fins lucrativos. Contribuições ajudam a manter os custos. Obrigado!</p>
-        <div class="donation-item" style="border-left-color:#8a2be2;"><strong>⚡ Lightning Network</strong><p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c6a5aaa9a1a1a3a2b6a7b4b4a9b2f6f786b1a7aaaaa3b2a9a0b5a7b2a9b5aeafe8a5a9ab">[email&#160;protected]</a> <button class="copy-btn" onclick="copyText('cloggedparrot01@walletofsatoshi.com')">Copiar</button></p></div>
+        <div class="donation-item" style="border-left-color:#8a2be2;"><strong>⚡ Lightning Network</strong><p>cloggedparrot01@walletofsatoshi.com <button class="copy-btn" onclick="copyText('cloggedparrot01@walletofsatoshi.com')">Copiar</button></p></div>
         <div class="donation-item" style="border-left-color:#f7931a;"><strong>₿ Bitcoin</strong><p>bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5 <button class="copy-btn" onclick="copyText('bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5')">Copiar</button></p></div>
         <div class="donation-item" style="border-left-color:#627eea;"><strong>🔷 EVM</strong><p>0xAd944bA180610F1Fe43151eD81c0084C918c68e1 <button class="copy-btn" onclick="copyText('0xAd944bA180610F1Fe43151eD81c0084C918c68e1')">Copiar</button></p></div>
         <div class="donation-item" style="border-left-color:#14f195;"><strong>◎ Solana</strong><p>EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm <button class="copy-btn" onclick="copyText('EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm')">Copiar</button></p></div>
@@ -357,7 +357,7 @@
             <div style="background: #0f141c; border-radius: 16px; overflow: hidden; margin-bottom: 25px;" id="calendarioContainer">
                 <div class="tradingview-widget-container">
                     <div class="tradingview-widget-container__widget"></div>
-                    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
                     {"width":"100%","height":"600","colorTheme":"dark","locale":"br"}
                     </script>
                 </div>
@@ -460,7 +460,7 @@
         </div>
     </div>
 </div>
-
+<script src="https://s3.tradingview.com/tv.js"></script>
 <script>
     // ========== VARIÁVEIS GLOBAIS ==========
     let price = 67728.12;
@@ -1175,64 +1175,14 @@ ${allocationText}
             const symbol = document.getElementById('pairSelector').value;
             const container = document.getElementById('chart_container');
             container.innerHTML = '';
-
-            // Cria container interno obrigatório pelo embed do TradingView
-            const widgetDiv = document.createElement('div');
-            widgetDiv.className = 'tradingview-widget-container__widget';
-            widgetDiv.style.height = '100%';
-            widgetDiv.style.width = '100%';
-            container.appendChild(widgetDiv);
-
-            // Injeta script do embed widget (método oficial e estável)
-            const script = document.createElement('script');
-            script.type = 'text/javascript';
-            script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
-            script.async = true;
-            script.innerHTML = JSON.stringify({
-                autosize: true,
-                symbol: symbol,
-                interval: currentTF,
-                timezone: "America/Sao_Paulo",
-                theme: "dark",
-                style: "1",
-                locale: "br",
-                hide_top_toolbar: !isDesktop,
-                allow_symbol_change: false,
-                save_image: false,
-                calendar: false,
-                support_host: "https://www.tradingview.com"
-            });
-            container.appendChild(script);
+            setTimeout(() => { try { new TradingView.widget({ autosize: true, symbol: symbol, interval: currentTF, theme: "dark", style: "1", locale: "br", container_id: "chart_container", hide_top_toolbar: !isDesktop }); } catch(e) { container.innerHTML = '<div style="color:red;text-align:center;padding:20px;">Erro ao carregar gráfico.</div>'; } }, 100);
             if(metalInterval) clearInterval(metalInterval);
             if(activeWS) activeWS.close();
             if(symbol.startsWith("TVC:")) { let asset = symbol === "TVC:GOLD" ? "GOLD" : symbol === "TVC:SILVER" ? "SILVER" : "WTI"; metalInterval = setInterval(() => fetchHyperliquidPrice(asset), 3000); fetchHyperliquidPrice(asset); }
-            else { let pair = symbol.split(':')[1].toLowerCase(); let streamPair = pair.includes('btc') ? 'btcusdt' : pair.includes('eth') ? 'ethusdt' : pair.includes('hype') ? 'hypeusdt' : 'solusdt'; activeWS = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`); activeWS.onmessage = (e) => { const data = JSON.parse(e.data); price = parseFloat(data.c); document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`; pricesHistory.push(price); if(pricesHistory.length > 50) pricesHistory.shift(); updateSignals(); verificarAlarmes(); }; }
+            else { let pair = symbol.split(':')[1].toLowerCase(); let streamPair = pair.includes('btc') ? 'btcusdt' : pair.includes('eth') ? 'ethusdt' : 'solusdt'; activeWS = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`); activeWS.onmessage = (e) => { const data = JSON.parse(e.data); price = parseFloat(data.c); document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`; pricesHistory.push(price); if(pricesHistory.length > 50) pricesHistory.shift(); updateSignals(); verificarAlarmes(); }; }
         }
         
-        async function fetchHyperliquidPrice(asset) {
-            const fallbacks = { GOLD: 3300.00, SILVER: 33.50, WTI: 62.00 };
-            let newPrice = null;
-            try {
-                if (asset === 'GOLD' || asset === 'SILVER') {
-                    const symbol = asset === 'GOLD' ? 'XAU' : 'XAG';
-                    const res = await fetch('https://economia.awesomeapi.com.br/json/last/' + symbol + '-USD', { signal: AbortSignal.timeout(6000) });
-                    const data = await res.json();
-                    const key = Object.keys(data)[0];
-                    if (data[key]?.bid) newPrice = parseFloat(data[key].bid);
-                } else if (asset === 'WTI') {
-                    const res = await fetch('https://economia.awesomeapi.com.br/json/last/BRENT-USD', { signal: AbortSignal.timeout(6000) });
-                    const data = await res.json();
-                    if (data.BRENTUSD?.bid) newPrice = parseFloat(data.BRENTUSD.bid) - 3.5;
-                }
-            } catch(e) { console.warn('Falha API metais/petroleo:', e); }
-            price = newPrice || fallbacks[asset];
-            const label = { GOLD: '🥇 XAU/USD', SILVER: '🥈 XAG/USD', WTI: '🛢️ WTI/USD' };
-            document.getElementById('priceText').innerHTML = '<span style="font-size:0.45em;opacity:0.7;">' + (label[asset]||asset) + '</span><br>$ ' + price.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
-            pricesHistory.push(price);
-            if(pricesHistory.length > 50) pricesHistory.shift();
-            updateSignals();
-            verificarAlarmes();
-        }
+        async function fetchHyperliquidPrice(asset) { const defaults = { GOLD: 4528.50, SILVER: 32.85, WTI: 78.42 }; price = defaults[asset]; document.getElementById('priceText').innerHTML = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`; pricesHistory.push(price); if(pricesHistory.length > 50) pricesHistory.shift(); updateSignals(); verificarAlarmes(); }
         function onSymbolChange() { initChart(); }
         
         function calcularEMA50() { if (pricesHistory.length < 50) return price; let multiplier = 2 / (50 + 1); let ema = pricesHistory[0]; for (let i = 1; i < pricesHistory.length; i++) ema = (pricesHistory[i] - ema) * multiplier + ema; return ema; }
@@ -1310,4 +1260,12 @@ ${allocationText}
         // Event listeners do simulador
         document.getElementById('simuladorValor')?.addEventListener('input', calcularSimuladorRetorno);
         document.getElementById('simuladorDias')?.addEventListener('input', calcularSimuladorRetorno);
-        document.getElementById('simuladorPreset')?.a
+        document.getElementById('simuladorPreset')?.addEventListener('change', function(e) {
+            if (e.target.value !== 'custom') aplicarPresetSimulador(e.target.value);
+        });
+        
+        renderizarSimuladorPools();
+        atualizarTotalSimulador();
+    </script>
+</body>
+</html>
