@@ -247,46 +247,46 @@
 
     <!-- MODAL DE SENHA -->
     <div id="passwordModal" class="modal"><div class="modal-content" style="max-width:350px;"><h2>🔐 ACESSO</h2><input type="password" id="passInput" maxlength="9" placeholder="*********" style="text-align:center; font-size:24px; letter-spacing:4px;"><div class="button-group"><button class="close-btn" onclick="checkPassword()">VALIDAR</button><button class="close-btn" onclick="fecharModal('passwordModal')">Fechar</button></div></div></div>
-    <!-- MODAL DO ROBÔ -->
-<div id="robotModal" class="modal"><div class="modal-content"><h2>🤖 ROBÔ DE LIQUIDEZ</h2><p style="color:var(--green);">🔓 Acesso autorizado</p>
-    <div class="modo-operacao" style="margin-bottom: 15px;"><span>🎯 Filtro MVRV (regime de mercado)</span><label class="switch"><input type="checkbox" id="mvrvFilterToggle"><span class="slider"></span></label></div>
-    <div id="mvrvStatusRobot" style="font-size: 12px; color: var(--text); margin-bottom: 15px; padding: 10px; background: #0d151f; border-radius: 12px; display: none;">📊 Regime atual: <strong id="mvrvRegimeAtualRobot">-</strong><br>💡 <span id="mvrvRecomendacaoRobot">-</span></div>
-    <div class="alarme-section" style="border-color: var(--green); margin-bottom: 20px;"><div class="alarme-title">🧪 SIMULADOR DE AUTOMAÇÃO (Demo)</div>
-        <p style="font-size: 12px; margin-bottom: 10px; color: var(--text);">📌 Este simulador ajuda você a entender como funciona um robô de liquidez. Configure os parâmetros abaixo e veja como o bot se comportaria em diferentes cenários de mercado.</p>
-        <div class="grid-2">
-            <div><label>📊 Pool</label><select id="demoPoolSelect"></select><span style="font-size: 10px; color: var(--text);">Escolha a pool onde o robô vai atuar</span></div>
-            <div><label>💰 Valor (USDC) - quanto investir</label><input type="number" id="demoAmount" value="1000" step="100"><span style="font-size: 10px; color: var(--text);">Quantidade de USDC que será alocada</span></div>
-            <div><label>📈 Range (%) - faixa de preço (±)</label><select id="demoRangeSelect"><option>±5%</option><option selected>±10%</option><option>±15%</option></select><span style="font-size: 10px; color: var(--text);">Quanto maior o range, menor o risco de sair da faixa</span></div>
-            <div><label>🔄 Auto-ajuste - ajustar range automaticamente</label><select id="demoAutoAdjust"><option>ON</option><option>OFF</option></select><span style="font-size: 10px; color: var(--text);">ON = bot ajusta range conforme volatilidade</span></div>
-            <div><label>🚨 Modo Crash - remover liquidez em quedas</label><select id="demoCrash"><option>OFF</option><option>ON</option></select><span style="font-size: 10px; color: var(--text);">ON = bot remove liquidez em quedas bruscas</span></div>
-        </div>
-        <button class="btn-calc" onclick="simularBotLiquidez()" style="margin-top: 10px;">▶️ ATIVAR ROBÔ (DEMO)</button>
-        <div id="demoLog" class="robot-log">[Bot] Aguardando simulação...<br>💡 Clique em ATIVAR ROBÔ para ver como o bot se comporta</div>
-        <div id="demoResultado" style="background: #0d151f; padding: 12px; border-radius: 12px; margin-top: 12px; font-size: 12px;"></div>
-        <p style="font-size: 10px; margin-top: 8px; color: var(--text);">⚠️ Versão demonstrativa – em breve integração real com Meteora/Orca.</p>
-    </div>
-    <div class="security-warning">⚠️ ATENÇÃO: Use apenas em ambiente local. Chave privada não é salva.</div>
-    <h3>🔌 MODO REAL (Hyperliquid - Futuros)</h3>
-    <div class="campo"><label>Endereço da conta principal</label><input type="text" id="hlMainAddress" value="0x9a761Cc6331Fd28D0b04811135dfA233f6499C9C"></div>
-    <div class="campo"><label>Endereço da API wallet (Robonovo)</label><input type="text" id="hlApiAddress" value="0xa9adb7057b5531c077962289a69bbadc4973e381"></div>
-    <div class="campo"><label>Chave privada da API wallet</label><input type="password" id="hlApiPrivateKey" placeholder="0x..."></div>
-    <button class="close-btn" onclick="connectHyperliquid()">🔌 Validar e Conectar</button>
-    <div class="console" id="apiConsole">[API] Desconectado</div>
-    <div class="grid-2"><div><label>Stop Loss %</label><input type="number" id="botSL" value="1.5" step="0.1"></div><div><label>Take Profit %</label><input type="number" id="botTP" value="1.0" step="0.1"></div></div>
-    <div class="campo"><label>Par</label><select id="botPair"><option value="BTC">₿ BTC/USDC</option><option value="ETH">⟠ ETH/USDC</option><option value="SOL">◎ SOL/USDC</option><option value="GOLD">🥇 XAU/USD (Ouro)</option><option value="SILVER">🥈 XAG/USD (Prata)</option><option value="WTI">🛢️ WTI (Petróleo)</option></select></div>
-    <button class="close-btn" onclick="placeRealOrder()">🚀 ENVIAR ORDEM REAL</button>
-    <div class="button-group"><button class="close-btn" onclick="fecharModal('robotModal')">Fechar</button></div></div></div>
 
-<!-- MODAL DE DONATIVOS -->
-<div id="donationModal" class="modal"><div class="modal-content"><h2>💰 Donativos</h2><p style="background:#1e2a36; padding:15px; border-radius:15px; margin-bottom:20px;">Projeto independente, sem fins lucrativos. Contribuições ajudam a manter os custos. Obrigado!</p>
-    <div class="donation-item" style="border-left-color:#8a2be2;"><strong>⚡ Lightning Network</strong><p>cloggedparrot01@walletofsatoshi.com <button class="copy-btn" onclick="copyText('cloggedparrot01@walletofsatoshi.com')">Copiar</button></p></div>
-    <div class="donation-item" style="border-left-color:#f7931a;"><strong>₿ Bitcoin</strong><p>bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5 <button class="copy-btn" onclick="copyText('bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5')">Copiar</button></p></div>
-    <div class="donation-item" style="border-left-color:#627eea;"><strong>🔷 EVM</strong><p>0xAd944bA180610F1Fe43151eD81c0084C918c68e1 <button class="copy-btn" onclick="copyText('0xAd944bA180610F1Fe43151eD81c0084C918c68e1')">Copiar</button></p></div>
-    <div class="donation-item" style="border-left-color:#14f195;"><strong>◎ Solana</strong><p>EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm <button class="copy-btn" onclick="copyText('EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm')">Copiar</button></p></div>
-    <div class="donation-item" style="border-left-color:#32bcad;"><strong>🇧🇷 Pix</strong><p>127d59fc-1f37-4e8e-9fd4-295e1883727b <button class="copy-btn" onclick="copyText('127d59fc-1f37-4e8e-9fd4-295e1883727b')">Copiar</button></p></div>
-    <div class="button-group"><button class="close-btn" onclick="fecharModal('donationModal')">Fechar</button></div></div></div>
-    
-<!-- SUBMODAIS ESTRATÉGIAS -->
+    <!-- MODAL DO ROBÔ -->
+    <div id="robotModal" class="modal"><div class="modal-content"><h2>🤖 ROBÔ DE LIQUIDEZ</h2><p style="color:var(--green);">🔓 Acesso autorizado</p>
+        <div class="modo-operacao" style="margin-bottom: 15px;"><span>🎯 Filtro MVRV (regime de mercado)</span><label class="switch"><input type="checkbox" id="mvrvFilterToggle"><span class="slider"></span></label></div>
+        <div id="mvrvStatusRobot" style="font-size: 12px; color: var(--text); margin-bottom: 15px; padding: 10px; background: #0d151f; border-radius: 12px; display: none;">📊 Regime atual: <strong id="mvrvRegimeAtualRobot">-</strong><br>💡 <span id="mvrvRecomendacaoRobot">-</span></div>
+        <div class="alarme-section" style="border-color: var(--green); margin-bottom: 20px;"><div class="alarme-title">🧪 SIMULADOR DE AUTOMAÇÃO (Demo)</div>
+            <p style="font-size: 12px; margin-bottom: 10px; color: var(--text);">📌 Este simulador ajuda você a entender como funciona um robô de liquidez. Configure os parâmetros abaixo e veja como o bot se comportaria em diferentes cenários de mercado.</p>
+            <div class="grid-2">
+                <div><label>📊 Pool</label><select id="demoPoolSelect"></select><span style="font-size: 10px; color: var(--text);">Escolha a pool onde o robô vai atuar</span></div>
+                <div><label>💰 Valor (USDC) - quanto investir</label><input type="number" id="demoAmount" value="1000" step="100"><span style="font-size: 10px; color: var(--text);">Quantidade de USDC que será alocada</span></div>
+                <div><label>📈 Range (%) - faixa de preço (±)</label><select id="demoRangeSelect"><option>±5%</option><option selected>±10%</option><option>±15%</option></select><span style="font-size: 10px; color: var(--text);">Quanto maior o range, menor o risco de sair da faixa</span></div>
+                <div><label>🔄 Auto-ajuste - ajustar range automaticamente</label><select id="demoAutoAdjust"><option>ON</option><option>OFF</option></select><span style="font-size: 10px; color: var(--text);">ON = bot ajusta range conforme volatilidade</span></div>
+                <div><label>🚨 Modo Crash - remover liquidez em quedas</label><select id="demoCrash"><option>OFF</option><option>ON</option></select><span style="font-size: 10px; color: var(--text);">ON = bot remove liquidez em quedas bruscas</span></div>
+            </div>
+            <button class="btn-calc" onclick="simularBotLiquidez()" style="margin-top: 10px;">▶️ ATIVAR ROBÔ (DEMO)</button>
+            <div id="demoLog" class="robot-log">[Bot] Aguardando simulação...<br>💡 Clique em ATIVAR ROBÔ para ver como o bot se comporta</div>
+            <div id="demoResultado" style="background: #0d151f; padding: 12px; border-radius: 12px; margin-top: 12px; font-size: 12px;"></div>
+            <p style="font-size: 10px; margin-top: 8px; color: var(--text);">⚠️ Versão demonstrativa – em breve integração real com Meteora/Orca.</p>
+        </div>
+        <div class="security-warning">⚠️ ATENÇÃO: Use apenas em ambiente local. Chave privada não é salva.</div>
+        <h3>🔌 MODO REAL (Hyperliquid - Futuros)</h3>
+        <div class="campo"><label>Endereço da conta principal</label><input type="text" id="hlMainAddress" value="0x9a761Cc6331Fd28D0b04811135dfA233f6499C9C"></div>
+        <div class="campo"><label>Endereço da API wallet (Robonovo)</label><input type="text" id="hlApiAddress" value="0xa9adb7057b5531c077962289a69bbadc4973e381"></div>
+        <div class="campo"><label>Chave privada da API wallet</label><input type="password" id="hlApiPrivateKey" placeholder="0x..."></div>
+        <button class="close-btn" onclick="connectHyperliquid()">🔌 Validar e Conectar</button>
+        <div class="console" id="apiConsole">[API] Desconectado</div>
+        <div class="grid-2"><div><label>Stop Loss %</label><input type="number" id="botSL" value="1.5" step="0.1"></div><div><label>Take Profit %</label><input type="number" id="botTP" value="1.0" step="0.1"></div></div>
+        <div class="campo"><label>Par</label><select id="botPair"><option value="BTC">₿ BTC/USDC</option><option value="ETH">⟠ ETH/USDC</option><option value="SOL">◎ SOL/USDC</option><option value="GOLD">🥇 XAU/USD (Ouro)</option><option value="SILVER">🥈 XAG/USD (Prata)</option><option value="WTI">🛢️ WTI (Petróleo)</option></select></div>
+        <button class="close-btn" onclick="placeRealOrder()">🚀 ENVIAR ORDEM REAL</button>
+        <div class="button-group"><button class="close-btn" onclick="fecharModal('robotModal')">Fechar</button></div></div></div>
+
+    <!-- MODAL DE DONATIVOS -->
+    <div id="donationModal" class="modal"><div class="modal-content"><h2>💰 Donativos</h2><p style="background:#1e2a36; padding:15px; border-radius:15px; margin-bottom:20px;">Projeto independente, sem fins lucrativos. Contribuições ajudam a manter os custos. Obrigado!</p>
+        <div class="donation-item" style="border-left-color:#8a2be2;"><strong>⚡ Lightning Network</strong><p>cloggedparrot01@walletofsatoshi.com <button class="copy-btn" onclick="copyText('cloggedparrot01@walletofsatoshi.com')">Copiar</button></p></div>
+        <div class="donation-item" style="border-left-color:#f7931a;"><strong>₿ Bitcoin</strong><p>bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5 <button class="copy-btn" onclick="copyText('bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5')">Copiar</button></p></div>
+        <div class="donation-item" style="border-left-color:#627eea;"><strong>🔷 EVM</strong><p>0xAd944bA180610F1Fe43151eD81c0084C918c68e1 <button class="copy-btn" onclick="copyText('0xAd944bA180610F1Fe43151eD81c0084C918c68e1')">Copiar</button></p></div>
+        <div class="donation-item" style="border-left-color:#14f195;"><strong>◎ Solana</strong><p>EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm <button class="copy-btn" onclick="copyText('EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm')">Copiar</button></p></div>
+        <div class="donation-item" style="border-left-color:#32bcad;"><strong>🇧🇷 Pix</strong><p>127d59fc-1f37-4e8e-9fd4-295e1883727b <button class="copy-btn" onclick="copyText('127d59fc-1f37-4e8e-9fd4-295e1883727b')">Copiar</button></p></div>
+        <div class="button-group"><button class="close-btn" onclick="fecharModal('donationModal')">Fechar</button></div></div></div>
+        <!-- SUBMODAIS ESTRATÉGIAS -->
 <div id="submodalEstrategia1" class="submodal"><div class="submodal-content"><h2>📘 Estratégia 1: Market Making Adaptativo</h2><h3>🎯 O que é?</h3><p>Detecta fluxo agressivo de compra/venda e ajusta o range da posição de liquidez ANTES do preço se mover.</p><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia1')">Fechar</button></div></div></div>
 <div id="submodalEstrategia2" class="submodal"><div class="submodal-content"><h2>📘 Estratégia 2: Gamma Scalping</h2><h3>🎯 O que é?</h3><p>Lucrar com volatilidade por meio de hedge (comprar/vender spot).</p><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia2')">Fechar</button></div></div></div>
 <div id="submodalEstrategia3" class="submodal"><div class="submodal-content"><h2>📘 Estratégia 3: Liquidity Sniping</h2><h3>🎯 O que é?</h3><p>Entrar em pools novas com APR muito alto antes da massa.</p><div class="button-group"><button class="close-btn" onclick="fecharSubmodal('submodalEstrategia3')">Fechar</button></div></div></div>
@@ -338,14 +338,14 @@
                 </select>
             </div>
             <div class="filter-row"><div class="filter-item"><label>TVL mínimo ($)</label><input type="number" id="filtroTVL" placeholder="ex: 10000" value="0" step="1000"></div><div class="filter-item"><label>Volume mínimo ($)</label><input type="number" id="filtroVolume" placeholder="ex: 5000" value="0" step="1000"></div><div class="filter-item"><label>APR mínimo (%)</label><input type="number" id="filtroAPR" placeholder="ex: 100" value="0" step="10"></div><button class="btn-filter" onclick="aplicarFiltros()">Aplicar</button></div>
-            <div class="table-wrapper"><table class="pools-table" id="poolsTable"><thead><tr><th onclick="ordenarPor('pool')">Pool</th><th onclick="ordenarPor('network')">Network</th><th onclick="ordenarPor('dex')">DEX</th><th onclick="ordenarPor('tvl')">TVL</th><th>Ratio</th><th onclick="ordenarPor('volume')">Volume 24h</th><th onclick="ordenarPor('apr')">APR</th><th>Fee APY 1h</th><th>Fee APY 6h</th><th>Fee APY 24h</th><th>Fee APY 7d</th><th>Fee APY 30d</th><th onclick="ordenarPor('fee')">Fee</th><th onclick="ordenarPor('age')">Age</th><th>Score</th></tr></thead><tbody id="poolsTableBody"></tbody></table></div>
+            <div class="table-wrapper"><table class="pools-table" id="poolsTable"><thead>汽<th onclick="ordenarPor('pool')">Pool</th><th onclick="ordenarPor('network')">Network</th><th onclick="ordenarPor('dex')">DEX</th><th onclick="ordenarPor('tvl')">TVL</th><th>Ratio</th><th onclick="ordenarPor('volume')">Volume 24h</th><th onclick="ordenarPor('apr')">APR</th><th>Fee APY 1h</th><th>Fee APY 6h</th><th>Fee APY 24h</th><th>Fee APY 7d</th><th>Fee APY 30d</th><th onclick="ordenarPor('fee')">Fee</th><th onclick="ordenarPor('age')">Age</th><th>Score</th> </thead><tbody id="poolsTableBody"></tbody> </table></div>
         </div>
 
         <!-- POOLS ESTRATÉGICAS -->
         <div id="poolsEstrategicasTab" class="tab-content">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;"><h3 style="color: var(--gold); margin: 0;">🎯 Pools Estratégicas Selecionadas</h3><button class="btn-atualizar" onclick="atualizarPoolsEstrategicas()">🔄 Atualizar</button></div>
             <p style="color: var(--text); margin-bottom: 15px;">12 pools selecionadas para estratégias de alocação baseadas em MVRV. Clique no link 🔗 para acessar a pool na DEX.</p>
-            <div class="table-wrapper"><table class="pools-table" id="poolsEstrategicasTable"><thead><tr><th>Pool</th><th>Network</th><th>DEX</th><th>TVL</th><th>Ratio</th><th>Volume 24h</th><th>APR</th><th>Fee APY</th><th>Fee</th><th>Age</th><th>Oportunidade</th><th>Link</th></tr></thead><tbody id="poolsEstrategicasBody"></tbody></table></div>
+            <div class="table-wrapper"><table class="pools-table" id="poolsEstrategicasTable"><thead> <th>Pool</th><th>Network</th><th>DEX</th><th>TVL</th><th>Ratio</th><th>Volume 24h</th><th>APR</th><th>Fee APY</th><th>Fee</th><th>Age</th><th>Oportunidade</th><th>Link</th> </thead><tbody id="poolsEstrategicasBody"></tbody> </table></div>
         </div>
 
         <!-- NOTÍCIAS -->
@@ -482,11 +482,14 @@
         { pool: "USDT/WBNB", network: "Bsc", dex: "PancakeSwap V3", tvl: "27.2K", ratio: "16/84", volume: "0.50M", apr: "403.9%", fee: "7.7%", age: "1m0s", fee1h: "8.7%", fee6h: "6.2%", fee24h: "4.5%", fee7d: "3.8%", fee30d: "2.9%" },
         { pool: "CONV/USDC", network: "Solana", dex: "Raydium Concentrated", tvl: "278.1K", ratio: "87/13", volume: "2.21M", apr: "340.5%", fee: "23.0%", age: "2mo", fee1h: "15.2%", fee6h: "11.4%", fee24h: "8.1%", fee7d: "6.3%", fee30d: "4.8%" },
         { pool: "SOL/USDT", network: "Solana", dex: "Raydium Concentrated", tvl: "3.0K", ratio: "55/45", volume: "10.00M", apr: "349.0%", fee: "7.0%", age: "2m0s", fee1h: "12.3%", fee6h: "8.5%", fee24h: "5.2%", fee7d: "4.1%", fee30d: "3.2%" },
+        { pool: "SOL/WETH", network: "Ethereum", dex: "Uniswap V3", tvl: "1.0K", ratio: "91/9", volume: "3.29M", apr: "295.2%", fee: "7.3%", age: "1mo", fee1h: "9.8%", fee6h: "7.3%", fee24h: "5.6%", fee7d: "4.2%", fee30d: "3.1%" },
         { pool: "SOL/USDC", network: "Base", dex: "Aerodrome Slipstream", tvl: "218.5K", ratio: "59/41", volume: "0.30M", apr: "290.1%", fee: "18.3%", age: "40m", fee1h: "18.5%", fee6h: "14.2%", fee24h: "10.8%", fee7d: "7.9%", fee30d: "5.6%" },
         { pool: "USDC/WBTC", network: "Hyperliquid", dex: "Project X", tvl: "500.0K", ratio: "44/56", volume: "0.30M", apr: "265.6%", fee: "12.7%", age: "6mo", fee1h: "7.2%", fee6h: "5.4%", fee24h: "3.9%", fee7d: "3.1%", fee30d: "2.4%" },
         { pool: "TQQQ/USDC", network: "Solana", dex: "Raydium Concentrated", tvl: "20.5K", ratio: "51/49", volume: "4.28M", apr: "262.7%", fee: "17.4%", age: "17d", fee1h: "22.1%", fee6h: "16.8%", fee24h: "12.3%", fee7d: "8.5%", fee30d: "6.1%" },
         { pool: "HYPE/USDC", network: "Solana", dex: "Orca Whirlpool", tvl: "72.0K", ratio: "55/45", volume: "5.02M", apr: "222.3%", fee: "14.2%", age: "3mo", fee1h: "14.6%", fee6h: "11.2%", fee24h: "8.5%", fee7d: "6.4%", fee30d: "4.7%" },
         { pool: "HYPE/eBTC", network: "Solana", dex: "Meteora DLMM", tvl: "22.0K", ratio: "80/20", volume: "10.00M", apr: "209.8%", fee: "7.8%", age: "5mo", fee1h: "12.8%", fee6h: "9.6%", fee24h: "7.3%", fee7d: "5.5%", fee30d: "4.1%" },
+        { pool: "SOL/WETH", network: "Arbitrum", dex: "Uniswap V3", tvl: "128.1K", ratio: "63/37", volume: "10.00M", apr: "190.8%", fee: "6.4%", age: "2y", fee1h: "6.8%", fee6h: "5.1%", fee24h: "3.7%", fee7d: "2.9%", fee30d: "2.2%" },
+        { pool: "SOL/WBTC", network: "Arbitrum", dex: "Uniswap V3", tvl: "4.0K", ratio: "79/21", volume: "10.00M", apr: "179.9%", fee: "10.2%", age: "2y", fee1h: "8.4%", fee6h: "6.4%", fee24h: "4.8%", fee7d: "3.7%", fee30d: "2.8%" },
         { pool: "WETH/USDC", network: "Base", dex: "Aerodrome Slipstream", tvl: "371.0K", ratio: "75/27", volume: "0.30M", apr: "176.5%", fee: "13.6%", age: "1m", fee1h: "9.2%", fee6h: "7.1%", fee24h: "5.4%", fee7d: "4.2%", fee30d: "3.2%" },
         { pool: "SLOWN/USDC", network: "Ethereum", dex: "Uniswap V3", tvl: "157.0K", ratio: "79/21", volume: "3.49M", apr: "176.2%", fee: "1.5%", age: "2y", fee1h: "5.9%", fee6h: "4.5%", fee24h: "3.3%", fee7d: "2.6%", fee30d: "2.0%" },
         { pool: "HYPE/SOL", network: "Solana", dex: "Raydium Concentrated", tvl: "446.3K", ratio: "35/65", volume: "3.15M", apr: "174.0%", fee: "19.9%", age: "8mo", fee1h: "10.2%", fee6h: "7.8%", fee24h: "5.9%", fee7d: "4.5%", fee30d: "3.4%" },
@@ -499,21 +502,8 @@
         { pool: "BRL/USDC", network: "Polygon", dex: "QuickSwap", tvl: "46.5K", ratio: "55/45", volume: "1.41M", apr: "5.0%", fee: "10.0%", age: "1y", fee1h: "0.6%", fee6h: "0.5%", fee24h: "0.4%", fee7d: "0.3%", fee30d: "0.2%" },
         { pool: "BRL/USDT", network: "Bsc", dex: "PancakeSwap V3", tvl: "17.7K", ratio: "65/35", volume: "0.35M", apr: "5.0%", fee: "2.8%", age: "10mo", fee1h: "0.7%", fee6h: "0.5%", fee24h: "0.4%", fee7d: "0.3%", fee30d: "0.2%" },
         { pool: "BRZ/BRL", network: "Polygon", dex: "QuickSwap", tvl: "12.5K", ratio: "50/50", volume: "0.85M", apr: "12.3%", fee: "0.5%", age: "6mo", fee1h: "1.2%", fee6h: "0.9%", fee24h: "0.7%", fee7d: "0.5%", fee30d: "0.4%" },
-        { pool: "BRL/EURC", network: "Arbitrum", dex: "Camelot", tvl: "8.2K", ratio: "55/45", volume: "0.42M", apr: "8.7%", fee: "0.8%", age: "4mo", fee1h: "0.8%", fee6h: "0.6%", fee24h: "0.5%", fee7d: "0.4%", fee30d: "0.3%" },
-        { pool: "SOL/WETH", network: "Arbitrum", dex: "Uniswap V3", tvl: "128.1K", ratio: "63/37", volume: "10.00M", apr: "190.8%", fee: "6.4%", age: "2y", fee1h: "6.8%", fee6h: "5.1%", fee24h: "3.7%", fee7d: "2.9%", fee30d: "2.2%" },
-        { pool: "SOL/WBTC", network: "Arbitrum", dex: "Uniswap V3", tvl: "4.0K", ratio: "79/21", volume: "10.00M", apr: "179.9%", fee: "10.2%", age: "2y", fee1h: "8.4%", fee6h: "6.4%", fee24h: "4.8%", fee7d: "3.7%", fee30d: "2.8%" }
+        { pool: "BRL/EURC", network: "Arbitrum", dex: "Camelot", tvl: "8.2K", ratio: "55/45", volume: "0.42M", apr: "8.7%", fee: "0.8%", age: "4mo", fee1h: "0.8%", fee6h: "0.6%", fee24h: "0.5%", fee7d: "0.4%", fee30d: "0.3%" }
     ];
-    
-    // Remover duplicatas do poolsData
-    const uniquePoolsData = [];
-    const poolNames = new Set();
-    for (const pool of poolsData) {
-        if (!poolNames.has(pool.pool)) {
-            poolNames.add(pool.pool);
-            uniquePoolsData.push(pool);
-        }
-    }
-    poolsData = uniquePoolsData;
     
     let poolsEstrategicas = [
         { pool: "SOL/USDC", network: "Solana", dex: "Meteora DLMM", tvl: "220.3K", ratio: "59/41", volume: "4.73M", apr: "274.1%", fee: "0.03%", age: "40m", link: "https://app.meteora.ag/pool/SOL-USDC", fee1h: "18.5%", fee6h: "14.2%", fee24h: "10.8%", fee7d: "7.9%", fee30d: "5.6%" },
@@ -530,6 +520,7 @@
         { pool: "TQQQx/USDC", network: "Solana", dex: "Raydium Concentrated", tvl: "2.6K", ratio: "51/49", volume: "458", apr: "259.6%", fee: "4.00%", age: "17d", link: "https://raydium.io/pools", fee1h: "22.1%", fee6h: "16.8%", fee24h: "12.3%", fee7d: "8.5%", fee30d: "6.1%" }
     ];
     
+    // Dados para o simulador (baseado nas pools estratégicas)
     let simuladorPools = [
         { name: "SOL/USDC", apr: 274.1, network: "Solana", dex: "Meteora", risk: "Alto" },
         { name: "HYPE/USDC", apr: 224.7, network: "Solana", dex: "Meteora", risk: "Alto" },
@@ -554,7 +545,10 @@
     let carteiraManual = {};
     let feePeriodo = '24h';
     
-    simuladorPools.forEach(pool => { simuladorPercentuais[pool.name] = 0; });
+    // Inicializar percentuais do simulador como 0
+    simuladorPools.forEach(pool => {
+        simuladorPercentuais[pool.name] = 0;
+    });
     
     // ========== FUNÇÕES AUXILIARES ==========
     function abrirSubmodal(id) { document.getElementById(id).style.display = 'flex'; }
@@ -587,21 +581,18 @@
     
     function atualizarSemaforosTaxas() { feePeriodo = document.getElementById('feePeriodSelect').value; refreshCategories(); aplicarFiltrosEOrdenar(); renderPoolsEstrategicas(); }
     
-    // ========== FUNÇÕES DE CATEGORIAS ==========
-    function getUniqueTopAPRs(pools, n, filterFn = null) {
+    // ========== FUNÇÕES DE CATEGORIAS E TOP APRS ==========
+    function getTopAPRs(pools, n, filterFn = null) {
         let filtered = filterFn ? pools.filter(filterFn) : pools;
-        const uniqueMap = new Map();
-        for (const p of filtered) { if (!uniqueMap.has(p.pool)) uniqueMap.set(p.pool, p); }
-        const uniqueList = Array.from(uniqueMap.values());
-        uniqueList.sort((a, b) => parseFloat(b.apr) - parseFloat(a.apr));
-        return uniqueList.slice(0, n).map(p => ({ pair: p.pool, apr: p.apr, risk: getRiskLevel(p), fee: getFeeSignal(p, feePeriodo) }));
+        filtered.sort((a,b) => parseFloat(b.apr) - parseFloat(a.apr));
+        return filtered.slice(0,n).map(p => ({ pair: p.pool, apr: p.apr, risk: getRiskLevel(p), fee: getFeeSignal(p, feePeriodo) }));
     }
     
     function refreshCategories() {
-        const bluechip = getUniqueTopAPRs(poolsData, 6);
-        const stable = getUniqueTopAPRs(poolsData, 5, p => p.pool.toUpperCase().includes('USDC') || p.pool.toUpperCase().includes('USDT'));
-        const rwa = getUniqueTopAPRs(poolsData, 5, p => ['CONV', 'NVDA', 'SLOW', 'HOODX', 'TQQQ', 'HYPE'].some(k => p.pool.toUpperCase().includes(k)));
-        const real = getUniqueTopAPRs(poolsData, 5, p => p.pool.toUpperCase().includes('BRL') || p.pool.toUpperCase().includes('BRZ'));
+        const bluechip = getTopAPRs(poolsData, 6);
+        const stable = getTopAPRs(poolsData, 5, p => p.pool.toUpperCase().includes('USDC') || p.pool.toUpperCase().includes('USDT'));
+        const rwa = getTopAPRs(poolsData, 5, p => ['CONV', 'NVDA', 'SLOW', 'HOODX', 'TQQQ', 'HYPE'].some(k => p.pool.toUpperCase().includes(k)));
+        const real = getTopAPRs(poolsData, 5, p => p.pool.toUpperCase().includes('BRL') || p.pool.toUpperCase().includes('BRZ'));
         
         const categories = [
             { title: "BEST BLUE-CHIP", items: bluechip },
@@ -612,18 +603,23 @@
         
         let html = '';
         for (let cat of categories) {
-            if (cat.items.length > 0) {
-                html += `<div class="category-card"><div class="category-title">${cat.title}</div>`;
-                for (let item of cat.items) {
-                    html += `<div class="category-item"><span class="pair"><span class="risk-dot ${item.risk.class}"></span><span class="risk-dot ${item.fee.class}"></span>${item.pair}</span><span class="apr">${item.apr}</span></div>`;
-                }
-                html += `</div>`;
+            html += `<div class="category-card"><div class="category-title">${cat.title}</div>`;
+            for (let item of cat.items) {
+                html += `<div class="category-item">
+                            <span class="pair">
+                                <span class="risk-dot ${item.risk.class}"></span>
+                                <span class="risk-dot ${item.fee.class}"></span>
+                                ${item.pair}
+                            </span>
+                            <span class="apr">${item.apr}</span>
+                         </div>`;
             }
+            html += `</div>`;
         }
         document.getElementById('categoriesContainer').innerHTML = html;
     }
     
-    // ========== FUNÇÕES DE EXTRAÇÃO E CÁLCULO ==========
+    // ========== FUNÇÕES DE EXTRAÇÃO E CÁLCULO DE SCORE ==========
     function extrairNumeros(pool) {
         const parseNum = (str) => { if(!str) return 0; let n = parseFloat(str.replace(/[KMB%$]/g,'')); if(str.includes('K')) n*=1e3; if(str.includes('M')) n*=1e6; return n; };
         return { tvlNum: parseNum(pool.tvl), volNum: parseNum(pool.volume), aprNum: parseNum(pool.apr) };
@@ -637,7 +633,7 @@
         return (aprPerc*0.4)+(volPerc*0.3)+(tvlPerc*0.2);
     }
     
-    // ========== FUNÇÕES DE RENDERIZAÇÃO ==========
+    // ========== FUNÇÕES DE RENDERIZAÇÃO DE TABELAS ==========
     function renderPoolsTable(pools) {
         const tbody=document.getElementById('poolsTableBody');
         if(!tbody) return;
@@ -753,370 +749,523 @@
         }
         alert('✅ Calendário recarregado!');
     }
-        // ========== FUNÇÕES MVRV E CICLO ==========
-    function calcularRegimeMVRV(mvrv, sth) {
-        if (mvrv < 1.2 && sth < 0.95) return { regime: 'COMPRA_FORTE', cor: '#00ff88', msg: '🔥 Zona de compra forte!', strategy: 'Máxima agressividade' };
-        if (mvrv < 1.5) return { regime: 'ACUMULAÇÃO', cor: '#ffcc00', msg: '📈 Zona de acumulação.', strategy: 'Alto APR' };
-        if (mvrv < 2.5) return { regime: 'NEUTRO', cor: '#8b949e', msg: '⚖️ Zona neutra.', strategy: 'Diversificação' };
-        if (mvrv < 3.5) return { regime: 'REALIZAÇÃO', cor: '#ff9900', msg: '🔴 Zona de realização.', strategy: 'Redução de risco' };
-        return { regime: 'TOPO', cor: '#ff3e3e', msg: '⚠️ Zona de topo!', strategy: 'Apenas stablecoins' };
-    }
-    
-    function atualizarMVRV() {
-        const regimeObj = calcularRegimeMVRV(mvrvData.total, mvrvData.sth);
-        mvrvData.regime = regimeObj.regime; mvrvData.recomendacao = regimeObj.msg;
-        document.getElementById('mvrvValue').innerText = mvrvData.total.toFixed(2);
-        document.getElementById('sthValue').innerText = mvrvData.sth.toFixed(2);
-        document.getElementById('regimeText').innerText = mvrvData.regime;
-        const percentTotal = Math.min(100, (mvrvData.total / 4) * 100);
-        const percentSth = Math.min(100, (mvrvData.sth / 2) * 100);
-        document.getElementById('mvrvFill').style.width = percentTotal + '%';
-        document.getElementById('sthFill').style.width = percentSth + '%';
-        document.getElementById('mvrvRegimeAtualRobot').innerText = mvrvData.regime;
-        document.getElementById('mvrvRecomendacaoRobot').innerText = mvrvData.recomendacao;
-        document.getElementById('liquidityRegime').innerText = mvrvData.regime;
-        document.getElementById('liquidityStrategy').innerText = regimeObj.strategy;
-        atualizarAlocacao();
-    }
-    
-    function calcularScoreCiclo() {
-        cicloData.mvrv = parseFloat(document.getElementById('inputMVRV').value) || 0;
-        cicloData.nupl = parseFloat(document.getElementById('inputNUPL').value) || 0;
-        cicloData.sopr = parseFloat(document.getElementById('inputSOPR').value) || 0;
-        cicloData.realizedPrice = parseFloat(document.getElementById('inputRealizedPrice').value) || 0;
-        cicloData.rhodl = parseFloat(document.getElementById('inputRHODL').value) || 0;
-        cicloData.puell = parseFloat(document.getElementById('inputPuell').value) || 0;
-        const currentPrice = price;
-        let score = 0;
-        if (cicloData.mvrv < 1) score += 2; else if (cicloData.mvrv > 3.5) score -= 2;
-        if (cicloData.nupl < 0.25) score += 2; else if (cicloData.nupl > 0.6) score -= 2;
-        if (cicloData.sopr < 1) score += 1; else if (cicloData.sopr > 1.1) score -= 1;
-        if (currentPrice < cicloData.realizedPrice) score += 2; else score -= 1;
-        if (cicloData.rhodl < 1000) score += 2; else if (cicloData.rhodl > 5000) score -= 2;
-        if (cicloData.puell < 0.5) score += 2; else if (cicloData.puell > 3) score -= 2;
-        document.getElementById('scoreCiclo').innerText = score;
-        let sinal = '', corClass = '';
-        if (score >= 5) { sinal = 'COMPRA FORTE'; corClass = 'semaforo-verde'; }
-        else if (score <= -5) { sinal = 'TOPO / RISCO ALTO'; corClass = 'semaforo-vermelho'; }
-        else { sinal = 'NEUTRO'; corClass = 'semaforo-amarelo'; }
-        document.getElementById('sinalTexto').innerText = sinal;
-        document.getElementById('semaforoIcon').className = 'semaforo ' + corClass;
-    }
-    
-    // ========== FUNÇÕES AUTO LIQUIDITY ==========
-    function setModoLiquidity(modo) {
-        modoLiquidity = modo;
-        document.getElementById('modoAutoLiquidityBtn').classList.toggle('active', modo === 'auto');
-        document.getElementById('modoManualLiquidityBtn').classList.toggle('active', modo === 'manual');
-        document.getElementById('liquidityAutoContent').style.display = modo === 'auto' ? 'block' : 'none';
-        document.getElementById('liquidityManualContent').style.display = modo === 'manual' ? 'block' : 'none';
-        if (modo === 'manual') carregarPoolsManual();
-        else atualizarAlocacao();
-    }
-    
-    function atualizarAlocacao() {
-        let poolsFiltradas = poolsEstrategicas.filter(p => getRiskLevel(p).class === 'risk-verde');
-        if (poolsFiltradas.length < 3) poolsFiltradas = poolsEstrategicas.filter(p => getRiskLevel(p).class === 'risk-amarelo');
-        poolsFiltradas.sort((a,b) => parseFloat(b.apr) - parseFloat(a.apr));
-        const stablePool = poolsEstrategicas.find(p => p.pool === 'USDC/USDT');
-        if (stablePool && !poolsFiltradas.includes(stablePool)) poolsFiltradas.unshift(stablePool);
-        const percentuais = [25, 20, 15, 10, 10, 10, 5, 5, 5];
-        let alocacao = [], totalPercent = 0;
-        for (let i = 0; i < Math.min(poolsFiltradas.length, percentuais.length); i++) {
-            let percent = percentuais[i];
-            if (totalPercent + percent > 100) percent = 100 - totalPercent;
-            alocacao.push({ pool: poolsFiltradas[i].pool, percent: percent, apr: poolsFiltradas[i].apr });
-            totalPercent += percent;
-            if (totalPercent >= 100) break;
+            // ========== FUNÇÕES MVRV E CICLO ==========
+        function calcularRegimeMVRV(mvrv, sth) {
+            if (mvrv < 1.2 && sth < 0.95) return { regime: 'COMPRA_FORTE', cor: '#00ff88', msg: '🔥 Zona de compra forte!', strategy: 'Máxima agressividade' };
+            if (mvrv < 1.5) return { regime: 'ACUMULAÇÃO', cor: '#ffcc00', msg: '📈 Zona de acumulação.', strategy: 'Alto APR' };
+            if (mvrv < 2.5) return { regime: 'NEUTRO', cor: '#8b949e', msg: '⚖️ Zona neutra.', strategy: 'Diversificação' };
+            if (mvrv < 3.5) return { regime: 'REALIZAÇÃO', cor: '#ff9900', msg: '🔴 Zona de realização.', strategy: 'Redução de risco' };
+            return { regime: 'TOPO', cor: '#ff3e3e', msg: '⚠️ Zona de topo!', strategy: 'Apenas stablecoins' };
         }
-        if (totalPercent < 100 && stablePool && !alocacao.find(a => a.pool === 'USDC/USDT')) alocacao.push({ pool: 'USDC/USDT', percent: 100 - totalPercent, apr: '21.1%' });
-        const container = document.getElementById('alocacaoLista');
-        if (container) container.innerHTML = alocacao.map(item => `<div class="alocacao-item"><span>▪ ${item.pool} (${item.apr} APR)</span><span class="alocacao-percent">${item.percent}%</span></div>`).join('');
-    }
-    
-    function carregarPoolsManual() {
-        const container = document.getElementById('poolsManualLista');
-        if (!container) return;
-        let html = '';
-        poolsEstrategicas.forEach((pool, idx) => {
-            const percent = carteiraManual[pool.pool] || 0;
-            html += `<div class="alocacao-item"><span>▪ ${pool.pool} (${pool.apr} APR)</span><input type="number" id="percent_${idx}" value="${percent}" min="0" max="100" step="5" style="width:70px; background:#0d151f; border:1px solid #3d4d62; color:white; padding:5px; border-radius:12px; text-align:center;" onchange="atualizarResumoManual()"><span>%</span></div>`;
-        });
-        container.innerHTML = html;
-        atualizarResumoManual();
-    }
-    
-    function atualizarResumoManual() {
-        let total = 0;
-        poolsEstrategicas.forEach((_, idx) => { const inp = document.getElementById(`percent_${idx}`); if(inp) total += parseFloat(inp.value) || 0; });
-        const div = document.getElementById('resumoManual');
-        if(div) div.innerHTML = `Total: ${total}% ${total === 100 ? '✅' : '⚠️ (deve ser 100%)'}`;
-    }
-    
-    function salvarCarteiraManual() {
-        let total = 0;
-        poolsEstrategicas.forEach((pool, idx) => { const val = parseFloat(document.getElementById(`percent_${idx}`).value) || 0; carteiraManual[pool.pool] = val; total += val; });
-        if (Math.abs(total - 100) > 1) { alert(`Total: ${total}%. A soma deve ser 100%.`); return; }
-        alert('✅ Configuração salva!');
-    }
-    
-    function copiarEstrategia() {
-        let texto = '';
-        if (modoLiquidity === 'auto') {
-            const alocacoes = { 'COMPRA_FORTE': 'BTC/USDC (30%), ETH/USDC (25%), SOL/USDC (25%), USDC/USDT (20%)', 'ACUMULAÇÃO': 'SOL/USDC (25%), HYPE/USDC (20%), NVDAX/USDC (15%), BTC/USDC (15%), USDC/USDT (15%), ETH/USDC (10%)', 'NEUTRO': 'USDC/USDT (30%), BTC/USDC (25%), ETH/USDC (20%), SOL/USDC (15%), WBTC/WETH (10%)', 'REALIZAÇÃO': 'USDC/USDT (50%), BTC/USDC (30%), CONV/USDC (20%)', 'TOPO': 'USDC/USDT (100%)' };
-            texto = `📊 ESTRATÉGIA AUTO LIQUIDITY (AUTOMÁTICA)\n\nRegime MVRV: ${mvrvData.regime}\nMVRV: ${mvrvData.total.toFixed(2)} | STH: ${mvrvData.sth.toFixed(2)}\n\nAlocação:\n${alocacoes[mvrvData.regime]}\n\n${mvrvData.recomendacao}`;
-        } else {
-            let aloc = '';
-            poolsEstrategicas.forEach(p => { const per = carteiraManual[p.pool] || 0; if(per>0) aloc += `${p.pool} (${p.apr}): ${per}%\n`; });
-            texto = `📊 ESTRATÉGIA AUTO LIQUIDITY (MANUAL)\n\nCarteira Personalizada:\n${aloc}`;
+        
+        function atualizarMVRV() {
+            const regimeObj = calcularRegimeMVRV(mvrvData.total, mvrvData.sth);
+            mvrvData.regime = regimeObj.regime; mvrvData.recomendacao = regimeObj.msg;
+            document.getElementById('mvrvValue').innerText = mvrvData.total.toFixed(2);
+            document.getElementById('sthValue').innerText = mvrvData.sth.toFixed(2);
+            document.getElementById('regimeText').innerText = mvrvData.regime;
+            document.getElementById('mvrvRecomendacao').innerText = mvrvData.recomendacao;
+            const percentTotal = Math.min(100, (mvrvData.total / 4) * 100);
+            const percentSth = Math.min(100, (mvrvData.sth / 2) * 100);
+            document.getElementById('mvrvFill').style.width = percentTotal + '%';
+            document.getElementById('sthFill').style.width = percentSth + '%';
+            document.getElementById('mvrvRegimeAtualRobot').innerText = mvrvData.regime;
+            document.getElementById('mvrvRecomendacaoRobot').innerText = mvrvData.recomendacao;
+            document.getElementById('liquidityRegime').innerText = mvrvData.regime;
+            document.getElementById('liquidityStrategy').innerText = regimeObj.strategy;
+            atualizarAlocacao();
         }
-        navigator.clipboard.writeText(texto).then(() => alert('✅ Estratégia copiada!')).catch(() => alert('❌ Erro ao copiar.'));
-    }
-    
-    function atualizarAPRsAutoLiquidity() {
-        poolsEstrategicas.forEach(p => { let novoApr = parseFloat(p.apr) + (Math.random() * 30 - 15); novoApr = Math.max(5, Math.min(500, novoApr)); p.apr = novoApr.toFixed(1) + '%'; });
-        renderPoolsEstrategicas(); atualizarAlocacao();
-        if (modoLiquidity === 'manual') carregarPoolsManual();
-        alert('✅ APRs atualizados!');
-    }
-    
-    function simularBotLiquidez() {
-        const poolSelect = document.getElementById('demoPoolSelect');
-        const selectedPool = poolSelect.options[poolSelect.selectedIndex]?.text || 'SOL/USDC';
-        const amount = parseFloat(document.getElementById('demoAmount').value) || 1000;
-        const range = document.getElementById('demoRangeSelect').value;
-        const autoAdjust = document.getElementById('demoAutoAdjust').value;
-        const crash = document.getElementById('demoCrash').value;
-        const logDiv = document.getElementById('demoLog');
-        const resultDiv = document.getElementById('demoResultado');
-        logDiv.innerHTML = `[${new Date().toLocaleTimeString()}] 🚀 Iniciando simulação...\n[Bot] Pool: ${selectedPool}\n[Bot] Valor: ${amount} USDC\n[Bot] Range: ${range}\n[Bot] Auto-ajuste: ${autoAdjust}\n[Bot] Modo Crash: ${crash}\n[Bot] Adicionando liquidez...\n`;
-        setTimeout(() => {
-            logDiv.innerHTML += `[Bot] ✅ Liquidez adicionada!\n`;
-            if (autoAdjust === 'ON') { logDiv.innerHTML += `[Bot] Monitorando preço...\n`; setTimeout(() => { logDiv.innerHTML += `[Bot] ⚡ Preço variou! Ajustando range...\n`; }, 2000); }
-            if (crash === 'ON') { setTimeout(() => { logDiv.innerHTML += `[Bot] 🚨 Modo Crash! Removendo liquidez...\n`; }, 3500); }
-            setTimeout(() => { const fees = (amount * 0.002).toFixed(2); logDiv.innerHTML += `[Bot] 📈 Taxas: ${fees} USDC\n[Bot] ✅ Simulação concluída.\n`; resultDiv.innerHTML = `<strong>💰 Resultado</strong><br>Liquidez: ${amount} USDC<br>Taxas: ${fees} USDC<br>Final: ${(amount + parseFloat(fees)).toFixed(2)} USDC`; }, 5000);
-        }, 1500);
-    }
-    
-    function simularRobotLiquidez() {
-        const poolSelect = document.getElementById('robotPoolSelect');
-        const selectedPool = poolSelect.options[poolSelect.selectedIndex]?.text || 'SOL/USDC';
-        const amount = parseFloat(document.getElementById('robotAmount').value) || 1000;
-        const range = document.getElementById('robotRangeSelect').value;
-        const autoAdjust = document.getElementById('robotAutoAdjust').value;
-        const crash = document.getElementById('robotCrash').value;
-        const logDiv = document.getElementById('robotLog');
-        const resultDiv = document.getElementById('robotResultado');
-        logDiv.innerHTML = `[${new Date().toLocaleTimeString()}] 🚀 Simulação...\n[Bot] Pool: ${selectedPool}\n[Bot] Valor: ${amount} USDC\n[Bot] Range: ${range}\n[Bot] Auto: ${autoAdjust}\n[Bot] Crash: ${crash}\n`;
-        setTimeout(() => {
-            logDiv.innerHTML += `[Bot] ✅ Liquidez adicionada!\n`;
-            if (autoAdjust === 'ON') { setTimeout(() => { logDiv.innerHTML += `[Bot] ⚡ Ajustando range...\n`; }, 2000); }
-            if (crash === 'ON') { setTimeout(() => { logDiv.innerHTML += `[Bot] 🚨 Modo Crash!\n`; }, 3500); }
-            setTimeout(() => { const fees = (amount * 0.002).toFixed(2); logDiv.innerHTML += `[Bot] 📈 Taxas: ${fees} USDC\n`; resultDiv.innerHTML = `<strong>💰 Resultado</strong><br>Final: ${(amount + parseFloat(fees)).toFixed(2)} USDC`; }, 5000);
-        }, 1500);
-    }
-    
-    function atualizarTodosIndicadores() {
-        mvrvData.total = Math.max(0.5, Math.min(4, mvrvData.total + (Math.random() * 0.1 - 0.05)));
-        mvrvData.sth = Math.max(0.5, Math.min(2, mvrvData.sth + (Math.random() * 0.1 - 0.05)));
-        mvrvData.lth = Math.max(0.5, Math.min(4, mvrvData.lth + (Math.random() * 0.1 - 0.05)));
-        cicloData.mvrv = mvrvData.total; cicloData.nupl = Math.max(0.1, Math.min(0.9, cicloData.nupl + (Math.random() * 0.1 - 0.05)));
-        cicloData.sopr = Math.max(0.8, Math.min(1.3, cicloData.sopr + (Math.random() * 0.1 - 0.05)));
-        cicloData.realizedPrice = Math.max(10000, Math.min(40000, cicloData.realizedPrice + (Math.random() * 1000 - 500)));
-        cicloData.rhodl = Math.max(500, Math.min(10000, cicloData.rhodl + (Math.random() * 500 - 250)));
-        cicloData.puell = Math.max(0.3, Math.min(4, cicloData.puell + (Math.random() * 0.2 - 0.1)));
-        document.getElementById('inputMVRV').value = cicloData.mvrv.toFixed(2);
-        document.getElementById('inputNUPL').value = cicloData.nupl.toFixed(2);
-        document.getElementById('inputSOPR').value = cicloData.sopr.toFixed(2);
-        document.getElementById('inputRealizedPrice').value = cicloData.realizedPrice.toFixed(0);
-        document.getElementById('inputRHODL').value = cicloData.rhodl.toFixed(0);
-        document.getElementById('inputPuell').value = cicloData.puell.toFixed(2);
-        atualizarMVRV(); calcularScoreCiclo();
-        alert('✅ Todos os indicadores atualizados!');
-    }
-    
-    // ========== FUNÇÕES DO SIMULADOR DE RETORNO ==========
-    function renderizarSimuladorPools() {
-        const container = document.getElementById('simuladorPoolsLista');
-        if (!container) return;
-        container.innerHTML = simuladorPools.map(pool => `
-            <div class="simulador-pool-item">
-                <div class="pool-info"><div class="simulador-pool-name">${pool.name}</div><div class="simulador-pool-apr">${pool.apr}% APR • ${pool.dex} • ${pool.network}</div></div>
-                <div class="pool-percent"><input type="number" id="sim_perc_${pool.name.replace(/\//g, '_')}" class="simulador-percent-input" value="${simuladorPercentuais[pool.name] || 0}" min="0" max="100" step="5" onchange="atualizarPercentualSimulador('${pool.name}', this.value)"><span>%</span></div>
-            </div>`).join('');
-    }
-    
-    function atualizarPercentualSimulador(poolName, value) {
-        let percent = parseFloat(value) || 0;
-        percent = Math.min(100, Math.max(0, percent));
-        simuladorPercentuais[poolName] = percent;
-        const inputId = `sim_perc_${poolName.replace(/\//g, '_')}`;
-        const input = document.getElementById(inputId);
-        if (input) input.value = percent;
-        atualizarTotalSimulador();
-    }
-    
-    function atualizarTotalSimulador() {
-        const total = Object.values(simuladorPercentuais).reduce((sum, val) => sum + val, 0);
-        const displayDiv = document.getElementById('simuladorTotalPercent');
-        if (!displayDiv) return;
-        if (Math.abs(total - 100) < 0.1) { displayDiv.innerHTML = `Total alocado: ${total}% ✅ (100% completo)`; displayDiv.className = "total-percent ok"; }
-        else if (total > 100) { displayDiv.innerHTML = `Total alocado: ${total}% ❌ (excedeu 100%)`; displayDiv.className = "total-percent error"; }
-        else { displayDiv.innerHTML = `Total alocado: ${total}% ⚠️ (falta ${(100 - total).toFixed(1)}% para 100%)`; displayDiv.className = "total-percent warning"; }
-    }
-    
-    function aplicarPresetSimulador(strategy) {
-        const novosPercentuais = {};
-        if(strategy === 'aggressive') { novosPercentuais['SOL/USDC'] = 20; novosPercentuais['HYPE/USDC'] = 15; novosPercentuais['cbBTC/SOL'] = 15; novosPercentuais['NVDX/USDC'] = 15; novosPercentuais['TQQQ/USDC'] = 20; novosPercentuais['CONV/USDC'] = 15; }
-        else if(strategy === 'balanced') { novosPercentuais['SOL/USDC'] = 15; novosPercentuais['BTC/USDC'] = 15; novosPercentuais['ETH/USDC'] = 15; novosPercentuais['USDC/USDT'] = 20; novosPercentuais['AAPL/USDC'] = 10; novosPercentuais['MSFT/USDC'] = 10; novosPercentuais['HYPE/USDC'] = 15; }
-        else if(strategy === 'conservative') { novosPercentuais['USDC/USDT'] = 40; novosPercentuais['BTC/USDC'] = 20; novosPercentuais['ETH/USDC'] = 20; novosPercentuais['WBTC/WETH'] = 10; novosPercentuais['SOL/USDC'] = 10; }
-        else if(strategy === 'maxApr') { const sortedByApr = [...simuladorPools].sort((a,b) => b.apr - a.apr); let remaining = 100; for (let i = 0; i < sortedByApr.length && remaining > 0; i++) { const allocation = i === 0 ? Math.min(30, remaining) : Math.min(15, remaining); novosPercentuais[sortedByApr[i].name] = allocation; remaining -= allocation; } }
-        simuladorPools.forEach(pool => { simuladorPercentuais[pool.name] = novosPercentuais[pool.name] || 0; });
-        renderizarSimuladorPools(); atualizarTotalSimulador(); calcularSimuladorRetorno();
-    }
-    
-    function resetarPercentuaisSimulador() {
-        simuladorPools.forEach(pool => { simuladorPercentuais[pool.name] = 0; });
-        renderizarSimuladorPools(); atualizarTotalSimulador();
-        document.getElementById('simuladorAprMedio').innerHTML = '0%';
-        document.getElementById('simuladorRetorno').innerHTML = '$0';
-        document.getElementById('simuladorTotal').innerHTML = '$0';
-        document.getElementById('simuladorDetalhes').innerHTML = '';
-    }
-    
-    function calcularSimuladorRetorno() {
-        const totalPercent = Object.values(simuladorPercentuais).reduce((sum, val) => sum + val, 0);
-        if (Math.abs(totalPercent - 100) > 0.1) { alert(`⚠️ Total alocado é ${totalPercent}%. Deve ser exatamente 100% para calcular corretamente.`); return; }
-        const investAmount = parseFloat(document.getElementById('simuladorValor').value) || 0;
-        const days = parseFloat(document.getElementById('simuladorDias').value) || 0;
-        if (investAmount <= 0) { alert('❌ Digite um valor válido para investimento'); return; }
-        if (days <= 0) { alert('❌ Digite uma quantidade válida de dias'); return; }
-        let weightedApr = 0, allocationDetails = [];
-        for (const [poolName, percent] of Object.entries(simuladorPercentuais)) {
-            if (percent > 0) {
-                const pool = simuladorPools.find(p => p.name === poolName);
-                if (pool) { const contribution = (percent / 100) * pool.apr; weightedApr += contribution; allocationDetails.push({ name: poolName, percent: percent, apr: pool.apr, contribution: contribution }); }
+        
+        function calcularScoreCiclo() {
+            cicloData.mvrv = parseFloat(document.getElementById('inputMVRV').value) || 0;
+            cicloData.nupl = parseFloat(document.getElementById('inputNUPL').value) || 0;
+            cicloData.sopr = parseFloat(document.getElementById('inputSOPR').value) || 0;
+            cicloData.realizedPrice = parseFloat(document.getElementById('inputRealizedPrice').value) || 0;
+            cicloData.rhodl = parseFloat(document.getElementById('inputRHODL').value) || 0;
+            cicloData.puell = parseFloat(document.getElementById('inputPuell').value) || 0;
+            const currentPrice = price;
+            let score = 0;
+            if (cicloData.mvrv < 1) score += 2; else if (cicloData.mvrv > 3.5) score -= 2;
+            if (cicloData.nupl < 0.25) score += 2; else if (cicloData.nupl > 0.6) score -= 2;
+            if (cicloData.sopr < 1) score += 1; else if (cicloData.sopr > 1.1) score -= 1;
+            if (currentPrice < cicloData.realizedPrice) score += 2; else score -= 1;
+            if (cicloData.rhodl < 1000) score += 2; else if (cicloData.rhodl > 5000) score -= 2;
+            if (cicloData.puell < 0.5) score += 2; else if (cicloData.puell > 3) score -= 2;
+            document.getElementById('scoreCiclo').innerText = score;
+            let sinal = '', corClass = '', recomendacao = '';
+            if (score >= 5) { sinal = 'COMPRA FORTE'; corClass = 'semaforo-verde'; recomendacao = '🟢 COMPRA FORTE!'; }
+            else if (score <= -5) { sinal = 'TOPO / RISCO ALTO'; corClass = 'semaforo-vermelho'; recomendacao = '🔴 TOPO DETECTADO!'; }
+            else { sinal = 'NEUTRO'; corClass = 'semaforo-amarelo'; recomendacao = '🟡 Mercado neutro.'; }
+            document.getElementById('sinalTexto').innerText = sinal;
+            document.getElementById('semaforoIcon').className = 'semaforo ' + corClass;
+        }
+        
+        // ========== FUNÇÕES AUTO LIQUIDITY ==========
+        function setModoLiquidity(modo) {
+            modoLiquidity = modo;
+            document.getElementById('modoAutoLiquidityBtn').classList.toggle('active', modo === 'auto');
+            document.getElementById('modoManualLiquidityBtn').classList.toggle('active', modo === 'manual');
+            document.getElementById('liquidityAutoContent').style.display = modo === 'auto' ? 'block' : 'none';
+            document.getElementById('liquidityManualContent').style.display = modo === 'manual' ? 'block' : 'none';
+            if (modo === 'manual') carregarPoolsManual();
+            else atualizarAlocacao();
+        }
+        
+        function atualizarAlocacao() {
+            let poolsFiltradas = poolsEstrategicas.filter(p => getRiskLevel(p).class === 'risk-verde');
+            if (poolsFiltradas.length < 3) poolsFiltradas = poolsEstrategicas.filter(p => getRiskLevel(p).class === 'risk-amarelo');
+            poolsFiltradas.sort((a,b) => parseFloat(b.apr) - parseFloat(a.apr));
+            const stablePool = poolsEstrategicas.find(p => p.pool === 'USDC/USDT');
+            if (stablePool && !poolsFiltradas.includes(stablePool)) poolsFiltradas.unshift(stablePool);
+            const percentuais = [25, 20, 15, 10, 10, 10, 5, 5, 5];
+            let alocacao = [], totalPercent = 0;
+            for (let i = 0; i < Math.min(poolsFiltradas.length, percentuais.length); i++) {
+                let percent = percentuais[i];
+                if (totalPercent + percent > 100) percent = 100 - totalPercent;
+                alocacao.push({ pool: poolsFiltradas[i].pool, percent: percent, apr: poolsFiltradas[i].apr });
+                totalPercent += percent;
+                if (totalPercent >= 100) break;
+            }
+            if (totalPercent < 100 && stablePool && !alocacao.find(a => a.pool === 'USDC/USDT')) alocacao.push({ pool: 'USDC/USDT', percent: 100 - totalPercent, apr: '21.1%' });
+            const container = document.getElementById('alocacaoLista');
+            if (container) container.innerHTML = alocacao.map(item => `<div class="alocacao-item"><span>▪ ${item.pool} (${item.apr} APR)</span><span class="alocacao-percent">${item.percent}%</span></div>`).join('');
+        }
+        
+        function carregarPoolsManual() {
+            const container = document.getElementById('poolsManualLista');
+            if (!container) return;
+            let html = '';
+            poolsEstrategicas.forEach((pool, idx) => {
+                const percent = carteiraManual[pool.pool] || 0;
+                html += `<div class="alocacao-item"><span>▪ ${pool.pool} (${pool.apr} APR)</span><input type="number" id="percent_${idx}" value="${percent}" min="0" max="100" step="5" style="width:70px; background:#0d151f; border:1px solid #3d4d62; color:white; padding:5px; border-radius:12px; text-align:center;" onchange="atualizarResumoManual()"><span>%</span></div>`;
+            });
+            container.innerHTML = html;
+            atualizarResumoManual();
+        }
+        
+        function atualizarResumoManual() {
+            let total = 0;
+            poolsEstrategicas.forEach((_, idx) => { const inp = document.getElementById(`percent_${idx}`); if(inp) total += parseFloat(inp.value) || 0; });
+            const div = document.getElementById('resumoManual');
+            if(div) div.innerHTML = `Total: ${total}% ${total === 100 ? '✅' : '⚠️ (deve ser 100%)'}`;
+        }
+        
+        function salvarCarteiraManual() {
+            let total = 0;
+            poolsEstrategicas.forEach((pool, idx) => { const val = parseFloat(document.getElementById(`percent_${idx}`).value) || 0; carteiraManual[pool.pool] = val; total += val; });
+            if (Math.abs(total - 100) > 1) { alert(`Total: ${total}%. A soma deve ser 100%.`); return; }
+            alert('✅ Configuração salva!');
+        }
+        
+        function copiarEstrategia() {
+            let texto = '';
+            if (modoLiquidity === 'auto') {
+                const alocacoes = { 'COMPRA_FORTE': 'BTC/USDC (30%), ETH/USDC (25%), SOL/USDC (25%), USDC/USDT (20%)', 'ACUMULAÇÃO': 'SOL/USDC (25%), HYPE/USDC (20%), NVDAX/USDC (15%), BTC/USDC (15%), USDC/USDT (15%), ETH/USDC (10%)', 'NEUTRO': 'USDC/USDT (30%), BTC/USDC (25%), ETH/USDC (20%), SOL/USDC (15%), WBTC/WETH (10%)', 'REALIZAÇÃO': 'USDC/USDT (50%), BTC/USDC (30%), CONV/USDC (20%)', 'TOPO': 'USDC/USDT (100%)' };
+                texto = `📊 ESTRATÉGIA AUTO LIQUIDITY (AUTOMÁTICA)\n\nRegime MVRV: ${mvrvData.regime}\nMVRV: ${mvrvData.total.toFixed(2)} | STH: ${mvrvData.sth.toFixed(2)}\n\nAlocação:\n${alocacoes[mvrvData.regime]}\n\n${mvrvData.recomendacao}`;
+            } else {
+                let aloc = '';
+                poolsEstrategicas.forEach(p => { const per = carteiraManual[p.pool] || 0; if(per>0) aloc += `${p.pool} (${p.apr}): ${per}%\n`; });
+                texto = `📊 ESTRATÉGIA AUTO LIQUIDITY (MANUAL)\n\nCarteira Personalizada:\n${aloc}`;
+            }
+            navigator.clipboard.writeText(texto).then(() => alert('✅ Estratégia copiada!')).catch(() => alert('❌ Erro ao copiar.'));
+        }
+        
+        function atualizarAPRsAutoLiquidity() {
+            poolsEstrategicas.forEach(p => { let novoApr = parseFloat(p.apr) + (Math.random() * 30 - 15); novoApr = Math.max(5, Math.min(500, novoApr)); p.apr = novoApr.toFixed(1) + '%'; });
+            renderPoolsEstrategicas(); atualizarAlocacao();
+            if (modoLiquidity === 'manual') carregarPoolsManual();
+            alert('✅ APRs atualizados!');
+        }
+        
+        function simularBotLiquidez() {
+            const poolSelect = document.getElementById('demoPoolSelect');
+            const selectedPool = poolSelect.options[poolSelect.selectedIndex]?.text || 'SOL/USDC';
+            const amount = parseFloat(document.getElementById('demoAmount').value) || 1000;
+            const range = document.getElementById('demoRangeSelect').value;
+            const autoAdjust = document.getElementById('demoAutoAdjust').value;
+            const crash = document.getElementById('demoCrash').value;
+            const logDiv = document.getElementById('demoLog');
+            const resultDiv = document.getElementById('demoResultado');
+            logDiv.innerHTML = `[${new Date().toLocaleTimeString()}] 🚀 Iniciando simulação...\n[Bot] Pool: ${selectedPool}\n[Bot] Valor: ${amount} USDC\n[Bot] Range: ${range}\n[Bot] Auto-ajuste: ${autoAdjust}\n[Bot] Modo Crash: ${crash}\n[Bot] Adicionando liquidez...\n`;
+            setTimeout(() => {
+                logDiv.innerHTML += `[Bot] ✅ Liquidez adicionada!\n`;
+                if (autoAdjust === 'ON') { logDiv.innerHTML += `[Bot] Monitorando preço...\n`; setTimeout(() => { logDiv.innerHTML += `[Bot] ⚡ Preço variou! Ajustando range...\n`; }, 2000); }
+                if (crash === 'ON') { setTimeout(() => { logDiv.innerHTML += `[Bot] 🚨 Modo Crash! Removendo liquidez...\n`; }, 3500); }
+                setTimeout(() => { const fees = (amount * 0.002).toFixed(2); logDiv.innerHTML += `[Bot] 📈 Taxas: ${fees} USDC\n[Bot] ✅ Simulação concluída.\n`; resultDiv.innerHTML = `<strong>💰 Resultado</strong><br>Liquidez: ${amount} USDC<br>Taxas: ${fees} USDC<br>Final: ${(amount + parseFloat(fees)).toFixed(2)} USDC`; }, 5000);
+            }, 1500);
+        }
+        
+        function simularRobotLiquidez() {
+            const poolSelect = document.getElementById('robotPoolSelect');
+            const selectedPool = poolSelect.options[poolSelect.selectedIndex]?.text || 'SOL/USDC';
+            const amount = parseFloat(document.getElementById('robotAmount').value) || 1000;
+            const range = document.getElementById('robotRangeSelect').value;
+            const autoAdjust = document.getElementById('robotAutoAdjust').value;
+            const crash = document.getElementById('robotCrash').value;
+            const logDiv = document.getElementById('robotLog');
+            const resultDiv = document.getElementById('robotResultado');
+            logDiv.innerHTML = `[${new Date().toLocaleTimeString()}] 🚀 Simulação...\n[Bot] Pool: ${selectedPool}\n[Bot] Valor: ${amount} USDC\n[Bot] Range: ${range}\n[Bot] Auto: ${autoAdjust}\n[Bot] Crash: ${crash}\n`;
+            setTimeout(() => {
+                logDiv.innerHTML += `[Bot] ✅ Liquidez adicionada!\n`;
+                if (autoAdjust === 'ON') { setTimeout(() => { logDiv.innerHTML += `[Bot] ⚡ Ajustando range...\n`; }, 2000); }
+                if (crash === 'ON') { setTimeout(() => { logDiv.innerHTML += `[Bot] 🚨 Modo Crash!\n`; }, 3500); }
+                setTimeout(() => { const fees = (amount * 0.002).toFixed(2); logDiv.innerHTML += `[Bot] 📈 Taxas: ${fees} USDC\n`; resultDiv.innerHTML = `<strong>💰 Resultado</strong><br>Final: ${(amount + parseFloat(fees)).toFixed(2)} USDC`; }, 5000);
+            }, 1500);
+        }
+        
+        function atualizarTodosIndicadores() {
+            mvrvData.total = Math.max(0.5, Math.min(4, mvrvData.total + (Math.random() * 0.1 - 0.05)));
+            mvrvData.sth = Math.max(0.5, Math.min(2, mvrvData.sth + (Math.random() * 0.1 - 0.05)));
+            mvrvData.lth = Math.max(0.5, Math.min(4, mvrvData.lth + (Math.random() * 0.1 - 0.05)));
+            cicloData.mvrv = mvrvData.total; cicloData.nupl = Math.max(0.1, Math.min(0.9, cicloData.nupl + (Math.random() * 0.1 - 0.05)));
+            cicloData.sopr = Math.max(0.8, Math.min(1.3, cicloData.sopr + (Math.random() * 0.1 - 0.05)));
+            cicloData.realizedPrice = Math.max(10000, Math.min(40000, cicloData.realizedPrice + (Math.random() * 1000 - 500)));
+            cicloData.rhodl = Math.max(500, Math.min(10000, cicloData.rhodl + (Math.random() * 500 - 250)));
+            cicloData.puell = Math.max(0.3, Math.min(4, cicloData.puell + (Math.random() * 0.2 - 0.1)));
+            document.getElementById('inputMVRV').value = cicloData.mvrv.toFixed(2);
+            document.getElementById('inputNUPL').value = cicloData.nupl.toFixed(2);
+            document.getElementById('inputSOPR').value = cicloData.sopr.toFixed(2);
+            document.getElementById('inputRealizedPrice').value = cicloData.realizedPrice.toFixed(0);
+            document.getElementById('inputRHODL').value = cicloData.rhodl.toFixed(0);
+            document.getElementById('inputPuell').value = cicloData.puell.toFixed(2);
+            atualizarMVRV(); calcularScoreCiclo();
+            alert('✅ Todos os indicadores atualizados!');
+        }
+        
+        // ========== FUNÇÕES DO SIMULADOR DE RETORNO (NOVA ABA) ==========
+        function renderizarSimuladorPools() {
+            const container = document.getElementById('simuladorPoolsLista');
+            if (!container) return;
+            
+            container.innerHTML = simuladorPools.map(pool => `
+                <div class="simulador-pool-item">
+                    <div class="pool-info">
+                        <div class="pool-name">
+                            <span>${pool.name}</span>
+                            <span class="apr-badge">${pool.apr}% APR</span>
+                        </div>
+                        <div class="apr-value">${pool.dex} • ${pool.network} • Risco: ${pool.risk}</div>
+                    </div>
+                    <div class="pool-percent">
+                        <input type="number" id="sim_perc_${pool.name.replace(/\//g, '_')}" 
+                               class="simulador-percent-input"
+                               value="${simuladorPercentuais[pool.name] || 0}" 
+                               min="0" max="100" step="5"
+                               onchange="atualizarPercentualSimulador('${pool.name}', this.value)">
+                        <span>%</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function atualizarPercentualSimulador(poolName, value) {
+            let percent = parseFloat(value) || 0;
+            percent = Math.min(100, Math.max(0, percent));
+            simuladorPercentuais[poolName] = percent;
+            
+            const inputId = `sim_perc_${poolName.replace(/\//g, '_')}`;
+            const input = document.getElementById(inputId);
+            if (input) input.value = percent;
+            
+            atualizarTotalSimulador();
+        }
+        
+        function atualizarTotalSimulador() {
+            const total = Object.values(simuladorPercentuais).reduce((sum, val) => sum + val, 0);
+            const displayDiv = document.getElementById('simuladorTotalPercent');
+            if (!displayDiv) return;
+            
+            if (Math.abs(total - 100) < 0.1) {
+                displayDiv.innerHTML = `Total alocado: ${total}% ✅ (100% completo)`;
+                displayDiv.className = "total-percent ok";
+            } else if (total > 100) {
+                displayDiv.innerHTML = `Total alocado: ${total}% ❌ (excedeu 100%)`;
+                displayDiv.className = "total-percent error";
+            } else {
+                displayDiv.innerHTML = `Total alocado: ${total}% ⚠️ (falta ${(100 - total).toFixed(1)}% para 100%)`;
+                displayDiv.className = "total-percent warning";
             }
         }
-        const years = days / 365;
-        const estimatedReturn = investAmount * (weightedApr / 100) * years;
-        const totalValue = investAmount + estimatedReturn;
-        document.getElementById('simuladorAprMedio').innerHTML = `${weightedApr.toFixed(2)}%`;
-        document.getElementById('simuladorRetorno').innerHTML = `$${estimatedReturn.toFixed(2)}`;
-        document.getElementById('simuladorTotal').innerHTML = `$${totalValue.toFixed(2)}`;
-        const detailHtml = `<h4 style="color: #ffcc00; margin-bottom: 12px;">📈 Detalhamento da Alocação</h4>${allocationDetails.map(detail => `<div class="result-row"><span>${detail.name} (${detail.percent}%)</span><span>${detail.apr}% APR → $${((investAmount * detail.percent / 100) * (detail.apr / 100) * years).toFixed(2)}</span></div>`).join('')}<div class="result-row total"><span>💰 TOTAL INVESTIDO</span><span>$${investAmount.toFixed(2)}</span></div><div class="result-row total"><span>📈 RETORNO ESTIMADO</span><span style="color: #00ff88;">+$${estimatedReturn.toFixed(2)}</span></div><div class="result-row total"><span>🏆 VALOR FINAL ESTIMADO</span><span style="color: #ffcc00;">$${totalValue.toFixed(2)}</span></div>`;
-        document.getElementById('simuladorDetalhes').innerHTML = detailHtml;
-    }
-    
-    function copiarResultadoSimulador() {
-        const totalPercent = Object.values(simuladorPercentuais).reduce((sum, val) => sum + val, 0);
-        if (Math.abs(totalPercent - 100) > 0.1) { alert('⚠️ Complete a alocação (100%) antes de copiar os resultados.'); return; }
-        const investAmount = parseFloat(document.getElementById('simuladorValor').value) || 0;
-        const days = parseFloat(document.getElementById('simuladorDias').value) || 0;
-        const weightedApr = document.getElementById('simuladorAprMedio').innerText;
-        const estimatedReturn = document.getElementById('simuladorRetorno').innerText;
-        const totalValue = document.getElementById('simuladorTotal').innerText;
-        let allocationText = '';
-        for (const [poolName, percent] of Object.entries(simuladorPercentuais)) { if (percent > 0) { const pool = simuladorPools.find(p => p.name === poolName); allocationText += `${poolName} (${pool?.apr}% APR): ${percent}%\n`; } }
-        const resultText = `📊 SIMULAÇÃO DE RETORNO EM POOLS\n================================\n💰 Investimento: $${investAmount.toFixed(2)}\n📅 Período: ${days} dias\n🎯 APR Médio Ponderado: ${weightedApr}\n📈 Retorno Estimado: ${estimatedReturn}\n🏆 Valor Final: ${totalValue}\n\n📋 Alocação:\n${allocationText}\n⚠️ Simulação baseada em APRs atuais. Retornos reais podem variar.`;
-        navigator.clipboard.writeText(resultText).then(() => alert('✅ Resultado copiado!')).catch(() => alert('❌ Erro ao copiar.'));
-    }
-    
-    // ========== FUNÇÕES DO GRÁFICO E PREÇO ==========
-    function setTF(tf, btn) { currentTF = tf; document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); initChart(); }
-    function toggleMode() { isDesktop = !isDesktop; document.getElementById('mainCard').classList.toggle('desktop-mode', isDesktop); initChart(); }
-    
-    function initChart() {
-        const symbol = document.getElementById('pairSelector').value;
-        const container = document.getElementById('chart_container');
-        container.innerHTML = '';
-        setTimeout(() => { try { new TradingView.widget({ autosize: true, symbol: symbol, interval: currentTF, theme: "dark", style: "1", locale: "br", container_id: "chart_container", hide_top_toolbar: !isDesktop }); } catch(e) { container.innerHTML = '<div style="color:red;text-align:center;padding:20px;">Erro ao carregar gráfico.</div>'; } }, 100);
-        if(metalInterval) clearInterval(metalInterval);
-        if(activeWS) activeWS.close();
-        if(symbol.startsWith("TVC:")) { let asset = symbol === "TVC:GOLD" ? "GOLD" : symbol === "TVC:SILVER" ? "SILVER" : "WTI"; metalInterval = setInterval(() => fetchHyperliquidPrice(asset), 3000); fetchHyperliquidPrice(asset); }
-        else { let pair = symbol.split(':')[1].toLowerCase(); let streamPair = pair.includes('btc') ? 'btcusdt' : pair.includes('eth') ? 'ethusdt' : 'solusdt'; activeWS = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`); activeWS.onmessage = (e) => { const data = JSON.parse(e.data); price = parseFloat(data.c); document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`; pricesHistory.push(price); if(pricesHistory.length > 50) pricesHistory.shift(); updateSignals(); verificarAlarmes(); }; }
-    }
-    
-    async function fetchHyperliquidPrice(asset) { const defaults = { GOLD: 4528.50, SILVER: 32.85, WTI: 78.42 }; price = defaults[asset]; document.getElementById('priceText').innerHTML = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`; pricesHistory.push(price); if(pricesHistory.length > 50) pricesHistory.shift(); updateSignals(); verificarAlarmes(); }
-    function onSymbolChange() { initChart(); }
-    function calcularEMA50() { if (pricesHistory.length < 50) return price; let multiplier = 2 / (50 + 1); let ema = pricesHistory[0]; for (let i = 1; i < pricesHistory.length; i++) ema = (pricesHistory[i] - ema) * multiplier + ema; return ema; }
-    
-    function updateSignals() {
-        ema50 = calcularEMA50(); const sinalGeral = price > ema50 ? '🟢 OPORTUNIDADE' : '🔴 AGUARDAR'; document.getElementById('statusText').innerText = sinalGeral; document.getElementById('sinalGeralIcon').style.background = price > ema50 ? '#00ff88' : '#ff3e3e';
-        let sinalTecnico = '⚖️ NEUTRO', sinalTecnicoValor = 0; if (pricesHistory.length >= 21) { const compra = price > pricesHistory[pricesHistory.length - 21]; sinalTecnico = compra ? '🚀 COMPRA' : '📉 VENDA'; sinalTecnicoValor = compra ? 40 : 0; document.getElementById('sinalTecnicoIcon').style.background = compra ? '#00ff88' : '#ff3e3e'; } document.getElementById('rsiText').innerText = sinalTecnico;
-        let sinalMomentum = '⚖️ NEUTRO', sinalMomentumValor = 0; if (pricesHistory.length >= 3) { const avg3 = pricesHistory.slice(-3).reduce((a,b)=>a+b,0)/3; const variacao = (price - avg3) / avg3 * 100; if (variacao > 0.2) { sinalMomentum = '📈 ALTA'; sinalMomentumValor = 30; document.getElementById('sinalMomentumIcon').style.background = '#00ff88'; } else if (variacao < -0.2) { sinalMomentum = '📉 BAIXA'; sinalMomentumValor = 30; document.getElementById('sinalMomentumIcon').style.background = '#ff3e3e'; } else { sinalMomentum = '⚖️ NEUTRO'; document.getElementById('sinalMomentumIcon').style.background = '#ffcc00'; } } document.getElementById('momText').innerText = sinalMomentum;
-        let score = (price > ema50 ? 30 : 0) + sinalTecnicoValor + sinalMomentumValor; if ((sinalTecnico.includes('COMPRA') && sinalMomentum.includes('BAIXA')) || (sinalTecnico.includes('VENDA') && sinalMomentum.includes('ALTA'))) score = 0;
-        document.getElementById('scoreFill').style.width = score + '%'; document.getElementById('scoreValue').innerText = score + '/100';
-        let scoreLabel = '⚠️ Evitar operação', probabilidade = 'Baixa', classeScore = 'baixa';
-        if (score >= 80) { scoreLabel = '🔥 Confluência forte'; probabilidade = 'Alta'; classeScore = 'alta'; document.getElementById('alertaBadge').style.display = 'inline-block'; }
-        else if (score >= 60) { scoreLabel = '⚡ Confluência moderada'; probabilidade = 'Média'; classeScore = 'media'; document.getElementById('alertaBadge').style.display = 'none'; }
-        else document.getElementById('alertaBadge').style.display = 'none';
-        document.getElementById('scoreFill').className = 'score-fill ' + classeScore; document.getElementById('scoreLabel').innerText = scoreLabel; document.getElementById('probabilidade').innerText = probabilidade;
-        const hora = new Date().getHours(), minutos = new Date().getMinutes(), horaMin = hora + minutos/60; let sessao = 'Fora do horário';
-        if (horaMin >= 21 || horaMin < 1) sessao = '🌏 Ásia'; else if (horaMin >= 4 && horaMin < 9) sessao = '🇪🇺 Londres'; else if (horaMin >= 10 && horaMin < 14) sessao = '🇺🇸 NY (Pico)'; else if (horaMin >= 9.33 && horaMin < 15.5) sessao = '🥇 Metais NY'; else if (horaMin >= 10 && horaMin < 16.5) sessao = '🛢️ Petróleo'; document.getElementById('sessaoText').innerText = sessao;
-    }
-    
-    function calc() { const tp = price * (1 + parseFloat(document.getElementById('tpP').value)/100); const sl = price * (1 - parseFloat(document.getElementById('slP').value)/100); document.getElementById('resTP').innerText = `$${tp.toFixed(2)}`; document.getElementById('resSL').innerText = `$${sl.toFixed(2)}`; document.getElementById('results').style.display = 'block'; }
-    
-    // ========== FUNÇÕES DE ALARME ==========
-    function adicionarAlarme() { const preco = parseFloat(document.getElementById('alarmePreco').value); if(isNaN(preco)) return; alarmes.push({ preco, ativo: true, id: Date.now() }); atualizarListaAlarmes(); }
-    function removerAlarme(id) { alarmes = alarmes.filter(a => a.id !== id); atualizarListaAlarmes(); }
-    function atualizarListaAlarmes() { const lista = document.getElementById('alarmeLista'); if(alarmes.length === 0) { lista.innerHTML = '<div style="color: var(--text); text-align: center; padding: 10px;">Nenhum alarme definido</div>'; return; } lista.innerHTML = alarmes.map(a => `<div class="alarme-item"><span>🔔 $${a.preco.toLocaleString('en-US', {minimumFractionDigits:2})}</span><button class="alarme-remover" onclick="removerAlarme(${a.id})">✕</button></div>`).join(''); }
-    function verificarAlarmes() { alarmes.forEach(alarme => { if(alarme.ativo && Math.abs(price - alarme.preco) / alarme.preco < 0.001) { alarme.ativo = false; alert(`🔔 ALARME! Preço atingiu $${alarme.preco.toFixed(2)}`); atualizarListaAlarmes(); } }); }
-    
-    // ========== FUNÇÕES DE MODO DESCANSO ==========
-    function iniciarTimerDescanso() { clearTimeout(timeoutDescanso); timeoutDescanso = setTimeout(() => { if(!modoOperacaoAtivo) document.body.classList.add("modo-descanso"); }, 90000); }
-    function resetTimer() { if(!modoOperacaoAtivo) { document.body.classList.remove("modo-descanso"); iniciarTimerDescanso(); } }
-    document.onmousemove = resetTimer; document.onkeydown = resetTimer;
-    
-    const toggleLock = document.getElementById("lockScreenToggle"); toggleLock.addEventListener("change", function() { modoOperacaoAtivo = this.checked; if(modoOperacaoAtivo) { document.getElementById("statusModo").innerText = "Modo Operação: ON"; clearTimeout(timeoutDescanso); document.body.classList.remove("modo-descanso"); document.body.classList.add("modo-ativo"); } else { document.getElementById("statusModo").innerText = "Modo Operação: OFF"; document.body.classList.remove("modo-ativo"); iniciarTimerDescanso(); } });
-    
-    // ========== FUNÇÕES DE MODAIS ==========
-    function openPasswordModal() { document.getElementById('passwordModal').style.display = 'flex'; }
-    function openDonationModal() { document.getElementById('donationModal').style.display = 'flex'; }
-    function openPoolsModal() { document.getElementById('poolsModal').style.display = 'flex'; refreshCategories(); setModo('apr'); renderPoolsEstrategicas(); renderizarSimuladorPools(); atualizarTotalSimulador(); }
-    function closePoolsModal() { document.getElementById('poolsModal').style.display = 'none'; }
-    
-    function switchTab(tab) {
-        document.querySelectorAll('.tab-btn').forEach(btn=>btn.classList.remove('active')); 
-        document.querySelectorAll('.tab-content').forEach(content=>content.classList.remove('active'));
-        const tabMap = { pools:0, poolsEstrategicas:1, news:2, strategies:3, robot:4, mvrv:5, ciclo:6, liquidity:7, simulador:8 };
-        const idx = tabMap[tab]; 
-        if(idx !== undefined) document.querySelectorAll('.tab-btn')[idx]?.classList.add('active');
-        document.getElementById(`${tab}Tab`)?.classList.add('active');
-        if(tab === 'pools') refreshCategories(); 
-        if(tab === 'mvrv') atualizarMVRV(); 
-        if(tab === 'liquidity') { atualizarMVRV(); atualizarAlocacao(); } 
-        if(tab === 'ciclo') calcularScoreCiclo();
-        if(tab === 'simulador') { renderizarSimuladorPools(); atualizarTotalSimulador(); }
-    }
-    
-    function checkPassword() { if(document.getElementById('passInput').value === 'Maria1301') { fecharModal('passwordModal'); document.getElementById('robotModal').style.display = 'flex'; } else alert('Senha incorreta'); }
-    function connectHyperliquid() { document.getElementById('apiConsole').innerHTML = '[API] Conectado com sucesso! (modo simulação)'; }
-    function placeRealOrder() { const mvrvFilterActive = document.getElementById('mvrvFilterToggle')?.checked; if(mvrvFilterActive && (mvrvData.regime === 'TOPO' || mvrvData.regime === 'REALIZAÇÃO')) { alert(`⚠️ Filtro MVRV ativo: Mercado em ${mvrvData.regime}. Operação bloqueada!`); return; } alert('⚠️ Ordem simulada.'); }
-    
-    // ========== INICIALIZAÇÃO ==========
-    refreshCategories(); 
-    setModo('apr'); 
-    iniciarTimerDescanso(); 
-    initChart(); 
-    atualizarMVRV(); 
-    renderPoolsEstrategicas(); 
-    calcularScoreCiclo();
-    
-    const demoSelect = document.getElementById('demoPoolSelect'), robotSelect = document.getElementById('robotPoolSelect');
-    if (demoSelect) poolsEstrategicas.forEach(p => { const opt = document.createElement('option'); opt.value = p.pool; opt.text = p.pool; demoSelect.appendChild(opt); });
-    if (robotSelect) poolsEstrategicas.forEach(p => { const opt = document.createElement('option'); opt.value = p.pool; opt.text = p.pool; robotSelect.appendChild(opt); });
-    
-    const mvrvFilterToggle = document.getElementById('mvrvFilterToggle'), mvrvStatusRobot = document.getElementById('mvrvStatusRobot');
-    if(mvrvFilterToggle) mvrvFilterToggle.addEventListener('change', function() { if(mvrvStatusRobot) mvrvStatusRobot.style.display = this.checked ? 'block' : 'none'; });
-    
-    document.getElementById('simuladorValor')?.addEventListener('input', calcularSimuladorRetorno);
-    document.getElementById('simuladorDias')?.addEventListener('input', calcularSimuladorRetorno);
-    document.getElementById('simuladorPreset')?.addEventListener('change', function(e) { if (e.target.value !== 'custom') aplicarPresetSimulador(e.target.value); });
-    
-    renderizarSimuladorPools();
-    atualizarTotalSimulador();
-</script>
+        
+        function aplicarPresetSimulador(strategy) {
+            const novosPercentuais = {};
+            
+            switch(strategy) {
+                case 'aggressive':
+                    novosPercentuais['SOL/USDC'] = 20;
+                    novosPercentuais['HYPE/USDC'] = 15;
+                    novosPercentuais['cbBTC/SOL'] = 15;
+                    novosPercentuais['NVDX/USDC'] = 15;
+                    novosPercentuais['TQQQ/USDC'] = 20;
+                    novosPercentuais['CONV/USDC'] = 15;
+                    break;
+                case 'balanced':
+                    novosPercentuais['SOL/USDC'] = 15;
+                    novosPercentuais['BTC/USDC'] = 15;
+                    novosPercentuais['ETH/USDC'] = 15;
+                    novosPercentuais['USDC/USDT'] = 20;
+                    novosPercentuais['AAPL/USDC'] = 10;
+                    novosPercentuais['MSFT/USDC'] = 10;
+                    novosPercentuais['HYPE/USDC'] = 15;
+                    break;
+                case 'conservative':
+                    novosPercentuais['USDC/USDT'] = 40;
+                    novosPercentuais['BTC/USDC'] = 20;
+                    novosPercentuais['ETH/USDC'] = 20;
+                    novosPercentuais['WBTC/WETH'] = 10;
+                    novosPercentuais['SOL/USDC'] = 10;
+                    break;
+                case 'maxApr':
+                    const sortedByApr = [...simuladorPools].sort((a,b) => b.apr - a.apr);
+                    let remaining = 100;
+                    for (let i = 0; i < sortedByApr.length && remaining > 0; i++) {
+                        const allocation = i === 0 ? Math.min(30, remaining) : Math.min(15, remaining);
+                        novosPercentuais[sortedByApr[i].name] = allocation;
+                        remaining -= allocation;
+                    }
+                    break;
+                default:
+                    return;
+            }
+            
+            simuladorPools.forEach(pool => {
+                simuladorPercentuais[pool.name] = novosPercentuais[pool.name] || 0;
+            });
+            
+            renderizarSimuladorPools();
+            atualizarTotalSimulador();
+            calcularSimuladorRetorno();
+        }
+        
+        function resetarPercentuaisSimulador() {
+            simuladorPools.forEach(pool => {
+                simuladorPercentuais[pool.name] = 0;
+            });
+            renderizarSimuladorPools();
+            atualizarTotalSimulador();
+            document.getElementById('simuladorAprMedio').innerHTML = '0%';
+            document.getElementById('simuladorRetorno').innerHTML = '$0';
+            document.getElementById('simuladorTotal').innerHTML = '$0';
+            document.getElementById('simuladorDetalhes').innerHTML = '';
+        }
+        
+        function calcularSimuladorRetorno() {
+            const totalPercent = Object.values(simuladorPercentuais).reduce((sum, val) => sum + val, 0);
+            
+            if (Math.abs(totalPercent - 100) > 0.1) {
+                alert(`⚠️ Total alocado é ${totalPercent}%. Deve ser exatamente 100% para calcular corretamente.`);
+                return;
+            }
+            
+            const investAmount = parseFloat(document.getElementById('simuladorValor').value) || 0;
+            const days = parseFloat(document.getElementById('simuladorDias').value) || 0;
+            
+            if (investAmount <= 0) {
+                alert('❌ Digite um valor válido para investimento');
+                return;
+            }
+            if (days <= 0) {
+                alert('❌ Digite uma quantidade válida de dias');
+                return;
+            }
+            
+            let weightedApr = 0;
+            let allocationDetails = [];
+            
+            for (const [poolName, percent] of Object.entries(simuladorPercentuais)) {
+                if (percent > 0) {
+                    const pool = simuladorPools.find(p => p.name === poolName);
+                    if (pool) {
+                        const contribution = (percent / 100) * pool.apr;
+                        weightedApr += contribution;
+                        allocationDetails.push({
+                            name: poolName,
+                            percent: percent,
+                            apr: pool.apr,
+                            contribution: contribution
+                        });
+                    }
+                }
+            }
+            
+            const years = days / 365;
+            const estimatedReturn = investAmount * (weightedApr / 100) * years;
+            const totalValue = investAmount + estimatedReturn;
+            
+            document.getElementById('simuladorAprMedio').innerHTML = `${weightedApr.toFixed(2)}%`;
+            document.getElementById('simuladorRetorno').innerHTML = `$${estimatedReturn.toFixed(2)}`;
+            document.getElementById('simuladorTotal').innerHTML = `$${totalValue.toFixed(2)}`;
+            
+            const detailHtml = `
+                <h4 style="color: #ffcc00; margin-bottom: 12px;">📈 Detalhamento da Alocação</h4>
+                ${allocationDetails.map(detail => `
+                    <div class="result-row">
+                        <span>${detail.name} (${detail.percent}%)</span>
+                        <span>${detail.apr}% APR → $${((investAmount * detail.percent / 100) * (detail.apr / 100) * years).toFixed(2)}</span>
+                    </div>
+                `).join('')}
+                <div class="result-row total">
+                    <span>💰 TOTAL INVESTIDO</span>
+                    <span>$${investAmount.toFixed(2)}</span>
+                </div>
+                <div class="result-row total">
+                    <span>📈 RETORNO ESTIMADO</span>
+                    <span style="color: #00ff88;">+$${estimatedReturn.toFixed(2)}</span>
+                </div>
+                <div class="result-row total">
+                    <span>🏆 VALOR FINAL ESTIMADO</span>
+                    <span style="color: #ffcc00;">$${totalValue.toFixed(2)}</span>
+                </div>
+            `;
+            
+            document.getElementById('simuladorDetalhes').innerHTML = detailHtml;
+            
+            const summaryDiv = document.querySelector('#simuladorTab .simulador-result-highlight');
+            if (summaryDiv) {
+                summaryDiv.classList.add('warning-highlight');
+                setTimeout(() => summaryDiv.classList.remove('warning-highlight'), 500);
+            }
+        }
+        
+        function copiarResultadoSimulador() {
+            const totalPercent = Object.values(simuladorPercentuais).reduce((sum, val) => sum + val, 0);
+            if (Math.abs(totalPercent - 100) > 0.1) {
+                alert('⚠️ Complete a alocação (100%) antes de copiar os resultados.');
+                return;
+            }
+            
+            const investAmount = parseFloat(document.getElementById('simuladorValor').value) || 0;
+            const days = parseFloat(document.getElementById('simuladorDias').value) || 0;
+            const weightedApr = document.getElementById('simuladorAprMedio').innerText;
+            const estimatedReturn = document.getElementById('simuladorRetorno').innerText;
+            const totalValue = document.getElementById('simuladorTotal').innerText;
+            
+            let allocationText = '';
+            for (const [poolName, percent] of Object.entries(simuladorPercentuais)) {
+                if (percent > 0) {
+                    const pool = simuladorPools.find(p => p.name === poolName);
+                    allocationText += `${poolName} (${pool?.apr}% APR): ${percent}%\n`;
+                }
+            }
+            
+            const resultText = `📊 SIMULAÇÃO DE RETORNO EM POOLS
+================================
+💰 Investimento: $${investAmount.toFixed(2)}
+📅 Período: ${days} dias
+🎯 APR Médio Ponderado: ${weightedApr}
+📈 Retorno Estimado: ${estimatedReturn}
+🏆 Valor Final: ${totalValue}
+
+📋 Alocação:
+${allocationText}
+⚠️ Simulação baseada em APRs atuais. Retornos reais podem variar.`;
+            
+            navigator.clipboard.writeText(resultText).then(() => {
+                alert('✅ Resultado copiado para área de transferência!');
+            }).catch(() => {
+                alert('❌ Erro ao copiar.');
+            });
+        }
+        
+        // ========== FUNÇÕES DO GRÁFICO E PREÇO ==========
+        function setTF(tf, btn) { currentTF = tf; document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); initChart(); }
+        function toggleMode() { isDesktop = !isDesktop; document.getElementById('mainCard').classList.toggle('desktop-mode', isDesktop); initChart(); }
+        
+        function initChart() {
+            const symbol = document.getElementById('pairSelector').value;
+            const container = document.getElementById('chart_container');
+            container.innerHTML = '';
+            setTimeout(() => { try { new TradingView.widget({ autosize: true, symbol: symbol, interval: currentTF, theme: "dark", style: "1", locale: "br", container_id: "chart_container", hide_top_toolbar: !isDesktop }); } catch(e) { container.innerHTML = '<div style="color:red;text-align:center;padding:20px;">Erro ao carregar gráfico.</div>'; } }, 100);
+            if(metalInterval) clearInterval(metalInterval);
+            if(activeWS) activeWS.close();
+            if(symbol.startsWith("TVC:")) { let asset = symbol === "TVC:GOLD" ? "GOLD" : symbol === "TVC:SILVER" ? "SILVER" : "WTI"; metalInterval = setInterval(() => fetchHyperliquidPrice(asset), 3000); fetchHyperliquidPrice(asset); }
+            else { let pair = symbol.split(':')[1].toLowerCase(); let streamPair = pair.includes('btc') ? 'btcusdt' : pair.includes('eth') ? 'ethusdt' : 'solusdt'; activeWS = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`); activeWS.onmessage = (e) => { const data = JSON.parse(e.data); price = parseFloat(data.c); document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`; pricesHistory.push(price); if(pricesHistory.length > 50) pricesHistory.shift(); updateSignals(); verificarAlarmes(); }; }
+        }
+        
+        async function fetchHyperliquidPrice(asset) { const defaults = { GOLD: 4528.50, SILVER: 32.85, WTI: 78.42 }; price = defaults[asset]; document.getElementById('priceText').innerHTML = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`; pricesHistory.push(price); if(pricesHistory.length > 50) pricesHistory.shift(); updateSignals(); verificarAlarmes(); }
+        function onSymbolChange() { initChart(); }
+        
+        function calcularEMA50() { if (pricesHistory.length < 50) return price; let multiplier = 2 / (50 + 1); let ema = pricesHistory[0]; for (let i = 1; i < pricesHistory.length; i++) ema = (pricesHistory[i] - ema) * multiplier + ema; return ema; }
+        
+        function updateSignals() {
+            ema50 = calcularEMA50(); const sinalGeral = price > ema50 ? '🟢 OPORTUNIDADE' : '🔴 AGUARDAR'; document.getElementById('statusText').innerText = sinalGeral; document.getElementById('sinalGeralIcon').style.background = price > ema50 ? '#00ff88' : '#ff3e3e';
+            let sinalTecnico = '⚖️ NEUTRO', sinalTecnicoValor = 0; if (pricesHistory.length >= 21) { const compra = price > pricesHistory[pricesHistory.length - 21]; sinalTecnico = compra ? '🚀 COMPRA' : '📉 VENDA'; sinalTecnicoValor = compra ? 40 : 0; document.getElementById('sinalTecnicoIcon').style.background = compra ? '#00ff88' : '#ff3e3e'; } document.getElementById('rsiText').innerText = sinalTecnico;
+            let sinalMomentum = '⚖️ NEUTRO', sinalMomentumValor = 0; if (pricesHistory.length >= 3) { const avg3 = pricesHistory.slice(-3).reduce((a,b)=>a+b,0)/3; const variacao = (price - avg3) / avg3 * 100; if (variacao > 0.2) { sinalMomentum = '📈 ALTA'; sinalMomentumValor = 30; document.getElementById('sinalMomentumIcon').style.background = '#00ff88'; } else if (variacao < -0.2) { sinalMomentum = '📉 BAIXA'; sinalMomentumValor = 30; document.getElementById('sinalMomentumIcon').style.background = '#ff3e3e'; } else { sinalMomentum = '⚖️ NEUTRO'; document.getElementById('sinalMomentumIcon').style.background = '#ffcc00'; } } document.getElementById('momText').innerText = sinalMomentum;
+            let score = (price > ema50 ? 30 : 0) + sinalTecnicoValor + sinalMomentumValor; if ((sinalTecnico.includes('COMPRA') && sinalMomentum.includes('BAIXA')) || (sinalTecnico.includes('VENDA') && sinalMomentum.includes('ALTA'))) score = 0;
+            document.getElementById('scoreFill').style.width = score + '%'; document.getElementById('scoreValue').innerText = score + '/100';
+            let scoreLabel = '⚠️ Evitar operação', probabilidade = 'Baixa', classeScore = 'baixa';
+            if (score >= 80) { scoreLabel = '🔥 Confluência forte'; probabilidade = 'Alta'; classeScore = 'alta'; document.getElementById('alertaBadge').style.display = 'inline-block'; }
+            else if (score >= 60) { scoreLabel = '⚡ Confluência moderada'; probabilidade = 'Média'; classeScore = 'media'; document.getElementById('alertaBadge').style.display = 'none'; }
+            else document.getElementById('alertaBadge').style.display = 'none';
+            document.getElementById('scoreFill').className = 'score-fill ' + classeScore; document.getElementById('scoreLabel').innerText = scoreLabel; document.getElementById('probabilidade').innerText = probabilidade;
+            const hora = new Date().getHours(), minutos = new Date().getMinutes(), horaMin = hora + minutos/60; let sessao = 'Fora do horário';
+            if (horaMin >= 21 || horaMin < 1) sessao = '🌏 Ásia'; else if (horaMin >= 4 && horaMin < 9) sessao = '🇪🇺 Londres'; else if (horaMin >= 10 && horaMin < 14) sessao = '🇺🇸 NY (Pico)'; else if (horaMin >= 9.33 && horaMin < 15.5) sessao = '🥇 Metais NY'; else if (horaMin >= 10 && horaMin < 16.5) sessao = '🛢️ Petróleo'; document.getElementById('sessaoText').innerText = sessao;
+        }
+        
+        function calc() { const tp = price * (1 + parseFloat(document.getElementById('tpP').value)/100); const sl = price * (1 - parseFloat(document.getElementById('slP').value)/100); document.getElementById('resTP').innerText = `$${tp.toFixed(2)}`; document.getElementById('resSL').innerText = `$${sl.toFixed(2)}`; document.getElementById('results').style.display = 'block'; }
+        
+        // ========== FUNÇÕES DE ALARME ==========
+        function adicionarAlarme() { const preco = parseFloat(document.getElementById('alarmePreco').value); if(isNaN(preco)) return; alarmes.push({ preco, ativo: true, id: Date.now() }); atualizarListaAlarmes(); }
+        function removerAlarme(id) { alarmes = alarmes.filter(a => a.id !== id); atualizarListaAlarmes(); }
+        function atualizarListaAlarmes() { const lista = document.getElementById('alarmeLista'); if(alarmes.length === 0) { lista.innerHTML = '<div style="color: var(--text); text-align: center; padding: 10px;">Nenhum alarme definido</div>'; return; } lista.innerHTML = alarmes.map(a => `<div class="alarme-item"><span>🔔 $${a.preco.toLocaleString('en-US', {minimumFractionDigits:2})}</span><button class="alarme-remover" onclick="removerAlarme(${a.id})">✕</button></div>`).join(''); }
+        function verificarAlarmes() { alarmes.forEach(alarme => { if(alarme.ativo && Math.abs(price - alarme.preco) / alarme.preco < 0.001) { alarme.ativo = false; alert(`🔔 ALARME! Preço atingiu $${alarme.preco.toFixed(2)}`); atualizarListaAlarmes(); } }); }
+        
+        // ========== FUNÇÕES DE MODO DESCANSO ==========
+        function iniciarTimerDescanso() { clearTimeout(timeoutDescanso); timeoutDescanso = setTimeout(() => { if(!modoOperacaoAtivo) document.body.classList.add("modo-descanso"); }, 90000); }
+        function resetTimer() { if(!modoOperacaoAtivo) { document.body.classList.remove("modo-descanso"); iniciarTimerDescanso(); } }
+        document.onmousemove = resetTimer; document.onkeydown = resetTimer;
+        
+        const toggleLock = document.getElementById("lockScreenToggle"); toggleLock.addEventListener("change", function() { modoOperacaoAtivo = this.checked; if(modoOperacaoAtivo) { document.getElementById("statusModo").innerText = "Modo Operação: ON"; clearTimeout(timeoutDescanso); document.body.classList.remove("modo-descanso"); document.body.classList.add("modo-ativo"); } else { document.getElementById("statusModo").innerText = "Modo Operação: OFF"; document.body.classList.remove("modo-ativo"); iniciarTimerDescanso(); } });
+        
+        // ========== FUNÇÕES DE MODAIS ==========
+        function openPasswordModal() { document.getElementById('passwordModal').style.display = 'flex'; }
+        function openDonationModal() { document.getElementById('donationModal').style.display = 'flex'; }
+        function openPoolsModal() { document.getElementById('poolsModal').style.display = 'flex'; refreshCategories(); setModo('apr'); renderPoolsEstrategicas(); renderizarSimuladorPools(); atualizarTotalSimulador(); }
+        function closePoolsModal() { document.getElementById('poolsModal').style.display = 'none'; }
+        
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn=>btn.classList.remove('active')); 
+            document.querySelectorAll('.tab-content').forEach(content=>content.classList.remove('active'));
+            const tabMap = { pools:0, poolsEstrategicas:1, news:2, strategies:3, robot:4, mvrv:5, ciclo:6, liquidity:7, simulador:8 };
+            const idx = tabMap[tab]; 
+            if(idx !== undefined) document.querySelectorAll('.tab-btn')[idx]?.classList.add('active');
+            document.getElementById(`${tab}Tab`)?.classList.add('active');
+            if(tab === 'pools') refreshCategories(); 
+            if(tab === 'mvrv') atualizarMVRV(); 
+            if(tab === 'liquidity') { atualizarMVRV(); atualizarAlocacao(); } 
+            if(tab === 'ciclo') calcularScoreCiclo();
+            if(tab === 'simulador') { renderizarSimuladorPools(); atualizarTotalSimulador(); }
+        }
+        
+        function checkPassword() { if(document.getElementById('passInput').value === 'Maria1301') { fecharModal('passwordModal'); document.getElementById('robotModal').style.display = 'flex'; } else alert('Senha incorreta'); }
+        function connectHyperliquid() { document.getElementById('apiConsole').innerHTML = '[API] Conectado com sucesso! (modo simulação)'; }
+        function placeRealOrder() { const mvrvFilterActive = document.getElementById('mvrvFilterToggle')?.checked; if(mvrvFilterActive && (mvrvData.regime === 'TOPO' || mvrvData.regime === 'REALIZAÇÃO')) { alert(`⚠️ Filtro MVRV ativo: Mercado em ${mvrvData.regime}. Operação bloqueada!`); return; } alert('⚠️ Ordem simulada.'); }
+        
+        // ========== INICIALIZAÇÃO ==========
+        refreshCategories(); 
+        setModo('apr'); 
+        iniciarTimerDescanso(); 
+        initChart(); 
+        atualizarMVRV(); 
+        renderPoolsEstrategicas(); 
+        calcularScoreCiclo();
+        
+        const demoSelect = document.getElementById('demoPoolSelect'), robotSelect = document.getElementById('robotPoolSelect');
+        if (demoSelect) poolsEstrategicas.forEach(p => { const opt = document.createElement('option'); opt.value = p.pool; opt.text = p.pool; demoSelect.appendChild(opt); });
+        if (robotSelect) poolsEstrategicas.forEach(p => { const opt = document.createElement('option'); opt.value = p.pool; opt.text = p.pool; robotSelect.appendChild(opt); });
+        
+        const mvrvFilterToggle = document.getElementById('mvrvFilterToggle'), mvrvStatusRobot = document.getElementById('mvrvStatusRobot');
+        if(mvrvFilterToggle) mvrvFilterToggle.addEventListener('change', function() { if(mvrvStatusRobot) mvrvStatusRobot.style.display = this.checked ? 'block' : 'none'; });
+        
+        // Event listeners do simulador
+        document.getElementById('simuladorValor')?.addEventListener('input', calcularSimuladorRetorno);
+        document.getElementById('simuladorDias')?.addEventListener('input', calcularSimuladorRetorno);
+        document.getElementById('simuladorPreset')?.addEventListener('change', function(e) {
+            if (e.target.value !== 'custom') aplicarPresetSimulador(e.target.value);
+        });
+        
+        renderizarSimuladorPools();
+        atualizarTotalSimulador();
+    </script>
 </body>
 </html>
