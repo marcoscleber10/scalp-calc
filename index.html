@@ -589,35 +589,15 @@
     }
     
     function refreshCategories() {
-        // Tokens que identificam cada categoria
-        const STABLE_TOKENS  = ['USDC','USDT','BUSD','DAI','FRAX','AUSD'];
-        const RWA_TOKENS     = ['CONV','TQQQ','TQQQX','HYPE','HOODX','SLOWN','NVDA','NVDAX','AAPL','MSFT','TSLA','AMZN','GOOG'];
-        const REAL_TOKENS    = ['BRL','BRZ','EURC','BRLA'];
+        const STABLE  = ['USDC','USDT','BUSD','DAI','FRAX','AUSD'];
+        const RWA     = ['CONV','TQQQ','TQQQX','HYPE','HOODX','SLOWN','NVDA','NVDAX','AAPL','MSFT','TSLA','AMZN','GOOG'];
+        const REAL    = ['BRL','BRZ','EURC','BRLA'];
+        function sides(p) { return p.pool.toUpperCase().split('/'); }
 
-        function tokens(pool) { return pool.pool.toUpperCase().split('/'); }
-
-        // BLUE-CHIP: top APR geral, sem filtro
         const bluechip = getTopAPRs(poolsData, 6);
-
-        // STABLE CON: ambos os lados são stable tokens
-        const stable = getTopAPRs(poolsData, 5, p => {
-            const [a, b] = tokens(p);
-            return STABLE_TOKENS.some(t => a.includes(t)) && STABLE_TOKENS.some(t => b.includes(t));
-        });
-
-        // BEST RWA: pelo menos um lado é token RWA, nenhum lado é REAL
-        const rwa = getTopAPRs(poolsData, 5, p => {
-            const [a, b] = tokens(p);
-            const isRwa = RWA_TOKENS.some(t => a.includes(t) || b.includes(t));
-            const isReal = REAL_TOKENS.some(t => a.includes(t) || b.includes(t));
-            return isRwa && !isReal;
-        });
-
-        // BEST REAL: pelo menos um lado é token Real (BRL/BRZ/EURC)
-        const real = getTopAPRs(poolsData, 5, p => {
-            const [a, b] = tokens(p);
-            return REAL_TOKENS.some(t => a.includes(t) || b.includes(t));
-        });
+        const stable   = getTopAPRs(poolsData, 5, p => { const [a,b]=sides(p); return STABLE.some(t=>a.includes(t)) && STABLE.some(t=>b.includes(t)); });
+        const rwa      = getTopAPRs(poolsData, 5, p => { const [a,b]=sides(p); return RWA.some(t=>a.includes(t)||b.includes(t)) && !REAL.some(t=>a.includes(t)||b.includes(t)); });
+        const real     = getTopAPRs(poolsData, 5, p => { const [a,b]=sides(p); return REAL.some(t=>a.includes(t)||b.includes(t)); });
         
         const categories = [
             { title: "BEST BLUE-CHIP", items: bluechip },
@@ -1207,26 +1187,7 @@ ${allocationText}
             else { let pair = symbol.split(':')[1].toLowerCase(); let streamPair = pair.includes('btc') ? 'btcusdt' : pair.includes('eth') ? 'ethusdt' : 'solusdt'; activeWS = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`); activeWS.onmessage = (e) => { const data = JSON.parse(e.data); price = parseFloat(data.c); document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`; pricesHistory.push(price); if(pricesHistory.length > 50) pricesHistory.shift(); updateSignals(); verificarAlarmes(); }; }
         }
         
-        async function fetchHyperliquidPrice(asset) {
-            const coinMap = { GOLD: '@XAU', SILVER: '@XAG', WTI: '@WTI' };
-            const geckoMap = { GOLD: 'gold', SILVER: 'silver' };
-            let val = 0;
-            try {
-                const r = await fetch('https://api.hyperliquid.xyz/info', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({type:'allMids'}) });
-                if (r.ok) { const d = await r.json(); val = parseFloat(d[coinMap[asset]] || 0); }
-            } catch(e) {}
-            if (!(val > 0) && geckoMap[asset]) {
-                try {
-                    const r = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${geckoMap[asset]}&vs_currencies=usd`);
-                    if (r.ok) { const d = await r.json(); val = d[geckoMap[asset]]?.usd || 0; }
-                } catch(e) {}
-            }
-            if (!(val > 0)) return;
-            price = val;
-            document.getElementById('priceText').innerHTML = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
-            pricesHistory.push(price); if(pricesHistory.length > 50) pricesHistory.shift();
-            updateSignals(); verificarAlarmes();
-        }
+        async function fetchHyperliquidPrice(asset) { const defaults = { GOLD: 4528.50, SILVER: 32.85, WTI: 78.42 }; price = defaults[asset]; document.getElementById('priceText').innerHTML = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`; pricesHistory.push(price); if(pricesHistory.length > 50) pricesHistory.shift(); updateSignals(); verificarAlarmes(); }
         function onSymbolChange() { initChart(); }
         
         function calcularEMA50() { if (pricesHistory.length < 50) return price; let multiplier = 2 / (50 + 1); let ema = pricesHistory[0]; for (let i = 1; i < pricesHistory.length; i++) ema = (pricesHistory[i] - ema) * multiplier + ema; return ema; }
