@@ -280,7 +280,7 @@
 
     <!-- MODAL DE DONATIVOS -->
     <div id="donationModal" class="modal"><div class="modal-content"><h2>💰 Donativos</h2><p style="background:#1e2a36; padding:15px; border-radius:15px; margin-bottom:20px;">Projeto independente, sem fins lucrativos. Contribuições ajudam a manter os custos. Obrigado!</p>
-        <div class="donation-item" style="border-left-color:#8a2be2;"><strong>⚡ Lightning Network</strong><p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9ffcf3f0f8f8fafbeffeededf0ebafaedfe8fef3f3faebf0f9ecfeebf0ecf7f6b1fcf0f2">[email&#160;protected]</a> <button class="copy-btn" onclick="copyText('cloggedparrot01@walletofsatoshi.com')">Copiar</button></p></div>
+        <div class="donation-item" style="border-left-color:#8a2be2;"><strong>⚡ Lightning Network</strong><p>cloggedparrot01@walletofsatoshi.com <button class="copy-btn" onclick="copyText('cloggedparrot01@walletofsatoshi.com')">Copiar</button></p></div>
         <div class="donation-item" style="border-left-color:#f7931a;"><strong>₿ Bitcoin</strong><p>bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5 <button class="copy-btn" onclick="copyText('bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5')">Copiar</button></p></div>
         <div class="donation-item" style="border-left-color:#627eea;"><strong>🔷 EVM</strong><p>0xAd944bA180610F1Fe43151eD81c0084C918c68e1 <button class="copy-btn" onclick="copyText('0xAd944bA180610F1Fe43151eD81c0084C918c68e1')">Copiar</button></p></div>
         <div class="donation-item" style="border-left-color:#14f195;"><strong>◎ Solana</strong><p>EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm <button class="copy-btn" onclick="copyText('EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm')">Copiar</button></p></div>
@@ -357,7 +357,7 @@
             <div style="background: #0f141c; border-radius: 16px; overflow: hidden; margin-bottom: 25px;" id="calendarioContainer">
                 <div class="tradingview-widget-container">
                     <div class="tradingview-widget-container__widget"></div>
-                    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
                     {"width":"100%","height":"600","colorTheme":"dark","locale":"br"}
                     </script>
                 </div>
@@ -589,30 +589,10 @@
     }
     
     function refreshCategories() {
-        const rwaKeywords = ['CONV', 'NVDA', 'SLOW', 'HOODX', 'TQQQ', 'HYPE', 'NVDX', 'AAPL', 'MSFT', 'TSLA', 'AMZN', 'GOOG'];
-        const realKeywords = ['BRL', 'BRZ', 'EURC', 'BRLA'];
-
         const bluechip = getTopAPRs(poolsData, 6);
-
-        const stable = getTopAPRs(poolsData, 5, p => {
-            const upper = p.pool.toUpperCase();
-            if (!upper.includes('USDC') && !upper.includes('USDT')) return false;
-            if (rwaKeywords.some(k => upper.includes(k))) return false;
-            if (realKeywords.some(k => upper.includes(k))) return false;
-            const base = p.pool.split('/')[0].toUpperCase();
-            return ['USDC','USDT','WBNB','WETH','WBTC','BNB','ETH','SOL','BTC'].some(t => base.includes(t));
-        });
-
-        const rwa = getTopAPRs(poolsData, 5, p => {
-            const upper = p.pool.toUpperCase();
-            if (realKeywords.some(k => upper.includes(k))) return false;
-            return rwaKeywords.some(k => upper.includes(k));
-        });
-
-        const real = getTopAPRs(poolsData, 5, p => {
-            const upper = p.pool.toUpperCase();
-            return realKeywords.some(k => upper.includes(k));
-        });
+        const stable = getTopAPRs(poolsData, 5, p => p.pool.toUpperCase().includes('USDC') || p.pool.toUpperCase().includes('USDT'));
+        const rwa = getTopAPRs(poolsData, 5, p => ['CONV', 'NVDA', 'SLOW', 'HOODX', 'TQQQ', 'HYPE'].some(k => p.pool.toUpperCase().includes(k)));
+        const real = getTopAPRs(poolsData, 5, p => p.pool.toUpperCase().includes('BRL') || p.pool.toUpperCase().includes('BRZ'));
         
         const categories = [
             { title: "BEST BLUE-CHIP", items: bluechip },
@@ -1202,50 +1182,7 @@ ${allocationText}
             else { let pair = symbol.split(':')[1].toLowerCase(); let streamPair = pair.includes('btc') ? 'btcusdt' : pair.includes('eth') ? 'ethusdt' : 'solusdt'; activeWS = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`); activeWS.onmessage = (e) => { const data = JSON.parse(e.data); price = parseFloat(data.c); document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`; pricesHistory.push(price); if(pricesHistory.length > 50) pricesHistory.shift(); updateSignals(); verificarAlarmes(); }; }
         }
         
-        async function fetchHyperliquidPrice(asset) {
-            const coinMap = { GOLD: '@XAU', SILVER: '@XAG', WTI: '@WTI' };
-            let fetched = false;
-            // Fonte 1: HyperLiquid
-            try {
-                const r = await fetch('https://api.hyperliquid.xyz/info', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({type:'allMids'}) });
-                if (r.ok) {
-                    const d = await r.json();
-                    const val = parseFloat(d[coinMap[asset]]);
-                    if (val > 0) { price = val; fetched = true; }
-                }
-            } catch(e) {}
-            // Fonte 2: Metals-API via CoinGecko (ouro e prata)
-            if (!fetched) {
-                const geckoMap = { GOLD: 'gold', SILVER: 'silver' };
-                if (geckoMap[asset]) {
-                    try {
-                        const r = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${geckoMap[asset]}&vs_currencies=usd`);
-                        if (r.ok) {
-                            const d = await r.json();
-                            const val = d[geckoMap[asset]]?.usd;
-                            if (val > 0) { price = val; fetched = true; }
-                        }
-                    } catch(e) {}
-                }
-            }
-            // Fonte 3: Kraken para petróleo (WTI via XBT como proxy não existe, mas tenta spot)
-            if (!fetched && asset === 'WTI') {
-                try {
-                    const r = await fetch('https://query1.finance.yahoo.com/v8/finance/chart/CL%3DF?interval=1m&range=1d');
-                    if (r.ok) {
-                        const d = await r.json();
-                        const val = d?.chart?.result?.[0]?.meta?.regularMarketPrice;
-                        if (val > 0) { price = val; fetched = true; }
-                    }
-                } catch(e) {}
-            }
-            if (!fetched) return; // não atualiza se não buscou nada
-            document.getElementById('priceText').innerHTML = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
-            pricesHistory.push(price);
-            if(pricesHistory.length > 50) pricesHistory.shift();
-            updateSignals();
-            verificarAlarmes();
-        }
+        async function fetchHyperliquidPrice(asset) { const defaults = { GOLD: 4528.50, SILVER: 32.85, WTI: 78.42 }; price = defaults[asset]; document.getElementById('priceText').innerHTML = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`; pricesHistory.push(price); if(pricesHistory.length > 50) pricesHistory.shift(); updateSignals(); verificarAlarmes(); }
         function onSymbolChange() { initChart(); }
         
         function calcularEMA50() { if (pricesHistory.length < 50) return price; let multiplier = 2 / (50 + 1); let ema = pricesHistory[0]; for (let i = 1; i < pricesHistory.length; i++) ema = (pricesHistory[i] - ema) * multiplier + ema; return ema; }
@@ -1308,53 +1245,10 @@ ${allocationText}
         refreshCategories(); 
         setModo('apr'); 
         iniciarTimerDescanso(); 
+        initChart(); 
         atualizarMVRV(); 
         renderPoolsEstrategicas(); 
         calcularScoreCiclo();
-
-        // Inicia preço imediatamente, sem depender do TradingView
-        function iniciarPrecoImediato() {
-            const symbol = document.getElementById('pairSelector').value;
-            if (symbol.startsWith("TVC:")) {
-                const asset = symbol === "TVC:GOLD" ? "GOLD" : symbol === "TVC:SILVER" ? "SILVER" : "WTI";
-                fetchHyperliquidPrice(asset);
-                metalInterval = setInterval(() => fetchHyperliquidPrice(asset), 3000);
-            } else {
-                const pair = symbol.split(':')[1].toLowerCase();
-                const streamPair = pair.includes('btc') ? 'btcusdt' : pair.includes('eth') ? 'ethusdt' : 'solusdt';
-                if (activeWS) activeWS.close();
-                activeWS = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`);
-                activeWS.onmessage = (e) => {
-                    const data = JSON.parse(e.data);
-                    price = parseFloat(data.c);
-                    document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
-                    pricesHistory.push(price);
-                    if(pricesHistory.length > 50) pricesHistory.shift();
-                    updateSignals();
-                    verificarAlarmes();
-                };
-                activeWS.onerror = () => activeWS.close();
-                activeWS.onclose = () => {
-                    // reconecta em 3s se fechar inesperadamente
-                    setTimeout(iniciarPrecoImediato, 3000);
-                };
-            }
-        }
-
-        // Tenta iniciar após TradingView carregar, mas inicia preço de qualquer forma
-        if (typeof TradingView !== 'undefined') {
-            initChart();
-        } else {
-            // tv.js ainda não carregou — espera até 5s, mas já inicia preço
-            iniciarPrecoImediato();
-            const tvWait = setInterval(() => {
-                if (typeof TradingView !== 'undefined') {
-                    clearInterval(tvWait);
-                    initChart();
-                }
-            }, 500);
-            setTimeout(() => clearInterval(tvWait), 5000);
-        }
         
         const demoSelect = document.getElementById('demoPoolSelect'), robotSelect = document.getElementById('robotPoolSelect');
         if (demoSelect) poolsEstrategicas.forEach(p => { const opt = document.createElement('option'); opt.value = p.pool; opt.text = p.pool; demoSelect.appendChild(opt); });
@@ -1366,4 +1260,12 @@ ${allocationText}
         // Event listeners do simulador
         document.getElementById('simuladorValor')?.addEventListener('input', calcularSimuladorRetorno);
         document.getElementById('simuladorDias')?.addEventListener('input', calcularSimuladorRetorno);
-        document.getElementById('simuladorPreset')?.ad
+        document.getElementById('simuladorPreset')?.addEventListener('change', function(e) {
+            if (e.target.value !== 'custom') aplicarPresetSimulador(e.target.value);
+        });
+        
+        renderizarSimuladorPools();
+        atualizarTotalSimulador();
+    </script>
+</body>
+</html>
