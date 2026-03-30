@@ -280,7 +280,7 @@
 
     <!-- MODAL DE DONATIVOS -->
     <div id="donationModal" class="modal"><div class="modal-content"><h2>💰 Donativos</h2><p style="background:#1e2a36; padding:15px; border-radius:15px; margin-bottom:20px;">Projeto independente, sem fins lucrativos. Contribuições ajudam a manter os custos. Obrigado!</p>
-        <div class="donation-item" style="border-left-color:#8a2be2;"><strong>⚡ Lightning Network</strong><p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2c4f40434b4b49485c4d5e5e43581c1d6c5b4d40404958434a5f4d58435f4445024f4341">[email&#160;protected]</a> <button class="copy-btn" onclick="copyText('cloggedparrot01@walletofsatoshi.com')">Copiar</button></p></div>
+        <div class="donation-item" style="border-left-color:#8a2be2;"><strong>⚡ Lightning Network</strong><p>cloggedparrot01@walletofsatoshi.com <button class="copy-btn" onclick="copyText('cloggedparrot01@walletofsatoshi.com')">Copiar</button></p></div>
         <div class="donation-item" style="border-left-color:#f7931a;"><strong>₿ Bitcoin</strong><p>bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5 <button class="copy-btn" onclick="copyText('bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5')">Copiar</button></p></div>
         <div class="donation-item" style="border-left-color:#627eea;"><strong>🔷 EVM</strong><p>0xAd944bA180610F1Fe43151eD81c0084C918c68e1 <button class="copy-btn" onclick="copyText('0xAd944bA180610F1Fe43151eD81c0084C918c68e1')">Copiar</button></p></div>
         <div class="donation-item" style="border-left-color:#14f195;"><strong>◎ Solana</strong><p>EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm <button class="copy-btn" onclick="copyText('EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm')">Copiar</button></p></div>
@@ -357,7 +357,7 @@
             <div style="background: #0f141c; border-radius: 16px; overflow: hidden; margin-bottom: 25px;" id="calendarioContainer">
                 <div class="tradingview-widget-container">
                     <div class="tradingview-widget-container__widget"></div>
-                    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
                     {"width":"100%","height":"600","colorTheme":"dark","locale":"br"}
                     </script>
                 </div>
@@ -589,15 +589,10 @@
     }
     
     function refreshCategories() {
-        const STABLE  = ['USDC','USDT','BUSD','DAI','FRAX','AUSD'];
-        const RWA     = ['CONV','TQQQ','TQQQX','HYPE','HOODX','SLOWN','NVDA','NVDAX','AAPL','MSFT','TSLA','AMZN','GOOG'];
-        const REAL    = ['BRL','BRZ','EURC','BRLA'];
-        function sides(p) { return p.pool.toUpperCase().split('/'); }
-
         const bluechip = getTopAPRs(poolsData, 6);
-        const stable   = getTopAPRs(poolsData, 5, p => { const [a,b]=sides(p); return STABLE.some(t=>a.includes(t)) && STABLE.some(t=>b.includes(t)); });
-        const rwa      = getTopAPRs(poolsData, 5, p => { const [a,b]=sides(p); return RWA.some(t=>a.includes(t)||b.includes(t)) && !REAL.some(t=>a.includes(t)||b.includes(t)); });
-        const real     = getTopAPRs(poolsData, 5, p => { const [a,b]=sides(p); return REAL.some(t=>a.includes(t)||b.includes(t)); });
+        const stable = getTopAPRs(poolsData, 5, p => p.pool.toUpperCase().includes('USDC') || p.pool.toUpperCase().includes('USDT'));
+        const rwa = getTopAPRs(poolsData, 5, p => ['CONV', 'NVDA', 'SLOW', 'HOODX', 'TQQQ', 'HYPE'].some(k => p.pool.toUpperCase().includes(k)));
+        const real = getTopAPRs(poolsData, 5, p => p.pool.toUpperCase().includes('BRL') || p.pool.toUpperCase().includes('BRZ'));
         
         const categories = [
             { title: "BEST BLUE-CHIP", items: bluechip },
@@ -1265,4 +1260,12 @@ ${allocationText}
         // Event listeners do simulador
         document.getElementById('simuladorValor')?.addEventListener('input', calcularSimuladorRetorno);
         document.getElementById('simuladorDias')?.addEventListener('input', calcularSimuladorRetorno);
-        document.getElementById('simuladorPreset')?.ad
+        document.getElementById('simuladorPreset')?.addEventListener('change', function(e) {
+            if (e.target.value !== 'custom') aplicarPresetSimulador(e.target.value);
+        });
+        
+        renderizarSimuladorPools();
+        atualizarTotalSimulador();
+    </script>
+</body>
+</html>
