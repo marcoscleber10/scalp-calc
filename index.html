@@ -1308,10 +1308,53 @@ ${allocationText}
         refreshCategories(); 
         setModo('apr'); 
         iniciarTimerDescanso(); 
-        initChart(); 
         atualizarMVRV(); 
         renderPoolsEstrategicas(); 
         calcularScoreCiclo();
+
+        // Inicia preço imediatamente, sem depender do TradingView
+        function iniciarPrecoImediato() {
+            const symbol = document.getElementById('pairSelector').value;
+            if (symbol.startsWith("TVC:")) {
+                const asset = symbol === "TVC:GOLD" ? "GOLD" : symbol === "TVC:SILVER" ? "SILVER" : "WTI";
+                fetchHyperliquidPrice(asset);
+                metalInterval = setInterval(() => fetchHyperliquidPrice(asset), 3000);
+            } else {
+                const pair = symbol.split(':')[1].toLowerCase();
+                const streamPair = pair.includes('btc') ? 'btcusdt' : pair.includes('eth') ? 'ethusdt' : 'solusdt';
+                if (activeWS) activeWS.close();
+                activeWS = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`);
+                activeWS.onmessage = (e) => {
+                    const data = JSON.parse(e.data);
+                    price = parseFloat(data.c);
+                    document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
+                    pricesHistory.push(price);
+                    if(pricesHistory.length > 50) pricesHistory.shift();
+                    updateSignals();
+                    verificarAlarmes();
+                };
+                activeWS.onerror = () => activeWS.close();
+                activeWS.onclose = () => {
+                    // reconecta em 3s se fechar inesperadamente
+                    setTimeout(iniciarPrecoImediato, 3000);
+                };
+            }
+        }
+
+        // Tenta iniciar após TradingView carregar, mas inicia preço de qualquer forma
+        if (typeof TradingView !== 'undefined') {
+            initChart();
+        } else {
+            // tv.js ainda não carregou — espera até 5s, mas já inicia preço
+            iniciarPrecoImediato();
+            const tvWait = setInterval(() => {
+                if (typeof TradingView !== 'undefined') {
+                    clearInterval(tvWait);
+                    initChart();
+                }
+            }, 500);
+            setTimeout(() => clearInterval(tvWait), 5000);
+        }
         
         const demoSelect = document.getElementById('demoPoolSelect'), robotSelect = document.getElementById('robotPoolSelect');
         if (demoSelect) poolsEstrategicas.forEach(p => { const opt = document.createElement('option'); opt.value = p.pool; opt.text = p.pool; demoSelect.appendChild(opt); });
