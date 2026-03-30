@@ -1201,15 +1201,112 @@ ${allocationText}
         function setTF(tf, btn) { currentTF = tf; document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); initChart(); }
         function toggleMode() { isDesktop = !isDesktop; document.getElementById('mainCard').classList.toggle('desktop-mode', isDesktop); initChart(); }
         
+        // ---- sistema de preço robusto ----
+        let wsReconnectTimer = null;
+        let wsCurrentSymbol = '';
+        let wsFallbackInterval = null;
+
         function initChart() {
             const symbol = document.getElementById('pairSelector').value;
             const container = document.getElementById('chart_container');
             container.innerHTML = '';
-            setTimeout(() => { try { new TradingView.widget({ autosize: true, symbol: symbol, interval: currentTF, theme: "dark", style: "1", locale: "br", container_id: "chart_container", hide_top_toolbar: !isDesktop }); } catch(e) { container.innerHTML = '<div style="color:red;text-align:center;padding:20px;">Erro ao carregar gráfico.</div>'; } }, 100);
-            if(metalInterval) clearInterval(metalInterval);
-            if(activeWS) activeWS.close();
-            if(symbol.startsWith("TVC:")) { let asset = symbol === "TVC:GOLD" ? "GOLD" : symbol === "TVC:SILVER" ? "SILVER" : "WTI"; metalInterval = setInterval(() => fetchHyperliquidPrice(asset), 3000); fetchHyperliquidPrice(asset); }
-            else { let pair = symbol.split(':')[1].toLowerCase(); let streamPair = pair.includes('btc') ? 'btcusdt' : pair.includes('eth') ? 'ethusdt' : 'solusdt'; activeWS = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`); activeWS.onmessage = (e) => { const data = JSON.parse(e.data); price = parseFloat(data.c); document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`; pricesHistory.push(price); if(pricesHistory.length > 50) pricesHistory.shift(); updateSignals(); verificarAlarmes(); }; }
+            setTimeout(() => {
+                try { new TradingView.widget({ autosize: true, symbol: symbol, interval: currentTF, theme: "dark", style: "1", locale: "br", container_id: "chart_container", hide_top_toolbar: !isDesktop }); }
+                catch(e) { container.innerHTML = '<div style="color:red;text-align:center;padding:20px;">Erro ao carregar gráfico.</div>'; }
+            }, 100);
+
+            // limpa tudo antes de reiniciar
+            if (metalInterval) clearInterval(metalInterval);
+            if (wsFallbackInterval) clearInterval(wsFallbackInterval);
+            if (wsReconnectTimer) clearTimeout(wsReconnectTimer);
+            if (activeWS) { activeWS.onclose = null; activeWS.onerror = null; activeWS.onmessage = null; activeWS.close(); activeWS = null; }
+
+            if (symbol.startsWith("TVC:")) {
+                const asset = symbol === "TVC:GOLD" ? "GOLD" : symbol === "TVC:SILVER" ? "SILVER" : "WTI";
+                fetchHyperliquidPrice(asset);
+                metalInterval = setInterval(() => fetchHyperliquidPrice(asset), 3000);
+            } else {
+                wsCurrentSymbol = symbol;
+                iniciarWebSocketComFallback(symbol);
+            }
+        }
+
+        function iniciarWebSocketComFallback(symbol) {
+            const pair = symbol.split(':')[1]?.toLowerCase() || 'btcusdt';
+            const streamPair = pair.includes('btc') ? 'btcusdt' : pair.includes('eth') ? 'ethusdt' : pair.includes('sol') ? 'solusdt' : 'btcusdt';
+            const hlCoin = pair.includes('btc') ? 'BTC' : pair.includes('eth') ? 'ETH' : pair.includes('sol') ? 'SOL' : 'BTC';
+
+            // inicia fallback via HyperLiquid REST imediatamente (garante preço mesmo se WS falhar)
+            fetchCryptoViaHL(hlCoin);
+            if (wsFallbackInterval) clearInterval(wsFallbackInterval);
+            wsFallbackInterval = setInterval(() => {
+                // só usa fallback se WS não estiver OPEN
+                if (!activeWS || activeWS.readyState !== WebSocket.OPEN) {
+                    fetchCryptoViaHL(hlCoin);
+                }
+            }, 4000);
+
+            // tenta WebSocket Binance
+            tentarWebSocket(streamPair, hlCoin, symbol);
+        }
+
+        function tentarWebSocket(streamPair, hlCoin, symbol) {
+            if (wsCurrentSymbol !== symbol) return; // símbolo trocou, abandona
+            try {
+                const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`);
+                activeWS = ws;
+
+                ws.onopen = () => {
+                    document.getElementById('priceText').style.opacity = '1';
+                };
+
+                ws.onmessage = (e) => {
+                    if (wsCurrentSymbol !== symbol) return;
+                    try {
+                        const data = JSON.parse(e.data);
+                        price = parseFloat(data.c);
+                        document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
+                        pricesHistory.push(price);
+                        if (pricesHistory.length > 50) pricesHistory.shift();
+                        updateSignals();
+                        verificarAlarmes();
+                    } catch(err) {}
+                };
+
+                ws.onerror = () => {
+                    ws.close();
+                };
+
+                ws.onclose = () => {
+                    if (wsCurrentSymbol !== symbol) return;
+                    activeWS = null;
+                    // tenta reconectar em 3s
+                    wsReconnectTimer = setTimeout(() => tentarWebSocket(streamPair, hlCoin, symbol), 3000);
+                };
+
+            } catch(e) {
+                wsReconnectTimer = setTimeout(() => tentarWebSocket(streamPair, hlCoin, symbol), 5000);
+            }
+        }
+
+        async function fetchCryptoViaHL(coin) {
+            try {
+                const resp = await fetch('https://api.hyperliquid.xyz/info', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type: 'allMids' })
+                });
+                const data = await resp.json();
+                const mid = parseFloat(data[coin]);
+                if (mid && mid > 0) {
+                    price = mid;
+                    document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
+                    pricesHistory.push(price);
+                    if (pricesHistory.length > 50) pricesHistory.shift();
+                    updateSignals();
+                    verificarAlarmes();
+                }
+            } catch(e) {}
         }
         
         async function fetchHyperliquidPrice(asset) {
