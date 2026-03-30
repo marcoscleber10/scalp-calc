@@ -280,7 +280,7 @@
 
     <!-- MODAL DE DONATIVOS -->
     <div id="donationModal" class="modal"><div class="modal-content"><h2>💰 Donativos</h2><p style="background:#1e2a36; padding:15px; border-radius:15px; margin-bottom:20px;">Projeto independente, sem fins lucrativos. Contribuições ajudam a manter os custos. Obrigado!</p>
-        <div class="donation-item" style="border-left-color:#8a2be2;"><strong>⚡ Lightning Network</strong><p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6b0807040c0c0e0f1b0a1919041f5b5a2b1c0a07070e1f040d180a1f0418030245080406">[email&#160;protected]</a> <button class="copy-btn" onclick="copyText('cloggedparrot01@walletofsatoshi.com')">Copiar</button></p></div>
+        <div class="donation-item" style="border-left-color:#8a2be2;"><strong>⚡ Lightning Network</strong><p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9ffcf3f0f8f8fafbeffeededf0ebafaedfe8fef3f3faebf0f9ecfeebf0ecf7f6b1fcf0f2">[email&#160;protected]</a> <button class="copy-btn" onclick="copyText('cloggedparrot01@walletofsatoshi.com')">Copiar</button></p></div>
         <div class="donation-item" style="border-left-color:#f7931a;"><strong>₿ Bitcoin</strong><p>bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5 <button class="copy-btn" onclick="copyText('bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5')">Copiar</button></p></div>
         <div class="donation-item" style="border-left-color:#627eea;"><strong>🔷 EVM</strong><p>0xAd944bA180610F1Fe43151eD81c0084C918c68e1 <button class="copy-btn" onclick="copyText('0xAd944bA180610F1Fe43151eD81c0084C918c68e1')">Copiar</button></p></div>
         <div class="donation-item" style="border-left-color:#14f195;"><strong>◎ Solana</strong><p>EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm <button class="copy-btn" onclick="copyText('EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm')">Copiar</button></p></div>
@@ -589,36 +589,26 @@
     }
     
     function refreshCategories() {
-        // Listas de pares excluídos por categoria para evitar duplicatas
         const rwaKeywords = ['CONV', 'NVDA', 'SLOW', 'HOODX', 'TQQQ', 'HYPE', 'NVDX', 'AAPL', 'MSFT', 'TSLA', 'AMZN', 'GOOG'];
         const realKeywords = ['BRL', 'BRZ', 'EURC', 'BRLA'];
 
-        // BLUE-CHIP: qualquer pool (top geral por APR)
         const bluechip = getTopAPRs(poolsData, 6);
 
-        // STABLE CON: apenas pares onde AMBOS os lados são stable/fiat (sem RWA)
         const stable = getTopAPRs(poolsData, 5, p => {
             const upper = p.pool.toUpperCase();
-            // Deve conter USDC ou USDT
             if (!upper.includes('USDC') && !upper.includes('USDT')) return false;
-            // Não pode ser par RWA ou Real
             if (rwaKeywords.some(k => upper.includes(k))) return false;
             if (realKeywords.some(k => upper.includes(k))) return false;
-            // O outro lado do par também deve ser stable/cripto principal
-            const parts = p.pool.split('/');
-            const base = parts[0].toUpperCase();
-            const stableTokens = ['USDC','USDT','WBNB','WETH','WBTC','BNB','ETH','SOL','BTC'];
-            return stableTokens.some(t => base.includes(t));
+            const base = p.pool.split('/')[0].toUpperCase();
+            return ['USDC','USDT','WBNB','WETH','WBTC','BNB','ETH','SOL','BTC'].some(t => base.includes(t));
         });
 
-        // BEST RWA: pares de ativos do mundo real (ações, commodities tokenizadas)
         const rwa = getTopAPRs(poolsData, 5, p => {
             const upper = p.pool.toUpperCase();
-            if (realKeywords.some(k => upper.includes(k))) return false; // não misturar com Real
+            if (realKeywords.some(k => upper.includes(k))) return false;
             return rwaKeywords.some(k => upper.includes(k));
         });
 
-        // BEST REAL: pares BRL/BRZ
         const real = getTopAPRs(poolsData, 5, p => {
             const upper = p.pool.toUpperCase();
             return realKeywords.some(k => upper.includes(k));
@@ -1201,149 +1191,55 @@ ${allocationText}
         function setTF(tf, btn) { currentTF = tf; document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); initChart(); }
         function toggleMode() { isDesktop = !isDesktop; document.getElementById('mainCard').classList.toggle('desktop-mode', isDesktop); initChart(); }
         
-        // ---- sistema de preço robusto ----
-        let wsReconnectTimer = null;
-        let wsCurrentSymbol = '';
-        let wsFallbackInterval = null;
-
         function initChart() {
             const symbol = document.getElementById('pairSelector').value;
             const container = document.getElementById('chart_container');
             container.innerHTML = '';
-            setTimeout(() => {
-                try { new TradingView.widget({ autosize: true, symbol: symbol, interval: currentTF, theme: "dark", style: "1", locale: "br", container_id: "chart_container", hide_top_toolbar: !isDesktop }); }
-                catch(e) { container.innerHTML = '<div style="color:red;text-align:center;padding:20px;">Erro ao carregar gráfico.</div>'; }
-            }, 100);
-
-            // limpa tudo antes de reiniciar
-            if (metalInterval) clearInterval(metalInterval);
-            if (wsFallbackInterval) clearInterval(wsFallbackInterval);
-            if (wsReconnectTimer) clearTimeout(wsReconnectTimer);
-            if (activeWS) { activeWS.onclose = null; activeWS.onerror = null; activeWS.onmessage = null; activeWS.close(); activeWS = null; }
-
-            if (symbol.startsWith("TVC:")) {
-                const asset = symbol === "TVC:GOLD" ? "GOLD" : symbol === "TVC:SILVER" ? "SILVER" : "WTI";
-                fetchHyperliquidPrice(asset);
-                metalInterval = setInterval(() => fetchHyperliquidPrice(asset), 3000);
-            } else {
-                wsCurrentSymbol = symbol;
-                iniciarWebSocketComFallback(symbol);
-            }
-        }
-
-        function iniciarWebSocketComFallback(symbol) {
-            const pair = symbol.split(':')[1]?.toLowerCase() || 'btcusdt';
-            const streamPair = pair.includes('btc') ? 'btcusdt' : pair.includes('eth') ? 'ethusdt' : pair.includes('sol') ? 'solusdt' : 'btcusdt';
-            const hlCoin = pair.includes('btc') ? 'BTC' : pair.includes('eth') ? 'ETH' : pair.includes('sol') ? 'SOL' : 'BTC';
-
-            // inicia fallback via HyperLiquid REST imediatamente (garante preço mesmo se WS falhar)
-            fetchCryptoViaHL(hlCoin);
-            if (wsFallbackInterval) clearInterval(wsFallbackInterval);
-            wsFallbackInterval = setInterval(() => {
-                // só usa fallback se WS não estiver OPEN
-                if (!activeWS || activeWS.readyState !== WebSocket.OPEN) {
-                    fetchCryptoViaHL(hlCoin);
-                }
-            }, 4000);
-
-            // tenta WebSocket Binance
-            tentarWebSocket(streamPair, hlCoin, symbol);
-        }
-
-        function tentarWebSocket(streamPair, hlCoin, symbol) {
-            if (wsCurrentSymbol !== symbol) return; // símbolo trocou, abandona
-            try {
-                const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`);
-                activeWS = ws;
-
-                ws.onopen = () => {
-                    document.getElementById('priceText').style.opacity = '1';
-                };
-
-                ws.onmessage = (e) => {
-                    if (wsCurrentSymbol !== symbol) return;
-                    try {
-                        const data = JSON.parse(e.data);
-                        price = parseFloat(data.c);
-                        document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
-                        pricesHistory.push(price);
-                        if (pricesHistory.length > 50) pricesHistory.shift();
-                        updateSignals();
-                        verificarAlarmes();
-                    } catch(err) {}
-                };
-
-                ws.onerror = () => {
-                    ws.close();
-                };
-
-                ws.onclose = () => {
-                    if (wsCurrentSymbol !== symbol) return;
-                    activeWS = null;
-                    // tenta reconectar em 3s
-                    wsReconnectTimer = setTimeout(() => tentarWebSocket(streamPair, hlCoin, symbol), 3000);
-                };
-
-            } catch(e) {
-                wsReconnectTimer = setTimeout(() => tentarWebSocket(streamPair, hlCoin, symbol), 5000);
-            }
-        }
-
-        async function fetchCryptoViaHL(coin) {
-            try {
-                const resp = await fetch('https://api.hyperliquid.xyz/info', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ type: 'allMids' })
-                });
-                const data = await resp.json();
-                const mid = parseFloat(data[coin]);
-                if (mid && mid > 0) {
-                    price = mid;
-                    document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
-                    pricesHistory.push(price);
-                    if (pricesHistory.length > 50) pricesHistory.shift();
-                    updateSignals();
-                    verificarAlarmes();
-                }
-            } catch(e) {}
+            setTimeout(() => { try { new TradingView.widget({ autosize: true, symbol: symbol, interval: currentTF, theme: "dark", style: "1", locale: "br", container_id: "chart_container", hide_top_toolbar: !isDesktop }); } catch(e) { container.innerHTML = '<div style="color:red;text-align:center;padding:20px;">Erro ao carregar gráfico.</div>'; } }, 100);
+            if(metalInterval) clearInterval(metalInterval);
+            if(activeWS) activeWS.close();
+            if(symbol.startsWith("TVC:")) { let asset = symbol === "TVC:GOLD" ? "GOLD" : symbol === "TVC:SILVER" ? "SILVER" : "WTI"; metalInterval = setInterval(() => fetchHyperliquidPrice(asset), 3000); fetchHyperliquidPrice(asset); }
+            else { let pair = symbol.split(':')[1].toLowerCase(); let streamPair = pair.includes('btc') ? 'btcusdt' : pair.includes('eth') ? 'ethusdt' : 'solusdt'; activeWS = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`); activeWS.onmessage = (e) => { const data = JSON.parse(e.data); price = parseFloat(data.c); document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`; pricesHistory.push(price); if(pricesHistory.length > 50) pricesHistory.shift(); updateSignals(); verificarAlarmes(); }; }
         }
         
         async function fetchHyperliquidPrice(asset) {
             const coinMap = { GOLD: '@XAU', SILVER: '@XAG', WTI: '@WTI' };
-            const coin = coinMap[asset];
+            let fetched = false;
+            // Fonte 1: HyperLiquid
             try {
-                const resp = await fetch('https://api.hyperliquid.xyz/info', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ type: 'allMids' })
-                });
-                const data = await resp.json();
-                const mid = data[coin];
-                if (mid && !isNaN(parseFloat(mid))) {
-                    price = parseFloat(mid);
-                } else {
-                    // fallback: try spot prices
-                    const resp2 = await fetch('https://api.hyperliquid.xyz/info', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ type: 'spotMetaAndAssetCtxs' })
-                    });
-                    const data2 = await resp2.json();
-                    const tokens = data2[0]?.tokens || [];
-                    const ctxs = data2[1] || [];
-                    const nameMap = { GOLD: 'XAU', SILVER: 'XAG', WTI: 'WTI' };
-                    const idx = tokens.findIndex(t => t.name === nameMap[asset]);
-                    if (idx !== -1 && ctxs[idx]?.midPx) price = parseFloat(ctxs[idx].midPx);
+                const r = await fetch('https://api.hyperliquid.xyz/info', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({type:'allMids'}) });
+                if (r.ok) {
+                    const d = await r.json();
+                    const val = parseFloat(d[coinMap[asset]]);
+                    if (val > 0) { price = val; fetched = true; }
                 }
-            } catch(e) {
-                console.warn('HyperLiquid API error:', e);
-                // last resort static fallback only if price was never set
-                if (!price || price === 0) {
-                    const defaults = { GOLD: 3300, SILVER: 33.5, WTI: 69 };
-                    price = defaults[asset];
+            } catch(e) {}
+            // Fonte 2: Metals-API via CoinGecko (ouro e prata)
+            if (!fetched) {
+                const geckoMap = { GOLD: 'gold', SILVER: 'silver' };
+                if (geckoMap[asset]) {
+                    try {
+                        const r = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${geckoMap[asset]}&vs_currencies=usd`);
+                        if (r.ok) {
+                            const d = await r.json();
+                            const val = d[geckoMap[asset]]?.usd;
+                            if (val > 0) { price = val; fetched = true; }
+                        }
+                    } catch(e) {}
                 }
             }
+            // Fonte 3: Kraken para petróleo (WTI via XBT como proxy não existe, mas tenta spot)
+            if (!fetched && asset === 'WTI') {
+                try {
+                    const r = await fetch('https://query1.finance.yahoo.com/v8/finance/chart/CL%3DF?interval=1m&range=1d');
+                    if (r.ok) {
+                        const d = await r.json();
+                        const val = d?.chart?.result?.[0]?.meta?.regularMarketPrice;
+                        if (val > 0) { price = val; fetched = true; }
+                    }
+                } catch(e) {}
+            }
+            if (!fetched) return; // não atualiza se não buscou nada
             document.getElementById('priceText').innerHTML = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
             pricesHistory.push(price);
             if(pricesHistory.length > 50) pricesHistory.shift();
