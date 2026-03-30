@@ -280,7 +280,7 @@
 
     <!-- MODAL DE DONATIVOS -->
     <div id="donationModal" class="modal"><div class="modal-content"><h2>💰 Donativos</h2><p style="background:#1e2a36; padding:15px; border-radius:15px; margin-bottom:20px;">Projeto independente, sem fins lucrativos. Contribuições ajudam a manter os custos. Obrigado!</p>
-        <div class="donation-item" style="border-left-color:#8a2be2;"><strong>⚡ Lightning Network</strong><p>cloggedparrot01@walletofsatoshi.com <button class="copy-btn" onclick="copyText('cloggedparrot01@walletofsatoshi.com')">Copiar</button></p></div>
+        <div class="donation-item" style="border-left-color:#8a2be2;"><strong>⚡ Lightning Network</strong><p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2c4f40434b4b49485c4d5e5e43581c1d6c5b4d40404958434a5f4d58435f4445024f4341">[email&#160;protected]</a> <button class="copy-btn" onclick="copyText('cloggedparrot01@walletofsatoshi.com')">Copiar</button></p></div>
         <div class="donation-item" style="border-left-color:#f7931a;"><strong>₿ Bitcoin</strong><p>bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5 <button class="copy-btn" onclick="copyText('bc1q3zf09xtensa5kag3nz6jsvqyle3sgnmns0j9n5')">Copiar</button></p></div>
         <div class="donation-item" style="border-left-color:#627eea;"><strong>🔷 EVM</strong><p>0xAd944bA180610F1Fe43151eD81c0084C918c68e1 <button class="copy-btn" onclick="copyText('0xAd944bA180610F1Fe43151eD81c0084C918c68e1')">Copiar</button></p></div>
         <div class="donation-item" style="border-left-color:#14f195;"><strong>◎ Solana</strong><p>EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm <button class="copy-btn" onclick="copyText('EtSD7W7YG36ZuMAAX6bwJYJ9keciRK7cP7rJiadiZdmm')">Copiar</button></p></div>
@@ -357,7 +357,7 @@
             <div style="background: #0f141c; border-radius: 16px; overflow: hidden; margin-bottom: 25px;" id="calendarioContainer">
                 <div class="tradingview-widget-container">
                     <div class="tradingview-widget-container__widget"></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+                    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
                     {"width":"100%","height":"600","colorTheme":"dark","locale":"br"}
                     </script>
                 </div>
@@ -589,10 +589,35 @@
     }
     
     function refreshCategories() {
+        // Tokens que identificam cada categoria
+        const STABLE_TOKENS  = ['USDC','USDT','BUSD','DAI','FRAX','AUSD'];
+        const RWA_TOKENS     = ['CONV','TQQQ','TQQQX','HYPE','HOODX','SLOWN','NVDA','NVDAX','AAPL','MSFT','TSLA','AMZN','GOOG'];
+        const REAL_TOKENS    = ['BRL','BRZ','EURC','BRLA'];
+
+        function tokens(pool) { return pool.pool.toUpperCase().split('/'); }
+
+        // BLUE-CHIP: top APR geral, sem filtro
         const bluechip = getTopAPRs(poolsData, 6);
-        const stable = getTopAPRs(poolsData, 5, p => p.pool.toUpperCase().includes('USDC') || p.pool.toUpperCase().includes('USDT'));
-        const rwa = getTopAPRs(poolsData, 5, p => ['CONV', 'NVDA', 'SLOW', 'HOODX', 'TQQQ', 'HYPE'].some(k => p.pool.toUpperCase().includes(k)));
-        const real = getTopAPRs(poolsData, 5, p => p.pool.toUpperCase().includes('BRL') || p.pool.toUpperCase().includes('BRZ'));
+
+        // STABLE CON: ambos os lados são stable tokens
+        const stable = getTopAPRs(poolsData, 5, p => {
+            const [a, b] = tokens(p);
+            return STABLE_TOKENS.some(t => a.includes(t)) && STABLE_TOKENS.some(t => b.includes(t));
+        });
+
+        // BEST RWA: pelo menos um lado é token RWA, nenhum lado é REAL
+        const rwa = getTopAPRs(poolsData, 5, p => {
+            const [a, b] = tokens(p);
+            const isRwa = RWA_TOKENS.some(t => a.includes(t) || b.includes(t));
+            const isReal = REAL_TOKENS.some(t => a.includes(t) || b.includes(t));
+            return isRwa && !isReal;
+        });
+
+        // BEST REAL: pelo menos um lado é token Real (BRL/BRZ/EURC)
+        const real = getTopAPRs(poolsData, 5, p => {
+            const [a, b] = tokens(p);
+            return REAL_TOKENS.some(t => a.includes(t) || b.includes(t));
+        });
         
         const categories = [
             { title: "BEST BLUE-CHIP", items: bluechip },
@@ -1182,7 +1207,26 @@ ${allocationText}
             else { let pair = symbol.split(':')[1].toLowerCase(); let streamPair = pair.includes('btc') ? 'btcusdt' : pair.includes('eth') ? 'ethusdt' : 'solusdt'; activeWS = new WebSocket(`wss://stream.binance.com:9443/ws/${streamPair}@ticker`); activeWS.onmessage = (e) => { const data = JSON.parse(e.data); price = parseFloat(data.c); document.getElementById('priceText').innerText = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`; pricesHistory.push(price); if(pricesHistory.length > 50) pricesHistory.shift(); updateSignals(); verificarAlarmes(); }; }
         }
         
-        async function fetchHyperliquidPrice(asset) { const defaults = { GOLD: 4528.50, SILVER: 32.85, WTI: 78.42 }; price = defaults[asset]; document.getElementById('priceText').innerHTML = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`; pricesHistory.push(price); if(pricesHistory.length > 50) pricesHistory.shift(); updateSignals(); verificarAlarmes(); }
+        async function fetchHyperliquidPrice(asset) {
+            const coinMap = { GOLD: '@XAU', SILVER: '@XAG', WTI: '@WTI' };
+            const geckoMap = { GOLD: 'gold', SILVER: 'silver' };
+            let val = 0;
+            try {
+                const r = await fetch('https://api.hyperliquid.xyz/info', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({type:'allMids'}) });
+                if (r.ok) { const d = await r.json(); val = parseFloat(d[coinMap[asset]] || 0); }
+            } catch(e) {}
+            if (!(val > 0) && geckoMap[asset]) {
+                try {
+                    const r = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${geckoMap[asset]}&vs_currencies=usd`);
+                    if (r.ok) { const d = await r.json(); val = d[geckoMap[asset]]?.usd || 0; }
+                } catch(e) {}
+            }
+            if (!(val > 0)) return;
+            price = val;
+            document.getElementById('priceText').innerHTML = `$ ${price.toLocaleString('en-US', {minimumFractionDigits:2})}`;
+            pricesHistory.push(price); if(pricesHistory.length > 50) pricesHistory.shift();
+            updateSignals(); verificarAlarmes();
+        }
         function onSymbolChange() { initChart(); }
         
         function calcularEMA50() { if (pricesHistory.length < 50) return price; let multiplier = 2 / (50 + 1); let ema = pricesHistory[0]; for (let i = 1; i < pricesHistory.length; i++) ema = (pricesHistory[i] - ema) * multiplier + ema; return ema; }
@@ -1260,12 +1304,4 @@ ${allocationText}
         // Event listeners do simulador
         document.getElementById('simuladorValor')?.addEventListener('input', calcularSimuladorRetorno);
         document.getElementById('simuladorDias')?.addEventListener('input', calcularSimuladorRetorno);
-        document.getElementById('simuladorPreset')?.addEventListener('change', function(e) {
-            if (e.target.value !== 'custom') aplicarPresetSimulador(e.target.value);
-        });
-        
-        renderizarSimuladorPools();
-        atualizarTotalSimulador();
-    </script>
-</body>
-</html>
+        document.getElementById('simuladorPreset')?.ad
